@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "974778918990",
+    "project_id": "home-doctor-de846",
+    "storage_bucket": "home-doctor-de846.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:974778918990:android:f2f04b814bb16bd7b1bb1f",
+        "android_client_info": {
+          "package_name": "com.example.capstone_home_doctor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "974778918990-hi57sip5pp2vpf9siejnrk589917hmf1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.capstone_home_doctor",
+            "certificate_hash": "3ff0c39499f009349990e2ba4578498c3618cfca"
+          }
+        },
+        {
+          "client_id": "974778918990-l43qgtmrv7pti4kjmqlvls9ubcf4di79.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNhumFBA9o0zs-2yJSFZBHUv2d9HpiUjc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "974778918990-l43qgtmrv7pti4kjmqlvls9ubcf4di79.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "974778918990-jnfto0qej9luk1qg89ctbav3kfh93hcp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.capstoneHomeDoctor"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

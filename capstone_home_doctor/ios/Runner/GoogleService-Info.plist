@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>974778918990-jnfto0qej9luk1qg89ctbav3kfh93hcp.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.974778918990-jnfto0qej9luk1qg89ctbav3kfh93hcp</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCyRsNLUCj565KSKkjvTit5e2ZCSkG3aAQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>974778918990</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.capstoneHomeDoctor</string>
+	<key>PROJECT_ID</key>
+	<string>home-doctor-de846</string>
+	<key>STORAGE_BUCKET</key>
+	<string>home-doctor-de846.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:974778918990:ios:103367aa5463dbeeb1bb1f</string>
+</dict>
+</plist>

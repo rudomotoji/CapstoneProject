@@ -36,9 +36,11 @@ dev_dependencies:
   shared_preferences: ^0.5.12+4
   equatable: ^1.2.5
   flutter_bloc: ^6.1.1
+  rxdart: ^0.25.0
   firebase_analytics: ^6.3.0
   firebase_core: ^0.5.3
   firebase_messaging: ^7.0.3
+  flutter_local_notifications: ^3.0.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
