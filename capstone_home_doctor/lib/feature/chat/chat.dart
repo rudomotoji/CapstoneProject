@@ -12,7 +12,7 @@ class ChatScreen extends StatefulWidget {
 
   @override
   _ChatScreenState createState() =>
-      _ChatScreenState(receiveID: receiveName, receiveName: receiveName);
+      _ChatScreenState(receiveID: receiveID, receiveName: receiveName);
 }
 
 class _ChatScreenState extends State<ChatScreen> {
@@ -304,7 +304,8 @@ class _ChatScreenState extends State<ChatScreen> {
                             height: 35,
                             padding: EdgeInsets.all(10),
                           ),
-                          imageUrl: '',
+                          imageUrl:
+                              'https://image.cnbcfm.com/api/v1/image/105992231-1561667465295gettyimages-521697453.jpeg?v=1561667497&w=1600&h=900',
                           width: 35,
                           height: 35,
                           fit: BoxFit.cover,
