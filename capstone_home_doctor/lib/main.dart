@@ -81,6 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _handleGeneralMessage(Map<String, dynamic> message) {
     String payload;
+    ReceiveNotification receiveNotification;
     if (message.containsKey('data')) {
       // Handle data message
       final dynamic data = message['data'];
@@ -91,6 +92,8 @@ class _MyHomePageState extends State<MyHomePage> {
     //     title: notification["title"],
     //     body: notification["body"],
     //     payload: payload);
+    receiveNotification= ReceiveNotification(id: 0, title:notification["title"], body: notification["body"], payload: payload);
+    localNotifyManager.show(receiveNotification);
   }
 
   void _handleIOSGeneralMessage(Map<String, dynamic> message) {
@@ -121,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ? _handleIOSGeneralMessage(message)
             : _handleGeneralMessage(message);
       },
-      onBackgroundMessage: myBackgroundMessageHandler,
+      // onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
         // _navigateToItemDetail(message);

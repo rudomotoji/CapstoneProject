@@ -55,7 +55,7 @@ class NotiHelper {
     });
   }
 
-  Future<void> show() async{
+  Future<void> show(ReceiveNotification receiveNotification) async{
     var androidChannel = AndroidNotificationDetails(
       'CHANNEL_ID',
       'CHANNEL_NAME',
@@ -69,10 +69,10 @@ class NotiHelper {
     var platformChannel = NotificationDetails(android: androidChannel,iOS: iosChannel);
     await _plugin.show(
         0,
-        'test title',
-        'test body',
-        platformChannel,
-      payload: 'new payload',
+      receiveNotification.title,
+      receiveNotification.body,
+      platformChannel,
+      payload: receiveNotification.payload,
     );
   }
 
