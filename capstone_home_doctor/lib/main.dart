@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:capstone_home_doctor/feature/login/sign_in.dart';
 import 'package:flutter/material.dart';
-import 'Item.dart';
 import 'common/constant/evn.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
+import 'package:firebase_core/firebase_core.dart';
 import 'services/noti_helper.dart';
 
 Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
@@ -22,16 +22,9 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
   // Or do other work.
 }
 
-final Map<String, Item> _items = <String, Item>{};
-Item _itemForMessage(Map<String, dynamic> message) {
-  final dynamic data = message['data'] ?? message;
-  final String itemId = data['id'];
-  final Item item = _items.putIfAbsent(itemId, () => Item(itemId: itemId))
-    ..status = data['status'];
-  return item;
-}
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp(env: EnvValue.development));
 }
 
@@ -151,11 +144,11 @@ class _MyHomePageState extends State<MyHomePage> {
     localNotifyManager.setNotificationnOnClick(onNotificationOnClick);
   }
 
-  onNotificationReceive(ReceiveNotification notification){
-print('Notification receive: ${notification.id}');
+  onNotificationReceive(ReceiveNotification notification) {
+    print('Notification receive: ${notification.id}');
   }
 
-  onNotificationOnClick(String payload){
+  onNotificationOnClick(String payload) {
     print('Notification onclick: ${payload}');
   }
 
@@ -163,19 +156,7 @@ print('Notification receive: ${notification.id}');
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: Column(
-            children: [
-              Text('$_token'),
-              RaisedButton(
-                onPressed: ()=>{
-                  localNotifyManager.show()
-                },
-                child: Text('push'),
-              )
-            ],
-          )
-        ),
+        child: SignInScreen(),
       ),
     );
   }
