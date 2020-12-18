@@ -92,18 +92,26 @@ class _MyHomePageState extends State<MyHomePage> {
     //     title: notification["title"],
     //     body: notification["body"],
     //     payload: payload);
-    receiveNotification= ReceiveNotification(id: 0, title:notification["title"], body: notification["body"], payload: payload);
+    receiveNotification = ReceiveNotification(
+        id: 0,
+        title: notification["title"],
+        body: notification["body"],
+        payload: payload);
     localNotifyManager.show(receiveNotification);
   }
 
   void _handleIOSGeneralMessage(Map<String, dynamic> message) {
     String payload = jsonEncode(message);
+    ReceiveNotification receiveNotification;
 
     final dynamic notification = message['aps']['alert'];
-    // NotiHelper.show(
-    //     title: notification["title"],
-    //     body: notification["body"],
-    //     payload: payload);
+
+    receiveNotification = ReceiveNotification(
+        id: 0,
+        title: notification["title"],
+        body: notification["body"],
+        payload: payload);
+    localNotifyManager.show(receiveNotification);
   }
 
   @override
