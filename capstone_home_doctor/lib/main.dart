@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:capstone_home_doctor/feature/call/call_page.dart';
+import 'package:capstone_home_doctor/feature/call/index.dart';
 import 'package:capstone_home_doctor/feature/login/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'common/constant/evn.dart';
@@ -167,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SignInScreen(),
+        child: IndexPage(),
       ),
     );
   }
