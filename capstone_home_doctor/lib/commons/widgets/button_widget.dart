@@ -28,26 +28,23 @@ class ButtonHDr extends StatefulWidget {
   //with button full, we can defined button color and text color
   final Color bgColor;
   final Color labelColor;
-  //left or right icon position for button
-  final bool isLeftIcon;
 
-  const ButtonHDr(
-      {Key key,
-      this.onTap,
-      this.label,
-      this.image,
-      this.style,
-      this.width,
-      this.height,
-      this.margin,
-      this.bgColor,
-      this.labelColor,
-      this.isLeftIcon})
-      : super(key: key);
+  const ButtonHDr({
+    Key key,
+    this.onTap,
+    this.label,
+    this.image,
+    this.style,
+    this.width,
+    this.height,
+    this.margin,
+    this.bgColor,
+    this.labelColor,
+  }) : super(key: key);
 
   @override
-  _ButtonHDr createState() => _ButtonHDr(label, image, style, width, height,
-      margin, bgColor, labelColor, isLeftIcon);
+  _ButtonHDr createState() => _ButtonHDr(
+      label, image, style, width, height, margin, bgColor, labelColor);
 }
 
 class _ButtonHDr extends State<ButtonHDr> {
@@ -59,7 +56,6 @@ class _ButtonHDr extends State<ButtonHDr> {
   double _margin;
   Color _bgColor;
   Color _labelColor;
-  bool _isLeftIcon;
 
   @override
   _ButtonHDr(
@@ -71,7 +67,6 @@ class _ButtonHDr extends State<ButtonHDr> {
     this._margin,
     this._bgColor,
     this._labelColor,
-    _isLeftIcon,
   );
 
   @override
