@@ -9,7 +9,23 @@ class Register extends StatefulWidget {
 
 class _Register extends State<Register> with WidgetsBindingObserver {
   @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return null;
+    return Scaffold(
+      body: SafeArea(
+        child: Text('Register'),
+      ),
+    );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:capstone_home_doctor/commons/constants/numeral.dart';
+import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +16,7 @@ class HeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: DefaultNumeral.DEFAULT_HEADER_SIZE,
+      padding: DefaultNumeralUI.HEADER_SIZE,
       child: Row(
         children: [
           if (!isMainView)

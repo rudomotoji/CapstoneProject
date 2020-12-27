@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -6,137 +7,172 @@ enum ButtonStyleHDr {
   BUTTON_GREY,
   BUTTON_TRANSPARENT,
   BUTTON_IMAGE,
+  BUTTON_FULL,
 }
 
-//rerange button case
-//status: Not Done yet.
-
-class ButtonHomeDoctor extends StatefulWidget {
+class ButtonHDr extends StatefulWidget {
   //action onTap
   final VoidCallback onTap;
-  //width button
+  //label of button
+  final String label;
+  //image for button. Image is used if style = BUTTON_IMAGE or BUTTON_FULL
+  final Image image;
+  //Style of button
+  final ButtonStyleHDr style;
+  //optional field
+  //width, height
   final double width;
-  //height button
   final double height;
-  //border radius of button
-  final double borderRadius;
-  //button name
-  final String text;
-  //color of button
-  final Color backgroundColor;
-  //color of button's name
-  final Color textColor;
-  //size of button's name
-  final double fontSize;
-  //Margin of button with screen. We should define margin for button in stead of width :D
+  //we should use margin in stead of width. It's good for responsive (suitable with almost screen types.).
   final double margin;
-  //style of button
-  final ButtonStyleHDr buttonStyle;
+  //with button full, we can defined button color and text color
+  final Color bgColor;
+  final Color labelColor;
+  //left or right icon position for button
+  final bool isLeftIcon;
 
-  const ButtonHomeDoctor({
-    Key key,
-    this.onTap,
-    this.width,
-    this.height,
-    this.borderRadius,
-    this.backgroundColor,
-    this.fontSize,
-    this.text,
-    this.textColor,
-    this.margin,
-    this.buttonStyle,
-  }) : super(key: key);
+  const ButtonHDr(
+      {Key key,
+      this.onTap,
+      this.label,
+      this.image,
+      this.style,
+      this.width,
+      this.height,
+      this.margin,
+      this.bgColor,
+      this.labelColor,
+      this.isLeftIcon})
+      : super(key: key);
 
   @override
-  _ButtonHomeDoctor createState() => _ButtonHomeDoctor(
-      width,
-      height,
-      borderRadius,
-      text,
-      backgroundColor,
-      textColor,
-      fontSize,
-      margin,
-      buttonStyle);
+  _ButtonHDr createState() => _ButtonHDr(label, image, style, width, height,
+      margin, bgColor, labelColor, isLeftIcon);
 }
 
-class _ButtonHomeDoctor extends State<ButtonHomeDoctor> {
+class _ButtonHDr extends State<ButtonHDr> {
+  String _label;
+  Image _image;
+  ButtonStyleHDr _style;
   double _width;
   double _height;
-  double _borderRadius;
-  String _text;
-  Color _backgroundColor;
-  Color _textColor;
-  double _fontSize;
   double _margin;
-  ButtonStyleHDr _buttonStyle;
+  Color _bgColor;
+  Color _labelColor;
+  bool _isLeftIcon;
 
   @override
-  _ButtonHomeDoctor(
+  _ButtonHDr(
+    this._label,
+    this._image,
+    this._style,
     this._width,
     this._height,
-    this._borderRadius,
-    this._text,
-    this._backgroundColor,
-    this._textColor,
-    this._fontSize,
     this._margin,
-    this._buttonStyle,
+    this._bgColor,
+    this._labelColor,
+    _isLeftIcon,
   );
+
   @override
   Widget build(BuildContext context) {
-    if (_width != null && _margin != null) {
-      _width = MediaQuery.of(context).size.width - 80;
-    } else if (_width == null && _margin != null) {
+    if ((_width == 0 || _width == null) && (_margin == 0 || _margin == null)) {
+      _width =
+          MediaQuery.of(context).size.width - (DefaultNumeralUI.PADDING * 4);
+    }
+    // if ((_width != 0 && _width != null) && (_margin == 0 || _margin == null)) {}
+    if ((_width == 0 || _width == null) &&
+        (_margin != null || _margin != null)) {
       _width = MediaQuery.of(context).size.width - (_margin * 2);
     }
-    if (_width == 0 || _width == null || _width.isNaN || _width.isNegative) {
-      _width = MediaQuery.of(context).size.width - 80;
+    if ((_width != 0 || _width != null) &&
+        (_margin != null || _margin != null)) {
+      _width = MediaQuery.of(context).size.width - (_margin * 2);
     }
     if (_height == 0 || _height == null) {
-      _height = 50;
+      _height = DefaultNumeralUI.BUTTON_HEIGHT;
     }
-    if (_borderRadius == 0 || _borderRadius == null) {
-      _borderRadius = 12;
+    if (_label == null || _label == '') {
+      _label = 'Button';
     }
-    if (_fontSize == 0 || _fontSize == null) {
-      _fontSize = 16;
+    switch (_style) {
+      case ButtonStyleHDr.BUTTON_BLACK:
+        _bgColor = DefaultTheme.BLACK_BUTTON;
+        _labelColor = DefaultTheme.WHITE;
+        break;
+      case ButtonStyleHDr.BUTTON_GREY:
+        _bgColor = DefaultTheme.GREY_BUTTON;
+        _labelColor = DefaultTheme.BLACK;
+        break;
+      case ButtonStyleHDr.BUTTON_TRANSPARENT:
+        _bgColor = DefaultTheme.TRANSPARENT;
+        _labelColor = DefaultTheme.BLACK;
+        break;
+      case ButtonStyleHDr.BUTTON_FULL:
+        if (_bgColor == null) {
+          _bgColor = DefaultTheme.BLACK_BUTTON;
+        }
+        if (_labelColor == null) {
+          _labelColor = DefaultTheme.WHITE;
+        }
+        break;
+      case ButtonStyleHDr.BUTTON_IMAGE:
+        if (_width <= 0 || _width > 50 || _width == null) {
+          _width = DefaultNumeralUI.BUTTON_IMAGE_SIZE;
+        }
+        if (_height <= 0 || _height > 50 || _height == null) {
+          _height = DefaultNumeralUI.BUTTON_IMAGE_SIZE;
+        }
+        break;
+      default:
+        _bgColor = DefaultTheme.BLACK_BUTTON;
+        _labelColor = DefaultTheme.WHITE;
+        break;
     }
-    if (_textColor == null) {
-      _textColor = DefaultTheme.WHITE;
+    if (_style == ButtonStyleHDr.BUTTON_IMAGE) {
+      return SizedBox(
+        width: _width,
+        height: _height,
+        child: IconButton(
+          icon: _image,
+          onPressed: widget.onTap,
+        ),
+      );
+    } else if (_style == ButtonStyleHDr.BUTTON_FULL) {
+      return FlatButton.icon(
+        shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(DefaultNumeralUI.BORDER_RADIUS)),
+        color: _bgColor,
+        minWidth: _width,
+        height: _height,
+        onPressed: widget.onTap,
+        icon: SizedBox(
+          width: DefaultNumeralUI.ICON_SIZE_BUTTON,
+          height: DefaultNumeralUI.ICON_SIZE_BUTTON,
+          child: _image,
+        ),
+        label: Text(
+          _label,
+          style: TextStyle(
+              fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE, color: _labelColor),
+        ),
+      );
+    } else {
+      return FlatButton(
+        shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(DefaultNumeralUI.BORDER_RADIUS)),
+        color: _bgColor,
+        minWidth: _width,
+        height: _height,
+        onPressed: widget.onTap,
+        child: Text(
+          _label,
+          style: TextStyle(
+              fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE, color: _labelColor),
+        ),
+      );
     }
-    if (_backgroundColor == null) {
-      _backgroundColor = DefaultTheme.BLACK_BUTTON;
-    }
-
-    //notice this
-    if (_text == null || _text == '' || _text.isEmpty) {
-      _text = 'Button';
-    }
-
-    //notice this
-    if (_buttonStyle == ButtonStyleHDr.BUTTON_TRANSPARENT) {
-      _backgroundColor = DefaultTheme.TRANSPARENT;
-    }
-    if (_buttonStyle == ButtonStyleHDr.BUTTON_BLACK) {
-      _textColor = DefaultTheme.WHITE;
-      _backgroundColor = DefaultTheme.BLACK;
-    }
-    if (_buttonStyle == ButtonStyleHDr.BUTTON_GREY) {
-      _textColor = DefaultTheme.BLACK;
-      _backgroundColor = DefaultTheme.GREY_BUTTON;
-    }
-    return FlatButton(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(_borderRadius)),
-      color: _backgroundColor,
-      minWidth: _width,
-      height: _height,
-      onPressed: widget.onTap,
-      child: Text(
-        _text,
-        style: TextStyle(fontSize: _fontSize, color: _textColor),
-      ),
-    );
   }
 }

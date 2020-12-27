@@ -1,4 +1,5 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
@@ -33,7 +34,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      // resizeToAvoidBottomPadding: false,
       backgroundColor: DefaultTheme.WHITE,
       body: SafeArea(
         child: Column(
@@ -60,58 +61,44 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                     color: DefaultTheme.GREY_TEXT,
                     height: 0.25,
                   ),
-                  TextFieldHomeDoctor(
-                    // textfieldStyle: TextFieldStyleHDr.BORDERED,
-                    label: 'Tên đăng nhập',
-                    hintText: 'your_username',
+                  TextFieldHDr(
+                    label: 'VN +84',
+                    hintText: 'Số điện thoại',
+                    maxLength: 10,
+                    keyboardType: TextInputType.number,
                     buttonKeyboardAction: TextInputAction.next,
                     controller: _usernameController,
                     onChange: (text) {
-                      _userDTO.id = text;
+                      setState(() {
+                        _userDTO.phoneNo = text;
+                        if (text.toString().isEmpty) {
+                          _userDTO.phoneNo = null;
+                        }
+                      });
                     },
                   ),
                   Divider(
                     color: DefaultTheme.GREY_TEXT,
                     height: 0.25,
-                  ),
-                  TextFieldHomeDoctor(
-                    isObsecure: true,
-                    label: 'Mật khẩu',
-                    hintText: '•••••••••',
-                    controller: _passwordController,
-                  ),
-                  Divider(
-                    color: DefaultTheme.GREY_TEXT,
-                    height: 0.25,
-                  ),
-                  TextFieldHomeDoctor(),
-                  ButtonHomeDoctor(
-                    onTap: () {
-                      print('sample');
-                    },
                   ),
                 ],
               ),
             ),
-            ButtonHomeDoctor(
-              text: 'Quên mật khẩu?',
-              height: 2,
-              width: 100,
-              textColor: DefaultTheme.BLACK,
-              buttonStyle: ButtonStyleHDr.BUTTON_TRANSPARENT,
-              onTap: () {},
-            ),
-            ButtonHomeDoctor(
-              text: 'Đăng nhập',
-              onTap: () {},
+            if (_userDTO.phoneNo != null)
+              (ButtonHDr(
+                label: 'Tiếp theo',
+                onTap: () {},
+              )),
+            Padding(padding: EdgeInsets.only(top: 10)),
+            ButtonHDr(
+              style: ButtonStyleHDr.BUTTON_GREY,
+              label: 'Đăng kí tài khoản mới',
+              onTap: () {
+                print(_userDTO.phoneNo);
+                Navigator.pushNamed(context, RoutesHDr.REGISTER);
+              },
             ),
             Padding(padding: EdgeInsets.only(top: 10)),
-            ButtonHomeDoctor(
-              buttonStyle: ButtonStyleHDr.BUTTON_GREY,
-              text: 'Đăng kí',
-              onTap: () {},
-            ),
-            Padding(padding: EdgeInsets.only(top: 5)),
             Text(
               'Powered by HomeDoctor',
               style: TextStyle(

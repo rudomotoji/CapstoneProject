@@ -1,19 +1,10 @@
-import 'package:capstone_home_doctor/commons/constants/numeral.dart';
+import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:flutter/material.dart';
 
-enum TextFieldStyleHDr { NO_BORDER, BORDERED, CONTAIN_UNIT }
+enum TextFieldStyle { NO_BORDER, BORDERED, CONTAIN_UNIT, TEXT_AREA }
 
-//status: not done yet.
-
-//defined addition about input style.
-//catch length of textfield. if number, make number right of textfield, else left
-//sub label if text field has unit.
-//...
-
-class TextFieldHomeDoctor extends StatefulWidget {
-  //add more attribute about the input type: number, email, text, textarea,
-
+class TextFieldHDr extends StatefulWidget {
   //controller of textfield
   final TextEditingController controller;
   //action onChange
@@ -31,17 +22,18 @@ class TextFieldHomeDoctor extends StatefulWidget {
   //keyboard type
   final TextInputType keyboardType;
   //style of textfield, default is NO_BORDER.
-  final TextFieldStyleHDr textfieldStyle;
+  final TextFieldStyle textfieldStyle;
   //hint text in textfield
   final String hintText;
   //helper text under textfield
   final String helperText;
   //max lenght for textfield
-  final int maxLenght;
+  final int maxLength;
   //style capitalization
   final TextCapitalization capitalStyle;
+  //input field style
 
-  const TextFieldHomeDoctor({
+  const TextFieldHDr({
     Key key,
     this.controller,
     this.onChange,
@@ -54,12 +46,12 @@ class TextFieldHomeDoctor extends StatefulWidget {
     this.textfieldStyle,
     this.hintText,
     this.helperText,
-    this.maxLenght,
+    this.maxLength,
     this.capitalStyle,
   }) : super(key: key);
 
   @override
-  _TextFieldHomeDoctor createState() => _TextFieldHomeDoctor(
+  _TextFieldHDr createState() => _TextFieldHDr(
       controller,
       label,
       fontSize,
@@ -71,11 +63,10 @@ class TextFieldHomeDoctor extends StatefulWidget {
       hintText,
       helperText,
       capitalStyle,
-      maxLenght);
+      maxLength);
 }
 
-class _TextFieldHomeDoctor extends State<TextFieldHomeDoctor>
-    with WidgetsBindingObserver {
+class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
   TextEditingController _controller;
   String _label;
   double _fontSize;
@@ -83,13 +74,13 @@ class _TextFieldHomeDoctor extends State<TextFieldHomeDoctor>
   bool _isObsecure;
   TextInputAction _buttonKeyboardAction;
   TextInputType _keyboardType;
-  TextFieldStyleHDr _textfieldStyle;
+  TextFieldStyle _textfieldStyle;
   String _hintText;
   String _helperText;
-  int _maxLenght;
+  int _maxLength;
   TextCapitalization _capitalStyle;
 
-  _TextFieldHomeDoctor(
+  _TextFieldHDr(
     this._controller,
     this._label,
     this._fontSize,
@@ -101,7 +92,7 @@ class _TextFieldHomeDoctor extends State<TextFieldHomeDoctor>
     this._hintText,
     this._helperText,
     this._capitalStyle,
-    this._maxLenght,
+    this._maxLength,
   );
 
   @override
@@ -137,7 +128,7 @@ class _TextFieldHomeDoctor extends State<TextFieldHomeDoctor>
       _keyboardType = TextInputType.text;
     }
     if (_textfieldStyle == null) {
-      _textfieldStyle = TextFieldStyleHDr.NO_BORDER;
+      _textfieldStyle = TextFieldStyle.NO_BORDER;
     }
     if (_hintText == null || _hintText == '' || _hintText.isEmpty) {
       _hintText = 'placeholder';
@@ -149,13 +140,13 @@ class _TextFieldHomeDoctor extends State<TextFieldHomeDoctor>
       _capitalStyle = TextCapitalization.none;
     }
     switch (_textfieldStyle) {
-      case TextFieldStyleHDr.NO_BORDER:
+      case TextFieldStyle.NO_BORDER:
         return Row(
           children: [
             Container(
-              padding: EdgeInsets.only(left: DefaultNumeral.DEFAULT_PADDING),
-              width: DefaultNumeral.DEFAULT_LABEL_WIDTH,
-              height: DefaultNumeral.DEFAULT_LABEL_HEIGHT,
+              padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING),
+              width: DefaultNumeralUI.LABEL_TEXTFIELD_WIDTH,
+              height: DefaultNumeralUI.LABEL_TEXTFIELD_HEIGHT,
               alignment: Alignment.centerLeft,
               child: Text(
                 '${_label}',
@@ -168,12 +159,18 @@ class _TextFieldHomeDoctor extends State<TextFieldHomeDoctor>
             Flexible(
               child: TextField(
                 obscureText: _isObsecure,
+                keyboardType: _keyboardType,
                 textInputAction: _buttonKeyboardAction,
+                textCapitalization: _capitalStyle,
+                maxLength: _maxLength,
+                buildCounter: (BuildContext context,
+                        {int currentLength, int maxLength, bool isFocused}) =>
+                    null,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: _hintText,
-                  contentPadding: EdgeInsets.fromLTRB(
-                      10, 0, DefaultNumeral.DEFAULT_PADDING, 0),
+                  contentPadding:
+                      EdgeInsets.fromLTRB(10, 0, DefaultNumeralUI.PADDING, 0),
                   focusedBorder: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   errorBorder: InputBorder.none,
@@ -186,28 +183,26 @@ class _TextFieldHomeDoctor extends State<TextFieldHomeDoctor>
           ],
         );
         break;
-      case TextFieldStyleHDr.BORDERED:
+      case TextFieldStyle.BORDERED:
         return Row(
           children: [
-            Padding(
-                padding: EdgeInsets.only(left: DefaultNumeral.DEFAULT_PADDING)),
+            Padding(padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
             Flexible(
               child: TextField(
                 obscureText: _isObsecure,
+                keyboardType: _keyboardType,
                 textInputAction: _buttonKeyboardAction,
                 textCapitalization: _capitalStyle,
-                maxLength: _maxLenght,
+                maxLength: _maxLength,
                 decoration: InputDecoration(
+                  counter: Offstage(),
                   labelText: _label,
                   helperText: _helperText,
                   filled: true,
                   fillColor: DefaultTheme.GREY_BUTTON.withOpacity(0.8),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.fromLTRB(
-                      DefaultNumeral.DEFAULT_PADDING,
-                      0,
-                      DefaultNumeral.DEFAULT_PADDING,
-                      0),
+                      DefaultNumeralUI.PADDING, 0, DefaultNumeralUI.PADDING, 0),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(5),
                     borderSide: BorderSide(
@@ -227,15 +222,66 @@ class _TextFieldHomeDoctor extends State<TextFieldHomeDoctor>
                 ),
               ),
             ),
-            Padding(
-                padding:
-                    EdgeInsets.only(right: DefaultNumeral.DEFAULT_PADDING)),
+            Padding(padding: EdgeInsets.only(right: DefaultNumeralUI.PADDING)),
           ],
         );
         break;
-      case TextFieldStyleHDr.CONTAIN_UNIT:
-        print('contian unit');
-        // TODO: Handle this case.
+      case TextFieldStyle.CONTAIN_UNIT:
+        return Stack(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.only(
+                  left: DefaultNumeralUI.PADDING,
+                  right: DefaultNumeralUI.PADDING),
+              child: TextField(
+                textAlign: TextAlign.right,
+                obscureText: _isObsecure,
+                keyboardType: _keyboardType,
+                textInputAction: _buttonKeyboardAction,
+                textCapitalization: _capitalStyle,
+                maxLength: _maxLength,
+                decoration: InputDecoration(
+                  counter: Offstage(),
+                  hintText: _label,
+                  filled: true,
+                  fillColor: DefaultTheme.GREY_BUTTON.withOpacity(0.8),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.fromLTRB(DefaultNumeralUI.PADDING,
+                      0, DefaultNumeralUI.PADDING * 2 + 10, 0),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide: BorderSide(
+                      width: 0.25,
+                      color: DefaultTheme.TRANSPARENT,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    borderSide: BorderSide(
+                      width: 0.25,
+                      color: DefaultTheme.TRANSPARENT,
+                    ),
+                  ),
+                  errorBorder: InputBorder.none,
+                  disabledBorder: InputBorder.none,
+                ),
+              ),
+            ),
+            Positioned(
+              right: DefaultNumeralUI.PADDING * 2,
+              top: 14,
+              child: Text(
+                'cm',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: _fontSize,
+                ),
+              ),
+            ),
+          ],
+        );
+        break;
+      case TextFieldStyle.TEXT_AREA:
         break;
     }
   }
