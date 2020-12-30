@@ -2,13 +2,7 @@ import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:flutter/material.dart';
 
-enum ButtonStyleHDr {
-  BUTTON_BLACK,
-  BUTTON_GREY,
-  BUTTON_TRANSPARENT,
-  BUTTON_IMAGE,
-  BUTTON_FULL,
-}
+//For simple button
 
 class ButtonHDr extends StatefulWidget {
   //action onTap
@@ -17,7 +11,7 @@ class ButtonHDr extends StatefulWidget {
   final String label;
   //image for button. Image is used if style = BUTTON_IMAGE or BUTTON_FULL
   final Image image;
-  //Style of button
+  //Style of button, enum below.
   final ButtonStyleHDr style;
   //optional field
   //width, height
@@ -170,4 +164,12 @@ class _ButtonHDr extends State<ButtonHDr> {
       );
     }
   }
+}
+
+enum ButtonStyleHDr {
+  BUTTON_BLACK,
+  BUTTON_GREY,
+  BUTTON_TRANSPARENT,
+  BUTTON_IMAGE,
+  BUTTON_FULL,
 }

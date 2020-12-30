@@ -1,8 +1,24 @@
-import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
-import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:flutter/material.dart';
 
-enum TextFieldStyle { NO_BORDER, BORDERED, CONTAIN_UNIT, TEXT_AREA }
+// class TextFieldHDr extends StatefulWidget {
+//   //controller of textfield
+//   final TextEditingController controller;
+//   //onChange action
+//   final ValueChanged<Object> onChange;
+//   //label of textfield
+//   final String label;
+//   //style of textfield. Enum below.
+//   final TextFieldStyleHDr style;
+//   //format type of textfield. Enum below
+//   final
+// }
+
+// class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {}
+
+import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
+import 'package:capstone_home_doctor/commons/constants/theme.dart';
+
+enum TextFieldStyleHDr { NO_BORDER, BORDERED, CONTAIN_UNIT, TEXT_AREA }
 
 class TextFieldHDr extends StatefulWidget {
   //controller of textfield
@@ -22,7 +38,7 @@ class TextFieldHDr extends StatefulWidget {
   //keyboard type
   final TextInputType keyboardType;
   //style of textfield, default is NO_BORDER.
-  final TextFieldStyle textfieldStyle;
+  final TextFieldStyleHDr textfieldStyle;
   //hint text in textfield
   final String hintText;
   //helper text under textfield
@@ -74,7 +90,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
   bool _isObsecure;
   TextInputAction _buttonKeyboardAction;
   TextInputType _keyboardType;
-  TextFieldStyle _textfieldStyle;
+  TextFieldStyleHDr _textfieldStyle;
   String _hintText;
   String _helperText;
   int _maxLength;
@@ -128,7 +144,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
       _keyboardType = TextInputType.text;
     }
     if (_textfieldStyle == null) {
-      _textfieldStyle = TextFieldStyle.NO_BORDER;
+      _textfieldStyle = TextFieldStyleHDr.NO_BORDER;
     }
     if (_hintText == null || _hintText == '' || _hintText.isEmpty) {
       _hintText = 'placeholder';
@@ -140,7 +156,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
       _capitalStyle = TextCapitalization.none;
     }
     switch (_textfieldStyle) {
-      case TextFieldStyle.NO_BORDER:
+      case TextFieldStyleHDr.NO_BORDER:
         return Row(
           children: [
             Container(
@@ -183,7 +199,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
           ],
         );
         break;
-      case TextFieldStyle.BORDERED:
+      case TextFieldStyleHDr.BORDERED:
         return Row(
           children: [
             Padding(padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
@@ -226,7 +242,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
           ],
         );
         break;
-      case TextFieldStyle.CONTAIN_UNIT:
+      case TextFieldStyleHDr.CONTAIN_UNIT:
         return Stack(
           children: <Widget>[
             Container(
@@ -281,10 +297,22 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
           ],
         );
         break;
-      case TextFieldStyle.TEXT_AREA:
+      case TextFieldStyleHDr.TEXT_AREA:
         break;
     }
   }
 }
 
-//not official.
+// enum TextFieldStyleHDr {
+//   BORDER,
+//   NO_BORDER,
+//   CONTAIN_UNIT,
+//   TEXT_EREA,
+// }
+
+// enum InputStyleHDr {
+//   PASSWORD,
+//   TEXT,
+//   NUMBER,
+//   DOUBLE,
+// }
