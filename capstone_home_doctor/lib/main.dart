@@ -1,85 +1,86 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:capstone_home_doctor/feature/call/call_page.dart';
-import 'package:capstone_home_doctor/feature/call/index.dart';
-import 'package:capstone_home_doctor/feature/login/sign_in.dart';
+import 'package:capstone_home_doctor/features/call/call_page.dart';
+import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/features/login/log_in_view.dart';
+import 'package:capstone_home_doctor/features/register/register_view.dart';
+
 import 'package:flutter/material.dart';
-import 'common/constant/evn.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
 
-Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
-  if (message.containsKey('data')) {
-    // Handle data message
-    final dynamic data = message['data'];
-  }
-
-  if (message.containsKey('notification')) {
-    // Handle notification message
-    final dynamic notification = message['notification'];
-  }
-
-  // Or do other work.
+void main() {
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: DefaultTheme.TRANSPARENT,
+    systemNavigationBarColor: DefaultTheme.TRANSPARENT,
+    statusBarIconBrightness: Brightness.dark,
+    systemNavigationBarIconBrightness: Brightness.dark,
+  ));
+  runApp(HomeDoctor());
 }
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp(env: EnvValue.development));
-}
+// class HomeDoctor extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: () {
+//         FocusScope.of(context).requestFocus(new FocusNode());
+//       },
+// <<<<<<< HEAD
+//     );
+//     _fcm.getToken().then((String token) {
+//       assert(token != null);
+//       setState(() {
+//         _token = '$token';
+//       });
+//       print('acctoken: $token');
+//     });
+//     // _fcm.subscribeToTopic("");
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  final Env env;
+//     localNotifyManager.setOnNotificationReceive(onNotificationReceive);
+//     localNotifyManager.setNotificationnOnClick(onNotificationOnClick);
+//   }
 
-  MyApp({Key key, @required this.env}) : super(key: key);
+//   onNotificationReceive(ReceiveNotification notification) {
+//     print('Notification receive: ${notification.id}');
+//   }
 
+//   onNotificationOnClick(String payload) {
+//     print('Notification onclick: ${payload}');
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: SafeArea(
+//         child: IndexPage(),
+// =======
+//       child: MaterialApp(
+//         debugShowCheckedModeBanner: false,
+//         initialRoute: RoutesHDr.INITIAL_ROUTE,
+//         routes: {
+//           RoutesHDr.LOG_IN: (context) => Login(),
+//           RoutesHDr.REGISTER: (context) => Register(),
+//         },
+//         home: Login(),
+// >>>>>>> dev_hieu
+//       ),
+//     );
+//   }
+// }
+
+class HomeDoctor extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(),
-    );
-  }
+  _HomeDoctorState createState() => _HomeDoctorState();
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class _HomeDoctorState extends State<HomeDoctor> {
   final FirebaseMessaging _fcm = FirebaseMessaging();
   String _token = 'Generate Token';
-
-  // Widget _buildDialog(BuildContext context, Item item) {
-  //   return AlertDialog(
-  //     content: Text("Item ${item.itemId} has been updated"),
-  //     actions: <Widget>[
-  //       FlatButton(
-  //         child: const Text('CLOSE'),
-  //         onPressed: () {
-  //           Navigator.pop(context, false);
-  //         },
-  //       ),
-  //       FlatButton(
-  //         child: const Text('SHOW'),
-  //         onPressed: () {
-  //           Navigator.pop(context, true);
-  //         },
-  //       ),
-  //     ],
-  //   );
-  // }
 
   void _handleGeneralMessage(Map<String, dynamic> message) {
     String payload;
@@ -167,9 +168,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: IndexPage(),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: RoutesHDr.INITIAL_ROUTE,
+        routes: {
+          RoutesHDr.LOG_IN: (context) => Login(),
+          RoutesHDr.REGISTER: (context) => Register(),
+        },
+        home: Login(),
       ),
     );
   }

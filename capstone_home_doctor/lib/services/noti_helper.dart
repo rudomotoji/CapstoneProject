@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -9,53 +8,60 @@ class NotiHelper {
   // static final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
   FlutterLocalNotificationsPlugin _plugin;
   var initSetting;
-  BehaviorSubject<ReceiveNotification> get didReceiveNotificationSubject => BehaviorSubject<ReceiveNotification>();
+  BehaviorSubject<ReceiveNotification> get didReceiveNotificationSubject =>
+      BehaviorSubject<ReceiveNotification>();
 
-  NotiHelper.init(){
+  NotiHelper.init() {
     _plugin = FlutterLocalNotificationsPlugin();
-    if(Platform.isIOS){
+    if (Platform.isIOS) {
       requestIOSPermission();
     }
     initializePlatform();
   }
 
-  requestIOSPermission(){
-    _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>().requestPermissions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+  requestIOSPermission() {
+    _plugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        .requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
   }
 
-  initializePlatform(){
+  initializePlatform() {
     // var initSettingAndroid = AndroidInitializationSettings('app_notification_icon');
-    var initSettingAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initSettingAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     var initSettingIOS = IOSInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-      onDidReceiveLocalNotification: (id, title, body, payload) async{
-        ReceiveNotification receiveNotification = ReceiveNotification(id: id, title: title, body: body, payload: payload);
-        didReceiveNotificationSubject.add(receiveNotification);
-      }
-    );
-    initSetting = InitializationSettings(android:initSettingAndroid,iOS:initSettingIOS);
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        onDidReceiveLocalNotification: (id, title, body, payload) async {
+          ReceiveNotification receiveNotification = ReceiveNotification(
+              id: id, title: title, body: body, payload: payload);
+          didReceiveNotificationSubject.add(receiveNotification);
+        });
+    initSetting = InitializationSettings(
+        android: initSettingAndroid, iOS: initSettingIOS);
   }
 
-  setOnNotificationReceive(Function onNotificationReceive){
+  setOnNotificationReceive(Function onNotificationReceive) {
     didReceiveNotificationSubject.listen((nontification) {
       onNotificationReceive(nontification);
     });
   }
 
-  setNotificationnOnClick(Function onNotificationOnClick) async{
-    await _plugin.initialize(initSetting, onSelectNotification: (String payload) async {
+  setNotificationnOnClick(Function onNotificationOnClick) async {
+    await _plugin.initialize(initSetting,
+        onSelectNotification: (String payload) async {
       onNotificationOnClick(payload);
     });
   }
 
-  Future<void> show(ReceiveNotification receiveNotification) async{
+  Future<void> show(ReceiveNotification receiveNotification) async {
     var androidChannel = AndroidNotificationDetails(
       'CHANNEL_ID',
       'CHANNEL_NAME',
@@ -66,9 +72,10 @@ class NotiHelper {
     );
 
     var iosChannel = IOSNotificationDetails();
-    var platformChannel = NotificationDetails(android: androidChannel,iOS: iosChannel);
+    var platformChannel =
+        NotificationDetails(android: androidChannel, iOS: iosChannel);
     await _plugin.show(
-        0,
+      0,
       receiveNotification.title,
       receiveNotification.body,
       platformChannel,
@@ -109,7 +116,7 @@ class NotiHelper {
 
 NotiHelper localNotifyManager = NotiHelper.init();
 
-class ReceiveNotification{
+class ReceiveNotification {
   final int id;
   final String title;
   final String body;
@@ -119,5 +126,5 @@ class ReceiveNotification{
     @required this.title,
     @required this.body,
     @required this.payload,
-});
+  });
 }

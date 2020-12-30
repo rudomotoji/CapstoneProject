@@ -1,4 +1,4 @@
-package com.example.capstone_home_doctor
+package hdr.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

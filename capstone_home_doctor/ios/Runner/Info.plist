@@ -2,12 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSCameraUsageDescription</key>
-	<string>If you want to call video, we need accept to use camera</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>We need use microphone to call audio</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Home Doctor</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -24,8 +22,14 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>If you want to call video, we need accept to use camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need use microphone to call audio</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -51,10 +55,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>FirebaseAppDelegateProxyEnabled</key>
+	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-    
-    <key>io.flutter.embedded_views_preview</key>
-    <true/>
 </dict>
 </plist>
