@@ -174,6 +174,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
       },
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'SFPro'),
         initialRoute: RoutesHDr.INITIAL_ROUTE,
         routes: {
           RoutesHDr.LOG_IN: (context) => Login(),

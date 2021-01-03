@@ -20,7 +20,7 @@ import 'package:capstone_home_doctor/commons/constants/theme.dart';
 
 enum TextFieldStyleHDr { NO_BORDER, BORDERED, CONTAIN_UNIT, TEXT_AREA }
 
-class TextFieldHDr extends StatefulWidget {
+class TextFieldHDr2 extends StatefulWidget {
   //controller of textfield
   final TextEditingController controller;
   //action onChange
@@ -49,7 +49,7 @@ class TextFieldHDr extends StatefulWidget {
   final TextCapitalization capitalStyle;
   //input field style
 
-  const TextFieldHDr({
+  const TextFieldHDr2({
     Key key,
     this.controller,
     this.onChange,
@@ -67,7 +67,7 @@ class TextFieldHDr extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TextFieldHDr createState() => _TextFieldHDr(
+  _TextFieldHDr2 createState() => _TextFieldHDr2(
       controller,
       label,
       fontSize,
@@ -82,7 +82,7 @@ class TextFieldHDr extends StatefulWidget {
       maxLength);
 }
 
-class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
+class _TextFieldHDr2 extends State<TextFieldHDr2> with WidgetsBindingObserver {
   TextEditingController _controller;
   String _label;
   double _fontSize;
@@ -96,7 +96,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
   int _maxLength;
   TextCapitalization _capitalStyle;
 
-  _TextFieldHDr(
+  _TextFieldHDr2(
     this._controller,
     this._label,
     this._fontSize,

@@ -48,7 +48,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
             ),
             Padding(padding: const EdgeInsets.only(top: 30)),
             Image.asset(
-              'lib/assets/images/logo-home-doctor.png',
+              'assets/images/logo-home-doctor.png',
               width: 80,
               height: 80,
             ),
@@ -61,7 +61,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                     color: DefaultTheme.GREY_TEXT,
                     height: 0.25,
                   ),
-                  TextFieldHDr(
+                  TextFieldHDr2(
                     label: 'VN +84',
                     hintText: 'Số điện thoại',
                     maxLength: 10,
@@ -91,7 +91,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
               )),
             Padding(padding: EdgeInsets.only(top: 10)),
             ButtonHDr(
-              style: ButtonStyleHDr.BUTTON_GREY,
+              style: BtnStyle.BUTTON_GREY,
               label: 'Đăng kí tài khoản mới',
               onTap: () {
                 print(_userDTO.phoneNo);

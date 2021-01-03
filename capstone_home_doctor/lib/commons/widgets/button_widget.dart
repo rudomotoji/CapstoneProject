@@ -12,7 +12,7 @@ class ButtonHDr extends StatefulWidget {
   //image for button. Image is used if style = BUTTON_IMAGE or BUTTON_FULL
   final Image image;
   //Style of button, enum below.
-  final ButtonStyleHDr style;
+  final BtnStyle style;
   //optional field
   //width, height
   final double width;
@@ -44,7 +44,7 @@ class ButtonHDr extends StatefulWidget {
 class _ButtonHDr extends State<ButtonHDr> {
   String _label;
   Image _image;
-  ButtonStyleHDr _style;
+  BtnStyle _style;
   double _width;
   double _height;
   double _margin;
@@ -85,19 +85,19 @@ class _ButtonHDr extends State<ButtonHDr> {
       _label = 'Button';
     }
     switch (_style) {
-      case ButtonStyleHDr.BUTTON_BLACK:
+      case BtnStyle.BUTTON_BLACK:
         _bgColor = DefaultTheme.BLACK_BUTTON;
         _labelColor = DefaultTheme.WHITE;
         break;
-      case ButtonStyleHDr.BUTTON_GREY:
+      case BtnStyle.BUTTON_GREY:
         _bgColor = DefaultTheme.GREY_BUTTON;
         _labelColor = DefaultTheme.BLACK;
         break;
-      case ButtonStyleHDr.BUTTON_TRANSPARENT:
+      case BtnStyle.BUTTON_TRANSPARENT:
         _bgColor = DefaultTheme.TRANSPARENT;
         _labelColor = DefaultTheme.BLACK;
         break;
-      case ButtonStyleHDr.BUTTON_FULL:
+      case BtnStyle.BUTTON_FULL:
         if (_bgColor == null) {
           _bgColor = DefaultTheme.BLACK_BUTTON;
         }
@@ -105,7 +105,7 @@ class _ButtonHDr extends State<ButtonHDr> {
           _labelColor = DefaultTheme.WHITE;
         }
         break;
-      case ButtonStyleHDr.BUTTON_IMAGE:
+      case BtnStyle.BUTTON_IMAGE:
         if (_width <= 0 || _width > 50 || _width == null) {
           _width = DefaultNumeralUI.BUTTON_IMAGE_SIZE;
         }
@@ -118,7 +118,7 @@ class _ButtonHDr extends State<ButtonHDr> {
         _labelColor = DefaultTheme.WHITE;
         break;
     }
-    if (_style == ButtonStyleHDr.BUTTON_IMAGE) {
+    if (_style == BtnStyle.BUTTON_IMAGE) {
       return SizedBox(
         width: _width,
         height: _height,
@@ -127,7 +127,7 @@ class _ButtonHDr extends State<ButtonHDr> {
           onPressed: widget.onTap,
         ),
       );
-    } else if (_style == ButtonStyleHDr.BUTTON_FULL) {
+    } else if (_style == BtnStyle.BUTTON_FULL) {
       return FlatButton.icon(
         shape: RoundedRectangleBorder(
             borderRadius:
@@ -166,7 +166,7 @@ class _ButtonHDr extends State<ButtonHDr> {
   }
 }
 
-enum ButtonStyleHDr {
+enum BtnStyle {
   BUTTON_BLACK,
   BUTTON_GREY,
   BUTTON_TRANSPARENT,
