@@ -87,7 +87,9 @@ class _Login extends State<Login> with WidgetsBindingObserver {
             if (_userDTO.phoneNo != null)
               (ButtonHDr(
                 label: 'Tiếp theo',
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, RoutesHDr.MAIN_HOME);
+                },
               )),
             Padding(padding: EdgeInsets.only(top: 10)),
             ButtonHDr(

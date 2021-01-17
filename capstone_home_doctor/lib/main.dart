@@ -1,17 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:capstone_home_doctor/features/call/call_page.dart';
+import 'features/call/call_page.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
-import 'package:capstone_home_doctor/features/login/log_in_view.dart';
-import 'package:capstone_home_doctor/features/register/register_view.dart';
+import 'features/login/log_in_view.dart';
+import 'features/register/register_view.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'services/noti_helper.dart';
+
+import 'features/home/home.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -22,56 +24,6 @@ void main() {
   ));
   runApp(HomeDoctor());
 }
-
-// class HomeDoctor extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: () {
-//         FocusScope.of(context).requestFocus(new FocusNode());
-//       },
-// <<<<<<< HEAD
-//     );
-//     _fcm.getToken().then((String token) {
-//       assert(token != null);
-//       setState(() {
-//         _token = '$token';
-//       });
-//       print('acctoken: $token');
-//     });
-//     // _fcm.subscribeToTopic("");
-
-//     localNotifyManager.setOnNotificationReceive(onNotificationReceive);
-//     localNotifyManager.setNotificationnOnClick(onNotificationOnClick);
-//   }
-
-//   onNotificationReceive(ReceiveNotification notification) {
-//     print('Notification receive: ${notification.id}');
-//   }
-
-//   onNotificationOnClick(String payload) {
-//     print('Notification onclick: ${payload}');
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: SafeArea(
-//         child: IndexPage(),
-// =======
-//       child: MaterialApp(
-//         debugShowCheckedModeBanner: false,
-//         initialRoute: RoutesHDr.INITIAL_ROUTE,
-//         routes: {
-//           RoutesHDr.LOG_IN: (context) => Login(),
-//           RoutesHDr.REGISTER: (context) => Register(),
-//         },
-//         home: Login(),
-// >>>>>>> dev_hieu
-//       ),
-//     );
-//   }
-// }
 
 class HomeDoctor extends StatefulWidget {
   @override
@@ -179,6 +131,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
         routes: {
           RoutesHDr.LOG_IN: (context) => Login(),
           RoutesHDr.REGISTER: (context) => Register(),
+          RoutesHDr.MAIN_HOME: (context) => MainHome(),
         },
         home: Login(),
       ),
