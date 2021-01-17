@@ -129,7 +129,11 @@ class IndexState extends State<IndexPage> {
   }
 
   Future<void> _handleCameraAndMic(Permission permission) async {
-    final status = await permission.request();
-    print(status);
+    if (await permission.isUndetermined) {
+      // We didn't ask for permission yet.
+    } else {
+      final status = await permission.request();
+      print(status);
+    }
   }
 }
