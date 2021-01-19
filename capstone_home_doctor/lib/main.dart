@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'features/call/call_page.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'features/login/log_in_view.dart';
@@ -10,7 +9,6 @@ import 'features/register/register_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'services/noti_helper.dart';
 
 import 'features/home/home.dart';
@@ -33,6 +31,13 @@ class HomeDoctor extends StatefulWidget {
 class _HomeDoctorState extends State<HomeDoctor> {
   final FirebaseMessaging _fcm = FirebaseMessaging();
   String _token = 'Generate Token';
+
+  Future<dynamic> myBackgroundMessageHandler(
+      Map<String, dynamic> message) async {
+    Platform.isIOS
+        ? _handleIOSGeneralMessage(message)
+        : _handleGeneralMessage(message);
+  }
 
   void _handleGeneralMessage(Map<String, dynamic> message) {
     String payload;
@@ -81,13 +86,11 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     _fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
-        // _showItemDialog(message);
         Platform.isIOS
             ? _handleIOSGeneralMessage(message)
             : _handleGeneralMessage(message);
       },
-      // onBackgroundMessage: myBackgroundMessageHandler,
+      onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
         // _navigateToItemDetail(message);

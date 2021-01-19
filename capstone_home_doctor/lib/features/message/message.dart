@@ -11,10 +11,3 @@ class _MessageState extends State<MessagePage> {
     return Center();
   }
 }
-
-// class MessagePage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }

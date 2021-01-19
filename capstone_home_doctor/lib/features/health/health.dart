@@ -77,10 +77,3 @@ class _HealthState extends State<HealthPage> {
     );
   }
 }
-
-// class HealthPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }

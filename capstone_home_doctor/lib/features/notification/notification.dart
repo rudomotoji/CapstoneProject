@@ -11,10 +11,3 @@ class _NotificationState extends State<NotificationPage> {
     return Center();
   }
 }
-
-// class NotificationPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }
