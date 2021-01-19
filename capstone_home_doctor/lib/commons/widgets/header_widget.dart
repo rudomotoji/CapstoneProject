@@ -24,12 +24,10 @@ class HeaderWidget extends StatelessWidget {
               splashColor: DefaultTheme.TRANSPARENT,
               highlightColor: DefaultTheme.TRANSPARENT,
               onTap: () {
-                //pop
-                //Navigator.pop(context);
-                print('Do pop');
+                Navigator.pop(context);
               },
               child: Image.asset(
-                'lib/assets/images/ic-pop.png',
+                'assets/images/ic-pop.png',
                 width: 30,
                 height: 30,
               ),
@@ -60,7 +58,7 @@ class HeaderWidget extends StatelessWidget {
                       print('Press Notification');
                     },
                     child: Image.asset(
-                      'lib/assets/images/ic-notification.png',
+                      'assets/images/ic-notification.png',
                       width: 30,
                       height: 30,
                     ),
@@ -76,8 +74,7 @@ class HeaderWidget extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 16,
                       child: ClipOval(
-                        child:
-                            Image.asset('lib/assets/images/avatar-default.jpg'),
+                        child: Image.asset('assets/images/avatar-default.jpg'),
                       ),
                     ),
                   ),

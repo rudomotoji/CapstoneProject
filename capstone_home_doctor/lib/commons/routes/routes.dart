@@ -5,4 +5,5 @@ class RoutesHDr {
   static const String LOG_IN = '/LogIn';
   static const String REGISTER = '/Register';
   static const String GENERATE_CONTRACT = '/GenerateContract';
+  static const String CONFIRM_LOG_IN = '/ConfirmLogin';
 }
