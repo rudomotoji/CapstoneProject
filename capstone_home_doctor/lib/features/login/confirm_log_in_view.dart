@@ -69,18 +69,26 @@ class _ConfirmLogin extends State<ConfirmLogin> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             HeaderWidget(
-              title: 'Xác nhận đăng nhập',
-              isAuthenticated: false,
+              title: 'Xác nhận',
               isMainView: false,
+              buttonHeaderType: ButtonHeaderType.NEW_MESSAGE,
             ),
             Container(
               padding: EdgeInsets.only(left: 20, right: 20),
+              alignment: Alignment.centerLeft,
               child: Text(
-                'Mã xác nhận sẽ được gửi về số điện thoại ${_phoneNo} của bạn.',
+                'Nhập mã số gồm 6 chữ số được gửi tới ',
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: DefaultTheme.GREY_TEXT,
-                    fontSize: DefaultNumeralUI.TEXTFIELD_LABEL_SIZE),
+                style: TextStyle(color: DefaultTheme.GREY_TEXT, fontSize: 16),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '+84${_phoneNo}',
+                textAlign: TextAlign.left,
+                style: TextStyle(color: DefaultTheme.BLACK, fontSize: 20),
               ),
             ),
             Expanded(
@@ -188,7 +196,7 @@ class _ConfirmLogin extends State<ConfirmLogin> {
             ),
             ButtonHDr(
               style: BtnStyle.BUTTON_BLACK,
-              label: 'Xác nhận',
+              label: 'Đăng nhập',
               onTap: () {
                 _otpCode = _pin1.text +
                     _pin2.text +

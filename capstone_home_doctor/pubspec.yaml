@@ -64,10 +64,11 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/ic-notification.png
     - assets/images/avatar-default.jpg
     - assets/images/logo-home-doctor.png
     - assets/images/ic-pop.png
+    - assets/images/ic-detail.png
+    - assets/images/ic-new-msg.png
 
 
   

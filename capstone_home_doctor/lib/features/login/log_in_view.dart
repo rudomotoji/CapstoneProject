@@ -51,7 +51,6 @@ class _Login extends State<Login> with WidgetsBindingObserver {
           children: <Widget>[
             HeaderWidget(
               title: 'Đăng nhập',
-              isAuthenticated: false,
               isMainView: true,
             ),
             Padding(padding: const EdgeInsets.only(top: 30)),
@@ -100,9 +99,9 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                 style: BtnStyle.BUTTON_GREY,
                 label: 'Tiếp theo',
                 onTap: () {
-                  startPhoneAuth();
-                  // Navigator.pushNamed(context, RoutesHDr.CONFIRM_LOG_IN,
-                  //     arguments: {'PHONE_NUMBER': _phoneNo});
+                  //startPhoneAuth();
+                  Navigator.pushNamed(context, RoutesHDr.CONFIRM_LOG_IN,
+                      arguments: {'PHONE_NUMBER': _phoneNo});
                 },
               )),
             Padding(padding: EdgeInsets.only(top: 20)),
