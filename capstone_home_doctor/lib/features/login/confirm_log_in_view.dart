@@ -45,7 +45,9 @@ class _ConfirmLogin extends State<ConfirmLogin> {
   @override
   Widget build(BuildContext context) {
     Map<String, String> arguments = ModalRoute.of(context).settings.arguments;
-    _phoneNo = arguments['PHONE_NUMBER'];
+    _phoneNo = Provider.of<PhoneAuthDataProvider>(context, listen: false)
+        .phoneNumberController
+        .text;
 
     final phoneAuthDataProvider =
         Provider.of<PhoneAuthDataProvider>(context, listen: false);
@@ -71,10 +73,10 @@ class _ConfirmLogin extends State<ConfirmLogin> {
             HeaderWidget(
               title: 'Xác nhận',
               isMainView: false,
-              buttonHeaderType: ButtonHeaderType.NEW_MESSAGE,
+              //buttonHeaderType: ButtonHeaderType.NEW_MESSAGE,
             ),
             Container(
-              padding: EdgeInsets.only(left: 20, right: 20),
+              padding: EdgeInsets.only(top: 20, left: 20, right: 20),
               alignment: Alignment.centerLeft,
               child: Text(
                 'Nhập mã số gồm 6 chữ số được gửi tới ',
