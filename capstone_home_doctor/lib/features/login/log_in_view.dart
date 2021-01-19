@@ -3,8 +3,12 @@ import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
-import 'package:capstone_home_doctor/models/user_dto.dart';
+import 'package:capstone_home_doctor/features/login/phone_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+//import 'logout.dart';
+import 'package:provider/provider.dart';
+import 'dart:async';
 
 class Login extends StatefulWidget {
   @override
@@ -14,10 +18,13 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login> with WidgetsBindingObserver {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
 
-  UserDTO _userDTO = new UserDTO();
+  final scaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: "scaffold-verify-phone");
+
+  // UserDTO _userDTO = new UserDTO();
+  String _phoneNo;
 
   @override
   void initState() {
@@ -34,6 +41,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       // resizeToAvoidBottomPadding: false,
       backgroundColor: DefaultTheme.WHITE,
       body: SafeArea(
@@ -43,7 +51,6 @@ class _Login extends State<Login> with WidgetsBindingObserver {
           children: <Widget>[
             HeaderWidget(
               title: 'Đăng nhập',
-              isAuthenticated: false,
               isMainView: true,
             ),
             Padding(padding: const EdgeInsets.only(top: 30)),
@@ -61,18 +68,21 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                     color: DefaultTheme.GREY_TEXT,
                     height: 0.25,
                   ),
-                  TextFieldHDr2(
-                    label: 'VN +84',
-                    hintText: 'Số điện thoại',
-                    maxLength: 10,
-                    keyboardType: TextInputType.number,
-                    buttonKeyboardAction: TextInputAction.next,
-                    controller: _usernameController,
+                  TextFieldHDr(
+                    style: TFStyle.NO_BORDER,
+                    label: 'Số điện thoại',
+                    placeHolder: '090 999 9999',
+                    maxLength: 11,
+                    inputType: TFInputType.TF_PHONE,
+                    controller: Provider.of<PhoneAuthDataProvider>(context,
+                            listen: false)
+                        .phoneNumberController,
+                    keyboardAction: TextInputAction.next,
                     onChange: (text) {
                       setState(() {
-                        _userDTO.phoneNo = text;
+                        _phoneNo = text;
                         if (text.toString().isEmpty) {
-                          _userDTO.phoneNo = null;
+                          _phoneNo = null;
                         }
                       });
                     },
@@ -84,23 +94,19 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                 ],
               ),
             ),
-            if (_userDTO.phoneNo != null)
+            if (_phoneNo != null)
               (ButtonHDr(
+                style: BtnStyle.BUTTON_GREY,
                 label: 'Tiếp theo',
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, RoutesHDr.MAIN_HOME);
+                  // Navigator.pushReplacementNamed(context, RoutesHDr.MAIN_HOME);
+
+                  //startPhoneAuth();
+                  Navigator.pushNamed(context, RoutesHDr.CONFIRM_LOG_IN,
+                      arguments: {'PHONE_NUMBER': _phoneNo});
                 },
               )),
-            Padding(padding: EdgeInsets.only(top: 10)),
-            ButtonHDr(
-              style: BtnStyle.BUTTON_GREY,
-              label: 'Đăng kí tài khoản mới',
-              onTap: () {
-                print(_userDTO.phoneNo);
-                Navigator.pushNamed(context, RoutesHDr.REGISTER);
-              },
-            ),
-            Padding(padding: EdgeInsets.only(top: 10)),
+            Padding(padding: EdgeInsets.only(top: 20)),
             Text(
               'Powered by HomeDoctor',
               style: TextStyle(
@@ -113,5 +119,40 @@ class _Login extends State<Login> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  _showSnackBar(String text) {
+    final snackBar = SnackBar(
+      content: Text('$text'),
+      duration: Duration(seconds: 2),
+    );
+//    if (mounted) Scaffold.of(context).showSnackBar(snackBar);
+    scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  startPhoneAuth() async {
+    final phoneAuthDataProvider =
+        Provider.of<PhoneAuthDataProvider>(context, listen: false);
+
+    phoneAuthDataProvider.loading = true;
+    bool validPhone = await phoneAuthDataProvider.instantiate(
+        dialCode: '+84',
+        onCodeSent: () {
+          Navigator.pushNamed(context, RoutesHDr.CONFIRM_LOG_IN);
+        },
+        onFailed: () {
+          _showSnackBar(phoneAuthDataProvider.message);
+        },
+        onError: () {
+          _showSnackBar(phoneAuthDataProvider.message);
+        });
+    if (!validPhone) {
+      print(Provider.of<PhoneAuthDataProvider>(context, listen: false)
+          .phoneNumberController
+          .text);
+      phoneAuthDataProvider.loading = false;
+      _showSnackBar("Oops! Number seems invaild");
+      return;
+    }
   }
 }

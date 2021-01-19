@@ -1,114 +1,113 @@
-import 'package:flutter/material.dart';
-
-// class TextFieldHDr extends StatefulWidget {
-//   //controller of textfield
-//   final TextEditingController controller;
-//   //onChange action
-//   final ValueChanged<Object> onChange;
-//   //label of textfield
-//   final String label;
-//   //style of textfield. Enum below.
-//   final TextFieldStyleHDr style;
-//   //format type of textfield. Enum below
-//   final
-// }
-
-// class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {}
+//Simple Textfield
+import 'dart:math';
 
 import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:flutter/material.dart';
 
-enum TextFieldStyleHDr { NO_BORDER, BORDERED, CONTAIN_UNIT, TEXT_AREA }
+enum TFInputType {
+  TF_PASSWORD,
+  TF_TEXT,
+  TF_NUMBER,
+  TF_PHONE,
+  TF_EMAIL,
+}
 
-class TextFieldHDr2 extends StatefulWidget {
+enum TFStyle {
+  NO_BORDER,
+  BORDERED,
+  UNIT,
+  TEXT_AREA,
+}
+
+class TextFieldHDr extends StatefulWidget {
   //controller of textfield
   final TextEditingController controller;
   //action onChange
   final ValueChanged<Object> onChange;
   //label of textfield
   final String label;
-  //all text font size in a textfield
-  final double fontSize;
-  //color text
-  final Color textColor;
-  //is password field or not
-  final bool isObsecure;
-  //custom for submit button in keyboard
-  final TextInputAction buttonKeyboardAction;
-  //keyboard type
-  final TextInputType keyboardType;
-  //style of textfield, default is NO_BORDER.
-  final TextFieldStyleHDr textfieldStyle;
-  //hint text in textfield
-  final String hintText;
-  //helper text under textfield
+  //The view of keyboard and the value view in textfield
+  final TFInputType inputType;
+  //the action of keyboard
+  final TextInputAction keyboardAction;
+  //the desc. in textfield.
+  final String placeHolder;
+  //helper Text is shown below the textfield for help people inut right
   final String helperText;
-  //max lenght for textfield
+  //maximum Length of text field
   final int maxLength;
   //style capitalization
   final TextCapitalization capitalStyle;
-  //input field style
+  //style of textfield
+  final TFStyle style;
+  //unit of textfield
+  final String unit;
+  //flag for multiple textfield in row
+  final bool isMultipleInRow;
+  //auto focus textfield
+  final bool autoFocus;
 
-  const TextFieldHDr2({
+  const TextFieldHDr({
     Key key,
     this.controller,
     this.onChange,
     this.label,
-    this.fontSize,
-    this.textColor,
-    this.isObsecure,
-    this.buttonKeyboardAction,
-    this.keyboardType,
-    this.textfieldStyle,
-    this.hintText,
+    this.inputType,
+    this.keyboardAction,
+    this.placeHolder,
     this.helperText,
     this.maxLength,
     this.capitalStyle,
+    this.style,
+    this.unit,
+    this.isMultipleInRow,
+    this.autoFocus,
   }) : super(key: key);
 
   @override
-  _TextFieldHDr2 createState() => _TextFieldHDr2(
+  _TextFieldHDr createState() => _TextFieldHDr(
       controller,
       label,
-      fontSize,
-      textColor,
-      isObsecure,
-      buttonKeyboardAction,
-      keyboardType,
-      textfieldStyle,
-      hintText,
+      inputType,
+      keyboardAction,
+      placeHolder,
       helperText,
+      maxLength,
       capitalStyle,
-      maxLength);
+      style,
+      unit,
+      isMultipleInRow,
+      autoFocus);
 }
 
-class _TextFieldHDr2 extends State<TextFieldHDr2> with WidgetsBindingObserver {
+class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
   TextEditingController _controller;
   String _label;
-  double _fontSize;
-  Color _textColor;
-  bool _isObsecure;
-  TextInputAction _buttonKeyboardAction;
-  TextInputType _keyboardType;
-  TextFieldStyleHDr _textfieldStyle;
-  String _hintText;
+  TFInputType _inputType;
+  TextInputAction _keyboardAction;
+  String _placeHolder;
   String _helperText;
   int _maxLength;
   TextCapitalization _capitalStyle;
+  TFStyle _style;
+  String _unit;
+  bool _isMultipleInRow;
+  bool _autoFocus;
 
-  _TextFieldHDr2(
+  _TextFieldHDr(
     this._controller,
     this._label,
-    this._fontSize,
-    this._textColor,
-    this._isObsecure,
-    this._buttonKeyboardAction,
-    this._keyboardType,
-    this._textfieldStyle,
-    this._hintText,
+    this._inputType,
+    this._keyboardAction,
+    this._placeHolder,
     this._helperText,
-    this._capitalStyle,
     this._maxLength,
+    this._capitalStyle,
+    this._style,
+    this._unit,
+    this._isMultipleInRow,
+    this._autoFocus,
   );
 
   @override
@@ -125,38 +124,15 @@ class _TextFieldHDr2 extends State<TextFieldHDr2> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    if (_label == null || _label == '' || _label.isEmpty) {
-      _label = 'Label';
-    }
-    if (_fontSize == null || _fontSize == 0) {
-      _fontSize = 15;
-    }
-    if (_textColor == null) {
-      _textColor = DefaultTheme.BLACK;
-    }
-    if (_isObsecure == null) {
-      _isObsecure = false;
-    }
-    if (_buttonKeyboardAction == null) {
-      _buttonKeyboardAction = TextInputAction.done;
-    }
-    if (_keyboardType == null) {
-      _keyboardType = TextInputType.text;
-    }
-    if (_textfieldStyle == null) {
-      _textfieldStyle = TextFieldStyleHDr.NO_BORDER;
-    }
-    if (_hintText == null || _hintText == '' || _hintText.isEmpty) {
-      _hintText = 'placeholder';
-    }
-    if (_helperText == null || _helperText == '' || _helperText.isEmpty) {
-      _helperText = 'Please describes helper text: some desc here';
+    if (_style == null) {
+      _style = TFStyle.NO_BORDER;
     }
     if (_capitalStyle == null) {
       _capitalStyle = TextCapitalization.none;
     }
-    switch (_textfieldStyle) {
-      case TextFieldStyleHDr.NO_BORDER:
+
+    switch (_style) {
+      case TFStyle.NO_BORDER:
         return Row(
           children: [
             Container(
@@ -167,16 +143,26 @@ class _TextFieldHDr2 extends State<TextFieldHDr2> with WidgetsBindingObserver {
               child: Text(
                 '${_label}',
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: _fontSize,
+                  fontWeight: DefaultNumeralUI.FONT_WEIGHT_LABEL_TEXTFIELD,
+                  fontSize: DefaultNumeralUI.TEXTFIELD_LABEL_SIZE,
                 ),
               ),
             ),
             Flexible(
               child: TextField(
-                obscureText: _isObsecure,
-                keyboardType: _keyboardType,
-                textInputAction: _buttonKeyboardAction,
+                autofocus: true,
+                obscureText:
+                    (_inputType == TFInputType.TF_PASSWORD) ? true : false,
+                keyboardType: (_inputType == TFInputType.TF_NUMBER)
+                    ? TextInputType.number
+                    : (_inputType == TFInputType.TF_EMAIL)
+                        ? TextInputType.emailAddress
+                        : (_inputType == TFInputType.TF_PHONE)
+                            ? TextInputType.phone
+                            : (_inputType == TFInputType.TF_TEXT)
+                                ? TextInputType.text
+                                : null,
+                textInputAction: _keyboardAction,
                 textCapitalization: _capitalStyle,
                 maxLength: _maxLength,
                 buildCounter: (BuildContext context,
@@ -184,9 +170,12 @@ class _TextFieldHDr2 extends State<TextFieldHDr2> with WidgetsBindingObserver {
                     null,
                 decoration: InputDecoration(
                   border: InputBorder.none,
-                  hintText: _hintText,
-                  contentPadding:
-                      EdgeInsets.fromLTRB(10, 0, DefaultNumeralUI.PADDING, 0),
+                  hintText: _placeHolder,
+                  contentPadding: EdgeInsets.fromLTRB(
+                      DefaultNumeralUI.PADDING_10,
+                      0,
+                      DefaultNumeralUI.PADDING,
+                      0),
                   focusedBorder: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   errorBorder: InputBorder.none,
@@ -195,19 +184,31 @@ class _TextFieldHDr2 extends State<TextFieldHDr2> with WidgetsBindingObserver {
                 onChanged: widget.onChange,
                 controller: _controller,
               ),
-            )
+            ),
           ],
         );
         break;
-      case TextFieldStyleHDr.BORDERED:
+      case TFStyle.BORDERED:
         return Row(
           children: [
-            Padding(padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
+            if (_isMultipleInRow == false)
+              Padding(padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
+            Padding(padding: EdgeInsets.only(left: 2.5)),
             Flexible(
               child: TextField(
-                obscureText: _isObsecure,
-                keyboardType: _keyboardType,
-                textInputAction: _buttonKeyboardAction,
+                autofocus: true,
+                obscureText:
+                    (_inputType == TFInputType.TF_PASSWORD) ? true : false,
+                keyboardType: (_inputType == TFInputType.TF_NUMBER)
+                    ? TextInputType.number
+                    : (_inputType == TFInputType.TF_EMAIL)
+                        ? TextInputType.emailAddress
+                        : (_inputType == TFInputType.TF_PHONE)
+                            ? TextInputType.phone
+                            : (_inputType == TFInputType.TF_TEXT)
+                                ? TextInputType.text
+                                : null,
+                textInputAction: _keyboardAction,
                 textCapitalization: _capitalStyle,
                 maxLength: _maxLength,
                 decoration: InputDecoration(
@@ -236,13 +237,19 @@ class _TextFieldHDr2 extends State<TextFieldHDr2> with WidgetsBindingObserver {
                   errorBorder: InputBorder.none,
                   disabledBorder: InputBorder.none,
                 ),
+                onChanged: widget.onChange,
+                controller: _controller,
               ),
             ),
-            Padding(padding: EdgeInsets.only(right: DefaultNumeralUI.PADDING)),
+            if (_isMultipleInRow == false)
+              Padding(padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
+            Padding(padding: EdgeInsets.only(left: 2.5)),
           ],
         );
         break;
-      case TextFieldStyleHDr.CONTAIN_UNIT:
+      case TFStyle.TEXT_AREA:
+        break;
+      case TFStyle.UNIT:
         return Stack(
           children: <Widget>[
             Container(
@@ -250,10 +257,20 @@ class _TextFieldHDr2 extends State<TextFieldHDr2> with WidgetsBindingObserver {
                   left: DefaultNumeralUI.PADDING,
                   right: DefaultNumeralUI.PADDING),
               child: TextField(
+                autofocus: true,
                 textAlign: TextAlign.right,
-                obscureText: _isObsecure,
-                keyboardType: _keyboardType,
-                textInputAction: _buttonKeyboardAction,
+                obscureText:
+                    (_inputType == TFInputType.TF_PASSWORD) ? true : false,
+                keyboardType: (_inputType == TFInputType.TF_NUMBER)
+                    ? TextInputType.number
+                    : (_inputType == TFInputType.TF_EMAIL)
+                        ? TextInputType.emailAddress
+                        : (_inputType == TFInputType.TF_PHONE)
+                            ? TextInputType.phone
+                            : (_inputType == TFInputType.TF_TEXT)
+                                ? TextInputType.text
+                                : null,
+                textInputAction: _keyboardAction,
                 textCapitalization: _capitalStyle,
                 maxLength: _maxLength,
                 decoration: InputDecoration(
@@ -287,32 +304,16 @@ class _TextFieldHDr2 extends State<TextFieldHDr2> with WidgetsBindingObserver {
               right: DefaultNumeralUI.PADDING * 2,
               top: 14,
               child: Text(
-                'cm',
+                _unit,
                 style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: _fontSize,
+                  fontWeight: DefaultNumeralUI.FONT_WEIGHT_LABEL_TEXTFIELD,
+                  fontSize: DefaultNumeralUI.TEXTFIELD_LABEL_SIZE,
                 ),
               ),
             ),
           ],
         );
         break;
-      case TextFieldStyleHDr.TEXT_AREA:
-        break;
     }
   }
 }
-
-// enum TextFieldStyleHDr {
-//   BORDER,
-//   NO_BORDER,
-//   CONTAIN_UNIT,
-//   TEXT_EREA,
-// }
-
-// enum InputStyleHDr {
-//   PASSWORD,
-//   TEXT,
-//   NUMBER,
-//   DOUBLE,
-// }

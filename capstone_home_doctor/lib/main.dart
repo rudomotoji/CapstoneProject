@@ -3,17 +3,23 @@ import 'dart:io';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
-import 'features/login/log_in_view.dart';
-import 'features/register/register_view.dart';
+import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
+import 'package:capstone_home_doctor/features/login/log_in_view.dart';
+import 'package:capstone_home_doctor/features/login/phone_auth.dart';
+import 'package:capstone_home_doctor/features/register/register_view.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'services/noti_helper.dart';
 
 import 'features/home/home.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: DefaultTheme.TRANSPARENT,
     systemNavigationBarColor: DefaultTheme.TRANSPARENT,
@@ -127,16 +133,24 @@ class _HomeDoctorState extends State<HomeDoctor> {
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: 'SFPro'),
-        initialRoute: RoutesHDr.INITIAL_ROUTE,
-        routes: {
-          RoutesHDr.LOG_IN: (context) => Login(),
-          RoutesHDr.REGISTER: (context) => Register(),
-          RoutesHDr.MAIN_HOME: (context) => MainHome(),
-        },
-        home: Login(),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => PhoneAuthDataProvider(),
+          ),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(fontFamily: 'SFPro'),
+          initialRoute: RoutesHDr.INITIAL_ROUTE,
+          routes: {
+            RoutesHDr.LOG_IN: (context) => Login(),
+            RoutesHDr.REGISTER: (context) => Register(),
+            RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
+            RoutesHDr.MAIN_HOME: (context) => MainHome(),
+          },
+          home: Login(),
+        ),
       ),
     );
   }

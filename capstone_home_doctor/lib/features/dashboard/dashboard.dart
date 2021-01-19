@@ -31,13 +31,7 @@ class _DashboardState extends State<DashboardPage> {
     // );
     return SafeArea(
         child: Column(
-      children: [
-        HeaderWidget(
-          title: 'Đăng nhập',
-          isAuthenticated: false,
-          isMainView: true,
-        ),
-      ],
+      children: [],
     ));
   }
 

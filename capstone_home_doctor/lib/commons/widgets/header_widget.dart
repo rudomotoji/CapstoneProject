@@ -2,19 +2,25 @@ import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:flutter/material.dart';
 
+enum ButtonHeaderType {
+  NONE,
+  AVATAR,
+  NEW_MESSAGE,
+  DETAIL,
+}
+
 class HeaderWidget extends StatelessWidget {
   final String title;
-  final bool isAuthenticated;
-  final bool isMainView;
+  ButtonHeaderType buttonHeaderType;
+  bool isMainView;
 
-  //status: not Done yet.
-
-  //rerange header case.
-
-  HeaderWidget({this.title, this.isAuthenticated, this.isMainView});
+  HeaderWidget({this.title, this.buttonHeaderType, this.isMainView});
 
   @override
   Widget build(BuildContext context) {
+    if (buttonHeaderType == null) {
+      buttonHeaderType = ButtonHeaderType.NONE;
+    }
     return Padding(
       padding: DefaultNumeralUI.HEADER_SIZE,
       child: Row(
@@ -24,12 +30,10 @@ class HeaderWidget extends StatelessWidget {
               splashColor: DefaultTheme.TRANSPARENT,
               highlightColor: DefaultTheme.TRANSPARENT,
               onTap: () {
-                //pop
-                //Navigator.pop(context);
-                print('Do pop');
+                Navigator.pop(context);
               },
               child: Image.asset(
-                'lib/assets/images/ic-pop.png',
+                'assets/images/ic-pop.png',
                 width: 30,
                 height: 30,
               ),
@@ -46,25 +50,58 @@ class HeaderWidget extends StatelessWidget {
               color: DefaultTheme.BLACK,
             ),
           ),
-          if (isAuthenticated)
+          if (buttonHeaderType == ButtonHeaderType.DETAIL)
             (Expanded(
               flex: 2,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Padding(padding: EdgeInsets.only(left: 20)),
                   InkWell(
                     splashColor: DefaultTheme.TRANSPARENT,
                     highlightColor: DefaultTheme.TRANSPARENT,
                     onTap: () {
                       //for notification navtigator
-                      print('Press Notification');
+                      print('Press Detail Button');
                     },
                     child: Image.asset(
-                      'lib/assets/images/ic-notification.png',
+                      'assets/images/ic-detail.png',
                       width: 30,
                       height: 30,
                     ),
                   ),
+                ],
+              ),
+            )),
+          if (buttonHeaderType == ButtonHeaderType.NEW_MESSAGE)
+            (Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(padding: EdgeInsets.only(left: 20)),
+                  InkWell(
+                    splashColor: DefaultTheme.TRANSPARENT,
+                    highlightColor: DefaultTheme.TRANSPARENT,
+                    onTap: () {
+                      //for notification navtigator
+                      print('Press New Msg Button');
+                    },
+                    child: Image.asset(
+                      'assets/images/ic-new-msg.png',
+                      width: 30,
+                      height: 30,
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          if (buttonHeaderType == ButtonHeaderType.AVATAR)
+            (Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
                   Padding(padding: EdgeInsets.only(left: 20)),
                   InkWell(
                     splashColor: DefaultTheme.TRANSPARENT,
@@ -76,8 +113,7 @@ class HeaderWidget extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 16,
                       child: ClipOval(
-                        child:
-                            Image.asset('lib/assets/images/avatar-default.jpg'),
+                        child: Image.asset('assets/images/avatar-default.jpg'),
                       ),
                     ),
                   ),
