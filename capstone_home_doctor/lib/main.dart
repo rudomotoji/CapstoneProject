@@ -90,7 +90,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
             ? _handleIOSGeneralMessage(message)
             : _handleGeneralMessage(message);
       },
-      onBackgroundMessage: myBackgroundMessageHandler,
+      // onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
         // _navigateToItemDetail(message);

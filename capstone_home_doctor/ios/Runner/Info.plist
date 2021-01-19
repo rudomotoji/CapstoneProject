@@ -27,7 +27,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>If you want to call video, we need accept to use camera</string>
+	<string>We need accept to use camera and scan QRCode</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need use microphone to call audio</string>
 	<key>UIBackgroundModes</key>

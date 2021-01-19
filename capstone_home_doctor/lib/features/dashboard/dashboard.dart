@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -8,25 +9,36 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardState extends State<DashboardPage> {
   var location;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: [
-          FlatButton(
-            child: Text('get location'),
-            onPressed: () {
-              _determinePosition();
-            },
-          ),
-          location != null
-              ? Text(location.latitude.toString() +
-                  ' - ' +
-                  location.longitude.toString())
-              : Text(''),
-        ],
-      ),
-    );
+    // return Container(
+    //   child: Row(
+    //     children: [
+    //       FlatButton(
+    //         child: Text('get location'),
+    //         onPressed: () {
+    //           _determinePosition();
+    //         },
+    //       ),
+    //       location != null
+    //           ? Text(location.latitude.toString() +
+    //               ' - ' +
+    //               location.longitude.toString())
+    //           : Text(''),
+    //     ],
+    //   ),
+    // );
+    return SafeArea(
+        child: Column(
+      children: [
+        HeaderWidget(
+          title: 'Đăng nhập',
+          isAuthenticated: false,
+          isMainView: true,
+        ),
+      ],
+    ));
   }
 
   Future _determinePosition() async {
