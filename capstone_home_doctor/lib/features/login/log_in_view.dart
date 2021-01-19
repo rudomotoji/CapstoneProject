@@ -100,10 +100,9 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                 label: 'Tiếp theo',
                 onTap: () {
                   // Navigator.pushReplacementNamed(context, RoutesHDr.MAIN_HOME);
-
-                  //startPhoneAuth();
-                  Navigator.pushNamed(context, RoutesHDr.CONFIRM_LOG_IN,
-                      arguments: {'PHONE_NUMBER': _phoneNo});
+                  startPhoneAuth();
+                  // Navigator.pushNamed(context, RoutesHDr.CONFIRM_LOG_IN,
+                  //     arguments: {'PHONE_NUMBER': _phoneNo});
                 },
               )),
             Padding(padding: EdgeInsets.only(top: 20)),

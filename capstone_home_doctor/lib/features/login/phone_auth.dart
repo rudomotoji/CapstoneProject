@@ -112,37 +112,36 @@ class PhoneAuthDataProvider with ChangeNotifier {
             authException.toString());
     };
 
-    // final PhoneVerificationCompleted verificationCompleted =
-    //     (AuthCredential auth) {
-    //   _addStatusMessage('Auto retrieving verification code');
-
-    //   FireBase.auth.signInWithCredential(auth);
-    //   //.then((AuthResult value) {
-    //   //   if (value.user != null) {
-    //   //     _addStatusMessage('Authentication successful');
-    //   //     _addStatus(PhoneAuthState.Verified);
-    //   //     if (onVerified != null) onVerified();
-    //   //   } else {
-    //   //     if (onFailed != null) onFailed();
-    //   //     _addStatus(PhoneAuthState.Failed);
-    //   //     _addStatusMessage('Invalid code/invalid authentication');
-    //   //   }
-    //   // }).catchError((error) {
-    //   //   if (onError != null) onError();
-    //   //   _addStatus(PhoneAuthState.Error);
-    //   //   _addStatusMessage('Something has gone wrong, please try later $error');
-    //   // });
-    // };
     final PhoneVerificationCompleted verificationCompleted =
-        (PhoneAuthCredential phoneAuthCredential) async {
-      await FireBase.auth.signInWithCredential(phoneAuthCredential);
-      // showSnackBar(SnackBar(
-      //   content: Text(
-      //       "Phone number automatically verified and user signed in: ${phoneAuthCredential}"),
-      // ));
-      _addStatusMessage(
-          "Phone number automatically verified and user signed in: ${phoneAuthCredential}");
+        (AuthCredential auth) {
+      _addStatusMessage('Auto retrieving verification code');
+
+      FireBase.auth.signInWithCredential(auth).then((UserCredential value) {
+        if (value.user != null) {
+          _addStatusMessage('Authentication successful');
+          _addStatus(PhoneAuthState.Verified);
+          if (onVerified != null) onVerified();
+        } else {
+          if (onFailed != null) onFailed();
+          _addStatus(PhoneAuthState.Failed);
+          _addStatusMessage('Invalid code/invalid authentication');
+        }
+      }).catchError((error) {
+        if (onError != null) onError();
+        _addStatus(PhoneAuthState.Error);
+        _addStatusMessage('Something has gone wrong, please try later $error');
+      });
     };
+    // final PhoneVerificationCompleted verificationCompleted =
+    //     (PhoneAuthCredential phoneAuthCredential) async {
+    //   await FireBase.auth.signInWithCredential(phoneAuthCredential);
+    //   // showSnackBar(SnackBar(
+    //   //   content: Text(
+    //   //       "Phone number automatically verified and user signed in: ${phoneAuthCredential}"),
+    //   // ));
+    //   _addStatusMessage(
+    //       "Phone number automatically verified and user signed in: ${phoneAuthCredential}");
+    // };
     //
     _addStatusMessage('Phone auth started');
     FireBase.auth
