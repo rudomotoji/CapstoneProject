@@ -85,7 +85,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
   _startAuth() {
     final PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) async {
-      actualCode = verificationId;
+      actualCode = await verificationId;
       _addStatusMessage("\nEnter the code sent to " + phone);
       _addStatus(PhoneAuthState.CodeSent);
       if (onCodeSent != null) onCodeSent();
@@ -98,7 +98,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
       _addStatus(PhoneAuthState.AutoRetrievalTimeOut);
       if (onAutoRetrievalTimeout != null) onAutoRetrievalTimeout();
     };
-
+//notice this
     final PhoneVerificationFailed verificationFailed =
         (FirebaseAuthException authException) {
       _addStatusMessage('${authException.toString}');

@@ -26,18 +26,25 @@ class _ConfirmContract extends State<ConfirmContract>
 
   @override
   Widget build(BuildContext context) {
-    Map<String, Object> arguments = ModalRoute.of(context).settings.arguments;
-    _qrString = arguments['QRCODE'];
-    print('IN CONFIRM PAGE ${_qrString}');
+    String arguments = ModalRoute.of(context).settings.arguments;
+    // Object x = ModalRoute.of(context).settings.arguments;
+    // String code = x['QRCODE'] as String;
+
+    print('WHAT Code MEANS? $arguments');
+    // print('AVAILABLE CHECK ${check}');
+    // this._qrString = arguments['QRCODE'];
+    // print('IN CONFIRM PAGE ${this._qrString}');
     return Scaffold(
       body: SafeArea(
         child: Column(children: <Widget>[
-          HeaderWidget(
-            title: 'Xác nhận hợp đồng',
-          ),
-          // Text(
-          //   '${_qrString}',
+          // HeaderWidget(
+          //   title: 'Xác nhận hợp đồng',
+          //   isMainView: false,
+          //   buttonHeaderType: Head,
           // ),
+          Text(
+            '${arguments}',
+          ),
         ]),
       ),
     );

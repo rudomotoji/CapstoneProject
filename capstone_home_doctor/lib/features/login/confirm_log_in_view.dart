@@ -44,7 +44,7 @@ class _ConfirmLogin extends State<ConfirmLogin> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> arguments = ModalRoute.of(context).settings.arguments;
+    //Map<String, String> arguments = ModalRoute.of(context).settings.arguments;
     _phoneNo = Provider.of<PhoneAuthDataProvider>(context, listen: false)
         .phoneNumberController
         .text;

@@ -53,7 +53,7 @@ class _DashboardState extends State<DashboardPage> {
               // Navigator.pushNamed(context, RoutesHDr.CONFIRM_CONTRACT,
               //     arguments: {'QR_STRING', codeScanner});
               Navigator.pushNamed(context, RoutesHDr.CONFIRM_CONTRACT,
-                  arguments: {'QRCODE', codeScanner});
+                  arguments: codeScanner);
             }
           },
           child: Container(
