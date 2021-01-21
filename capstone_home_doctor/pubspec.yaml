@@ -80,6 +80,10 @@ flutter:
     - assets/images/ic-noti-selected.png
     - assets/images/ic-detail.png
     - assets/images/ic-new-msg.png
+    - assets/images/ic-navigator.png
+    - assets/images/ic-scan-qr.png
+    - assets/images/ic-back-home.png
+
   
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

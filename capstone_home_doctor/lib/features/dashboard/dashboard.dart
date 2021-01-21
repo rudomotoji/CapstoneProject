@@ -1,6 +1,8 @@
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -31,7 +33,80 @@ class _DashboardState extends State<DashboardPage> {
     // );
     return SafeArea(
         child: Column(
-      children: [],
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        HeaderWidget(
+          title: 'Trang chủ',
+          isMainView: true,
+          buttonHeaderType: ButtonHeaderType.AVATAR,
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 20),
+        ),
+        InkWell(
+          onTap: () async {
+            //
+            String codeSanner = await BarcodeScanner.scan();
+            if (codeSanner != null) {
+              Navigator.pushNamed(context, RoutesHDr.CONFIRM_CONTRACT,
+                  arguments: {'QR_STRING', codeSanner});
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.only(left: 20),
+            width: MediaQuery.of(context).size.width - 40,
+            height: 100,
+            decoration: BoxDecoration(
+              color: Color(0xffEEEFF3),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Image.asset(
+                    'assets/images/ic-scan-qr.png',
+                    width: 35,
+                    height: 35,
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(left: 15),
+                      width: MediaQuery.of(context).size.width - 40 - 150,
+                      child: Text(
+                        'Xác nhận hợp đồng',
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 15, top: 3),
+                      width: MediaQuery.of(context).size.width - 40 - 150,
+                      child: Text(
+                        'Quét mã QR Code để kết nối với bác sĩ thông qua hợp đồng',
+                        style: TextStyle(color: Color(0xFF888888)),
+                      ),
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Image.asset(
+                    'assets/images/ic-navigator.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                ),
+                Padding(padding: EdgeInsets.all(5)),
+              ],
+            ),
+          ),
+        ),
+      ],
     ));
   }
 

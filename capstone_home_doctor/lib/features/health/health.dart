@@ -1,4 +1,5 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -50,6 +51,11 @@ class _HealthState extends State<HealthPage> {
         child: SafeArea(
           child: ListView(
             children: [
+              HeaderWidget(
+                title: 'Sức khoẻ',
+                isMainView: true,
+                buttonHeaderType: ButtonHeaderType.AVATAR,
+              ),
               const SizedBox(height: 16),
               SizedBox(
                 width: segmentedControlMaxWidth,

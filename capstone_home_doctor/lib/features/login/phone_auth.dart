@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show ChangeNotifier, VoidCallback;
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ enum PhoneAuthState {
 }
 
 class PhoneAuthDataProvider with ChangeNotifier {
+  final AuthenticateHelper authenHelper = AuthenticateHelper();
   VoidCallback onStarted,
       onCodeSent,
       onCodeResent,
@@ -113,24 +115,29 @@ class PhoneAuthDataProvider with ChangeNotifier {
     };
 
     final PhoneVerificationCompleted verificationCompleted =
-        (AuthCredential auth) {
+        (AuthCredential auth) async {
       _addStatusMessage('Auto retrieving verification code');
+      final UserCredential value =
+          await FireBase.auth.signInWithCredential(auth);
 
-      FireBase.auth.signInWithCredential(auth).then((UserCredential value) {
-        if (value.user != null) {
-          _addStatusMessage('Authentication successful');
-          _addStatus(PhoneAuthState.Verified);
-          if (onVerified != null) onVerified();
-        } else {
-          if (onFailed != null) onFailed();
-          _addStatus(PhoneAuthState.Failed);
-          _addStatusMessage('Invalid code/invalid authentication');
+      // FireBase.auth.signInWithCredential(auth).then((UserCredential value) {
+      if (value.user != null) {
+        _addStatusMessage('Authentication successful');
+        _addStatus(PhoneAuthState.Verified);
+        if (onVerified != null) {
+          onVerified();
         }
-      }).catchError((error) {
-        if (onError != null) onError();
-        _addStatus(PhoneAuthState.Error);
-        _addStatusMessage('Something has gone wrong, please try later $error');
-      });
+      } else {
+        if (onFailed != null) onFailed();
+        _addStatus(PhoneAuthState.Failed);
+        _addStatusMessage('Invalid code/invalid authentication');
+      }
+
+      // }).catchError((error) {
+      //   if (onError != null) onError();
+      //   _addStatus(PhoneAuthState.Error);
+      //   _addStatusMessage('Something has gone wrong, please try later $error');
+      // });
     };
     // final PhoneVerificationCompleted verificationCompleted =
     //     (PhoneAuthCredential phoneAuthCredential) async {
@@ -170,13 +177,27 @@ class PhoneAuthDataProvider with ChangeNotifier {
     FireBase.auth.signInWithCredential(_authCredential).then((result) async {
       _addStatusMessage('Authentication successful');
       _addStatus(PhoneAuthState.Verified);
-      if (onVerified != null) onVerified();
+      if (onVerified != null) {
+        onVerified();
+        authenHelper.updateAuth(true);
+      }
+      ;
     }).catchError((error) {
       if (onError != null) onError();
       _addStatus(PhoneAuthState.Error);
       _addStatusMessage(
           'Something has gone wrong, please try later(signInWithPhoneNumber) $error');
     });
+  }
+
+  void signOut() async {
+    try {
+      await FireBase.auth.signOut();
+      authenHelper.updateAuth(false);
+    } catch (e) {
+      print('Error: ${e.toString()}');
+      return null;
+    }
   }
 
   _addStatus(PhoneAuthState state) {

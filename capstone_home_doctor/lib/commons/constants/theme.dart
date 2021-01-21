@@ -11,4 +11,5 @@ class DefaultTheme {
   static final Color TRANSPARENT = Color(0x00000000);
   static final Color GREY_TAB_BAR = Color(0xFFEFF0F2);
   static final Color GREY_TOP_TAB_BAR = Color(0xFF1B1C1E);
+  static final Color RED_TEXT = Color(0xFFFF0A0A);
 }

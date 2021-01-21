@@ -3,10 +3,12 @@ import 'dart:io';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/features/contract/confirm_contract_view.dart';
 import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/phone_auth.dart';
 import 'package:capstone_home_doctor/features/register/register_view.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,8 +37,10 @@ class HomeDoctor extends StatefulWidget {
 }
 
 class _HomeDoctorState extends State<HomeDoctor> {
+  final AuthenticateHelper authenHelper = AuthenticateHelper();
   final FirebaseMessaging _fcm = FirebaseMessaging();
   String _token = 'Generate Token';
+  Widget _startScreen = Login();
 
   Future<dynamic> myBackgroundMessageHandler(
       Map<String, dynamic> message) async {
@@ -83,6 +87,16 @@ class _HomeDoctorState extends State<HomeDoctor> {
   @override
   void initState() {
     super.initState();
+    authenHelper.isAuthenticated().then((value) {
+      setState(() {
+        if (value) {
+          _startScreen = MainHome();
+        } else {
+          _startScreen = Login();
+        }
+      });
+    });
+
     if (Platform.isIOS) {
       _fcm.requestNotificationPermissions(const IosNotificationSettings(
           sound: true, badge: true, alert: true, provisional: true));
@@ -148,8 +162,11 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.REGISTER: (context) => Register(),
             RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
             RoutesHDr.MAIN_HOME: (context) => MainHome(),
+            RoutesHDr.CONFIRM_CONTRACT: (context) => ConfirmContract(),
           },
-          home: Login(),
+          // home: _startScreen,
+          home: MainHome(),
+          // home: (_isLogined) ? MainHome() : Login(),
         ),
       ),
     );

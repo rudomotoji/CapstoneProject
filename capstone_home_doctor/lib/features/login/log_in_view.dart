@@ -70,8 +70,8 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                   ),
                   TextFieldHDr(
                     style: TFStyle.NO_BORDER,
-                    label: 'Số điện thoại',
-                    placeHolder: '090 999 9999',
+                    label: 'VN +84',
+                    placeHolder: 'Số điện thoại',
                     maxLength: 11,
                     inputType: TFInputType.TF_PHONE,
                     controller: Provider.of<PhoneAuthDataProvider>(context,
@@ -99,10 +99,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                 style: BtnStyle.BUTTON_GREY,
                 label: 'Tiếp theo',
                 onTap: () {
-                  // Navigator.pushReplacementNamed(context, RoutesHDr.MAIN_HOME);
                   startPhoneAuth();
-                  // Navigator.pushNamed(context, RoutesHDr.CONFIRM_LOG_IN,
-                  //     arguments: {'PHONE_NUMBER': _phoneNo});
                 },
               )),
             Padding(padding: EdgeInsets.only(top: 20)),

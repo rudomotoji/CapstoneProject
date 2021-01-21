@@ -67,18 +67,18 @@ class TextFieldHDr extends StatefulWidget {
 
   @override
   _TextFieldHDr createState() => _TextFieldHDr(
-      controller,
-      label,
-      inputType,
-      keyboardAction,
-      placeHolder,
-      helperText,
-      maxLength,
-      capitalStyle,
-      style,
-      unit,
-      isMultipleInRow,
-      autoFocus);
+        controller,
+        label,
+        inputType,
+        keyboardAction,
+        placeHolder,
+        helperText,
+        maxLength,
+        capitalStyle,
+        style,
+        unit,
+        isMultipleInRow,
+      );
 }
 
 class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
@@ -93,7 +93,6 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
   TFStyle _style;
   String _unit;
   bool _isMultipleInRow;
-  bool _autoFocus;
 
   _TextFieldHDr(
     this._controller,
@@ -107,7 +106,6 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
     this._style,
     this._unit,
     this._isMultipleInRow,
-    this._autoFocus,
   );
 
   @override

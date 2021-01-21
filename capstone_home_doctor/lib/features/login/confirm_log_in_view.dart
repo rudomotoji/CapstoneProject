@@ -266,7 +266,8 @@ class _ConfirmLogin extends State<ConfirmLogin> {
     _showSnackBar(
         "${Provider.of<PhoneAuthDataProvider>(context, listen: false).message}");
     await Future.delayed(Duration(seconds: 1));
-    Navigator.pushNamed(context, RoutesHDr.REGISTER);
+    Navigator.pushNamedAndRemoveUntil(
+        context, RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
   }
 
   onFailed() {

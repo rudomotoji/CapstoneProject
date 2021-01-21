@@ -113,10 +113,35 @@ class _ButtonHDr extends State<ButtonHDr> {
           _height = DefaultNumeralUI.BUTTON_IMAGE_SIZE;
         }
         break;
+      case BtnStyle.BUTTON_IN_LIST:
+        if (_labelColor == null) {
+          _labelColor = DefaultTheme.BLACK;
+        }
+        break;
       default:
         _bgColor = DefaultTheme.BLACK_BUTTON;
         _labelColor = DefaultTheme.WHITE;
         break;
+    }
+    if (_style == BtnStyle.BUTTON_IN_LIST) {
+      return FlatButton(
+        color: DefaultTheme.TRANSPARENT,
+        minWidth: MediaQuery.of(context).size.width,
+        height: _height - 10,
+        onPressed: widget.onTap,
+        padding: EdgeInsets.only(left: 50),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            _label,
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE,
+              color: _labelColor,
+            ),
+          ),
+        ),
+      );
     }
     if (_style == BtnStyle.BUTTON_IMAGE) {
       return SizedBox(
@@ -172,4 +197,5 @@ enum BtnStyle {
   BUTTON_TRANSPARENT,
   BUTTON_IMAGE,
   BUTTON_FULL,
+  BUTTON_IN_LIST,
 }
