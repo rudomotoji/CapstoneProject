@@ -1,4 +1,8 @@
+import 'dart:ui';
+
+import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -49,11 +53,7 @@ class _DashboardState extends State<DashboardPage> {
             //
             String codeScanner = await BarcodeScanner.scan();
             if (codeScanner != null) {
-              print('Code Scanner in Main Home ${codeScanner}');
-              // Navigator.pushNamed(context, RoutesHDr.CONFIRM_CONTRACT,
-              //     arguments: {'QR_STRING', codeScanner});
-              Navigator.pushNamed(context, RoutesHDr.CONFIRM_CONTRACT,
-                  arguments: codeScanner);
+              _onButtonShowModelSheet(codeScanner);
             }
           },
           child: Container(
@@ -111,6 +111,50 @@ class _DashboardState extends State<DashboardPage> {
         ),
       ],
     ));
+  }
+
+  void _onButtonShowModelSheet(String codeScanned) {
+    showModalBottomSheet(
+        isScrollControlled: false,
+        context: context,
+        backgroundColor: DefaultTheme.TRANSPARENT,
+        builder: (context) {
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Container(
+              height: 500,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  ButtonHDr(
+                    style: BtnStyle.BUTTON_BLACK,
+                    label: 'Đồng ý ghép nối',
+                    onTap: () {
+                      Navigator.pushNamed(context, RoutesHDr.CONFIRM_CONTRACT,
+                          arguments: codeScanned);
+                    },
+                  ),
+                  ButtonHDr(
+                    style: BtnStyle.BUTTON_GREY,
+                    label: 'Huỷ ghép nối',
+                    onTap: () {
+                      Navigator.pushNamedAndRemoveUntil(context,
+                          RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+                    },
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 100),
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   Future _determinePosition() async {

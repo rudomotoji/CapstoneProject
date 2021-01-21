@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -37,14 +38,24 @@ class _ConfirmContract extends State<ConfirmContract>
     return Scaffold(
       body: SafeArea(
         child: Column(children: <Widget>[
-          // HeaderWidget(
-          //   title: 'Xác nhận hợp đồng',
-          //   isMainView: false,
-          //   buttonHeaderType: Head,
-          // ),
+          HeaderWidget(
+            title: 'Xác nhận hợp đồng',
+            isMainView: false,
+            buttonHeaderType: ButtonHeaderType.BACK_HOME,
+          ),
           Text(
             '${arguments}',
           ),
+          // ButtonHDr(
+          //   label: 'Xác nhận',
+          //   onTap: () {},
+          //   style: BtnStyle.BUTTON_BLACK,
+          // ),
+          // ButtonHDr(
+          //   label: 'Huỷ',
+          //   onTap: () {},
+          //   style: BtnStyle.BUTTON_GREY,
+          // ),
         ]),
       ),
     );
