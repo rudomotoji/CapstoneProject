@@ -88,6 +88,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
   void initState() {
     super.initState();
     authenHelper.isAuthenticated().then((value) {
+      print('value now ${value}');
       setState(() {
         if (value) {
           _startScreen = MainHome();

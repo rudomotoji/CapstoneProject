@@ -47,10 +47,13 @@ class _DashboardState extends State<DashboardPage> {
         InkWell(
           onTap: () async {
             //
-            String codeSanner = await BarcodeScanner.scan();
-            if (codeSanner != null) {
+            String codeScanner = await BarcodeScanner.scan();
+            if (codeScanner != null) {
+              print('Code Scanner in Main Home ${codeScanner}');
+              // Navigator.pushNamed(context, RoutesHDr.CONFIRM_CONTRACT,
+              //     arguments: {'QR_STRING', codeScanner});
               Navigator.pushNamed(context, RoutesHDr.CONFIRM_CONTRACT,
-                  arguments: {'QR_STRING', codeSanner});
+                  arguments: {'QRCODE', codeScanner});
             }
           },
           child: Container(
@@ -77,7 +80,7 @@ class _DashboardState extends State<DashboardPage> {
                       padding: EdgeInsets.only(left: 15),
                       width: MediaQuery.of(context).size.width - 40 - 150,
                       child: Text(
-                        'Xác nhận hợp đồng',
+                        'Quét hợp đồng',
                         style: TextStyle(
                             fontSize: 20,
                             color: Colors.black,
@@ -88,7 +91,7 @@ class _DashboardState extends State<DashboardPage> {
                       padding: EdgeInsets.only(left: 15, top: 3),
                       width: MediaQuery.of(context).size.width - 40 - 150,
                       child: Text(
-                        'Quét mã QR Code để kết nối với bác sĩ thông qua hợp đồng',
+                        'Quét mã QR Code để kết nối với bác sĩ',
                         style: TextStyle(color: Color(0xFF888888)),
                       ),
                     ),

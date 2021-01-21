@@ -175,6 +175,7 @@ class _HeaderWidget extends State<HeaderWidget> {
 
   _signOut() {
     Provider.of<PhoneAuthDataProvider>(context, listen: false).signOut();
+
     Navigator.pushNamedAndRemoveUntil(
         context, RoutesHDr.LOG_IN, (Route<dynamic> route) => false);
   }

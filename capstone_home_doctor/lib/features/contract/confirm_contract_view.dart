@@ -10,7 +10,8 @@ class ConfirmContract extends StatefulWidget {
 
 class _ConfirmContract extends State<ConfirmContract>
     with WidgetsBindingObserver {
-  String _qrString = '';
+  String _qrString;
+  // _ConfirmContract({})
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -25,17 +26,18 @@ class _ConfirmContract extends State<ConfirmContract>
 
   @override
   Widget build(BuildContext context) {
-    Map<String, String> arguments = ModalRoute.of(context).settings.arguments;
-    _qrString = arguments['QR_STRING'];
+    Map<String, Object> arguments = ModalRoute.of(context).settings.arguments;
+    _qrString = arguments['QRCODE'];
+    print('IN CONFIRM PAGE ${_qrString}');
     return Scaffold(
       body: SafeArea(
         child: Column(children: <Widget>[
           HeaderWidget(
             title: 'Xác nhận hợp đồng',
           ),
-          Text(
-            '${_qrString}',
-          ),
+          // Text(
+          //   '${_qrString}',
+          // ),
         ]),
       ),
     );
