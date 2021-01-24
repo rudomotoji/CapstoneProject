@@ -5,6 +5,7 @@ import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/features/contract/request_contract_repo.dart';
 import 'package:capstone_home_doctor/features/contract/request_contract_view.dart';
+import 'package:capstone_home_doctor/features/chat/chat.dart';
 import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/phone_auth.dart';
@@ -191,6 +192,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.INTRO_CONNECT_PERIPHERAL: (context) =>
                 IntroConnectDevice(),
             RoutesHDr.CONNECT_PERIPHERAL: (context) => ConnectPeripheral(),
+            RoutesHDr.CHAT: (context) => ChatScreen(),
           },
           // home: _startScreen,
           home: MainHome(),

@@ -8,4 +8,5 @@ class RoutesHDr {
   static const String CONFIRM_CONTRACT = '/RequestContract';
   static const String INTRO_CONNECT_PERIPHERAL = '/IntroConnectDevice';
   static const String CONNECT_PERIPHERAL = '/ConnectPeripheral';
+  static const String CHAT = '/chat';
 }

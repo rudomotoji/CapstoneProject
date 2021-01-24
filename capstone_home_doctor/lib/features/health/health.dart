@@ -38,16 +38,13 @@ class _HealthState extends State<HealthPage> {
       ProfileTab(),
     ];
     return CupertinoPageScaffold(
-      // navigationBar: CupertinoNavigationBar(
-      //   automaticallyImplyLeading: false,
-      //   middle: Text('asdasdasd'),
-      // ),
       child: DefaultTextStyle(
         // style: CupertinoTheme.of(context)
         //     .textTheme
         //     .textStyle
         //     .copyWith(fontSize: 13),
         style: TextStyle(color: DefaultTheme.BLACK_BUTTON),
+        // style: TextStyle(color: DefaultTheme.GREY_LIGHT),
         child: SafeArea(
           child: Column(
             children: [
