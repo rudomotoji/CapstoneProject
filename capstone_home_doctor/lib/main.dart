@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/features/chat/chat.dart';
 import 'package:capstone_home_doctor/features/contract/confirm_contract_view.dart';
 import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/log_in_view.dart';
@@ -164,6 +165,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
             RoutesHDr.MAIN_HOME: (context) => MainHome(),
             RoutesHDr.CONFIRM_CONTRACT: (context) => ConfirmContract(),
+            RoutesHDr.CHAT: (context) => ChatScreen(),
           },
           // home: _startScreen,
           home: MainHome(),

@@ -6,4 +6,5 @@ class RoutesHDr {
   static const String GENERATE_CONTRACT = '/GenerateContract';
   static const String CONFIRM_LOG_IN = '/ConfirmLogin';
   static const String CONFIRM_CONTRACT = '/ConfirmContract';
+  static const String CHAT = '/chat';
 }

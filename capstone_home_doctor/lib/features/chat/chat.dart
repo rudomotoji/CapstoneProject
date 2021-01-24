@@ -1,55 +1,35 @@
 import 'package:capstone_home_doctor/commons/widgets/full_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {
-  final String receiveID;
-  final String receiveName;
-  ChatScreen({this.receiveID, this.receiveName});
-
-  @override
-  _ChatScreenState createState() =>
-      _ChatScreenState(receiveID: receiveID, receiveName: receiveName);
+  // @override
+  _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final String receiveID;
-  final String receiveName;
-  _ChatScreenState({this.receiveID, this.receiveName});
-
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController scrollController = ScrollController();
-  // FocusNode focusNode = FocusNode();
+  final String id = '153176a9-877a-45ed-bb90-191535b8c820';
+
   bool isDisplaySticker;
   bool isLoading;
-
-  SharedPreferences prefs;
+  String receiveID;
+  String receiveName;
   String chatID;
-  String id;
   var listMessage;
 
   @override
   void initState() {
     super.initState();
-    // focusNode.addListener(onFocusChange);
-
     isDisplaySticker = false;
     isLoading = false;
-
-    setState(() {
-      chatID = "";
-    });
-
-    readLocal();
+    chatID = "";
   }
 
   readLocal() async {
-    prefs = await SharedPreferences.getInstance();
-    id = prefs.getString('id') ?? "";
-
     if (id.hashCode <= receiveID.hashCode) {
       setState(() {
         chatID = '$id-$receiveID';
@@ -60,22 +40,26 @@ class _ChatScreenState extends State<ChatScreen> {
       });
     }
 
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(id)
-        .update({"chattingWith": receiveID});
-  }
+    var docRef = FirebaseFirestore.instance.collection('messages').doc(chatID);
 
-  // onFocusChange() {
-  //   if (focusNode.hasFocus) {
-  //     setState(() {
-  //       isDisplaySticker = false;
-  //     });
-  //   }
-  // }
+    if (docRef == null) {
+      FirebaseFirestore.instance.runTransaction((transaction) async {
+        await transaction.set(docRef, {
+          'user1': {'id': id, 'name': 'vuong', 'image': ''},
+          'user2': {'id': receiveID, 'name': receiveName, 'image': ''},
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> relative = ModalRoute.of(context).settings.arguments;
+    if (relative != null) {
+      receiveID = relative['receiveID'];
+      receiveName = relative['receiveName'];
+      readLocal();
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -104,22 +88,9 @@ class _ChatScreenState extends State<ChatScreen> {
               createInput(),
             ],
           ),
-          // createLoading(),
         ]),
         onWillPop: onPressBack,
       ),
-    );
-  }
-
-  createLoading() {
-    return Positioned(
-      child: isLoading
-          ? CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Colors.lightBlueAccent,
-              ),
-            )
-          : Container(),
     );
   }
 
