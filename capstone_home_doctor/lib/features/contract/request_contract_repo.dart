@@ -1,8 +1,10 @@
+import 'package:capstone_home_doctor/commons/http/contract_api.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:flutter/material.dart';
 
 class RequestContractProvider with ChangeNotifier {
   RequestContractDTO dto;
+  ContractAPI contractAPI;
 
   setMethod({
     RequestContractDTO requestContractDTO,
@@ -16,7 +18,10 @@ class RequestContractProvider with ChangeNotifier {
     return true;
   }
 
-  _makeRequestContract() {}
+  _makeRequestContract(dto) {
+    Map<String, String> dtoToJson = toJson(dto);
+    contractAPI.makeRequestAPI(dtoToJson);
+  }
 
   Map<String, String> toJson(dto) {
     final Map<String, String> data = new Map<String, String>();
