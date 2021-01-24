@@ -8,6 +8,10 @@ class OverviewTab extends StatefulWidget {
 class _OverviewTabState extends State<OverviewTab> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Column(
+      children: <Widget>[
+        Text('Tổng quan'),
+      ],
+    );
   }
 }

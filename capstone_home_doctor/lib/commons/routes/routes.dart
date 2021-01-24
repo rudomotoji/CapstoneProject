@@ -5,5 +5,7 @@ class RoutesHDr {
   static const String REGISTER = '/Register';
   static const String GENERATE_CONTRACT = '/GenerateContract';
   static const String CONFIRM_LOG_IN = '/ConfirmLogin';
-  static const String CONFIRM_CONTRACT = '/ConfirmContract';
+  static const String CONFIRM_CONTRACT = '/RequestContract';
+  static const String INTRO_CONNECT_PERIPHERAL = '/IntroConnectDevice';
+  static const String CONNECT_PERIPHERAL = '/ConnectPeripheral';
 }

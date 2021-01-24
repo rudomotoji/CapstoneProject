@@ -21,7 +21,10 @@ class ButtonHDr extends StatefulWidget {
   final double margin;
   //with button full, we can defined button color and text color
   final Color bgColor;
+  //color of label button
   final Color labelColor;
+  //button in list label position
+  final bool isLabelLeft;
 
   const ButtonHDr({
     Key key,
@@ -34,11 +37,12 @@ class ButtonHDr extends StatefulWidget {
     this.margin,
     this.bgColor,
     this.labelColor,
+    this.isLabelLeft,
   }) : super(key: key);
 
   @override
-  _ButtonHDr createState() => _ButtonHDr(
-      label, image, style, width, height, margin, bgColor, labelColor);
+  _ButtonHDr createState() => _ButtonHDr(label, image, style, width, height,
+      margin, bgColor, labelColor, isLabelLeft);
 }
 
 class _ButtonHDr extends State<ButtonHDr> {
@@ -50,6 +54,7 @@ class _ButtonHDr extends State<ButtonHDr> {
   double _margin;
   Color _bgColor;
   Color _labelColor;
+  bool _isLabelLeft;
 
   @override
   _ButtonHDr(
@@ -61,10 +66,14 @@ class _ButtonHDr extends State<ButtonHDr> {
     this._margin,
     this._bgColor,
     this._labelColor,
+    this._isLabelLeft,
   );
 
   @override
   Widget build(BuildContext context) {
+    if (_isLabelLeft == null) {
+      _isLabelLeft = false;
+    }
     if ((_width == 0 || _width == null) && (_margin == 0 || _margin == null)) {
       _width =
           MediaQuery.of(context).size.width - (DefaultNumeralUI.PADDING * 4);
@@ -124,24 +133,73 @@ class _ButtonHDr extends State<ButtonHDr> {
         break;
     }
     if (_style == BtnStyle.BUTTON_IN_LIST) {
-      return FlatButton(
-        color: DefaultTheme.TRANSPARENT,
-        minWidth: MediaQuery.of(context).size.width,
-        height: _height - 10,
-        onPressed: widget.onTap,
-        padding: EdgeInsets.only(left: 50),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            _label,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE,
-              color: _labelColor,
-            ),
+      if (_image == null) {
+        return FlatButton(
+          color: DefaultTheme.TRANSPARENT,
+          minWidth: MediaQuery.of(context).size.width,
+          height: _height - 10,
+          onPressed: widget.onTap,
+          padding: (_isLabelLeft) ? EdgeInsets.only(left: 50) : null,
+          child: (_isLabelLeft)
+              ? Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    _label,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE,
+                      color: _labelColor,
+                    ),
+                  ),
+                )
+              : Text(
+                  _label,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE,
+                    color: _labelColor,
+                  ),
+                ),
+        );
+      } else {
+        return FlatButton(
+          color: DefaultTheme.TRANSPARENT,
+          minWidth: MediaQuery.of(context).size.width,
+          height: _height - 10,
+          onPressed: widget.onTap,
+          padding: (_isLabelLeft) ? EdgeInsets.only(left: 50) : null,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+              ),
+              SizedBox(
+                width: DefaultNumeralUI.ICON_SIZE_BUTTON,
+                height: DefaultNumeralUI.ICON_SIZE_BUTTON,
+                child: _image,
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+              ),
+              Text(
+                _label,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE,
+                  color: _labelColor,
+                ),
+              ),
+              Spacer(),
+              Image.asset(
+                'assets/images/ic-navigator.png',
+                width: 10,
+                height: 10,
+              ),
+            ],
           ),
-        ),
-      );
+        );
+      }
     }
     if (_style == BtnStyle.BUTTON_IMAGE) {
       return SizedBox(

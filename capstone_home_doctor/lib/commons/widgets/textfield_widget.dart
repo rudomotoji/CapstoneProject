@@ -131,185 +131,260 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
 
     switch (_style) {
       case TFStyle.NO_BORDER:
-        return Row(
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING),
-              width: DefaultNumeralUI.LABEL_TEXTFIELD_WIDTH,
-              height: DefaultNumeralUI.LABEL_TEXTFIELD_HEIGHT,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                '${_label}',
-                style: TextStyle(
-                  fontWeight: DefaultNumeralUI.FONT_WEIGHT_LABEL_TEXTFIELD,
-                  fontSize: DefaultNumeralUI.TEXTFIELD_LABEL_SIZE,
+        return Material(
+          color: DefaultTheme.TRANSPARENT,
+          child: Row(
+            children: [
+              Container(
+                color: DefaultTheme.TRANSPARENT,
+                padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING),
+                width: DefaultNumeralUI.LABEL_TEXTFIELD_WIDTH,
+                height: DefaultNumeralUI.LABEL_TEXTFIELD_HEIGHT,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '${_label}',
+                  style: TextStyle(
+                    fontWeight: DefaultNumeralUI.FONT_WEIGHT_LABEL_TEXTFIELD,
+                    fontSize: DefaultNumeralUI.TEXTFIELD_LABEL_SIZE,
+                  ),
                 ),
               ),
-            ),
-            Flexible(
-              child: TextField(
-                autofocus: true,
-                obscureText:
-                    (_inputType == TFInputType.TF_PASSWORD) ? true : false,
-                keyboardType: (_inputType == TFInputType.TF_NUMBER)
-                    ? TextInputType.number
-                    : (_inputType == TFInputType.TF_EMAIL)
-                        ? TextInputType.emailAddress
-                        : (_inputType == TFInputType.TF_PHONE)
-                            ? TextInputType.phone
-                            : (_inputType == TFInputType.TF_TEXT)
-                                ? TextInputType.text
-                                : null,
-                textInputAction: _keyboardAction,
-                textCapitalization: _capitalStyle,
-                maxLength: _maxLength,
-                buildCounter: (BuildContext context,
-                        {int currentLength, int maxLength, bool isFocused}) =>
-                    null,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: _placeHolder,
-                  contentPadding: EdgeInsets.fromLTRB(
-                      DefaultNumeralUI.PADDING_10,
-                      0,
-                      DefaultNumeralUI.PADDING,
-                      0),
-                  focusedBorder: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
+              Flexible(
+                child: TextField(
+                  autofocus: true,
+                  obscureText:
+                      (_inputType == TFInputType.TF_PASSWORD) ? true : false,
+                  keyboardType: (_inputType == TFInputType.TF_NUMBER)
+                      ? TextInputType.number
+                      : (_inputType == TFInputType.TF_EMAIL)
+                          ? TextInputType.emailAddress
+                          : (_inputType == TFInputType.TF_PHONE)
+                              ? TextInputType.phone
+                              : (_inputType == TFInputType.TF_TEXT)
+                                  ? TextInputType.text
+                                  : null,
+                  textInputAction: _keyboardAction,
+                  textCapitalization: _capitalStyle,
+                  maxLength: _maxLength,
+                  buildCounter: (BuildContext context,
+                          {int currentLength, int maxLength, bool isFocused}) =>
+                      null,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: _placeHolder,
+                    contentPadding: EdgeInsets.fromLTRB(
+                        DefaultNumeralUI.PADDING_10,
+                        0,
+                        DefaultNumeralUI.PADDING,
+                        0),
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                  ),
+                  onChanged: widget.onChange,
+                  controller: _controller,
                 ),
-                onChanged: widget.onChange,
-                controller: _controller,
               ),
-            ),
-          ],
+            ],
+          ),
         );
         break;
       case TFStyle.BORDERED:
-        return Row(
-          children: [
-            if (_isMultipleInRow == false)
-              Padding(padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
-            Padding(padding: EdgeInsets.only(left: 2.5)),
-            Flexible(
-              child: TextField(
-                autofocus: true,
-                obscureText:
-                    (_inputType == TFInputType.TF_PASSWORD) ? true : false,
-                keyboardType: (_inputType == TFInputType.TF_NUMBER)
-                    ? TextInputType.number
-                    : (_inputType == TFInputType.TF_EMAIL)
-                        ? TextInputType.emailAddress
-                        : (_inputType == TFInputType.TF_PHONE)
-                            ? TextInputType.phone
-                            : (_inputType == TFInputType.TF_TEXT)
-                                ? TextInputType.text
-                                : null,
-                textInputAction: _keyboardAction,
-                textCapitalization: _capitalStyle,
-                maxLength: _maxLength,
-                decoration: InputDecoration(
-                  counter: Offstage(),
-                  labelText: _label,
-                  helperText: _helperText,
-                  filled: true,
-                  fillColor: DefaultTheme.GREY_BUTTON.withOpacity(0.8),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.fromLTRB(
-                      DefaultNumeralUI.PADDING, 0, DefaultNumeralUI.PADDING, 0),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(
-                      width: 0.25,
-                      color: DefaultTheme.TRANSPARENT,
+        return Material(
+          child: Row(
+            children: [
+              if (_isMultipleInRow == false)
+                Padding(
+                    padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
+              Padding(padding: EdgeInsets.only(left: 2.5)),
+              Flexible(
+                child: TextField(
+                  autofocus: true,
+                  obscureText:
+                      (_inputType == TFInputType.TF_PASSWORD) ? true : false,
+                  keyboardType: (_inputType == TFInputType.TF_NUMBER)
+                      ? TextInputType.number
+                      : (_inputType == TFInputType.TF_EMAIL)
+                          ? TextInputType.emailAddress
+                          : (_inputType == TFInputType.TF_PHONE)
+                              ? TextInputType.phone
+                              : (_inputType == TFInputType.TF_TEXT)
+                                  ? TextInputType.text
+                                  : null,
+                  textInputAction: _keyboardAction,
+                  textCapitalization: _capitalStyle,
+                  maxLength: _maxLength,
+                  decoration: InputDecoration(
+                    counter: Offstage(),
+                    labelText: _label,
+                    helperText: _helperText,
+                    filled: true,
+                    fillColor: DefaultTheme.GREY_BUTTON.withOpacity(0.8),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.fromLTRB(
+                        DefaultNumeralUI.PADDING,
+                        0,
+                        DefaultNumeralUI.PADDING,
+                        0),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        width: 0.25,
+                        color: DefaultTheme.TRANSPARENT,
+                      ),
                     ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(
-                      width: 0.25,
-                      color: DefaultTheme.TRANSPARENT,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        width: 0.25,
+                        color: DefaultTheme.TRANSPARENT,
+                      ),
                     ),
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
                   ),
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
+                  onChanged: widget.onChange,
+                  controller: _controller,
                 ),
-                onChanged: widget.onChange,
-                controller: _controller,
               ),
-            ),
-            if (_isMultipleInRow == false)
-              Padding(padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
-            Padding(padding: EdgeInsets.only(left: 2.5)),
-          ],
+              if (_isMultipleInRow == false)
+                Padding(
+                    padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
+              Padding(padding: EdgeInsets.only(left: 2.5)),
+            ],
+          ),
         );
         break;
       case TFStyle.TEXT_AREA:
+        return Material(
+          child: Row(
+            children: [
+              if (_isMultipleInRow == false)
+                Padding(
+                    padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
+              Padding(padding: EdgeInsets.only(left: 2.5)),
+              Flexible(
+                child: TextField(
+                  textAlign: TextAlign.left,
+                  expands: true,
+                  maxLines: null,
+                  autofocus: false,
+                  obscureText:
+                      (_inputType == TFInputType.TF_PASSWORD) ? true : false,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: _keyboardAction,
+                  textCapitalization: _capitalStyle,
+                  maxLength: _maxLength,
+                  decoration: InputDecoration(
+                    counter: Offstage(),
+                    labelText: _label,
+                    helperText: _helperText,
+                    filled: true,
+                    fillColor: DefaultTheme.GREY_BUTTON.withOpacity(0.8),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.fromLTRB(
+                        DefaultNumeralUI.PADDING,
+                        0,
+                        DefaultNumeralUI.PADDING,
+                        0),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        width: 0.25,
+                        color: DefaultTheme.TRANSPARENT,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        width: 0.25,
+                        color: DefaultTheme.TRANSPARENT,
+                      ),
+                    ),
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
+                  ),
+                  onChanged: widget.onChange,
+                  controller: _controller,
+                ),
+              ),
+              if (_isMultipleInRow == false)
+                Padding(
+                    padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
+              Padding(padding: EdgeInsets.only(left: 2.5)),
+            ],
+          ),
+        );
         break;
       case TFStyle.UNIT:
-        return Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(
-                  left: DefaultNumeralUI.PADDING,
-                  right: DefaultNumeralUI.PADDING),
-              child: TextField(
-                autofocus: true,
-                textAlign: TextAlign.right,
-                obscureText:
-                    (_inputType == TFInputType.TF_PASSWORD) ? true : false,
-                keyboardType: (_inputType == TFInputType.TF_NUMBER)
-                    ? TextInputType.number
-                    : (_inputType == TFInputType.TF_EMAIL)
-                        ? TextInputType.emailAddress
-                        : (_inputType == TFInputType.TF_PHONE)
-                            ? TextInputType.phone
-                            : (_inputType == TFInputType.TF_TEXT)
-                                ? TextInputType.text
-                                : null,
-                textInputAction: _keyboardAction,
-                textCapitalization: _capitalStyle,
-                maxLength: _maxLength,
-                decoration: InputDecoration(
-                  counter: Offstage(),
-                  hintText: _label,
-                  filled: true,
-                  fillColor: DefaultTheme.GREY_BUTTON.withOpacity(0.8),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.fromLTRB(DefaultNumeralUI.PADDING,
-                      0, DefaultNumeralUI.PADDING * 2 + 10, 0),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(
-                      width: 0.25,
-                      color: DefaultTheme.TRANSPARENT,
+        return Material(
+          child: Stack(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(
+                    left: DefaultNumeralUI.PADDING,
+                    right: DefaultNumeralUI.PADDING),
+                child: TextField(
+                  autofocus: true,
+                  textAlign: TextAlign.right,
+                  obscureText:
+                      (_inputType == TFInputType.TF_PASSWORD) ? true : false,
+                  keyboardType: (_inputType == TFInputType.TF_NUMBER)
+                      ? TextInputType.number
+                      : (_inputType == TFInputType.TF_EMAIL)
+                          ? TextInputType.emailAddress
+                          : (_inputType == TFInputType.TF_PHONE)
+                              ? TextInputType.phone
+                              : (_inputType == TFInputType.TF_TEXT)
+                                  ? TextInputType.text
+                                  : null,
+                  textInputAction: _keyboardAction,
+                  textCapitalization: _capitalStyle,
+                  maxLength: _maxLength,
+                  decoration: InputDecoration(
+                    counter: Offstage(),
+                    hintText: _label,
+                    filled: true,
+                    fillColor: DefaultTheme.GREY_BUTTON.withOpacity(0.8),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.fromLTRB(
+                        DefaultNumeralUI.PADDING,
+                        0,
+                        DefaultNumeralUI.PADDING * 2 + 10,
+                        0),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        width: 0.25,
+                        color: DefaultTheme.TRANSPARENT,
+                      ),
                     ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(
-                      width: 0.25,
-                      color: DefaultTheme.TRANSPARENT,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(
+                        width: 0.25,
+                        color: DefaultTheme.TRANSPARENT,
+                      ),
                     ),
+                    errorBorder: InputBorder.none,
+                    disabledBorder: InputBorder.none,
                   ),
-                  errorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
                 ),
               ),
-            ),
-            Positioned(
-              right: DefaultNumeralUI.PADDING * 2,
-              top: 14,
-              child: Text(
-                _unit,
-                style: TextStyle(
-                  fontWeight: DefaultNumeralUI.FONT_WEIGHT_LABEL_TEXTFIELD,
-                  fontSize: DefaultNumeralUI.TEXTFIELD_LABEL_SIZE,
+              Positioned(
+                right: DefaultNumeralUI.PADDING * 2,
+                top: 14,
+                child: Text(
+                  _unit,
+                  style: TextStyle(
+                    fontWeight: DefaultNumeralUI.FONT_WEIGHT_LABEL_TEXTFIELD,
+                    fontSize: DefaultNumeralUI.TEXTFIELD_LABEL_SIZE,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
         break;
     }

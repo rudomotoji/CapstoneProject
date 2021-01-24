@@ -24,7 +24,7 @@ class _HealthState extends State<HealthPage> {
 
   @override
   Widget build(BuildContext context) {
-    final segmentedControlMaxWidth = 500.0;
+    final segmentedControlMaxWidth = MediaQuery.of(context).size.width - 40;
     final children = <int, Widget>{
       0: Text('Tổng quan'), //overview
       1: Text('Timeline'), //timeline
@@ -47,34 +47,39 @@ class _HealthState extends State<HealthPage> {
         //     .textTheme
         //     .textStyle
         //     .copyWith(fontSize: 13),
-        style: TextStyle(color: DefaultTheme.GREY_LIGHT),
+        style: TextStyle(color: DefaultTheme.BLACK_BUTTON),
         child: SafeArea(
-          child: ListView(
+          child: Column(
             children: [
               HeaderWidget(
                 title: 'Sức khoẻ',
                 isMainView: true,
                 buttonHeaderType: ButtonHeaderType.AVATAR,
               ),
-              const SizedBox(height: 16),
               SizedBox(
+                height: 60,
                 width: segmentedControlMaxWidth,
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(5, 5, 5, 10),
                   child: CupertinoSlidingSegmentedControl<int>(
                     backgroundColor: DefaultTheme.GREY_TOP_TAB_BAR,
-                    thumbColor: Colors.white,
+                    thumbColor: DefaultTheme.WHITE,
                     children: children,
                     onValueChanged: onValueChanged,
                     groupValue: currentSegment,
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                // height: 300,
-                alignment: Alignment.center,
-                child: childrenWidget.elementAt(currentSegment),
+              Expanded(
+                flex: 5,
+                child: ListView(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      child: childrenWidget.elementAt(currentSegment),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

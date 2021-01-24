@@ -8,6 +8,10 @@ class TimelineTab extends StatefulWidget {
 class _TimelineTabState extends State<TimelineTab> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Column(
+      children: <Widget>[
+        Text('Timeline'),
+      ],
+    );
   }
 }

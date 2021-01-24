@@ -3,12 +3,17 @@ import 'dart:io';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
-import 'package:capstone_home_doctor/features/contract/confirm_contract_view.dart';
+import 'package:capstone_home_doctor/features/contract/request_contract_repo.dart';
+import 'package:capstone_home_doctor/features/contract/request_contract_view.dart';
 import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/phone_auth.dart';
+import 'package:capstone_home_doctor/features/peripheral/connect_peripheral_view.dart';
+import 'package:capstone_home_doctor/features/peripheral/intro_connect_view.dart';
 import 'package:capstone_home_doctor/features/register/register_view.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/peripheral_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,10 +42,15 @@ class HomeDoctor extends StatefulWidget {
 }
 
 class _HomeDoctorState extends State<HomeDoctor> {
+  //helper
   final AuthenticateHelper authenHelper = AuthenticateHelper();
+  final PeripheralHelper peripheralHelper = PeripheralHelper();
+  //
   final FirebaseMessaging _fcm = FirebaseMessaging();
   String _token = 'Generate Token';
-  Widget _startScreen = Login();
+  Widget _startScreen = Scaffold(
+    body: Container(),
+  );
 
   Future<dynamic> myBackgroundMessageHandler(
       Map<String, dynamic> message) async {
@@ -84,11 +94,22 @@ class _HomeDoctorState extends State<HomeDoctor> {
     localNotifyManager.show(receiveNotification);
   }
 
+  void _initialServiceHelper() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('AUTHENTICATION')) {
+      authenHelper.innitalAuthen();
+    }
+    if (!prefs.containsKey('IS_PERIPHERALS_CONNECTED')) {
+      peripheralHelper.initialPeripheralChecking();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    _initialServiceHelper();
     authenHelper.isAuthenticated().then((value) {
-      print('value now ${value}');
+      print('value authen now ${value}');
       setState(() {
         if (value) {
           _startScreen = MainHome();
@@ -153,6 +174,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
           ChangeNotifierProvider(
             create: (context) => PhoneAuthDataProvider(),
           ),
+          ChangeNotifierProvider(
+            create: (context) => RequestContractProvider(),
+          ),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -163,7 +187,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.REGISTER: (context) => Register(),
             RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
             RoutesHDr.MAIN_HOME: (context) => MainHome(),
-            RoutesHDr.CONFIRM_CONTRACT: (context) => ConfirmContract(),
+            RoutesHDr.CONFIRM_CONTRACT: (context) => RequestContract(),
+            RoutesHDr.INTRO_CONNECT_PERIPHERAL: (context) =>
+                IntroConnectDevice(),
+            RoutesHDr.CONNECT_PERIPHERAL: (context) => ConnectPeripheral(),
           },
           // home: _startScreen,
           home: MainHome(),

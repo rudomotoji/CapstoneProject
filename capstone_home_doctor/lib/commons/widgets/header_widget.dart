@@ -153,10 +153,6 @@ class _HeaderWidget extends State<HeaderWidget> {
                   InkWell(
                     splashColor: DefaultTheme.TRANSPARENT,
                     highlightColor: DefaultTheme.TRANSPARENT,
-                    // onTap: () {
-                    //   //for personal view nav
-                    //   print('Press avatar');
-                    // },
                     onTap: _onButtonShowModelSheet,
                     child: CircleAvatar(
                       radius: 16,
@@ -200,28 +196,148 @@ class _HeaderWidget extends State<HeaderWidget> {
                 color: Colors.white,
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  //avt here
+                  Padding(
+                    padding: EdgeInsets.only(top: 50),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: CircleAvatar(
+                          radius: 30,
+                          child: ClipOval(
+                            child:
+                                Image.asset('assets/images/avatar-default.jpg'),
+                          ),
+                        ),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(left: 15),
+                            width: MediaQuery.of(context).size.width - 150,
+                            child: Text(
+                              'Nguyễn Văn A',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: DefaultTheme.BLACK,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 15, top: 3),
+                            width: MediaQuery.of(context).size.width - 150,
+                            child: Text(
+                              '090 999 9999',
+                              style: TextStyle(
+                                color: DefaultTheme.GREY_TEXT,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 50),
+                  ),
+                  //
                   Divider(
                     color: DefaultTheme.GREY_TEXT,
                     height: 0.25,
                   ),
                   ButtonHDr(
                     style: BtnStyle.BUTTON_IN_LIST,
-                    labelColor: DefaultTheme.RED_TEXT,
-                    label: 'Đăng xuất',
-                    onTap: () {
-                      _signOut();
-                    },
+                    labelColor: DefaultTheme.BLUE_TEXT,
+                    label: 'Thông tin tài khoản',
+                    isLabelLeft: true,
+                    onTap: () {},
+                  ),
+                  Divider(
+                    color: DefaultTheme.GREY_TEXT,
+                    height: 0.25,
+                  ),
+                  ButtonHDr(
+                    style: BtnStyle.BUTTON_IN_LIST,
+                    labelColor: DefaultTheme.BLUE_TEXT,
+                    label: 'Thiết bị đeo',
+                    isLabelLeft: true,
+                    onTap: () {},
+                  ),
+                  Divider(
+                    color: DefaultTheme.GREY_TEXT,
+                    height: 0.25,
+                  ),
+                  ButtonHDr(
+                    style: BtnStyle.BUTTON_IN_LIST,
+                    labelColor: DefaultTheme.BLUE_TEXT,
+                    label: 'Hợp đồng',
+                    isLabelLeft: true,
+                    onTap: () {},
+                  ),
+                  Divider(
+                    color: DefaultTheme.GREY_TEXT,
+                    height: 0.25,
+                  ),
+                  ButtonHDr(
+                    style: BtnStyle.BUTTON_IN_LIST,
+                    labelColor: DefaultTheme.BLUE_TEXT,
+                    label: 'Gói dịch vụ',
+                    isLabelLeft: true,
+                    onTap: () {},
                   ),
                   Divider(
                     color: DefaultTheme.GREY_TEXT,
                     height: 0.25,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(bottom: 100),
-                  )
+                    padding: EdgeInsets.only(bottom: 50),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Divider(
+                          color: DefaultTheme.GREY_TEXT,
+                          height: 0.25,
+                        ),
+                        ButtonHDr(
+                          style: BtnStyle.BUTTON_IN_LIST,
+                          labelColor: DefaultTheme.RED_TEXT,
+                          label: 'Đóng cửa sổ',
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        Divider(
+                          color: DefaultTheme.GREY_TEXT,
+                          height: 0.25,
+                        ),
+                        ButtonHDr(
+                          style: BtnStyle.BUTTON_IN_LIST,
+                          labelColor: DefaultTheme.RED_TEXT,
+                          label: 'Đăng xuất',
+                          onTap: () {
+                            _signOut();
+                          },
+                        ),
+                        Divider(
+                          color: DefaultTheme.GREY_TEXT,
+                          height: 0.25,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 50),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -50,6 +50,9 @@ dev_dependencies:
   geolocator: ^6.1.13
   signalr_core: ^1.0.8
   barcode_scan: ^2.0.1
+  url_launcher: ^5.7.10
+  flutter_blue: ^0.7.3
+  
 
   agora_rtc_engine: ^3.1.6
   permission_handler: ^5.0.1+1
@@ -83,6 +86,20 @@ flutter:
     - assets/images/ic-navigator.png
     - assets/images/ic-scan-qr.png
     - assets/images/ic-back-home.png
+    - assets/images/ic-connect-p.png
+    - assets/images/ic-heart-rate.png
+    - assets/images/ic-blood-pressure.png
+    - assets/images/ic-spo2.png
+    - assets/images/ic-oxy.png
+    - assets/images/ic-tempurature.png
+    - assets/images/img-device.png
+    - assets/images/img-bluetooth.png
+    - assets/images/ic-contract.png
+    - assets/images/img-amazfit.png
+    - assets/images/img-mi-band.png
+    - assets/images/img-galaxy-fit-e.png
+    - assets/images/ic-choose-date.png
+
 
   
   #   - images/a_dot_burr.jpeg
