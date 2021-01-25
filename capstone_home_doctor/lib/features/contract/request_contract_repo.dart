@@ -14,7 +14,7 @@ class RequestContractProvider with ChangeNotifier {
 
   Future<bool> initial({RequestContractDTO requestContractDTO}) async {
     this.dto = requestContractDTO;
-    _makeRequestContract(dto);
+    await _makeRequestContract(dto);
     return true;
   }
 

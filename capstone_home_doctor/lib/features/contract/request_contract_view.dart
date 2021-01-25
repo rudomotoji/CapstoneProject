@@ -1,13 +1,17 @@
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
+import 'package:capstone_home_doctor/features/contract/doctor_info_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/doctor_info_event.dart';
+import 'package:capstone_home_doctor/features/contract/doctor_info_state.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RequestContract extends StatefulWidget {
   @override
@@ -26,7 +30,7 @@ class _RequestContract extends State<RequestContract>
   DateTime _startDateValue = DateTime.now();
   DateTime _endDateValue = DateTime.now();
   var _noteController = TextEditingController();
-  // _ConfirmContract({})
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -42,6 +46,9 @@ class _RequestContract extends State<RequestContract>
   @override
   Widget build(BuildContext context) {
     String arguments = ModalRoute.of(context).settings.arguments;
+    // String doctorDTOToString = _getDoctorInfo(arguments).toString();
+    // print('doctor fullname ${doctorDTOToString}');
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -65,35 +72,10 @@ class _RequestContract extends State<RequestContract>
                             fontWeight: FontWeight.w600, fontSize: 20),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: DefaultTheme.GREY_BUTTON),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                                EdgeInsets.only(left: 20, top: 20, right: 20),
-                            child: Text(
-                              'Bác sĩ ${arguments}',
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 20, top: 5, bottom: 20, right: 20),
-                            child: Text(
-                              'Làm việc tại Bệnh viện ABC XYZ',
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        ],
-                      ),
+                    BlocProvider(
+                      create: (context) => DoctorInfoBloc()
+                        ..add(DoctorInfoSetIdEvent(id: arguments)),
+                      child: _getDoctorInfo(),
                     ),
                     Padding(
                       padding: EdgeInsets.only(
@@ -254,6 +236,75 @@ class _RequestContract extends State<RequestContract>
     print('HERE IN VIEW: ${reqContractDTO.patientId}');
     print('HERE IN VIEW: ${reqContractDTO.dateStarted}');
     print('HERE IN VIEW: ${reqContractDTO.dateFinished}');
+  }
+
+  //function getDoctorInfo
+  _getDoctorInfo() {
+    return BlocBuilder<DoctorInfoBloc, DoctorInfoState>(
+        builder: (context, state) {
+      if (state is DoctorInfoStateInitial) {
+        print('state initial');
+
+        return Container(
+            margin: EdgeInsets.only(left: 20, right: 20),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: DefaultTheme.GREY_BUTTON),
+            child: Center(child: CircularProgressIndicator()));
+      }
+      if (state is DoctorInfoStateFailure) {
+        return Container(
+          margin: EdgeInsets.only(left: 20, right: 20),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              color: DefaultTheme.GREY_BUTTON),
+          child: Center(
+            child: Text('Failed to find Doctor'),
+          ),
+        );
+      }
+      if (state is DoctorInfoStateSuccess) {
+        if (state.dto == null) {
+          return Container(
+            margin: EdgeInsets.only(left: 20, right: 20),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: DefaultTheme.GREY_BUTTON),
+            child: Center(
+              child: Text('Failed to find Doctor'),
+            ),
+          );
+        }
+      }
+      print('state successful');
+      print(state.props.first.toString());
+      return Container(
+        margin: EdgeInsets.only(left: 20, right: 20),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(6),
+            color: DefaultTheme.GREY_BUTTON),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(left: 20, top: 20, right: 20),
+              child: Text(
+                'Bác sĩ: ',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 20, top: 5, bottom: 20, right: 20),
+              child: Text(
+                'Làm việc tại ',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   void _showDatePickerStart() {
