@@ -65,180 +65,192 @@ class _RequestContract extends State<RequestContract>
     //idDoctor
     String arguments = ModalRoute.of(context).settings.arguments;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              HeaderWidget(
-                title: 'Xác nhận yêu cầu',
-                isMainView: false,
-                buttonHeaderType: ButtonHeaderType.BACK_HOME,
-              ),
-              Expanded(
-                child: ListView(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, bottom: 20, top: 30),
-                      child: Text(
-                        'Thông tin bác sĩ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 20),
-                      ),
-                    ),
-                    BlocProvider(
-                      create: (context) =>
-                          DoctorInfoBloc(doctorAPI: doctorRepository)
-                            ..add(DoctorInfoEventSetId(id: arguments)),
-                      child: _getDoctorInfo(),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 20, right: 20, bottom: 20, top: 50),
-                      child: Text(
-                        'Thông tin hợp đồng',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 20),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 5, left: 20, right: 20),
-                      child: Text(
-                        'Ngày bắt đầu',
-                        style: TextStyle(
-                            color: DefaultTheme.BLACK_BUTTON,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: DefaultTheme.GREY_BUTTON),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(left: 20),
-                          ),
-                          Text(
-                            '${_startDate.split('-')[2]} tháng ${_startDate.split('-')[1]} năm ${_startDate.split('-')[0]}',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w400),
-                          ),
-                          Expanded(
-                            child: ButtonHDr(
-                              label: 'Chọn',
-                              style: BtnStyle.BUTTON_FULL,
-                              image: Image.asset(
-                                  'assets/images/ic-choose-date.png'),
-                              width: 30,
-                              height: 40,
-                              labelColor: DefaultTheme.BLUE_REFERENCE,
-                              bgColor: DefaultTheme.TRANSPARENT,
-                              onTap: () {
-                                _showDatePickerStart();
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: 5, left: 20, right: 20, top: 10),
-                      child: Text(
-                        'Ngày kết thúc',
-                        style: TextStyle(
-                            color: DefaultTheme.BLACK_BUTTON,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: DefaultTheme.GREY_BUTTON),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(left: 20),
-                          ),
-                          Text(
-                            '${_endDate.split('-')[2]} tháng ${_endDate.split('-')[1]} năm ${_endDate.split('-')[0]}',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w400),
-                          ),
-                          Expanded(
-                            child: ButtonHDr(
-                              label: 'Chọn',
-                              style: BtnStyle.BUTTON_FULL,
-                              image: Image.asset(
-                                  'assets/images/ic-choose-date.png'),
-                              width: 30,
-                              height: 40,
-                              labelColor: DefaultTheme.BLUE_REFERENCE,
-                              bgColor: DefaultTheme.TRANSPARENT,
-                              onTap: () {
-                                _showDatePickerEnd();
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: 5, left: 20, right: 20, top: 10),
-                      child: Text(
-                        'Ghi chú',
-                        style: TextStyle(
-                            color: DefaultTheme.BLACK_BUTTON,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16),
-                      ),
-                    ),
-                    Container(
-                      alignment: Alignment.topLeft,
-                      padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                      height: 200,
-                      child: TextFieldHDr(
-                        controller: Provider.of<RequestContractDTOProvider>(
-                                context,
-                                listen: false)
-                            .reasonController,
-                        keyboardAction: TextInputAction.done,
-                        onChange: (text) {
-                          // setState(() {});
-                        },
-                        style: TFStyle.TEXT_AREA,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                      child: ButtonHDr(
-                        style: BtnStyle.BUTTON_BLACK,
-                        label: 'Gửi yêu cầu',
-                        onTap: () => BlocProvider(
-                          create: (context) => RequestContractBloc(
-                              requestContractAPI: requestContractRepository)
-                            ..add(RequestContractEventSend(
-                                dto: requestContractProvider.getProvider)),
-                          child: _doRequestContract(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<DoctorInfoBloc>(
+          create: (BuildContext context) =>
+              DoctorInfoBloc(doctorAPI: doctorRepository),
+        ),
+        BlocProvider<RequestContractBloc>(
+          create: (BuildContext context) => RequestContractBloc(
+              requestContractAPI: requestContractRepository),
+        ),
+      ],
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                HeaderWidget(
+                  title: 'Xác nhận yêu cầu',
+                  isMainView: false,
+                  buttonHeaderType: ButtonHeaderType.BACK_HOME,
+                ),
+                Expanded(
+                  child: ListView(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20, top: 30),
+                        child: Text(
+                          'Thông tin bác sĩ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 20),
                         ),
                       ),
-                    ),
-                  ],
+                      BlocProvider(
+                        create: (context) =>
+                            DoctorInfoBloc(doctorAPI: doctorRepository)
+                              ..add(DoctorInfoEventSetId(id: arguments)),
+                        child: _getDoctorInfo(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20, top: 50),
+                        child: Text(
+                          'Thông tin hợp đồng',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 20),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(bottom: 5, left: 20, right: 20),
+                        child: Text(
+                          'Ngày bắt đầu',
+                          style: TextStyle(
+                              color: DefaultTheme.BLACK_BUTTON,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 20, right: 20),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: DefaultTheme.GREY_BUTTON),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(left: 20),
+                            ),
+                            Text(
+                              '${_startDate.split('-')[2]} tháng ${_startDate.split('-')[1]} năm ${_startDate.split('-')[0]}',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w400),
+                            ),
+                            Expanded(
+                              child: ButtonHDr(
+                                label: 'Chọn',
+                                style: BtnStyle.BUTTON_FULL,
+                                image: Image.asset(
+                                    'assets/images/ic-choose-date.png'),
+                                width: 30,
+                                height: 40,
+                                labelColor: DefaultTheme.BLUE_REFERENCE,
+                                bgColor: DefaultTheme.TRANSPARENT,
+                                onTap: () {
+                                  _showDatePickerStart();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            bottom: 5, left: 20, right: 20, top: 10),
+                        child: Text(
+                          'Ngày kết thúc',
+                          style: TextStyle(
+                              color: DefaultTheme.BLACK_BUTTON,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 20, right: 20),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: DefaultTheme.GREY_BUTTON),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(left: 20),
+                            ),
+                            Text(
+                              '${_endDate.split('-')[2]} tháng ${_endDate.split('-')[1]} năm ${_endDate.split('-')[0]}',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w400),
+                            ),
+                            Expanded(
+                              child: ButtonHDr(
+                                label: 'Chọn',
+                                style: BtnStyle.BUTTON_FULL,
+                                image: Image.asset(
+                                    'assets/images/ic-choose-date.png'),
+                                width: 30,
+                                height: 40,
+                                labelColor: DefaultTheme.BLUE_REFERENCE,
+                                bgColor: DefaultTheme.TRANSPARENT,
+                                onTap: () {
+                                  _showDatePickerEnd();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            bottom: 5, left: 20, right: 20, top: 10),
+                        child: Text(
+                          'Ghi chú',
+                          style: TextStyle(
+                              color: DefaultTheme.BLACK_BUTTON,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        height: 200,
+                        child: TextFieldHDr(
+                          controller: Provider.of<RequestContractDTOProvider>(
+                                  context,
+                                  listen: false)
+                              .reasonController,
+                          keyboardAction: TextInputAction.done,
+                          onChange: (text) {
+                            // setState(() {});
+                          },
+                          style: TFStyle.TEXT_AREA,
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        child: ButtonHDr(
+                            style: BtnStyle.BUTTON_BLACK,
+                            label: 'Gửi yêu cầu',
+                            onTap: () {
+                              BlocProvider.of<RequestContractBloc>(context).add(
+                                  RequestContractEventSend(
+                                      dto:
+                                          requestContractProvider.getProvider));
+                            }),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ]),
+              ]),
+        ),
       ),
     );
   }
@@ -412,82 +424,6 @@ class _RequestContract extends State<RequestContract>
         },
       );
     }
-  }
-
-// //FUNCTION TO REQUEST CONTRACT
-  _doRequestContract() {
-    return BlocBuilder<RequestContractBloc, RequestContractState>(
-        builder: (context, state) {
-      print('${state} AND ${context}');
-      if (state is RequestContractStateLoading) {
-        return _showDialogCustom('loading');
-      }
-      if (state is RequestContractStateFailure) {
-        return _showDialogCustom('failed');
-      }
-      if (state is RequestContractStateSuccess) {
-        if (state.isRequested == false) {
-          return _showDialogCustom('failed');
-        }
-      }
-      return _showDialogCustom('success');
-    });
-  }
-
-  void _makeRequestContract() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return WillPopScope(
-          onWillPop: () {
-            //do for pop
-          },
-          child: Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: DefaultTheme.WHITE.withOpacity(0.6),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 30),
-                      ),
-                      SizedBox(
-                        child: Image.asset('assets/images/loading.gif'),
-                        width: 80,
-                        height: 80,
-                      ),
-                      Spacer(),
-                      Text(
-                        'Đang gửi',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: DefaultTheme.BLACK,
-                            fontSize: 15,
-                            decoration: TextDecoration.none,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 20),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
   }
 
   //FUNCTION GET DOCTOR BY DOCTOR ID
