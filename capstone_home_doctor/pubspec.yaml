@@ -101,6 +101,7 @@ flutter:
     - assets/images/loading.gif
     - assets/images/ic-done.png
     - assets/images/ic-failed.png
+    - assets/images/ic-dropdown.png
 
 
   

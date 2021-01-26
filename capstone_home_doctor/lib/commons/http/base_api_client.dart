@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 class BaseApiClient {
-  static const baseUrl = 'https://5f715f3b64a3720016e6059d.mockapi.io/api/v1';
+  static const baseUrl = 'http://45.76.186.233:8000/api/v1';
+  //static const baseUrl = 'https://5f715f3b64a3720016e6059d.mockapi.io/api/v1';
   Future<http.Response> getApi(String url, String token) async => http.get(
         baseUrl + url,
         headers: {

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
@@ -13,6 +14,7 @@ import 'package:capstone_home_doctor/features/contract/repositories/doctor_repos
 import 'package:capstone_home_doctor/features/contract/repositories/request_contract_repository.dart';
 import 'package:capstone_home_doctor/features/contract/states/doctor_info_state.dart';
 import 'package:capstone_home_doctor/features/contract/states/request_contract_state.dart';
+
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +32,9 @@ class RequestContract extends StatefulWidget {
 class _RequestContract extends State<RequestContract>
     with WidgetsBindingObserver {
   String _startDate = DateTime.now().toString().split(' ')[0];
-  String _endDate = DateTime.now().toString().split(' ')[0];
+  int _dayOfTrackingValue = 7;
+  String _dayOfTrackingView = '1 tuần';
+  var _noteController = TextEditingController();
   String _reason = '';
   RequestContractDTO reqContractDTO;
   DoctorRepository doctorRepository =
@@ -52,18 +56,17 @@ class _RequestContract extends State<RequestContract>
 
   @override
   Widget build(BuildContext context) {
+    //idDoctor
+    String arguments = ModalRoute.of(context).settings.arguments;
+    //
     final requestContractProvider =
         Provider.of<RequestContractDTOProvider>(context, listen: false);
     requestContractProvider.setProvider(
-        patientId: '100',
-        contractCode: 'ABCXYZ',
-        dateCreated: _startDate,
-        fullName: 'FULL Name here',
-        phoneNumber: '0900000999',
-        status: 'pending');
-
-    //idDoctor
-    String arguments = ModalRoute.of(context).settings.arguments;
+        doctorId: int.parse(arguments.trim()),
+        patientId: 2,
+        dateStarted: _startDate,
+        dayOfTracking: _dayOfTrackingValue,
+        reason: _reason);
 
     return MultiBlocProvider(
       providers: [
@@ -164,7 +167,7 @@ class _RequestContract extends State<RequestContract>
                         padding: EdgeInsets.only(
                             bottom: 5, left: 20, right: 20, top: 10),
                         child: Text(
-                          'Ngày kết thúc',
+                          'Theo dõi liên tục',
                           style: TextStyle(
                               color: DefaultTheme.BLACK_BUTTON,
                               fontWeight: FontWeight.w500,
@@ -184,25 +187,27 @@ class _RequestContract extends State<RequestContract>
                               padding: EdgeInsets.only(left: 20),
                             ),
                             Text(
-                              '${_endDate.split('-')[2]} tháng ${_endDate.split('-')[1]} năm ${_endDate.split('-')[0]}',
+                              '${_dayOfTrackingView}',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w400),
                             ),
-                            Expanded(
-                              child: ButtonHDr(
-                                label: 'Chọn',
-                                style: BtnStyle.BUTTON_FULL,
-                                image: Image.asset(
-                                    'assets/images/ic-choose-date.png'),
-                                width: 30,
-                                height: 40,
-                                labelColor: DefaultTheme.BLUE_REFERENCE,
-                                bgColor: DefaultTheme.TRANSPARENT,
-                                onTap: () {
-                                  _showDatePickerEnd();
-                                },
-                              ),
+                            Spacer(),
+                            ButtonHDr(
+                              label: 'Chọn',
+                              style: BtnStyle.BUTTON_FULL,
+                              image:
+                                  Image.asset('assets/images/ic-dropdown.png'),
+                              width: 30,
+                              height: 40,
+                              labelColor: DefaultTheme.BLUE_REFERENCE,
+                              bgColor: DefaultTheme.TRANSPARENT,
+                              onTap: () {
+                                _showDatePickerEnd();
+                              },
                             ),
+                            Padding(
+                              padding: EdgeInsets.only(right: 30),
+                            )
                           ],
                         ),
                       ),
@@ -222,13 +227,12 @@ class _RequestContract extends State<RequestContract>
                         padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                         height: 200,
                         child: TextFieldHDr(
-                          controller: Provider.of<RequestContractDTOProvider>(
-                                  context,
-                                  listen: false)
-                              .reasonController,
+                          controller: _noteController,
                           keyboardAction: TextInputAction.done,
                           onChange: (text) {
-                            // setState(() {});
+                            setState(() {
+                              _reason = text;
+                            });
                           },
                           style: TFStyle.TEXT_AREA,
                         ),
@@ -244,6 +248,11 @@ class _RequestContract extends State<RequestContract>
                                   RequestContractEventSend(
                                       dto:
                                           requestContractProvider.getProvider));
+                              // _showDialogCustom('success');
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  RoutesHDr.MAIN_HOME,
+                                  (Route<dynamic> route) => false);
                             }),
                       ),
                     ],
@@ -255,6 +264,25 @@ class _RequestContract extends State<RequestContract>
     );
   }
 
+  //validate state request
+  _stateRequest() {
+    return BlocBuilder<RequestContractBloc, RequestContractState>(
+        builder: (context, state) {
+      if (state is RequestContractStateLoading) {
+        return _showDialogCustom('loading');
+      }
+      if (state is RequestContractStateFailure) {
+        return _showDialogCustom('failed');
+      }
+      if (state is RequestContractStateSuccess) {
+        if (state.isRequested == false) {
+          return _showDialogCustom('failed');
+        }
+      }
+      return _showDialogCustom('success');
+    });
+  }
+
   //show dialog
   _showDialogCustom(String status) {
     if (status == 'loading') {
@@ -264,6 +292,10 @@ class _RequestContract extends State<RequestContract>
           return WillPopScope(
             onWillPop: () {
               //do for pop
+              if (status != 'loading') {
+                Navigator.of(context).pop();
+              }
+              return null;
             },
             child: Center(
               child: ClipRRect(
@@ -319,7 +351,10 @@ class _RequestContract extends State<RequestContract>
           return WillPopScope(
             onWillPop: () async {
               await Future.delayed(Duration(seconds: 3));
-              Navigator.of(context).pop;
+              Navigator.of(context).pop();
+              Navigator.pushNamedAndRemoveUntil(context, RoutesHDr.MAIN_HOME,
+                  (Route<dynamic> route) => false);
+              return null;
             },
             child: Center(
               child: ClipRRect(
@@ -533,6 +568,21 @@ class _RequestContract extends State<RequestContract>
                 ),
                 child: Column(
                   children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Ngày bắt đầu',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: DefaultTheme.BLACK,
+                            decoration: TextDecoration.none,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
                     Expanded(
                       child: CupertinoDatePicker(
                           mode: CupertinoDatePickerMode.date,
@@ -578,15 +628,73 @@ class _RequestContract extends State<RequestContract>
                 ),
                 child: Column(
                   children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Theo dõi liên tục',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: DefaultTheme.BLACK,
+                            decoration: TextDecoration.none,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
                     Expanded(
-                      child: CupertinoDatePicker(
-                          mode: CupertinoDatePickerMode.date,
-                          minimumDate: DateTime.now(),
-                          onDateTimeChanged: (dateTime) {
-                            setState(() {
-                              _endDate = dateTime.toString().split(' ')[0];
-                            });
-                          }),
+                      child: CupertinoPicker(
+                        itemExtent: 50,
+                        scrollController:
+                            FixedExtentScrollController(initialItem: 0),
+                        children: [
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text('1 tuần'),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text('1 tháng'),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text('3 tháng'),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text('6 tháng'),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text('1 năm'),
+                          ),
+                        ],
+                        onSelectedItemChanged: (value) {
+                          setState(() {
+                            if (value == 0) {
+                              _dayOfTrackingView = '1 tuần';
+                              _dayOfTrackingValue = 7;
+                            }
+                            if (value == 1) {
+                              _dayOfTrackingView = '1 tháng';
+                              _dayOfTrackingValue = 30;
+                            }
+                            if (value == 2) {
+                              _dayOfTrackingView = '3 tháng';
+                              _dayOfTrackingValue = 90;
+                            }
+                            if (value == 3) {
+                              _dayOfTrackingView = '6 tháng';
+                              _dayOfTrackingValue = 180;
+                            }
+                            if (value == 4) {
+                              _dayOfTrackingView = '1 năm';
+                              _dayOfTrackingValue = 365;
+                            }
+                          });
+                        },
+                      ),
                     ),
                     ButtonHDr(
                       style: BtnStyle.BUTTON_BLACK,
