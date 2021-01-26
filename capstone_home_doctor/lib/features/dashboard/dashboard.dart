@@ -55,8 +55,338 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
             _chooseStepContract();
           },
         ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            margin: EdgeInsets.fromLTRB(20, 50, 20, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 23,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          "Trạng thái cá nhân",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontFamily: "",
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      Spacer(),
+                      InkWell(
+                        onTap: () {},
+                        child: Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            margin: EdgeInsets.only(top: 1),
+                            child: Text(
+                              "Xem tổng quan",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                color: DefaultTheme.GREY_TEXT,
+                                fontFamily: "",
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(top: 1),
+                    child: Text(
+                      "Some description here",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: DefaultTheme.GREY_TEXT,
+                        fontFamily: "",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Không có dấu hiệu/Nhịp tim bất thường….",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: DefaultTheme.GREY_TEXT,
+                      fontFamily: "",
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            margin: EdgeInsets.fromLTRB(20, 50, 20, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 23,
+                  margin: EdgeInsets.only(left: 1, right: 2),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          "Lịch theo chu kì",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontFamily: "",
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      Spacer(),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Container(
+                          margin: EdgeInsets.only(top: 5),
+                          child: Text(
+                            "Xem lịch",
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontFamily: "",
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    padding: EdgeInsets.all(16),
+                    margin: EdgeInsets.only(top: 8),
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.GREY_VIEW,
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                    ),
+                    child: Column(
+                      children: [
+                        rowMedicalSchedule('thuốc số 1', '12:00', 'Mỗi ngày'),
+                        rowMedicalSchedule('thuốc số 2', '12:00', 'Mỗi ngày'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topLeft,
+          child: Container(
+            margin: EdgeInsets.fromLTRB(20, 23, 20, 0),
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Lần đo cuối",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: DefaultTheme.GREY_TEXT,
+                      fontFamily: "",
+                      fontWeight: FontWeight.w400,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                rowMonitor(),
+                rowMonitor(),
+              ],
+            ),
+          ),
+        ),
       ],
     ));
+  }
+
+  rowMonitor() {
+    return Container(
+      margin: EdgeInsets.only(top: 8),
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: DefaultTheme.GREY_VIEW,
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            height: 20,
+            margin: EdgeInsets.only(left: 9, top: 6, right: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.GREY_TEXT,
+                    ),
+                    child: Container(),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(left: 13, top: 1),
+                    child: Text(
+                      "Huyết áp",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: DefaultTheme.GREY_TEXT,
+                        fontFamily: "",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+                Spacer(),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Container(
+                    margin: EdgeInsets.only(top: 1),
+                    child: Text(
+                      "12:30",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: DefaultTheme.GREY_TEXT,
+                        fontFamily: "",
+                        fontWeight: FontWeight.w400,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Container(
+              margin: EdgeInsets.only(left: 42, top: 1),
+              child: Text(
+                "120/81 mmHg",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: DefaultTheme.GREY_TEXT,
+                  fontFamily: "",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 22,
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Container(
+              margin: EdgeInsets.only(left: 42),
+              child: Text(
+                "Chi tiết",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: DefaultTheme.GREY_TEXT,
+                  fontFamily: "",
+                  fontWeight: FontWeight.w400,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  rowMedicalSchedule(String nameMedical, String time, String timeLoop) {
+    return Container(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 15,
+            height: 15,
+            margin: EdgeInsets.only(top: 2),
+            decoration: BoxDecoration(
+              color: DefaultTheme.GREY_TEXT,
+            ),
+            child: Container(),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 5),
+            child: Text(
+              nameMedical,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: DefaultTheme.GREY_TEXT,
+                fontFamily: "",
+                fontWeight: FontWeight.w400,
+                fontSize: 15,
+              ),
+            ),
+          ),
+          Spacer(),
+          Container(
+            margin: EdgeInsets.only(right: 5),
+            child: Text(
+              time,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                color: DefaultTheme.GREY_TEXT,
+                fontFamily: "",
+                fontWeight: FontWeight.w400,
+                fontSize: 15,
+              ),
+            ),
+          ),
+          Text(
+            timeLoop,
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: DefaultTheme.GREY_TEXT,
+              fontFamily: "",
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showPopUpConfirmPrivacy(String codeScanned) {

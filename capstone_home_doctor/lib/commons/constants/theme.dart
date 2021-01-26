@@ -5,6 +5,7 @@ class DefaultTheme {
   static final Color BLACK_BUTTON = Color(0xFF303030);
   static final Color WHITE = Color(0xFFFFFFFF);
   static final Color GREY_BUTTON = Color(0xFFEEEFF3);
+  static final Color GREY_VIEW = Color(0xFFEEEFF3);
   static final Color GREY_TEXT = Color(0xFF666A72);
   static final Color GREY_LIGHT = Color(0xFF9BA5B9);
   static final Color BLUE_REFERENCE = Color(0xFF8E96D3);

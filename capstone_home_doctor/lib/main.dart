@@ -158,7 +158,6 @@ class _HomeDoctorState extends State<HomeDoctor> {
       setState(() {
         _token = '$token';
       });
-      print('acctoken: $token');
     });
     // _fcm.subscribeToTopic("");
 
