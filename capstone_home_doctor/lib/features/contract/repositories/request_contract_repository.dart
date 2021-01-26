@@ -10,11 +10,15 @@ class RequestContractRepository extends BaseApiClient {
       : assert(httpClient != null);
   //
   Future<bool> makeRequestContract(RequestContractDTO dto) async {
-    final String url = '/contracts';
+    // final String url = '/contracts';
+    final String url = '/Contracts';
     try {
       final request = await postApi(url, null, dto.toJson());
       if (request.statusCode == 201) {
         return true;
+      }
+      if (request.statusCode == 400) {
+        return false;
       }
       return false;
     } catch (e) {
