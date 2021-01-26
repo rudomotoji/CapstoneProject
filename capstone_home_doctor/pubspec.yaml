@@ -98,6 +98,9 @@ flutter:
     - assets/images/img-mi-band.png
     - assets/images/img-galaxy-fit-e.png
     - assets/images/ic-choose-date.png
+    - assets/images/loading.gif
+    - assets/images/ic-done.png
+    - assets/images/ic-failed.png
 
 
   

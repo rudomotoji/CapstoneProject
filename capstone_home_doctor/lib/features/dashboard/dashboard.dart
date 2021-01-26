@@ -117,6 +117,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                       style: BtnStyle.BUTTON_BLACK,
                       label: 'Đồng ý',
                       onTap: () {
+                        Navigator.of(context).pop();
                         Navigator.pushNamed(context, RoutesHDr.CONFIRM_CONTRACT,
                             arguments: codeScanned);
                       },
@@ -291,6 +292,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     onTap: () async {
                       String codeScanner = await BarcodeScanner.scan();
                       if (codeScanner != null) {
+                        Navigator.of(context).pop();
                         _showPopUpConfirmPrivacy(codeScanner);
                       }
                     },

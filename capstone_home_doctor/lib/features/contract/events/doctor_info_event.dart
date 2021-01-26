@@ -1,0 +1,16 @@
+import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+
+abstract class DoctorInfoEvent extends Equatable {
+  const DoctorInfoEvent();
+}
+
+class DoctorInfoEventSetId extends DoctorInfoEvent {
+  final String id;
+
+  const DoctorInfoEventSetId({@required this.id}) : assert(id != null);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [id];
+}
