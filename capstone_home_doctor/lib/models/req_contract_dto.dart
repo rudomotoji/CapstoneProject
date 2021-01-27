@@ -92,7 +92,7 @@ class RequestContractDTO {
     doctorId = json['doctorId'];
     patientId = json['patientId'];
     dateStarted = json['dateStarted'];
-    dayOfTracking = json['dayOfTracking'];
+    dayOfTracking = json['daysOfTracking'];
     reason = json['reason'];
   }
 
@@ -101,7 +101,7 @@ class RequestContractDTO {
     data['doctorId'] = this.doctorId;
     data['patientId'] = this.patientId;
     data['dateStarted'] = this.dateStarted;
-    data['dayOfTracking'] = this.dayOfTracking;
+    data['daysOfTracking'] = this.dayOfTracking;
     data['reason'] = this.reason;
     return data;
   }

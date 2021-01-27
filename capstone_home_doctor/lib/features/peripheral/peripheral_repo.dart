@@ -300,10 +300,12 @@ class AdapterStateTile extends StatelessWidget {
 
 class ScannedList extends StatelessWidget {
   final ScanResult result;
+  VoidCallback onTap;
 
   ScannedList({
     Key key,
     this.result,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -314,9 +316,8 @@ class ScannedList extends StatelessWidget {
         label: result.device.name,
         height: 80,
         image: Image.asset(_getImageDevice(result.device.name)),
-        onTap: () {
-          // startPhoneAuth();
-        },
+        onTap: this.onTap,
+        // startPhoneAuth();
       );
     } else
       return null;

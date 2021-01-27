@@ -143,15 +143,13 @@ class _VitalSignTabState extends State<VitalSignTab> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 20),
-                    child: Text(
-                      'Hiện tại chưa có thiết bị kết nối',
-                      style: TextStyle(
-                        color: DefaultTheme.GREY_TEXT,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w300,
-                      ),
+                  Spacer(),
+                  Text(
+                    'Hiện tại chưa có thiết bị kết nối',
+                    style: TextStyle(
+                      color: DefaultTheme.GREY_TEXT,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w300,
                     ),
                   ),
                 ],

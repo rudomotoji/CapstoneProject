@@ -145,21 +145,23 @@ class _RequestContract extends State<RequestContract>
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w400),
                             ),
-                            Expanded(
-                              child: ButtonHDr(
-                                label: 'Chọn',
-                                style: BtnStyle.BUTTON_FULL,
-                                image: Image.asset(
-                                    'assets/images/ic-choose-date.png'),
-                                width: 30,
-                                height: 40,
-                                labelColor: DefaultTheme.BLUE_REFERENCE,
-                                bgColor: DefaultTheme.TRANSPARENT,
-                                onTap: () {
-                                  _showDatePickerStart();
-                                },
-                              ),
+                            Spacer(),
+                            ButtonHDr(
+                              label: 'Chọn',
+                              style: BtnStyle.BUTTON_FULL,
+                              image: Image.asset(
+                                  'assets/images/ic-choose-date.png'),
+                              width: 30,
+                              height: 40,
+                              labelColor: DefaultTheme.BLUE_REFERENCE,
+                              bgColor: DefaultTheme.TRANSPARENT,
+                              onTap: () {
+                                _showDatePickerStart();
+                              },
                             ),
+                            Padding(
+                              padding: EdgeInsets.only(right: 10),
+                            )
                           ],
                         ),
                       ),
@@ -206,7 +208,7 @@ class _RequestContract extends State<RequestContract>
                               },
                             ),
                             Padding(
-                              padding: EdgeInsets.only(right: 30),
+                              padding: EdgeInsets.only(right: 10),
                             )
                           ],
                         ),
@@ -225,7 +227,7 @@ class _RequestContract extends State<RequestContract>
                       Container(
                         alignment: Alignment.topLeft,
                         padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                        height: 200,
+                        height: 150,
                         child: TextFieldHDr(
                           controller: _noteController,
                           keyboardAction: TextInputAction.done,

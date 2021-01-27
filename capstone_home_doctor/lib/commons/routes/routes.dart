@@ -9,4 +9,6 @@ class RoutesHDr {
   static const String INTRO_CONNECT_PERIPHERAL = '/IntroConnectDevice';
   static const String CONNECT_PERIPHERAL = '/ConnectPeripheral';
   static const String CHAT = '/chat';
+  static const String MANAGE_CONTRACT = '/ManageContract';
+  static const String PERIPHERAL_SERVICE = '/PeripheralService';
 }

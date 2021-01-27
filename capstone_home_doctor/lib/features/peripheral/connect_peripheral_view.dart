@@ -71,7 +71,17 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                           builder: (c, snapshot) => Column(
                             children: snapshot.data
                                 .map(
-                                  (result) => ScannedList(result: result),
+                                  (result) => ScannedList(
+                                    result: result,
+                                    onTap: () {
+                                      result.device.connect();
+                                      Navigator.pushNamed(
+                                          context, RoutesHDr.PERIPHERAL_SERVICE,
+                                          arguments: {
+                                            'PERIPHERAL_CONNECTED': result
+                                          });
+                                    },
+                                  ),
                                 )
                                 .toList(),
                           ),

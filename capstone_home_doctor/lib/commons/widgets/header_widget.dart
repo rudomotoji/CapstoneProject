@@ -79,7 +79,7 @@ class _HeaderWidget extends State<HeaderWidget> {
             '${_title}',
             style: TextStyle(
               fontSize: 25,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               color: DefaultTheme.BLACK,
             ),
           ),
@@ -96,8 +96,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                     onTap: widget.onTapButton,
                     child: Image.asset(
                       'assets/images/ic-detail.png',
-                      width: 30,
-                      height: 30,
+                      width: 40,
+                      height: 40,
                     ),
                   ),
                 ],
@@ -116,8 +116,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                     onTap: _backToHome,
                     child: Image.asset(
                       'assets/images/ic-back-home.png',
-                      width: 30,
-                      height: 30,
+                      width: 40,
+                      height: 40,
                     ),
                   ),
                 ],
@@ -136,8 +136,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                     onTap: widget.onTapButton,
                     child: Image.asset(
                       'assets/images/ic-new-msg.png',
-                      width: 30,
-                      height: 30,
+                      width: 40,
+                      height: 40,
                     ),
                   ),
                 ],
@@ -190,10 +190,10 @@ class _HeaderWidget extends State<HeaderWidget> {
           return BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.85,
+              height: MediaQuery.of(context).size.height * 0.7,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Colors.white,
+                borderRadius: BorderRadius.circular(33.33),
+                color: DefaultTheme.GREY_VIEW,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -201,7 +201,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                 children: <Widget>[
                   //avt here
                   Padding(
-                    padding: EdgeInsets.only(top: 50),
+                    padding: EdgeInsets.only(top: 30),
                   ),
                   Row(
                     children: [
@@ -220,7 +220,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Container(
-                            padding: EdgeInsets.only(left: 15),
+                            padding: EdgeInsets.only(left: 5),
                             width: MediaQuery.of(context).size.width - 150,
                             child: Text(
                               'Nguyễn Văn A',
@@ -232,7 +232,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.only(left: 15, top: 3),
+                            padding: EdgeInsets.only(left: 5, top: 3),
                             width: MediaQuery.of(context).size.width - 150,
                             child: Text(
                               '090 999 9999',
@@ -246,7 +246,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.only(bottom: 50),
+                    padding: EdgeInsets.only(bottom: 25),
                   ),
                   //
                   Divider(
@@ -280,7 +280,10 @@ class _HeaderWidget extends State<HeaderWidget> {
                     labelColor: DefaultTheme.BLUE_TEXT,
                     label: 'Hợp đồng',
                     isLabelLeft: true,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.pushNamed(context, RoutesHDr.MANAGE_CONTRACT);
+                    },
                   ),
                   Divider(
                     color: DefaultTheme.GREY_TEXT,
@@ -298,7 +301,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                     height: 0.25,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(bottom: 50),
+                    padding: EdgeInsets.only(bottom: 30),
                   ),
                   Expanded(
                     child: Column(
@@ -333,7 +336,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                           height: 0.25,
                         ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 50),
+                          padding: EdgeInsets.only(bottom: 30),
                         ),
                       ],
                     ),

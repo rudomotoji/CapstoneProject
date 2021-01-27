@@ -8,12 +8,14 @@ import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.da
 import 'package:capstone_home_doctor/features/contract/blocs/request_contract_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/request_contract_repository.dart';
+import 'package:capstone_home_doctor/features/contract/views/manage_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
 import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/phone_auth.dart';
 import 'package:capstone_home_doctor/features/peripheral/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/intro_connect_view.dart';
+import 'package:capstone_home_doctor/features/peripheral/peripheral_service_view.dart';
 import 'package:capstone_home_doctor/features/register/register_view.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
@@ -201,7 +203,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(fontFamily: 'SFPro'),
+            // theme: ThemeData(fontFamily: 'SFPro'),
             initialRoute: RoutesHDr.INITIAL_ROUTE,
             routes: {
               RoutesHDr.LOG_IN: (context) => Login(),
@@ -213,6 +215,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
                   IntroConnectDevice(),
               RoutesHDr.CONNECT_PERIPHERAL: (context) => ConnectPeripheral(),
               RoutesHDr.CHAT: (context) => ChatScreen(),
+              RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
+              RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
             },
             // home: _startScreen,
             home: MainHome(),

@@ -104,7 +104,9 @@ class _ButtonHDr extends State<ButtonHDr> {
         break;
       case BtnStyle.BUTTON_TRANSPARENT:
         _bgColor = DefaultTheme.TRANSPARENT;
-        _labelColor = DefaultTheme.BLACK;
+        if (_labelColor == null) {
+          _labelColor = DefaultTheme.BLACK;
+        }
         break;
       case BtnStyle.BUTTON_FULL:
         if (_bgColor == null) {
