@@ -22,6 +22,11 @@ const routes = [
     name: 'license',
     component: () => import("../views/license")
   },
+  {
+    path: '/symptom',
+    name: 'symptom',
+    component: () => import("../views/symptom")
+  },
 ]
 
 Vue.use(VueRouter);

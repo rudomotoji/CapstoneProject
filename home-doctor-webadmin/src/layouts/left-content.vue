@@ -19,7 +19,7 @@
         Danh sách yêu cầu
       </div>
     </router-link>
-    <router-link to="/">
+    <router-link to="/symptom">
       <div class="menuPatientFollowingView">
         <img src="../assets/patient.png" class="bitmapTwoImage" />
         Danh sách triệu chứng
