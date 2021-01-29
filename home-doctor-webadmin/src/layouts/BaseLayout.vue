@@ -1,8 +1,8 @@
 <template>
-  <div class="wrapper">
+  <div>
     <header-default class="header-content" />
     <main class="container">
-      <div class="left-content">
+      <div class="sidebar">
         <slot name="left-content" />
       </div>
       <div class="main-content">
@@ -22,15 +22,10 @@ export default {
 </script>
 
 <style style="scss">
-.wrapper {
-  position: relative;
-  min-height: 100%;
-}
 .container {
-  background-color: cornflowerblue;
-  width: 100%;
-  top: 2em;
-  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  margin-top: 2.5em;
 }
 .header-content {
   top: 0;
@@ -41,15 +36,8 @@ export default {
   position: fixed;
   align-items: "flex-end";
 }
-.left-content {
-  width: 20%;
-  left: 0;
-  position: absolute;
-  height: 100%;
-}
 .main-content {
-  right: 0%;
-  left: 30%;
-  position: fixed;
+  background-color: white;
+  margin-left: 250px;
 }
 </style>
