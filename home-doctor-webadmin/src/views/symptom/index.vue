@@ -11,13 +11,19 @@
           style="margin: 16px"
           >Thêm triệu chứng</el-button
         >
-        <el-table
-          :data="listsymptom"
-          style="width: 100%"
-          @cell-click="getDetailToUpdate"
-        >
+        <el-table :data="listsymptom" style="width: 100%">
           <el-table-column prop="name" label="Tên"> </el-table-column>
           <el-table-column prop="code" label="Code"> </el-table-column>
+          <el-table-column fixed="right" label="">
+            <template slot-scope="scope">
+              <el-button
+                type="text"
+                size="small"
+                @click="getDetailToUpdate(scope.row)"
+                >Cập nhật</el-button
+              >
+            </template>
+          </el-table-column>
         </el-table>
       </template>
     </BaseLayout>
@@ -35,10 +41,10 @@
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button v-if="form == null" type="primary" @click="newsymptom"
+          <el-button v-if="form.id == null" type="primary" @click="newsymptom"
             >Tạo</el-button
           >
-          <el-button v-if="form != null" type="primary" @click="editsymptom"
+          <el-button v-if="form.id != null" type="primary" @click="editsymptom"
             >Cập nhật</el-button
           >
           <el-button @click="closeDialog">Cancel</el-button>
