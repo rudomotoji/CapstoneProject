@@ -1,54 +1,27 @@
 <template>
-  <!-- <div>
-    <h1>Danh mục</h1>
-    <router-link to="/doctor">
-      <div class="menuPatientFollowingView">
-        <img src="../assets/patient.png" class="bitmapTwoImage" />
-        Danh sách bác sĩ
-      </div>
-    </router-link>
-    <router-link to="/license">
-      <div class="menuPatientFollowingView">
-        <img src="../assets/patient.png" class="bitmapTwoImage" />
-        Danh sách gói hợp đồng
-      </div>
-    </router-link>
-    <router-link to="/">
-      <div class="menuPatientFollowingView">
-        <img src="../assets/patient.png" class="bitmapTwoImage" />
-        Danh sách yêu cầu
-      </div>
-    </router-link>
-    <router-link to="/symptom">
-      <div class="menuPatientFollowingView">
-        <img src="../assets/patient.png" class="bitmapTwoImage" />
-        Danh sách triệu chứng
-      </div>
-    </router-link>
-  </div> -->
   <div class="container">
     <div class="control">Menu bar</div>
     <div class="navigation-links">
       <router-link to="/doctor" style="text-decoration: none">
-        <div key="1">
+        <div>
           <img src="../assets/patient.png" class="bitmapTwoImage" />
           Danh sách bác sĩ
         </div>
       </router-link>
       <router-link to="/license" style="text-decoration: none">
-        <div key="2">
+        <div>
           <img src="../assets/patient.png" class="bitmapTwoImage" /> Danh sách
           gói hợp đồng
         </div>
       </router-link>
       <router-link to="/" style="text-decoration: none">
-        <div key="3">
+        <div>
           <img src="../assets/patient.png" class="bitmapTwoImage" /> Danh sách
           yêu cầu
         </div>
       </router-link>
       <router-link to="/symptom" style="text-decoration: none">
-        <div key="4">
+        <div>
           <img src="../assets/patient.png" class="bitmapTwoImage" /> Danh sách
           triệu chứng
         </div>
@@ -75,18 +48,13 @@ export default {
   border: solid #fff;
   border-width: 0 1px 0 0;
   z-index: 999;
-  transition: all 0.5s ease-in-out;
+  text-align: left;
   .control {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100px;
     margin-bottom: 10px;
-    i {
-      font-size: 2rem;
-      cursor: pointer;
-      transition: all 0.5s ease-in-out;
-    }
   }
   .navigation-links {
     padding-top: 14px;

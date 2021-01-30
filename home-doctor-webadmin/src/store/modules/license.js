@@ -30,7 +30,6 @@ const actions = {
         });
     },
     updateLicense({ commit, dispatch }, license) {
-        console.log(license)
         licenseRepository.update(license, license.id).then(response => {
             if (response.status === 200) {
                 dispatch('getListLicense')

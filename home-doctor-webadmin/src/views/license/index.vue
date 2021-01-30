@@ -5,23 +5,27 @@
         <LeftContent />
       </template>
       <template v-slot:main-content>
-        <el-button type="primary" @click="dialogVisible = true"
+        <el-button
+          type="primary"
+          @click="dialogVisible = true"
+          style="margin: 16px"
           >Thêm gói</el-button
         >
-        <el-table
-          :data="listLicense"
-          style="width: 100%"
-          @cell-click="getDetailToUpdate"
-        >
+        <el-table :data="listLicense" style="width: 100%">
           <el-table-column prop="name" label="Tên"> </el-table-column>
           <el-table-column prop="price" label="Giá"> </el-table-column>
           <el-table-column prop="type" label="Loại"></el-table-column>
           <el-table-column prop="description" label="Mô tả"></el-table-column>
-          <!-- <el-table-column fixed="right" label="">
-            <template>
-              <el-button type="text" size="small">Cập nhật</el-button>
+          <el-table-column fixed="right" label="">
+            <template slot-scope="scope">
+              <el-button
+                type="text"
+                size="small"
+                @click="getDetailToUpdate(scope.row)"
+                >Cập nhật</el-button
+              >
             </template>
-          </el-table-column> -->
+          </el-table-column>
         </el-table>
       </template>
     </BaseLayout>
@@ -40,8 +44,8 @@
         </el-form-item>
         <el-form-item label="Loại">
           <el-radio-group v-model="form.type">
-            <el-radio label="Bác sĩ"></el-radio>
-            <el-radio label="Bệnh nhân"></el-radio>
+            <el-radio label="1">Bác sĩ</el-radio>
+            <el-radio label="2">Bệnh nhân</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="Mô tả">
@@ -49,10 +53,10 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button v-if="form == null" type="primary" @click="newLicense"
+          <el-button v-if="form.id == null" type="primary" @click="newLicense"
             >Tạo</el-button
           >
-          <el-button v-if="form != null" type="primary" @click="editLicense"
+          <el-button v-if="form.id != null" type="primary" @click="editLicense"
             >Cập nhật</el-button
           >
           <el-button @click="closeDialog">Cancel</el-button>

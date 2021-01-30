@@ -5,7 +5,10 @@
         <LeftContent />
       </template>
       <template v-slot:main-content>
-        <el-button type="primary" @click="dialogVisible = true"
+        <el-button
+          type="primary"
+          @click="dialogVisible = true"
+          style="margin: 16px"
           >Thêm triệu chứng</el-button
         >
         <el-table
@@ -14,7 +17,7 @@
           @cell-click="getDetailToUpdate"
         >
           <el-table-column prop="name" label="Tên"> </el-table-column>
-          <el-table-column prop="code" label="Giá"> </el-table-column>
+          <el-table-column prop="code" label="Code"> </el-table-column>
         </el-table>
       </template>
     </BaseLayout>

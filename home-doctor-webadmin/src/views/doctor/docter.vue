@@ -18,9 +18,9 @@
           </el-table-column>
           <el-table-column prop="phone" label="SĐT"> </el-table-column>
           <el-table-column fixed="right" label="Operations" width="120">
-            <template>
+            <template slot-scope="scope">
               <router-link
-                :to="{ name: 'doctor-detail', param: { docterID: 1 } }"
+                :to="{ name: 'doctor-detail', params: { doctorID: scope.row } }"
               >
                 <el-button type="text" size="small">Detail</el-button>
               </router-link>
