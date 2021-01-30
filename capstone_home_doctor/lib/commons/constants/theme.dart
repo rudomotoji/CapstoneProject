@@ -14,4 +14,7 @@ class DefaultTheme {
   static final Color GREY_TOP_TAB_BAR = Color(0xFFBEC1C9);
   static final Color RED_TEXT = Color(0xFFFF0A0A);
   static final Color BLUE_TEXT = Color(0xFF0A7AFF);
+  static final Color GRADIENT_1 = Color(0xFF27DE97);
+  static final Color GRADIENT_2 = Color(0xFF0D63CB);
+  static final Color RED_CALENDAR = Color(0xFFF5233C);
 }

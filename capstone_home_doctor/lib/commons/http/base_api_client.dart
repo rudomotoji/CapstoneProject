@@ -13,6 +13,7 @@ class BaseApiClient {
               token == null ? null : "Bearer ${token}"
         },
       );
+
   Future<http.Response> postApi(String url, String token, dynamic body) async {
     _removeBodyNullValues(body);
     return http.post(
