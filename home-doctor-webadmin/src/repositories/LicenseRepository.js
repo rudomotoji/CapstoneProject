@@ -3,31 +3,33 @@ import request from '../utils/request.js'
 export default {
     async getList() {
         return await request({
-            url: `license`,
+            url: `Licenses?status=active`,
             method: 'get'
         })
     },
     async create(license) {
         return await request({
-            url: `license`,
+            url: `Licenses`,
             method: 'post',
-            data: {
+            params: {
                 "name": license.name,
                 "price": license.price,
-                "type": license.type,
+                "days": license.days,
                 "description": license.description
             }
         })
     },
-    async update(license, licenseID) {
+    async update(license) {
         return await request({
-            url: `license/${licenseID}`,
+            url: `Licenses`,
             method: 'put',
             data: {
+                "licenseId": license.licenseId,
                 "name": license.name,
                 "price": license.price,
-                "type": license.type,
-                "description": license.description
+                "days": license.days,
+                "description": license.description,
+                "status": license.status
             }
         })
     },

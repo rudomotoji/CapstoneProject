@@ -13,8 +13,9 @@
         >
         <el-table :data="listLicense" style="width: 100%">
           <el-table-column prop="name" label="Tên"> </el-table-column>
+          <el-table-column prop="days" label="Số ngày"> </el-table-column>
           <el-table-column prop="price" label="Giá"> </el-table-column>
-          <el-table-column prop="type" label="Loại"></el-table-column>
+          <!-- <el-table-column prop="type" label="Loại"></el-table-column> -->
           <el-table-column prop="description" label="Mô tả"></el-table-column>
           <el-table-column fixed="right" label="">
             <template slot-scope="scope">
@@ -39,24 +40,33 @@
         <el-form-item label="Tên">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
+        <el-form-item label="Số ngày">
+          <el-input type="number" v-model="form.days"></el-input>
+        </el-form-item>
         <el-form-item label="Giá">
           <el-input type="number" v-model="form.price"></el-input>
         </el-form-item>
-        <el-form-item label="Loại">
+        <!-- <el-form-item label="Loại">
           <el-radio-group v-model="form.type">
             <el-radio label="1">Bác sĩ</el-radio>
             <el-radio label="2">Bệnh nhân</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="Mô tả">
           <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
 
         <el-form-item>
-          <el-button v-if="form.id == null" type="primary" @click="newLicense"
+          <el-button
+            v-if="form.licenseId == null || form.licenseId <= 0"
+            type="primary"
+            @click="newLicense"
             >Tạo</el-button
           >
-          <el-button v-if="form.id != null" type="primary" @click="editLicense"
+          <el-button
+            v-if="form.licenseId > 0"
+            type="primary"
+            @click="editLicense"
             >Cập nhật</el-button
           >
           <el-button @click="closeDialog">Cancel</el-button>
@@ -108,9 +118,9 @@ export default {
     },
     getDetailToUpdate(event) {
       this.form = {
-        id: event.id,
+        licenseId: event.licenseId,
         name: event.name,
-        type: event.type,
+        days: event.days,
         description: event.description,
         price: event.price,
       };

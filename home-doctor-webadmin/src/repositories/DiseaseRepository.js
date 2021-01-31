@@ -3,27 +3,27 @@ import request from '../utils/request.js'
 export default {
     async getList() {
         return await request({
-            url: `symptom`,
+            url: `Diseases`,
             method: 'get'
         })
     },
-    async create(symptom) {
+    async create(diseases) {
         return await request({
-            url: `symptom`,
+            url: `Diseases`,
             method: 'post',
             data: {
-                name: symptom.name,
-                code: symptom.code
+                name: diseases.name,
+                diseaseId: diseases.diseaseId
             }
         })
     },
-    async update(symptom) {
+    async update(diseases) {
         return await request({
-            url: `symptom/${symptom.id}`,
+            url: `Diseases/${diseases.id}`,
             method: 'put',
             data: {
-                name: symptom.name,
-                code: symptom.code
+                name: diseases.name,
+                diseaseId: diseases.diseaseId
             }
         })
     },

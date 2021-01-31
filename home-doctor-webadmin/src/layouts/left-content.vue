@@ -20,7 +20,7 @@
           yêu cầu
         </div>
       </router-link>
-      <router-link to="/symptom" style="text-decoration: none">
+      <router-link to="/disease" style="text-decoration: none">
         <div>
           <img src="../assets/patient.png" class="bitmapTwoImage" /> Danh sách
           triệu chứng

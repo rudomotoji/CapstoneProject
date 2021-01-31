@@ -23,9 +23,9 @@ const routes = [
     component: () => import("../views/license")
   },
   {
-    path: '/symptom',
-    name: 'symptom',
-    component: () => import("../views/symptom")
+    path: '/disease',
+    name: 'disease',
+    component: () => import("../views/disease")
   },
 ]
 

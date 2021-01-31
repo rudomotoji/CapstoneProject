@@ -21,7 +21,13 @@ const actions = {
         });
     },
     createLicense({ commit, dispatch }, license) {
-        licenseRepository.create(license).then(response => {
+        let param = {
+            "name": license.name,
+            "days": parseInt(license.days),
+            "description": license.description,
+            "price": parseInt(license.price),
+        };
+        licenseRepository.create(param).then(response => {
             if (response.status === 201) {
                 dispatch('getListLicense')
             } else {
@@ -30,7 +36,14 @@ const actions = {
         });
     },
     updateLicense({ commit, dispatch }, license) {
-        licenseRepository.update(license, license.id).then(response => {
+        let param = {
+            "licenseId": license.licenseId,
+            "name": license.name,
+            "days": parseInt(license.days),
+            "description": license.description,
+            "price": parseInt(license.price),
+        };
+        licenseRepository.update(param).then(response => {
             if (response.status === 200) {
                 dispatch('getListLicense')
             } else {

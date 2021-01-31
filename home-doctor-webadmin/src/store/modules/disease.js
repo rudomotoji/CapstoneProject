@@ -1,18 +1,17 @@
 import { RepositoryFactory } from '../../repositories/RepositoryFactory'
 // import router from '../../router'
-
-const symptomRepository = RepositoryFactory.get('symptomRepository')
+const diseaseRepository = RepositoryFactory.get('diseaseRepository')
 
 const state = () => ({
-    listsymptom: [],
+    listDiseases: [],
     detail: {},
 })
 const getters = {
 }
 
 const actions = {
-    getListSymptom({ commit }) {
-        symptomRepository.getList().then(response => {
+    getListDisease({ commit }) {
+        diseaseRepository.getList().then(response => {
             if (response.status === 200) {
                 commit('getAllSuccess', response.data)
             } else {
@@ -20,19 +19,19 @@ const actions = {
             }
         });
     },
-    createsymptom({ commit, dispatch }, symptom) {
-        symptomRepository.create(symptom).then(response => {
+    createDisease({ commit, dispatch }, disease) {
+        diseaseRepository.create(disease).then(response => {
             if (response.status === 201) {
-                dispatch('getListSymptom')
+                dispatch('getListDiseases')
             } else {
                 commit('failure')
             }
         });
     },
-    updatesymptom({ commit, dispatch }, symptom) {
-        symptomRepository.update(symptom).then(response => {
+    updateDisease({ commit, dispatch }, disease) {
+        diseaseRepository.update(disease).then(response => {
             if (response.status === 200) {
-                dispatch('getListSymptom')
+                dispatch('getListDiseases')
             } else {
                 commit('failure')
             }
@@ -42,7 +41,7 @@ const actions = {
 
 const mutations = {
     getAllSuccess(state, data) {
-        state.listsymptom = data
+        state.listDiseases = data
     },
 }
 

@@ -1,10 +1,11 @@
 import axios from 'axios'
 import { getToken } from './cookie'
 
-const baseDomain = 'https://6011351d91905e0017be46ed.mockapi.io/'
-// const versionAPI = ''
+// const baseDomain = 'https://6011351d91905e0017be46ed.mockapi.io/'
+const baseDomain = 'http://45.76.186.233:8000/api/'
+const versionAPI = 'v1'
 
-const baseUrl = `${baseDomain}`
+const baseUrl = `${baseDomain + versionAPI}/`
 const requestTimeout = 20000
 const headers = ''
 

@@ -11,9 +11,9 @@
           style="margin: 16px"
           >Thêm triệu chứng</el-button
         >
-        <el-table :data="listsymptom" style="width: 100%">
+        <el-table :data="listDiseases" style="width: 100%">
+          <el-table-column prop="diseaseId" label="Mã"> </el-table-column>
           <el-table-column prop="name" label="Tên"> </el-table-column>
-          <el-table-column prop="code" label="Code"> </el-table-column>
           <el-table-column fixed="right" label="">
             <template slot-scope="scope">
               <el-button
@@ -35,16 +35,22 @@
     >
       <el-form ref="form" :model="form">
         <el-form-item label="Mã">
-          <el-input v-model="form.code"></el-input>
+          <el-input v-model="form.diseaseId"></el-input>
         </el-form-item>
         <el-form-item label="Tên">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button v-if="form.id == null" type="primary" @click="newsymptom"
+          <el-button
+            v-if="form.diseaseId == null"
+            type="primary"
+            @click="newDisease"
             >Tạo</el-button
           >
-          <el-button v-if="form.id != null" type="primary" @click="editsymptom"
+          <el-button
+            v-if="form.diseaseId != null"
+            type="primary"
+            @click="editDisease"
             >Cập nhật</el-button
           >
           <el-button @click="closeDialog">Cancel</el-button>
@@ -60,13 +66,13 @@ import LeftContent from "../../layouts/left-content";
 import { mapActions, mapState } from "vuex";
 
 export default {
-  name: "symptom",
+  name: "disease",
   components: {
     LeftContent,
     BaseLayout,
   },
   mounted() {
-    this.getListSymptom();
+    this.getListDisease();
   },
   data() {
     return {
@@ -75,22 +81,22 @@ export default {
     };
   },
   computed: {
-    ...mapState("symptom", ["listsymptom"]),
+    ...mapState("disease", ["listDiseases"]),
   },
   methods: {
-    ...mapActions("symptom", [
-      "getListSymptom",
-      "createsymptom",
-      "updatesymptom",
+    ...mapActions("disease", [
+      "getListDisease",
+      "createDisease",
+      "updateDisease",
     ]),
-    newsymptom() {
+    newDisease() {
       this.dialogVisible = false;
-      this.createsymptom(this.form);
+      this.createDisease(this.form);
       this.form = {};
     },
-    editsymptom() {
+    editDisease() {
       this.dialogVisible = false;
-      this.updatesymptom(this.form);
+      this.updateDisease(this.form);
       this.form = {};
     },
     closeDialog() {
@@ -99,9 +105,8 @@ export default {
     },
     getDetailToUpdate(event) {
       this.form = {
-        id: event.id,
         name: event.name,
-        code: event.code,
+        diseaseId: event.diseaseId,
       };
       this.dialogVisible = true;
     },
