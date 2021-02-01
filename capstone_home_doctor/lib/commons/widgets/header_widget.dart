@@ -79,7 +79,7 @@ class _HeaderWidget extends State<HeaderWidget> {
             '${_title}',
             style: TextStyle(
               fontSize: 25,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               color: DefaultTheme.BLACK,
             ),
           ),
@@ -190,9 +190,9 @@ class _HeaderWidget extends State<HeaderWidget> {
           return BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.7,
+              height: MediaQuery.of(context).size.height * 0.8,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(33.33),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
                 color: DefaultTheme.GREY_VIEW,
               ),
               child: Column(
@@ -251,7 +251,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                   //
                   Divider(
                     color: DefaultTheme.GREY_TEXT,
-                    height: 0.25,
+                    height: 0.1,
                   ),
                   ButtonHDr(
                     style: BtnStyle.BUTTON_IN_LIST,
@@ -262,7 +262,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                   ),
                   Divider(
                     color: DefaultTheme.GREY_TEXT,
-                    height: 0.25,
+                    height: 0.1,
                   ),
                   ButtonHDr(
                     style: BtnStyle.BUTTON_IN_LIST,
@@ -273,7 +273,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                   ),
                   Divider(
                     color: DefaultTheme.GREY_TEXT,
-                    height: 0.25,
+                    height: 0.1,
                   ),
                   ButtonHDr(
                     style: BtnStyle.BUTTON_IN_LIST,
@@ -287,7 +287,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                   ),
                   Divider(
                     color: DefaultTheme.GREY_TEXT,
-                    height: 0.25,
+                    height: 0.1,
                   ),
                   ButtonHDr(
                     style: BtnStyle.BUTTON_IN_LIST,
@@ -298,7 +298,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                   ),
                   Divider(
                     color: DefaultTheme.GREY_TEXT,
-                    height: 0.25,
+                    height: 0.1,
                   ),
                   Padding(
                     padding: EdgeInsets.only(bottom: 30),
@@ -309,7 +309,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                       children: <Widget>[
                         Divider(
                           color: DefaultTheme.GREY_TEXT,
-                          height: 0.25,
+                          height: 0.1,
                         ),
                         ButtonHDr(
                           style: BtnStyle.BUTTON_IN_LIST,
@@ -321,7 +321,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                         ),
                         Divider(
                           color: DefaultTheme.GREY_TEXT,
-                          height: 0.25,
+                          height: 0.1,
                         ),
                         ButtonHDr(
                           style: BtnStyle.BUTTON_IN_LIST,
@@ -333,7 +333,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                         ),
                         Divider(
                           color: DefaultTheme.GREY_TEXT,
-                          height: 0.25,
+                          height: 0.1,
                         ),
                         Padding(
                           padding: EdgeInsets.only(bottom: 30),

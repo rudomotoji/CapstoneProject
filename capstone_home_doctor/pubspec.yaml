@@ -102,6 +102,11 @@ flutter:
     - assets/images/ic-done.png
     - assets/images/ic-failed.png
     - assets/images/ic-dropdown.png
+    - assets/images/ic-id.png
+    - assets/images/ic-contract-empty.png
+    - assets/images/ic-dot.png
+    - assets/images/ic-close.png
+    - assets/images/ic-find.png
 
 
   

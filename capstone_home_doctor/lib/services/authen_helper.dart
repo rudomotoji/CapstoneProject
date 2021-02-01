@@ -8,7 +8,8 @@ class AuthenticateHelper {
 
   Future<void> updateAuth(bool isAuthen) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('AUTHENTICATION')) {
+    if (!prefs.containsKey('AUTHENTICATION') ||
+        prefs.getBool('AUTHENTICATION') == null) {
       innitalAuthen();
     }
     prefs.setBool('AUTHENTICATION', isAuthen);
@@ -16,7 +17,8 @@ class AuthenticateHelper {
 
   Future<bool> isAuthenticated() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('AUTHENTICATION')) {
+    if (!prefs.containsKey('AUTHENTICATION') ||
+        prefs.getBool('AUTHENTICATION') == null) {
       innitalAuthen();
     }
     return prefs.getBool('AUTHENTICATION');
