@@ -35,6 +35,12 @@ class RequestContractDTO {
     data['note'] = this.note;
     return data;
   }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return '${doctorId} - ${diseaseIds}';
+  }
 }
 
 class RequestContractDTOProvider extends ChangeNotifier {

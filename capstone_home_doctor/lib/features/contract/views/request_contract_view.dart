@@ -12,6 +12,7 @@ import 'package:capstone_home_doctor/commons/widgets/multiple_select_tag/multi_s
 import 'package:capstone_home_doctor/commons/widgets/multiple_select_tag/multi_select_list_type.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
+
 import 'package:capstone_home_doctor/features/contract/blocs/disease_list_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/events/contract_request_event.dart';
@@ -69,6 +70,18 @@ class _RequestContract extends State<RequestContract>
   //
   DateValidator _dateValidator = DateValidator();
   //
+
+  //view to move next
+  String _dname = '';
+  String _dplace = '';
+  String _dSdt = '';
+  String _pname = '';
+  String _pSdt = '';
+  String _pBirthdate = '';
+  String _pAdd = '';
+  String _dEmail = '';
+  String _pGender = '';
+  //List<DiseaseDTO> _listDiseaseView = [];
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -100,6 +113,23 @@ class _RequestContract extends State<RequestContract>
         note: _note,
         diseaseIds: _diseaseIds);
 
+    final rContractViewProvider =
+        Provider.of<RContractProvider>(context, listen: false);
+    rContractViewProvider.setProvider(
+        dname: _dname,
+        dplace: _dplace,
+        dSdt: _dSdt,
+        dEmail: _dEmail,
+        pname: _pname,
+        pSdt: _pSdt,
+        diseases: _listDiseaseSelected,
+        duration: _dayOfTrackingView,
+        note: _note,
+        pGender: _pGender,
+        pAdd: _pAdd,
+        pBirthdate: _pBirthdate,
+        sDate: _startDate);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<DoctorInfoBloc>(
@@ -111,11 +141,11 @@ class _RequestContract extends State<RequestContract>
               requestContractAPI: requestContractRepository),
         ),
         BlocProvider<DiseaseListBloc>(
-          create: (BuildContext context3) =>
+          create: (BuildContext context) =>
               DiseaseListBloc(diseaseRepository: diseaseRepository),
         ),
         BlocProvider<PatientBloc>(
-          create: (BuildContext context4) =>
+          create: (BuildContext context) =>
               PatientBloc(patientRepository: patientRepository),
         ),
       ],
@@ -295,25 +325,28 @@ class _RequestContract extends State<RequestContract>
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(
-                            left: 20, right: 20, bottom: 20, top: 30),
-                        child: ButtonHDr(
-                            style: BtnStyle.BUTTON_BLACK,
-                            label: 'Gửi yêu cầu',
+                          padding: EdgeInsets.only(
+                              left: 20, right: 20, bottom: 20, top: 30),
+                          child: ButtonHDr(
+                            label: 'Tiếp theo',
                             onTap: () {
-                              _createRequest(
-                                  requestContractProvider.getProvider);
-                              // BlocProvider.of<RequestContractBloc>(context).add(
-                              //     RequestContractEventSend(
-                              //         dto:
-                              //             requestContractProvider.getProvider));
-                              // _showDialogCustom('success');
-                              // Navigator.pushNamedAndRemoveUntil(
-                              //     context,
-                              //     RoutesHDr.MAIN_HOME,
-                              //     (Route<dynamic> route) => false);
-                            }),
-                      ),
+                              // bool _isSend1st = false;
+                              // if (_isSend1st) {
+                              //   _views.clear();
+                              // }
+                              // _views.add(_startDate);
+                              // _views.add(_listDiseaseSelected);
+                              // _isSend1st = true;
+                              Navigator.of(context).pushNamed(
+                                  RoutesHDr.CONFIRM_CONTRACT_VIEW,
+                                  arguments: {
+                                    'REQUEST_OBJ':
+                                        requestContractProvider.getProvider,
+                                    'VIEWS_OBJ':
+                                        rContractViewProvider.getRProvider,
+                                  });
+                            },
+                          )),
                     ],
                   ),
                 ),
@@ -323,29 +356,34 @@ class _RequestContract extends State<RequestContract>
     );
   }
 
-  _createRequest(contract) {
-    BlocProvider.of<RequestContractBloc>(context)
-        .add(RequestContractEventSend(dto: contract));
-    BlocBuilder<RequestContractBloc, RequestContractState>(
-        builder: (context2, state2) {
-      if (state2 is RequestContractEventSend) {
-        if (state2 is RequestContractStateLoading) {
-          print('LOADING');
-        }
-        if (state2 is RequestContractStateFailure) {
-          print('FAILED');
-        }
-        if (state2 is RequestContractStateSuccess) {
-          if (state2.isRequested == false) {
-            print('FAILED');
-          }
-        }
-      }
-      Navigator.pushNamedAndRemoveUntil(
-          context, RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
-      return null;
-    });
-  }
+  // _createRequest(contract) {
+  //   return BlocProvider(
+  //     create: (context2) =>
+  //         RequestContractBloc(requestContractAPI: requestContractRepository)
+  //           ..add(RequestContractEventSend(dto: contract)),
+  //     child: BlocBuilder<RequestContractBloc, RequestContractState>(
+  //       builder: (context2, state2) {
+  //         if (state2 is RequestContractStateLoading) {
+  //           print('LOADING');
+  //         }
+  //         if (state2 is RequestContractStateFailure) {
+  //           print('FAILURE');
+  //         }
+  //         if (state2 is RequestContractStateSuccess) {
+  //           print('SUCCESS');
+  //         }
+  //         return ButtonHDr(
+  //           label: 'Gửi yêu cầu',
+  //           style: BtnStyle.BUTTON_BLACK,
+  //           onTap: () {
+  //             Navigator.pushNamedAndRemoveUntil(context, RoutesHDr.MAIN_HOME,
+  //                 (Route<dynamic> route) => false);
+  //           },
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   //make patient information
   _makePatientInfo() {
@@ -419,11 +457,21 @@ class _RequestContract extends State<RequestContract>
                   String _gender = '';
                   if (state4.dto.gender == 'Male') {
                     _gender = 'Ông';
+                    _pGender = 'Nam';
                   }
                   if (state4.dto.gender == 'Female') {
                     _gender = 'Bà';
+                    _pGender = 'Nữ';
                   }
+                  // _views.add(state4.dto.gender);
+                  // _views.add(state4.dto.fullName);
+                  // _views.add(state4.dto.dateOfBirth);
+                  // _views.add(state4.dto.address);
 
+                  _pname = state4.dto.fullName;
+                  _pSdt = state4.dto.phoneNumber;
+                  _pBirthdate = state4.dto.dateOfBirth;
+                  _pAdd = state4.dto.address;
                   return Container(
                     padding: EdgeInsets.only(
                         top: 20, bottom: 20, left: 20, right: 20),
@@ -682,7 +730,9 @@ class _RequestContract extends State<RequestContract>
                       ),
                       items: _itemsView,
                       onConfirm: (values) {
-                        _listDiseaseSelected = values;
+                        setState(() {
+                          _listDiseaseSelected = values;
+                        });
                         //  print('VALUES: ${values.toString()}');
                         String _idDisease = '';
                         for (var i = 0; i < values.length; i++) {
@@ -690,13 +740,15 @@ class _RequestContract extends State<RequestContract>
                           _diseaseIds.add(_idDisease);
                         }
                         print('LIST ID DISEASE NOW ${_diseaseIds}');
+                        print(
+                            'LIST DISEASE SELECTED WHEN CHOOSE NOW ${_listDiseaseSelected}');
                       },
                       chipDisplay: MultiSelectChipDisplay(
                         onTap: (value) {
                           setState(() {
                             _listDiseaseSelected.remove(value);
                             print(
-                                'DISEASE LIST SELECT NOW: ${_listDiseaseSelected.toString()}');
+                                'DISEASE LIST SELECT WHEN REMOVE NOW: ${_listDiseaseSelected.toString()}');
                           });
                         },
                       ),
@@ -744,6 +796,7 @@ class _RequestContract extends State<RequestContract>
                     setState(() {
                       _note = text;
                     });
+                    // _views.add(_note);
                   },
                   style: TFStyle.TEXT_AREA,
                 ),
@@ -1007,6 +1060,14 @@ class _RequestContract extends State<RequestContract>
             ),
           );
         }
+        _dname = state.dto.fullName;
+        _dplace = state.dto.workLocation;
+        _dSdt = state.dto.phone;
+        _dEmail = state.dto.email;
+
+        // _views.add(state.dto.fullName);
+        // _views.add(state.dto.workLocation);
+        // _views.add(state.dto.phone);
         return Container(
           margin: EdgeInsets.only(left: 20, right: 20),
           decoration: BoxDecoration(
@@ -1255,4 +1316,83 @@ class _RequestContract extends State<RequestContract>
       },
     );
   }
+}
+
+class ContractViewObj {
+  String dname = '';
+  String dplace = '';
+  String dSdt = '';
+  String dEmail = '';
+  String pname = '';
+  String pSdt = '';
+  String pGender = '';
+  String pBirthdate = '';
+  String pAdd = '';
+  List<DiseaseDTO> diseases = [];
+  String note = '';
+  String sDate = '';
+  String duration = '';
+
+  ContractViewObj(
+      {this.dname,
+      this.dplace,
+      this.dSdt,
+      this.dEmail,
+      this.pname,
+      this.pSdt,
+      this.pGender,
+      this.pBirthdate,
+      this.diseases,
+      this.duration,
+      this.note,
+      this.pAdd,
+      this.sDate});
+}
+
+class RContractProvider extends ChangeNotifier {
+  ContractViewObj obj = new ContractViewObj(
+      pname: '',
+      dSdt: '',
+      dEmail: '',
+      diseases: [],
+      pGender: '',
+      dname: '',
+      dplace: '',
+      duration: '',
+      note: '',
+      pAdd: '',
+      pBirthdate: '',
+      pSdt: '',
+      sDate: '');
+
+  setProvider(
+      {String dname,
+      String dplace,
+      String dSdt,
+      String dEmail,
+      String pname,
+      String pSdt,
+      String pGender,
+      String pBirthdate,
+      String pAdd,
+      List<DiseaseDTO> diseases,
+      String note,
+      String sDate,
+      String duration}) async {
+    this.obj.dname = dname;
+    this.obj.dplace = dplace;
+    this.obj.dSdt = dSdt;
+    this.obj.dEmail = dEmail;
+    this.obj.pname = pname;
+    this.obj.pSdt = pSdt;
+    this.obj.pGender = pGender;
+    this.obj.pBirthdate = pBirthdate;
+    this.obj.pAdd = pAdd;
+    this.obj.diseases = diseases;
+    this.obj.note = note;
+    this.obj.sDate = sDate;
+    this.obj.duration = duration;
+  }
+
+  ContractViewObj get getRProvider => obj;
 }

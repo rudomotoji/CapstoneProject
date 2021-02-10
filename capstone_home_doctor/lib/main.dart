@@ -4,15 +4,19 @@ import 'dart:io';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/features/chat/chat.dart';
+import 'package:capstone_home_doctor/features/contract/views/confirm_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/manage_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
+import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
 import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/phone_auth.dart';
+import 'package:capstone_home_doctor/features/medicine/views/medicine_history_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/intro_connect_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/peripheral_service_view.dart';
 import 'package:capstone_home_doctor/features/register/register_view.dart';
+import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
@@ -181,6 +185,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
           ChangeNotifierProvider(
             create: (context) => RequestContractDTOProvider(),
           ),
+          ChangeNotifierProvider(
+            create: (context) => RContractProvider(),
+          )
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -198,6 +205,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.CHAT: (context) => ChatScreen(),
             RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
             RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
+            RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),
+            RoutesHDr.SCHEDULE: (context) => Schedule(),
+            RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
+            RoutesHDr.PATIENT_INFORMATION: (context) => PatientInformation(),
           },
           // home: _startScreen,
           home: MainHome(),

@@ -151,7 +151,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
               ),
               Flexible(
                 child: TextField(
-                  autofocus: true,
+                  // autofocus: true,
                   obscureText:
                       (_inputType == TFInputType.TF_PASSWORD) ? true : false,
                   keyboardType: (_inputType == TFInputType.TF_NUMBER)
@@ -271,6 +271,8 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
                     color: DefaultTheme.GREY_VIEW,
                   ),
                   child: TextFormField(
+                    autofocus: false,
+                    onChanged: widget.onChange,
                     keyboardType: TextInputType.multiline,
                     maxLines: 10,
                     decoration: InputDecoration(
@@ -299,7 +301,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
                     left: DefaultNumeralUI.PADDING,
                     right: DefaultNumeralUI.PADDING),
                 child: TextField(
-                  autofocus: true,
+                  // autofocus: true,
                   textAlign: TextAlign.right,
                   obscureText:
                       (_inputType == TFInputType.TF_PASSWORD) ? true : false,

@@ -2,13 +2,81 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/artboard_button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
+import 'package:capstone_home_doctor/models/medicine_scheduling_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:barcode_scan/barcode_scan.dart';
+
+final List<MedicineSchedulingDTO> _listMedicine = [
+  MedicineSchedulingDTO(
+      name: 'Cefadroxil (Droxicef)',
+      amount: '250mg',
+      unit: 'viên',
+      totalDay: 5,
+      timePerDay: 2,
+      howToUsing: 'Uống sau ăn',
+      unitPerDay: 4),
+  MedicineSchedulingDTO(
+      name: 'Alpha chymotrypsin (Stratripsine)',
+      amount: '4,2mg',
+      unit: 'viên',
+      totalDay: 5,
+      timePerDay: 2,
+      howToUsing: 'Uống sau ăn',
+      unitPerDay: 4),
+  MedicineSchedulingDTO(
+      name: 'Metronidazol',
+      amount: '250mg',
+      unit: 'viên',
+      totalDay: 5,
+      timePerDay: 2,
+      howToUsing: 'Uống sau ăn',
+      unitPerDay: 4),
+  MedicineSchedulingDTO(
+      name: 'Paracetamol (Mypara)',
+      amount: '500mg',
+      unit: 'viên',
+      totalDay: 5,
+      timePerDay: null,
+      howToUsing: 'Uống sủi bọt khi đau',
+      unitPerDay: null),
+  MedicineSchedulingDTO(
+      name: 'Calci carbonat (CalciChew)',
+      amount: '1.25g',
+      unit: 'viên',
+      totalDay: 5,
+      timePerDay: 2,
+      howToUsing: 'Uống sau ăn',
+      unitPerDay: 2),
+  MedicineSchedulingDTO(
+      name: 'Vitamin C',
+      amount: '100mg',
+      unit: 'viên',
+      totalDay: 5,
+      timePerDay: 1,
+      howToUsing: 'Uống sau ăn sáng',
+      unitPerDay: 1),
+];
+
+final Shader _normalHealthColors = LinearGradient(
+  colors: <Color>[
+    DefaultTheme.GRADIENT_1,
+    DefaultTheme.GRADIENT_2,
+  ],
+).createShader(new Rect.fromLTWH(10.0, 1.0, 100.0, 90.0));
+
+final Shader _caledarColors = LinearGradient(
+  colors: <Color>[
+    DefaultTheme.GRADIENT_3,
+    DefaultTheme.GRADIENT_4,
+    DefaultTheme.GRADIENT_5,
+  ],
+).createShader(new Rect.fromLTWH(50, 1.0, 255.0, 255.0));
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -20,6 +88,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   var location;
   var _idDoctorController = TextEditingController();
   String _idDoctor = '';
+  DateValidator _dateValidator = DateValidator();
 
   @override
   void initState() {
@@ -45,17 +114,82 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           isMainView: true,
           buttonHeaderType: ButtonHeaderType.AVATAR,
         ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            padding: EdgeInsets.only(left: 20, bottom: 10),
+            child: Text(
+              '${_dateValidator.getDateTimeView()}',
+              style: TextStyle(
+                  color: DefaultTheme.GREY_TEXT,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 15),
+            ),
+          ),
+        ),
         Expanded(
           child: ListView(
             padding: EdgeInsets.only(left: 20, right: 20),
             children: <Widget>[
-              _showSuggestionDashboard(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: Image.asset('assets/images/ic-calendar.png'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                  ),
+                  Text(
+                    'Lịch',
+                    style: TextStyle(
+                      color: DefaultTheme.BLACK,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Spacer(),
+                  ButtonHDr(
+                    style: BtnStyle.BUTTON_TRANSPARENT,
+                    label: 'Chi tiết',
+                    labelColor: DefaultTheme.BLUE_REFERENCE,
+                    width: 40,
+                    onTap: () {
+                      Navigator.of(context).pushNamed(RoutesHDr.SCHEDULE);
+                    },
+                  ),
+                ],
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: 280,
+                child: OverflowBox(
+                    // alignment: Alignment.centerRight,
+                    minWidth: MediaQuery.of(context).size.width,
+                    maxWidth: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 0),
+                      child: _showCalendarOverview(),
+                    )),
+              ),
               Padding(
                 padding: EdgeInsets.only(top: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
+                    SizedBox(
+                      width: 25,
+                      height: 25,
+                      child:
+                          Image.asset('assets/images/ic-health-selected.png'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10),
+                    ),
                     Text(
                       'Trạng thái',
                       style: TextStyle(
@@ -76,32 +210,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                 ),
               ),
               _showStatusOverview(),
-              Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Lịch',
-                      style: TextStyle(
-                        color: DefaultTheme.BLACK,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Spacer(),
-                    ButtonHDr(
-                      style: BtnStyle.BUTTON_TRANSPARENT,
-                      label: 'Chi tiết',
-                      labelColor: DefaultTheme.BLUE_REFERENCE,
-                      width: 40,
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ),
-              _showCalendarOverview(),
+              //
+              _showSuggestionDashboard(),
+
               Padding(
                 padding: EdgeInsets.only(top: 20),
                 child: Text(
@@ -117,180 +228,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
             ],
           ),
         ),
-
-        //   Align(
-        //     alignment: Alignment.topCenter,
-        //     child: Container(
-        //       margin: EdgeInsets.fromLTRB(20, 50, 20, 0),
-        //       child: Column(
-        //         crossAxisAlignment: CrossAxisAlignment.stretch,
-        //         children: [
-        //           Container(
-        //             height: 23,
-        //             child: Row(
-        //               crossAxisAlignment: CrossAxisAlignment.stretch,
-        //               children: [
-        //                 Align(
-        //                   alignment: Alignment.topLeft,
-        //                   child: Text(
-        //                     "Trạng thái cá nhân",
-        //                     textAlign: TextAlign.left,
-        //                     style: TextStyle(
-        //                       color: DefaultTheme.GREY_TEXT,
-        //                       fontFamily: "",
-        //                       fontWeight: FontWeight.w400,
-        //                       fontSize: 20,
-        //                     ),
-        //                   ),
-        //                 ),
-        //                 Spacer(),
-        //                 InkWell(
-        //                   onTap: () {},
-        //                   child: Align(
-        //                     alignment: Alignment.topLeft,
-        //                     child: Container(
-        //                       margin: EdgeInsets.only(top: 1),
-        //                       child: Text(
-        //                         "Xem tổng quan",
-        //                         textAlign: TextAlign.right,
-        //                         style: TextStyle(
-        //                           color: DefaultTheme.GREY_TEXT,
-        //                           fontFamily: "",
-        //                           fontWeight: FontWeight.w400,
-        //                           fontSize: 15,
-        //                         ),
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 ),
-        //               ],
-        //             ),
-        //           ),
-        //           Align(
-        //             alignment: Alignment.topLeft,
-        //             child: Container(
-        //               margin: EdgeInsets.only(top: 1),
-        //               child: Text(
-        //                 "Some description here",
-        //                 textAlign: TextAlign.left,
-        //                 style: TextStyle(
-        //                   color: DefaultTheme.GREY_TEXT,
-        //                   fontFamily: "",
-        //                   fontWeight: FontWeight.w400,
-        //                   fontSize: 15,
-        //                 ),
-        //               ),
-        //             ),
-        //           ),
-        //           Align(
-        //             alignment: Alignment.topLeft,
-        //             child: Text(
-        //               "Không có dấu hiệu/Nhịp tim bất thường….",
-        //               textAlign: TextAlign.left,
-        //               style: TextStyle(
-        //                 color: DefaultTheme.GREY_TEXT,
-        //                 fontFamily: "",
-        //                 fontWeight: FontWeight.w400,
-        //                 fontSize: 15,
-        //               ),
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        //   Align(
-        //     alignment: Alignment.topCenter,
-        //     child: Container(
-        //       margin: EdgeInsets.fromLTRB(20, 50, 20, 0),
-        //       child: Column(
-        //         crossAxisAlignment: CrossAxisAlignment.stretch,
-        //         children: [
-        //           Container(
-        //             height: 23,
-        //             margin: EdgeInsets.only(left: 1, right: 2),
-        //             child: Row(
-        //               crossAxisAlignment: CrossAxisAlignment.stretch,
-        //               children: [
-        //                 Align(
-        //                   alignment: Alignment.topLeft,
-        //                   child: Text(
-        //                     "Lịch theo chu kì",
-        //                     textAlign: TextAlign.left,
-        //                     style: TextStyle(
-        //                       color: DefaultTheme.GREY_TEXT,
-        //                       fontFamily: "",
-        //                       fontWeight: FontWeight.w400,
-        //                       fontSize: 20,
-        //                     ),
-        //                   ),
-        //                 ),
-        //                 Spacer(),
-        //                 Align(
-        //                   alignment: Alignment.topLeft,
-        //                   child: Container(
-        //                     margin: EdgeInsets.only(top: 5),
-        //                     child: Text(
-        //                       "Xem lịch",
-        //                       textAlign: TextAlign.right,
-        //                       style: TextStyle(
-        //                         color: DefaultTheme.GREY_TEXT,
-        //                         fontFamily: "",
-        //                         fontWeight: FontWeight.w400,
-        //                         fontSize: 15,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 ),
-        //               ],
-        //             ),
-        //           ),
-        //           Align(
-        //             alignment: Alignment.topCenter,
-        //             child: Container(
-        //               padding: EdgeInsets.all(16),
-        //               margin: EdgeInsets.only(top: 8),
-        //               decoration: BoxDecoration(
-        //                 color: DefaultTheme.GREY_VIEW,
-        //                 borderRadius: BorderRadius.all(Radius.circular(5)),
-        //               ),
-        //               child: Column(
-        //                 children: [
-        //                   rowMedicalSchedule('thuốc số 1', '12:00', 'Mỗi ngày'),
-        //                   rowMedicalSchedule('thuốc số 2', '12:00', 'Mỗi ngày'),
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        //   Align(
-        //     alignment: Alignment.topLeft,
-        //     child: Container(
-        //       margin: EdgeInsets.fromLTRB(20, 23, 20, 0),
-        //       child: Column(
-        //         children: [
-        //           Align(
-        //             alignment: Alignment.topLeft,
-        //             child: Text(
-        //               "Lần đo cuối",
-        //               textAlign: TextAlign.left,
-        //               style: TextStyle(
-        //                 color: DefaultTheme.GREY_TEXT,
-        //                 fontFamily: "",
-        //                 fontWeight: FontWeight.w400,
-        //                 fontSize: 20,
-        //               ),
-        //             ),
-        //           ),
-        //           rowMonitor(),
-        //           rowMonitor(),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
       ],
     ));
   }
@@ -452,13 +389,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     );
   }
 
-  final Shader _normalHealthColors = LinearGradient(
-    colors: <Color>[
-      DefaultTheme.GRADIENT_1,
-      DefaultTheme.GRADIENT_2,
-    ],
-  ).createShader(new Rect.fromLTWH(0.0, 0.0, 200.0, 90.0));
-
   _showLastMeasurement() {}
 
   _showSuggestionDashboard() {
@@ -491,18 +421,20 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   }
 
   _showCalendarOverview() {
-    return Center(
-      child: SizedBox(
-        height: 200,
-        child: PageView.builder(
-          itemCount: 2,
-          controller: PageController(viewportFraction: 0.95),
-          onPageChanged: (int index) => setState(() => _index = index),
-          itemBuilder: (_, i) {
-            return Transform.scale(
-              scale: i == _index ? 1 : 0.9,
-              child: Card(
-                elevation: 0,
+    return SizedBox(
+      height: 280,
+      width: MediaQuery.of(context).size.width,
+      child: PageView.builder(
+        itemCount: 2,
+        controller: PageController(viewportFraction: 0.9),
+        onPageChanged: (int index) => setState(() => _index = index),
+        itemBuilder: (_, i) {
+          return Transform.scale(
+            scale: i == _index ? 1 : 0.9,
+            alignment: Alignment.centerLeft,
+            child: Card(
+                elevation: 3,
+                shadowColor: DefaultTheme.GREY_TEXT,
                 color: DefaultTheme.GREY_VIEW,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
@@ -513,16 +445,149 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                             padding: EdgeInsets.only(
                                 left: 20, right: 20, bottom: 10, top: 20),
                             child: Text(
-                              'Lịch tái khám',
+                              'Lịch dùng thuốc',
                               style: TextStyle(
-                                  color: DefaultTheme.RED_CALENDAR,
+                                  fontFamily: 'NewYork',
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 18),
+                                  fontSize: 18,
+                                  foreground: Paint()..shader = _caledarColors),
                             ),
                           ),
                           Divider(
-                            height: 0.25,
-                            color: DefaultTheme.GREY_TEXT,
+                            height: 0.1,
+                            color: DefaultTheme.GREY_TOP_TAB_BAR,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10),
+                          ),
+                          (_listMedicine.length == 0)
+                              ? Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    'Hiện không có lịch dùng thuốc',
+                                    style: TextStyle(
+                                        color: DefaultTheme.GREY_TEXT),
+                                  ),
+                                )
+                              : Expanded(
+                                  child: ListView.builder(
+                                      itemCount: _listMedicine.length,
+                                      itemBuilder: (BuildContext buildContext,
+                                          int index) {
+                                        return Container(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 20),
+                                                  ),
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                            220,
+                                                    child: Text(
+                                                      '${_listMedicine[index].name}',
+                                                      style: TextStyle(
+                                                          fontFamily: 'NewYork',
+                                                          color: DefaultTheme
+                                                              .BLACK,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
+                                                  ),
+                                                  Spacer(),
+                                                  (_listMedicine[index]
+                                                                  .unitPerDay !=
+                                                              null ||
+                                                          _listMedicine[index]
+                                                                  .timePerDay !=
+                                                              null)
+                                                      ? Text(
+                                                          '${_listMedicine[index].unitPerDay} viên/ ${_listMedicine[index].timePerDay} lần/ ngày',
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                          style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .GREY_TEXT,
+                                                            fontSize: 15,
+                                                          ),
+                                                        )
+                                                      : Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width -
+                                                              250,
+                                                          child: Text(
+                                                            '${_listMedicine[index].howToUsing}',
+                                                            textAlign:
+                                                                TextAlign.right,
+                                                            style: TextStyle(
+                                                              color: DefaultTheme
+                                                                  .GREY_TEXT,
+                                                              fontSize: 15,
+                                                            ),
+                                                            maxLines: 5,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        ),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        right: 10),
+                                                  )
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom: 10, top: 10),
+                                                child: Divider(
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR,
+                                                  height: 0.1,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 20),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10, top: 20),
+                            child: Text(
+                              'Lịch tái khám',
+                              style: TextStyle(
+                                  fontFamily: 'NewYork',
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18,
+                                  foreground: Paint()..shader = _caledarColors),
+                            ),
+                          ),
+                          Divider(
+                            height: 0.1,
+                            color: DefaultTheme.GREY_TOP_TAB_BAR,
                           ),
                           Padding(
                             padding: EdgeInsets.only(top: 20),
@@ -535,40 +600,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                             ),
                           ),
                         ],
-                      )
-                    : Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 20, right: 20, bottom: 10, top: 20),
-                            child: Text(
-                              'Lịch dùng thuốc',
-                              style: TextStyle(
-                                  color: DefaultTheme.RED_CALENDAR,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18),
-                            ),
-                          ),
-                          Divider(
-                            height: 0.25,
-                            color: DefaultTheme.GREY_TEXT,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 20),
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Text(
-                              'Hiện không có lịch dùng thuốc',
-                              style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                            ),
-                          ),
-                        ],
-                      ),
-              ),
-            );
-          },
-        ),
+                      )),
+          );
+        },
       ),
     );
   }
@@ -577,30 +611,54 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     //change color and text color if else status patient and call it
     return SizedBox(
       child: Container(
-        height: 50,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: DefaultTheme.GREY_BUTTON,
         ),
-        child: Row(
-          children: [
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: 20),
-              child: SizedBox(
-                width: 25,
-                height: 25,
-                child: Image.asset('assets/images/ic-health-selected.png'),
+              padding: EdgeInsets.only(top: 20),
+            ),
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Text(
+                    'Sinh hiệu bình thường',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        foreground: Paint()..shader = _normalHealthColors),
+                  ),
+                ),
+              ],
+            ),
+            //
+            Padding(
+              padding: EdgeInsets.only(top: 10, bottom: 5),
+              child: Divider(
+                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                height: 0.1,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 20),
-              child: Text(
-                'Sinh hiệu bình thường',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    foreground: Paint()..shader = _normalHealthColors),
+            Container(
+              height: 100,
+              child: Center(
+                child: Text(
+                  'Chưa có dữ liệu cho biểu đồ sinh hiệu',
+                  style: TextStyle(
+                    color: DefaultTheme.GREY_TEXT,
+                    fontSize: 15,
+                  ),
+                ),
               ),
+            ),
+            //
+            Padding(
+              padding: EdgeInsets.only(bottom: 20),
             ),
           ],
         ),
