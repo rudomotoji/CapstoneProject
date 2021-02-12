@@ -4,19 +4,19 @@ import 'dart:io';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/features/chat/chat.dart';
-import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.dart';
-import 'package:capstone_home_doctor/features/contract/blocs/request_contract_bloc.dart';
-import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
-import 'package:capstone_home_doctor/features/contract/repositories/request_contract_repository.dart';
+import 'package:capstone_home_doctor/features/contract/views/confirm_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/manage_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
+import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
 import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/phone_auth.dart';
+import 'package:capstone_home_doctor/features/medicine/views/medicine_history_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/intro_connect_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/peripheral_service_view.dart';
 import 'package:capstone_home_doctor/features/register/register_view.dart';
+import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
@@ -30,8 +30,6 @@ import 'features/home/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,10 +52,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
   //helper
   final AuthenticateHelper authenHelper = AuthenticateHelper();
   final PeripheralHelper peripheralHelper = PeripheralHelper();
-  DoctorRepository doctorRepository =
-      DoctorRepository(httpClient: http.Client());
-  RequestContractRepository requestContractRepository =
-      RequestContractRepository(httpClient: http.Client());
+
   //
   final FirebaseMessaging _fcm = FirebaseMessaging();
   String _token = 'Generate Token';
@@ -107,9 +102,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
     localNotifyManager.show(receiveNotification);
   }
 
-  void _initialServiceHelper() async {
+  Future<void> _initialServiceHelper() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('AUTHENTICATION')) {
+    if (!prefs.containsKey('AUTHENTICATION') ||
+        prefs.getBool('AUTHENTICATION') == null) {
       authenHelper.innitalAuthen();
     }
     if (!prefs.containsKey('IS_PERIPHERALS_CONNECTED')) {
@@ -177,51 +173,45 @@ class _HomeDoctorState extends State<HomeDoctor> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<DoctorInfoBloc>(
-          create: (BuildContext context) =>
-              DoctorInfoBloc(doctorAPI: doctorRepository),
-        ),
-        BlocProvider<RequestContractBloc>(
-          create: (BuildContext context) => RequestContractBloc(
-              requestContractAPI: requestContractRepository),
-        ),
-      ],
-      child: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
-        },
-        child: MultiProvider(
-          providers: [
-            ChangeNotifierProvider(
-              create: (context) => PhoneAuthDataProvider(),
-            ),
-            ChangeNotifierProvider(
-              create: (context) => RequestContractDTOProvider(),
-            ),
-          ],
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            // theme: ThemeData(fontFamily: 'SFPro'),
-            initialRoute: RoutesHDr.INITIAL_ROUTE,
-            routes: {
-              RoutesHDr.LOG_IN: (context) => Login(),
-              RoutesHDr.REGISTER: (context) => Register(),
-              RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
-              RoutesHDr.MAIN_HOME: (context) => MainHome(),
-              RoutesHDr.CONFIRM_CONTRACT: (context) => RequestContract(),
-              RoutesHDr.INTRO_CONNECT_PERIPHERAL: (context) =>
-                  IntroConnectDevice(),
-              RoutesHDr.CONNECT_PERIPHERAL: (context) => ConnectPeripheral(),
-              RoutesHDr.CHAT: (context) => ChatScreen(),
-              RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
-              RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
-            },
-            // home: _startScreen,
-            home: MainHome(),
-            // home: (_isLogined) ? MainHome() : Login(),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => PhoneAuthDataProvider(),
           ),
+          ChangeNotifierProvider(
+            create: (context) => RequestContractDTOProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => RContractProvider(),
+          )
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          // theme: ThemeData(fontFamily: 'SFPro'),
+          initialRoute: RoutesHDr.INITIAL_ROUTE,
+          routes: {
+            RoutesHDr.LOG_IN: (context) => Login(),
+            RoutesHDr.REGISTER: (context) => Register(),
+            RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
+            RoutesHDr.MAIN_HOME: (context) => MainHome(),
+            RoutesHDr.CONFIRM_CONTRACT: (context) => RequestContract(),
+            RoutesHDr.INTRO_CONNECT_PERIPHERAL: (context) =>
+                IntroConnectDevice(),
+            RoutesHDr.CONNECT_PERIPHERAL: (context) => ConnectPeripheral(),
+            RoutesHDr.CHAT: (context) => ChatScreen(),
+            RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
+            RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
+            RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),
+            RoutesHDr.SCHEDULE: (context) => Schedule(),
+            RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
+            RoutesHDr.PATIENT_INFORMATION: (context) => PatientInformation(),
+          },
+          // home: _startScreen,
+          home: MainHome(),
         ),
       ),
     );

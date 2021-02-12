@@ -11,4 +11,8 @@ class RoutesHDr {
   static const String CHAT = '/chat';
   static const String MANAGE_CONTRACT = '/ManageContract';
   static const String PERIPHERAL_SERVICE = '/PeripheralService';
+  static const String CONFIRM_CONTRACT_VIEW = '/ConfirmContract';
+  static const String SCHEDULE = '/Schedule';
+  static const String HISTORY_PRESCRIPTION = '/MedicineHistory';
+  static const String PATIENT_INFORMATION = '/PatientInformation';
 }

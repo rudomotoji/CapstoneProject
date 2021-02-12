@@ -1,12 +1,13 @@
-import 'package:capstone_home_doctor/features/contract/events/request_contract_event.dart';
-import 'package:capstone_home_doctor/features/contract/repositories/request_contract_repository.dart';
-import 'package:capstone_home_doctor/features/contract/states/request_contract_state.dart';
+import 'package:capstone_home_doctor/features/contract/events/contract_request_event.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
+import 'package:capstone_home_doctor/features/contract/states/contract_request_state.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RequestContractBloc
     extends Bloc<RequestContractEvent, RequestContractState> {
-  final RequestContractRepository requestContractAPI;
+  final ContractRepository requestContractAPI;
   RequestContractBloc({@required this.requestContractAPI})
       : assert(requestContractAPI != null),
         super(RequestContractStateInitial());
@@ -18,7 +19,7 @@ class RequestContractBloc
       yield RequestContractStateLoading();
       try {
         final bool isRequested =
-            await requestContractAPI.makeRequestContract(event.dto);
+            await requestContractAPI.createRequestContract(event.dto);
         if (isRequested) {
           yield RequestContractStateSuccess(isRequested: isRequested);
         } else {

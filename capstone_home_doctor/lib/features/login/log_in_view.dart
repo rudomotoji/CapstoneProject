@@ -5,10 +5,10 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/login/phone_auth.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 //import 'logout.dart';
 import 'package:provider/provider.dart';
-import 'dart:async';
 
 class Login extends StatefulWidget {
   @override
@@ -18,11 +18,9 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login> with WidgetsBindingObserver {
+  // final _phoneController = TextEditingController();
   final _phoneController = TextEditingController();
-
-  final scaffoldKey =
-      GlobalKey<ScaffoldState>(debugLabel: "scaffold-verify-phone");
-
+  final _codeController = TextEditingController();
   // UserDTO _userDTO = new UserDTO();
   String _phoneNo;
 
@@ -41,7 +39,6 @@ class _Login extends State<Login> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
       // resizeToAvoidBottomPadding: false,
       backgroundColor: DefaultTheme.WHITE,
       body: SafeArea(
@@ -72,18 +69,16 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                     style: TFStyle.NO_BORDER,
                     label: 'VN +84',
                     placeHolder: 'Số điện thoại',
-                    maxLength: 11,
+                    maxLength: 12,
                     inputType: TFInputType.TF_PHONE,
-                    controller: Provider.of<PhoneAuthDataProvider>(context,
-                            listen: false)
-                        .phoneNumberController,
+                    // controller: Provider.of<PhoneAuthDataProvider>(context,
+                    //         listen: false)
+                    //     .phoneNumberController,
+                    controller: _phoneController,
                     keyboardAction: TextInputAction.next,
                     onChange: (text) {
                       setState(() {
-                        _phoneNo = text;
-                        if (text.toString().isEmpty) {
-                          _phoneNo = null;
-                        }
+                        _phoneNo = '+84$text';
                       });
                     },
                   ),
@@ -94,14 +89,13 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                 ],
               ),
             ),
-            if (_phoneNo != null)
-              (ButtonHDr(
-                style: BtnStyle.BUTTON_GREY,
-                label: 'Tiếp theo',
-                onTap: () {
-                  startPhoneAuth();
-                },
-              )),
+            ButtonHDr(
+              style: BtnStyle.BUTTON_GREY,
+              label: 'Tiếp theo',
+              onTap: () {
+                loginUser(_phoneNo, context);
+              },
+            ),
             Padding(padding: EdgeInsets.only(top: 20)),
             Text(
               'Powered by HomeDoctor',
@@ -117,38 +111,73 @@ class _Login extends State<Login> with WidgetsBindingObserver {
     );
   }
 
-  _showSnackBar(String text) {
-    final snackBar = SnackBar(
-      content: Text('$text'),
-      duration: Duration(seconds: 2),
+  Future<bool> loginUser(String phone, BuildContext context) async {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+    _auth.setSettings(appVerificationDisabledForTesting: true);
+    _auth.verifyPhoneNumber(
+      phoneNumber: phone.toString(),
+      timeout: Duration(seconds: 60),
+      verificationCompleted: (AuthCredential credential) async {
+        UserCredential result = await _auth.signInWithCredential(credential);
+        FirebaseUser user = result.user;
+
+        if (user != null) {
+          Navigator.pushNamed(context, RoutesHDr.MAIN_HOME);
+        } else {
+          print("Error");
+        }
+
+        //This callback would gets called when verification is done auto maticlly
+      },
+      verificationFailed: (FirebaseAuthException exception) {
+        print('Login EXCEPTION FIREBASE ${exception}');
+      },
+      codeSent: (String verificationId, [int forceResendingToken]) {
+        // showDialog(
+        //     context: context,
+        //     barrierDismissible: false,
+        //     builder: (context) {
+        //       return AlertDialog(
+        //         title: Text("Give the code?"),
+        //         content: Column(
+        //           mainAxisSize: MainAxisSize.min,
+        //           children: <Widget>[
+        //             TextField(
+        //               controller: _codeController,
+        //             ),
+        //           ],
+        //         ),
+        //         actions: <Widget>[
+        //           FlatButton(
+        //             child: Text("Confirm"),
+        //             textColor: Colors.white,
+        //             color: Colors.blue,
+        //             onPressed: () async {
+        //               final code = _codeController.text.trim();
+        //               AuthCredential credential =
+        //                   PhoneAuthProvider.getCredential(
+        //                       verificationId: verificationId, smsCode: code);
+
+        //               UserCredential result =
+        //                   await _auth.signInWithCredential(credential);
+
+        //               if (result.user != null) {
+        //                 Navigator.pushNamed(context, RoutesHDr.MAIN_HOME);
+        //               } else {
+        //                 print("Error");
+        //               }
+        //             },
+        //           )
+        //         ],
+        //       );
+        //     });
+        String _phoneAndVerificationId = '${_phoneNo}:::${verificationId}';
+        Navigator.pushNamed(context, RoutesHDr.CONFIRM_LOG_IN,
+            arguments: {'PHONE_NO_&_VERIFICATION_ID': _phoneAndVerificationId});
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        // Auto-resolution timed out...
+      },
     );
-//    if (mounted) Scaffold.of(context).showSnackBar(snackBar);
-    scaffoldKey.currentState.showSnackBar(snackBar);
-  }
-
-  startPhoneAuth() async {
-    final phoneAuthDataProvider =
-        Provider.of<PhoneAuthDataProvider>(context, listen: false);
-
-    phoneAuthDataProvider.loading = true;
-    bool validPhone = await phoneAuthDataProvider.instantiate(
-        dialCode: '+84',
-        onCodeSent: () {
-          Navigator.pushNamed(context, RoutesHDr.CONFIRM_LOG_IN);
-        },
-        onFailed: () {
-          _showSnackBar(phoneAuthDataProvider.message);
-        },
-        onError: () {
-          _showSnackBar(phoneAuthDataProvider.message);
-        });
-    if (!validPhone) {
-      print(Provider.of<PhoneAuthDataProvider>(context, listen: false)
-          .phoneNumberController
-          .text);
-      phoneAuthDataProvider.loading = false;
-      _showSnackBar("Oops! Number seems invaild");
-      return;
-    }
   }
 }

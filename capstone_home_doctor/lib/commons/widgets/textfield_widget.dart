@@ -151,7 +151,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
               ),
               Flexible(
                 child: TextField(
-                  autofocus: true,
+                  // autofocus: true,
                   obscureText:
                       (_inputType == TFInputType.TF_PASSWORD) ? true : false,
                   keyboardType: (_inputType == TFInputType.TF_NUMBER)
@@ -265,48 +265,23 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
                     padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING)),
               Padding(padding: EdgeInsets.only(left: 2.5)),
               Flexible(
-                child: TextField(
-                  textAlign: TextAlign.left,
-                  expands: true,
-                  maxLines: null,
-                  autofocus: false,
-                  obscureText:
-                      (_inputType == TFInputType.TF_PASSWORD) ? true : false,
-                  keyboardType: TextInputType.multiline,
-                  textInputAction: _keyboardAction,
-                  textCapitalization: _capitalStyle,
-                  maxLength: _maxLength,
-                  decoration: InputDecoration(
-                    counter: Offstage(),
-                    labelText: _label,
-                    helperText: _helperText,
-                    filled: true,
-                    fillColor: DefaultTheme.GREY_BUTTON.withOpacity(0.8),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.fromLTRB(
-                        DefaultNumeralUI.PADDING,
-                        0,
-                        DefaultNumeralUI.PADDING,
-                        0),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(
-                        width: 0.25,
-                        color: DefaultTheme.TRANSPARENT,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(
-                        width: 0.25,
-                        color: DefaultTheme.TRANSPARENT,
-                      ),
-                    ),
-                    errorBorder: InputBorder.none,
-                    disabledBorder: InputBorder.none,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: DefaultTheme.GREY_VIEW,
                   ),
-                  onChanged: widget.onChange,
-                  controller: _controller,
+                  child: TextFormField(
+                    autofocus: false,
+                    onChanged: widget.onChange,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 10,
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(fontSize: 15),
+                      hintText: _placeHolder,
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.all(20),
+                    ),
+                  ),
                 ),
               ),
               if (_isMultipleInRow == false)
@@ -326,7 +301,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
                     left: DefaultNumeralUI.PADDING,
                     right: DefaultNumeralUI.PADDING),
                 child: TextField(
-                  autofocus: true,
+                  // autofocus: true,
                   textAlign: TextAlign.right,
                   obscureText:
                       (_inputType == TFInputType.TF_PASSWORD) ? true : false,

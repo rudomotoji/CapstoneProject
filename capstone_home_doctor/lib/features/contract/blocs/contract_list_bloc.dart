@@ -1,14 +1,15 @@
-import 'package:capstone_home_doctor/features/contract/events/list_contract_event.dart';
-import 'package:capstone_home_doctor/features/contract/repositories/list_contract_repository.dart';
-import 'package:capstone_home_doctor/features/contract/states/list_contract_state.dart';
+import 'package:capstone_home_doctor/features/contract/events/contract_list_event.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
+import 'package:capstone_home_doctor/features/contract/states/contract_list_state.dart';
+
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ContractListBloc extends Bloc<ListContractEvent, ListContractState> {
-  final ListContractRepository listContractAPI;
-  ContractListBloc({@required this.listContractAPI})
-      : assert(listContractAPI != null),
+  final ContractRepository contractAPI;
+  ContractListBloc({@required this.contractAPI})
+      : assert(contractAPI != null),
         super(ListContractStateInitial());
 
   @override
@@ -17,7 +18,7 @@ class ContractListBloc extends Bloc<ListContractEvent, ListContractState> {
       yield ListContractStateLoading();
       try {
         final List<ContractListDTO> list =
-            await listContractAPI.getListContract(event.id);
+            await contractAPI.getListContract(event.id);
         yield ListContractStateSuccess(listContract: list);
       } catch (e) {
         yield ListContractStateFailure();

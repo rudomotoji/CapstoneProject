@@ -1,12 +1,12 @@
-import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
-import 'package:capstone_home_doctor/features/login/phone_auth.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ConfirmLogin extends StatefulWidget {
   @override
@@ -16,6 +16,8 @@ class ConfirmLogin extends StatefulWidget {
   }
 }
 
+final AuthenticateHelper authenHelper = AuthenticateHelper();
+
 class _ConfirmLogin extends State<ConfirmLogin> {
   var _pin1 = TextEditingController();
   var _pin2 = TextEditingController();
@@ -24,11 +26,9 @@ class _ConfirmLogin extends State<ConfirmLogin> {
   var _pin5 = TextEditingController();
   var _pin6 = TextEditingController();
 
-  String _phoneNo;
+  String _phoneNo = '';
   String _otpCode;
-
-  final scaffoldKey =
-      GlobalKey<ScaffoldState>(debugLabel: "scaffold-verify-phone");
+  String _verificationId;
 
   @override
   void initState() {
@@ -44,26 +44,28 @@ class _ConfirmLogin extends State<ConfirmLogin> {
 
   @override
   Widget build(BuildContext context) {
-    //Map<String, String> arguments = ModalRoute.of(context).settings.arguments;
-    _phoneNo = Provider.of<PhoneAuthDataProvider>(context, listen: false)
-        .phoneNumberController
-        .text;
+    Map<String, String> arguments = ModalRoute.of(context).settings.arguments;
+    _phoneNo = arguments['PHONE_NO_&_VERIFICATION_ID'].split(':::')[0];
+    _verificationId = arguments['PHONE_NO_&_VERIFICATION_ID'].split(':::')[1];
+    //
+    // _phoneNo = Provider.of<PhoneAuthDataProvider>(context, listen: false)
+    //     .phoneNumberController
+    //     .text;
 
-    final phoneAuthDataProvider =
-        Provider.of<PhoneAuthDataProvider>(context, listen: false);
+    // final phoneAuthDataProvider =
+    //     Provider.of<PhoneAuthDataProvider>(context, listen: false);
 
-    phoneAuthDataProvider.setMethods(
-      onStarted: onStarted,
-      onError: onError,
-      onFailed: onFailed,
-      onVerified: onVerified,
-      onCodeResent: onCodeResent,
-      onCodeSent: onCodeSent,
-      onAutoRetrievalTimeout: onAutoRetrievalTimeOut,
-    );
+    // phoneAuthDataProvider.setMethods(
+    //   onStarted: onStarted,
+    //   onError: onError,
+    //   onFailed: onFailed,
+    //   onVerified: onVerified,
+    //   onCodeResent: onCodeResent,
+    //   onCodeSent: onCodeSent,
+    //   onAutoRetrievalTimeout: onAutoRetrievalTimeOut,
+    // );
 
     return Scaffold(
-      key: scaffoldKey,
       backgroundColor: DefaultTheme.WHITE,
       body: SafeArea(
         child: Column(
@@ -199,20 +201,40 @@ class _ConfirmLogin extends State<ConfirmLogin> {
             ButtonHDr(
               style: BtnStyle.BUTTON_BLACK,
               label: 'Đăng nhập',
-              onTap: () {
+              onTap: () async {
                 _otpCode = _pin1.text +
                     _pin2.text +
                     _pin3.text +
                     _pin4.text +
                     _pin5.text +
                     _pin6.text;
-                print('otp code ${_otpCode}');
-                signIn();
-                //   _loginAuth.verifyPhoneNo(
-                //       _phoneNo,
-                //       PhoneAuthDataProvider.getCredential(
-                //           verificationId: actualCode, smsCode: _otpCode),
-                //       _otpCode);
+
+                //the last login
+                // signIn();
+
+                //I dont' know this
+                // //   _loginAuth.verifyPhoneNo(
+                // //       _phoneNo,
+                // //       PhoneAuthDataProvider.getCredential(
+                // //           verificationId: actualCode, smsCode: _otpCode),
+                // //       _otpCode);
+
+                //new
+
+                AuthCredential credential = PhoneAuthProvider.getCredential(
+                    verificationId: _verificationId, smsCode: _otpCode);
+                FirebaseAuth _auth = FirebaseAuth.instance;
+                UserCredential result =
+                    await _auth.signInWithCredential(credential);
+                //PRINT
+                print('CREDENTIAL NOW ${credential}');
+                print('RESULT NOW ${result}');
+                if (result.user != null) {
+                  authenHelper.updateAuth(true);
+                  Navigator.pushNamed(context, RoutesHDr.MAIN_HOME);
+                } else {
+                  print("Error");
+                }
               },
             ),
             Padding(padding: EdgeInsets.only(top: 20)),
@@ -228,61 +250,5 @@ class _ConfirmLogin extends State<ConfirmLogin> {
         ),
       ),
     );
-  }
-
-  _showSnackBar(String text) {
-    final snackBar = SnackBar(
-      content: Text('$text'),
-      duration: Duration(seconds: 2),
-    );
-//    if (mounted) Scaffold.of(context).showSnackBar(snackBar);
-    scaffoldKey.currentState.showSnackBar(snackBar);
-  }
-
-  signIn() {
-    if (_otpCode.length != 6) {
-      _showSnackBar("Invalid OTP");
-    }
-    Provider.of<PhoneAuthDataProvider>(context, listen: false)
-        .verifyOTPAndLogin(smsCode: _otpCode);
-  }
-
-  onStarted() {
-    _showSnackBar("PhoneAuth started");
-//    _showSnackBar(phoneAuthDataProvider.message);
-  }
-
-  onCodeSent() {
-    _showSnackBar("OPT sent");
-//    _showSnackBar(phoneAuthDataProvider.message);
-  }
-
-  onCodeResent() {
-    _showSnackBar("OPT resent");
-//    _showSnackBar(phoneAuthDataProvider.message);
-  }
-
-  onVerified() async {
-    _showSnackBar(
-        "${Provider.of<PhoneAuthDataProvider>(context, listen: false).message}");
-    await Future.delayed(Duration(seconds: 1));
-    Navigator.pushNamedAndRemoveUntil(
-        context, RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
-  }
-
-  onFailed() {
-//    _showSnackBar(phoneAuthDataProvider.message);
-    _showSnackBar("PhoneAuth failed");
-  }
-
-  onError() {
-//    _showSnackBar(phoneAuthDataProvider.message);
-    _showSnackBar(
-        "PhoneAuth error ${Provider.of<PhoneAuthDataProvider>(context, listen: false).message}");
-  }
-
-  onAutoRetrievalTimeOut() {
-    _showSnackBar("PhoneAuth autoretrieval timeout");
-//    _showSnackBar(phoneAuthDataProvider.message);
   }
 }

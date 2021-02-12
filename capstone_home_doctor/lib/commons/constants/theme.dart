@@ -16,5 +16,10 @@ class DefaultTheme {
   static final Color BLUE_TEXT = Color(0xFF0A7AFF);
   static final Color GRADIENT_1 = Color(0xFF27DE97);
   static final Color GRADIENT_2 = Color(0xFF0D63CB);
+  static final Color CHIP_BLUE = Color(0xFF144786);
   static final Color RED_CALENDAR = Color(0xFFF5233C);
+  //
+  static final Color GRADIENT_3 = Color(0xFF2D31FF);
+  static final Color GRADIENT_4 = Color(0xFFFF2D2D);
+  static final Color GRADIENT_5 = Color(0xFFFF448E);
 }

@@ -52,7 +52,8 @@ dev_dependencies:
   barcode_scan: ^2.0.1
   url_launcher: ^5.7.10
   flutter_blue: ^0.7.3
-  
+  image_picker: ^0.6.7+22
+
   agora_rtc_engine: ^3.1.6
   permission_handler: ^5.0.1+1
 
@@ -102,6 +103,15 @@ flutter:
     - assets/images/ic-done.png
     - assets/images/ic-failed.png
     - assets/images/ic-dropdown.png
+    - assets/images/ic-id.png
+    - assets/images/ic-contract-empty.png
+    - assets/images/ic-dot.png
+    - assets/images/ic-close.png
+    - assets/images/ic-find.png
+    - assets/images/ic-dot-unselect.png
+    - assets/images/ic-medicine.png
+    - assets/images/ic-calendar.png
+    - assets/images/ic-more.png
 
 
   
@@ -132,6 +142,12 @@ flutter:
     - family: SFProRounded
       fonts:
         - asset: assets/fonts/SF-Pro-Rounded-Regular.otf
+
+    - family: NewYork
+      fonts:
+        - asset: assets/fonts/NewYork.ttf
+        - asset: assets/fonts/NewYorkItalic.ttf
+          style: italic
         
   #   - family: Schyler
   #     fonts:
