@@ -25,11 +25,70 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:android_alarm_manager/android_alarm_manager.dart';
 
 import 'features/home/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:provider/provider.dart';
+
+final MORNING = 6;
+final NOON = 11;
+final AFTERNOON = 4;
+final EVERNING = 7;
+final NIGHT = 10;
+
+void _handleGeneralMessage(Map<String, dynamic> message) {
+  String payload;
+  ReceiveNotification receiveNotification;
+  if (message.containsKey('data')) {
+    final dynamic data = message['data'];
+    payload = jsonEncode(data);
+  }
+  final dynamic notification = message['notification'];
+  receiveNotification = ReceiveNotification(
+      id: 0,
+      title: notification["title"],
+      body: notification["body"],
+      payload: payload);
+  localNotifyManager.show(receiveNotification);
+}
+
+void _handleIOSGeneralMessage(Map<String, dynamic> message) {
+  String payload = jsonEncode(message);
+  ReceiveNotification receiveNotification;
+
+  final dynamic notification = message['aps']['alert'];
+
+  receiveNotification = ReceiveNotification(
+      id: 0,
+      title: notification["title"],
+      body: notification["body"],
+      payload: payload);
+  localNotifyManager.show(receiveNotification);
+}
+
+void checkNotifiMedical() {
+  final hour = DateTime.now().hour;
+  final minute = DateTime.now().minute;
+
+  if ((hour == MORNING || hour == NOON || hour == AFTERNOON) && minute == 0) {
+    var message = {
+      "notification": {
+        "title": "Đã tới giờ uống thuốc",
+        "body":
+            "glyceryl trinitrat, isosorbid dinitrat, isosorbid mononitra,\nlovastatin, simvastatin, atorvastatin"
+      },
+      "data": {
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "status": "done",
+        "screen": "screenA",
+        "message": "ACTION"
+      }
+    };
+    _handleGeneralMessage(message);
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,41 +126,6 @@ class _HomeDoctorState extends State<HomeDoctor> {
         : _handleGeneralMessage(message);
   }
 
-  void _handleGeneralMessage(Map<String, dynamic> message) {
-    String payload;
-    ReceiveNotification receiveNotification;
-    if (message.containsKey('data')) {
-      // Handle data message
-      final dynamic data = message['data'];
-      payload = jsonEncode(data);
-    }
-    final dynamic notification = message['notification'];
-    // NotiHelper.show(
-    //     title: notification["title"],
-    //     body: notification["body"],
-    //     payload: payload);
-    receiveNotification = ReceiveNotification(
-        id: 0,
-        title: notification["title"],
-        body: notification["body"],
-        payload: payload);
-    localNotifyManager.show(receiveNotification);
-  }
-
-  void _handleIOSGeneralMessage(Map<String, dynamic> message) {
-    String payload = jsonEncode(message);
-    ReceiveNotification receiveNotification;
-
-    final dynamic notification = message['aps']['alert'];
-
-    receiveNotification = ReceiveNotification(
-        id: 0,
-        title: notification["title"],
-        body: notification["body"],
-        payload: payload);
-    localNotifyManager.show(receiveNotification);
-  }
-
   Future<void> _initialServiceHelper() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('AUTHENTICATION') ||
@@ -116,6 +140,16 @@ class _HomeDoctorState extends State<HomeDoctor> {
   @override
   void initState() {
     super.initState();
+    if (Platform.isAndroid) {
+      final int helloAlarmID = 0;
+      AndroidAlarmManager.initialize();
+      AndroidAlarmManager.periodic(
+        const Duration(minutes: 1),
+        helloAlarmID,
+        checkNotifiMedical,
+        wakeup: true,
+      );
+    }
     _initialServiceHelper();
     authenHelper.isAuthenticated().then((value) {
       print('value authen now ${value}');
