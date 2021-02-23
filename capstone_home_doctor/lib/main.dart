@@ -34,9 +34,8 @@ import 'package:provider/provider.dart';
 
 final MORNING = 6;
 final NOON = 11;
-final AFTERNOON = 4;
-final EVERNING = 7;
-final NIGHT = 10;
+final AFTERNOON = 16;
+final EVERNING = 21;
 
 void _handleGeneralMessage(Map<String, dynamic> message) {
   String payload;
@@ -245,7 +244,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.PATIENT_INFORMATION: (context) => PatientInformation(),
           },
           // home: _startScreen,
-          home: MainHome(),
+          home: Register(),
         ),
       ),
     );
