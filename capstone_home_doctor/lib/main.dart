@@ -244,7 +244,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.PATIENT_INFORMATION: (context) => PatientInformation(),
           },
           // home: _startScreen,
-          home: Register(),
+          home: MainHome(),
         ),
       ),
     );
