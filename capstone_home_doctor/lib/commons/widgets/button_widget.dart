@@ -25,6 +25,8 @@ class ButtonHDr extends StatefulWidget {
   final Color labelColor;
   //button in list label position
   final bool isLabelLeft;
+  //underline button transparent
+  final bool isUnderline;
 
   const ButtonHDr({
     Key key,
@@ -38,11 +40,12 @@ class ButtonHDr extends StatefulWidget {
     this.bgColor,
     this.labelColor,
     this.isLabelLeft,
+    this.isUnderline,
   }) : super(key: key);
 
   @override
   _ButtonHDr createState() => _ButtonHDr(label, image, style, width, height,
-      margin, bgColor, labelColor, isLabelLeft);
+      margin, bgColor, labelColor, isLabelLeft, isUnderline);
 }
 
 class _ButtonHDr extends State<ButtonHDr> {
@@ -55,6 +58,7 @@ class _ButtonHDr extends State<ButtonHDr> {
   Color _bgColor;
   Color _labelColor;
   bool _isLabelLeft;
+  bool _isUnderline;
 
   @override
   _ButtonHDr(
@@ -67,6 +71,7 @@ class _ButtonHDr extends State<ButtonHDr> {
     this._bgColor,
     this._labelColor,
     this._isLabelLeft,
+    this._isUnderline,
   );
 
   @override
@@ -93,6 +98,9 @@ class _ButtonHDr extends State<ButtonHDr> {
     if (_label == null || _label == '') {
       _label = 'Button';
     }
+    if (_isUnderline == null) {
+      _isUnderline = false;
+    }
     switch (_style) {
       case BtnStyle.BUTTON_BLACK:
         _bgColor = DefaultTheme.BLACK_BUTTON;
@@ -106,6 +114,9 @@ class _ButtonHDr extends State<ButtonHDr> {
         _bgColor = DefaultTheme.TRANSPARENT;
         if (_labelColor == null) {
           _labelColor = DefaultTheme.BLACK;
+        }
+        if (_isUnderline == null) {
+          _isUnderline = false;
         }
         break;
       case BtnStyle.BUTTON_FULL:
@@ -244,7 +255,11 @@ class _ButtonHDr extends State<ButtonHDr> {
         child: Text(
           _label,
           style: TextStyle(
-              fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE, color: _labelColor),
+            fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE,
+            color: _labelColor,
+            decoration:
+                (_isUnderline) ? TextDecoration.underline : TextDecoration.none,
+          ),
         ),
       );
     }

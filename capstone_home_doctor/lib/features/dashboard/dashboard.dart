@@ -20,6 +20,9 @@ final List<MedicineSchedulingDTO> _listMedicine = [
       totalDay: 5,
       timePerDay: 2,
       howToUsing: 'Uống sau ăn',
+      isMorning: true,
+      isNoon: false,
+      isNight: true,
       unitPerDay: 4),
   MedicineSchedulingDTO(
       name: 'Alpha chymotrypsin (Stratripsine)',
@@ -27,6 +30,9 @@ final List<MedicineSchedulingDTO> _listMedicine = [
       unit: 'viên',
       totalDay: 5,
       timePerDay: 2,
+      isMorning: true,
+      isNoon: false,
+      isNight: true,
       howToUsing: 'Uống sau ăn',
       unitPerDay: 4),
   MedicineSchedulingDTO(
@@ -35,6 +41,9 @@ final List<MedicineSchedulingDTO> _listMedicine = [
       unit: 'viên',
       totalDay: 5,
       timePerDay: 2,
+      isMorning: true,
+      isNoon: false,
+      isNight: true,
       howToUsing: 'Uống sau ăn',
       unitPerDay: 4),
   MedicineSchedulingDTO(
@@ -42,6 +51,9 @@ final List<MedicineSchedulingDTO> _listMedicine = [
       amount: '500mg',
       unit: 'viên',
       totalDay: 5,
+      isMorning: false,
+      isNoon: false,
+      isNight: false,
       timePerDay: null,
       howToUsing: 'Uống sủi bọt khi đau',
       unitPerDay: null),
@@ -51,6 +63,9 @@ final List<MedicineSchedulingDTO> _listMedicine = [
       unit: 'viên',
       totalDay: 5,
       timePerDay: 2,
+      isMorning: true,
+      isNoon: false,
+      isNight: true,
       howToUsing: 'Uống sau ăn',
       unitPerDay: 2),
   MedicineSchedulingDTO(
@@ -59,6 +74,9 @@ final List<MedicineSchedulingDTO> _listMedicine = [
       unit: 'viên',
       totalDay: 5,
       timePerDay: 1,
+      isMorning: true,
+      isNoon: false,
+      isNight: false,
       howToUsing: 'Uống sau ăn sáng',
       unitPerDay: 1),
 ];
@@ -155,7 +173,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                   ButtonHDr(
                     style: BtnStyle.BUTTON_TRANSPARENT,
                     label: 'Chi tiết',
-                    labelColor: DefaultTheme.BLUE_REFERENCE,
+                    labelColor: DefaultTheme.BLACK_BUTTON.withOpacity(0.8),
+                    isUnderline: true,
                     width: 40,
                     onTap: () {
                       Navigator.of(context).pushNamed(RoutesHDr.SCHEDULE);
@@ -202,7 +221,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     ButtonHDr(
                       style: BtnStyle.BUTTON_TRANSPARENT,
                       label: 'Xem tổng quan',
-                      labelColor: DefaultTheme.BLUE_REFERENCE,
+                      isUnderline: true,
+                      labelColor: DefaultTheme.BLACK_BUTTON.withOpacity(0.8),
                       width: 40,
                       onTap: () {},
                     ),
@@ -433,7 +453,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
             scale: i == _index ? 1 : 0.9,
             alignment: Alignment.centerLeft,
             child: Card(
-                elevation: 3,
+                elevation: 0,
                 shadowColor: DefaultTheme.GREY_TEXT,
                 color: DefaultTheme.GREY_VIEW,
                 shape: RoundedRectangleBorder(
@@ -444,13 +464,28 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                           Padding(
                             padding: EdgeInsets.only(
                                 left: 20, right: 20, bottom: 10, top: 20),
-                            child: Text(
-                              'Lịch dùng thuốc',
-                              style: TextStyle(
-                                  fontFamily: 'NewYork',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                  foreground: Paint()..shader = _caledarColors),
+                            child: Row(
+                              children: [
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Lịch dùng thuốc',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 17,
+                                      color: DefaultTheme.RED_CALENDAR,
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                (_listMedicine.length == 0)
+                                    ? Container()
+                                    : Text(
+                                        'Mỗi ngày',
+                                        style: TextStyle(
+                                            color: DefaultTheme.GREY_TEXT),
+                                      ),
+                              ],
                             ),
                           ),
                           Divider(
@@ -500,12 +535,11 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                                     child: Text(
                                                       '${_listMedicine[index].name}',
                                                       style: TextStyle(
-                                                          fontFamily: 'NewYork',
                                                           color: DefaultTheme
                                                               .BLACK,
-                                                          fontSize: 15,
+                                                          fontSize: 14,
                                                           fontWeight:
-                                                              FontWeight.w500),
+                                                              FontWeight.w400),
                                                     ),
                                                   ),
                                                   Spacer(),
@@ -515,22 +549,151 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                                           _listMedicine[index]
                                                                   .timePerDay !=
                                                               null)
-                                                      ? Text(
-                                                          '${_listMedicine[index].unitPerDay} viên/ ${_listMedicine[index].timePerDay} lần/ ngày',
-                                                          textAlign:
-                                                              TextAlign.right,
-                                                          style: TextStyle(
-                                                            color: DefaultTheme
-                                                                .GREY_TEXT,
-                                                            fontSize: 15,
-                                                          ),
+                                                      ? Row(
+                                                          children: <Widget>[
+                                                            Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color:
+                                                                    DefaultTheme
+                                                                        .WHITE,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                              ),
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.14,
+                                                              height: 50,
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Text(
+                                                                    '${_listMedicine[index].unitPerDay}',
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 1,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontFamily:
+                                                                          'NewYork',
+                                                                      fontSize:
+                                                                          16,
+                                                                      color: DefaultTheme
+                                                                          .BLUE_TEXT,
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    margin: EdgeInsets
+                                                                        .only(
+                                                                            top:
+                                                                                3),
+                                                                    child: Text(
+                                                                      '${_listMedicine[index].unit}/ lần',
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      maxLines:
+                                                                          1,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            10,
+                                                                        color: DefaultTheme
+                                                                            .GREY_TEXT,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              width: 5,
+                                                              height: 50,
+                                                            ),
+                                                            Container(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 10),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color:
+                                                                    DefaultTheme
+                                                                        .WHITE,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                              ),
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.13,
+                                                              height: 50,
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  (_listMedicine[index]
+                                                                              .isMorning ==
+                                                                          true)
+                                                                      ? Text(
+                                                                          'Sáng',
+                                                                          style: TextStyle(
+                                                                              fontSize: 12,
+                                                                              color: DefaultTheme.GREY_TEXT))
+                                                                      : Container(),
+                                                                  (_listMedicine[index]
+                                                                              .isNoon ==
+                                                                          true)
+                                                                      ? Text(
+                                                                          'Trưa',
+                                                                          style: TextStyle(
+                                                                              fontSize: 12,
+                                                                              color: DefaultTheme.GREY_TEXT))
+                                                                      : Container(),
+                                                                  (_listMedicine[index]
+                                                                              .isNight ==
+                                                                          true)
+                                                                      ? Text(
+                                                                          'Tối',
+                                                                          style: TextStyle(
+                                                                              fontSize: 12,
+                                                                              color: DefaultTheme.GREY_TEXT))
+                                                                      : Container(),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
                                                         )
                                                       : Container(
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  right: 10,
+                                                                  top: 10,
+                                                                  bottom: 10),
                                                           width: MediaQuery.of(
                                                                       context)
                                                                   .size
-                                                                  .width -
-                                                              250,
+                                                                  .width *
+                                                              0.28,
                                                           child: Text(
                                                             '${_listMedicine[index].howToUsing}',
                                                             textAlign:
@@ -538,7 +701,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                                             style: TextStyle(
                                                               color: DefaultTheme
                                                                   .GREY_TEXT,
-                                                              fontSize: 15,
+                                                              fontSize: 14,
                                                             ),
                                                             maxLines: 5,
                                                             overflow:
@@ -554,7 +717,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                               ),
                                               Padding(
                                                 padding: EdgeInsets.only(
-                                                    bottom: 10, top: 10),
+                                                    bottom: 5, top: 5),
                                                 child: Divider(
                                                   color: DefaultTheme
                                                       .GREY_TOP_TAB_BAR,
@@ -576,13 +739,16 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                           Padding(
                             padding: EdgeInsets.only(
                                 left: 20, right: 20, bottom: 10, top: 20),
-                            child: Text(
-                              'Lịch tái khám',
-                              style: TextStyle(
-                                  fontFamily: 'NewYork',
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 18,
-                                  foreground: Paint()..shader = _caledarColors),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Lịch tái khám',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 17,
+                                  color: DefaultTheme.RED_CALENDAR,
+                                ),
+                              ),
                             ),
                           ),
                           Divider(
@@ -648,7 +814,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
               height: 100,
               child: Center(
                 child: Text(
-                  'Chưa có dữ liệu cho biểu đồ sinh hiệu',
+                  'Chưa có dữ liệu',
                   style: TextStyle(
                     color: DefaultTheme.GREY_TEXT,
                     fontSize: 15,
@@ -826,6 +992,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                           ),
                           Spacer(),
                           ButtonHDr(
+                            isUnderline: false,
                             style: BtnStyle.BUTTON_BLACK,
                             label: 'Quét Mã QR',
                             onTap: () async {
@@ -842,6 +1009,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                             padding: EdgeInsets.only(top: 10),
                           ),
                           ButtonHDr(
+                            isUnderline: false,
                             style: BtnStyle.BUTTON_GREY,
                             label: 'Nhập ID Bác sĩ',
                             onTap: () {

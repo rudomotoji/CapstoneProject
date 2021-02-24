@@ -200,7 +200,6 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
               Padding(padding: EdgeInsets.only(left: 2.5)),
               Flexible(
                 child: TextField(
-                  autofocus: true,
                   obscureText:
                       (_inputType == TFInputType.TF_PASSWORD) ? true : false,
                   keyboardType: (_inputType == TFInputType.TF_NUMBER)

@@ -7,6 +7,8 @@ import 'package:capstone_home_doctor/features/chat/chat.dart';
 import 'package:capstone_home_doctor/features/contract/views/confirm_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/manage_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
+import 'package:capstone_home_doctor/features/health/health_record/views/create_health_record.dart';
+import 'package:capstone_home_doctor/features/health/health_record/views/health_record_detail.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
 import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/log_in_view.dart';
@@ -19,6 +21,7 @@ import 'package:capstone_home_doctor/features/register/register_view.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -52,6 +55,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
   //helper
   final AuthenticateHelper authenHelper = AuthenticateHelper();
   final PeripheralHelper peripheralHelper = PeripheralHelper();
+  final HealthRecordHelper hrHelper = HealthRecordHelper();
 
   //
   final FirebaseMessaging _fcm = FirebaseMessaging();
@@ -110,6 +114,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('IS_PERIPHERALS_CONNECTED')) {
       peripheralHelper.initialPeripheralChecking();
+    }
+    if (!prefs.containsKey('HEALTH_RECORD_ID')) {
+      hrHelper.initialHRId();
     }
   }
 
@@ -209,6 +216,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.SCHEDULE: (context) => Schedule(),
             RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
             RoutesHDr.PATIENT_INFORMATION: (context) => PatientInformation(),
+            //RoutesHDr.CREATE_HEALTH_RECORD: (context) => CreateHealthRecord(),
+            RoutesHDr.HEALTH_RECORD_DETAIL: (context) => HealthRecordDetail(),
           },
           // home: _startScreen,
           home: MainHome(),

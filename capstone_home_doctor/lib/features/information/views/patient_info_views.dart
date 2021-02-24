@@ -581,9 +581,9 @@ class _PatientInformation extends State<PatientInformation>
                                   child: ButtonHDr(
                                     style: BtnStyle.BUTTON_IMAGE,
                                     image: Image.asset(
-                                        'assets/images/ic-more.png'),
+                                        'assets/images/ic-remove.png'),
                                     onTap: () {
-                                      _showMorePopup();
+                                      _showDeletePopup();
                                     },
                                   ),
                                 ),
@@ -617,49 +617,6 @@ class _PatientInformation extends State<PatientInformation>
             ),
           );
         }));
-  }
-
-  _showMorePopup() {
-    showModalBottomSheet(
-        isScrollControlled: false,
-        context: this.context,
-        backgroundColor: Colors.white.withOpacity(0),
-        builder: (context) {
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 250,
-                  color: DefaultTheme.TRANSPARENT,
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(top: 50),
-                      ),
-                      Container(
-                        height: 200,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          color: DefaultTheme.WHITE.withOpacity(0.8),
-                        ),
-                        child: Text(''),
-                      ),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  child: Container(
-                    width: 100,
-                    height: 15,
-                    color: Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
   }
 
   _showDeletePopup() {

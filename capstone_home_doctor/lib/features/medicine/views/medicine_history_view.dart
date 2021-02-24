@@ -48,8 +48,6 @@ class _MedicineHistory extends State<MedicineHistory>
   @override
   Widget build(BuildContext context) {
     _listPrescription.sort((a, b) => b.dateFrom.compareTo(a.dateFrom));
-    print(_arrayValidator
-        .parseArrToView(_listPrescription[0].diseases.toString()));
     return Scaffold(
       body: SafeArea(
         child: Column(

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'overview.dart';
-import 'profile.dart';
+import 'health_record/views/profile.dart';
 import 'timeline.dart';
 import 'vitalsign.dart';
 
