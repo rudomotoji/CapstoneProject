@@ -5,10 +5,10 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/models/medicine_scheduling_dto.dart';
 import 'package:flutter/material.dart';
 
-class Schedule extends StatefulWidget {
+class ScheduleView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _Schedule();
+    return _ScheduleView();
   }
 }
 
@@ -63,7 +63,7 @@ final List<MedicineSchedulingDTO> _listMedicine = [
       unitPerDay: 1),
 ];
 
-class _Schedule extends State<Schedule> with WidgetsBindingObserver {
+class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(

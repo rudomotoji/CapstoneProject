@@ -21,11 +21,13 @@ import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:android_alarm_manager/android_alarm_manager.dart';
+import 'package:cron/cron.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:android_alarm_manager/android_alarm_manager.dart';
 
 import 'features/home/home.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,6 +38,11 @@ final MORNING = 6;
 final NOON = 11;
 final AFTERNOON = 16;
 final EVERNING = 21;
+//this is the name given to the background fetch
+const simpleTaskKey = "simpleTask";
+const simpleDelayedTask = "simpleDelayedTask";
+const simplePeriodicTask = "simplePeriodicTask";
+const simplePeriodic1HourTask = "simplePeriodic1HourTask";
 
 void _handleGeneralMessage(Map<String, dynamic> message) {
   String payload;
@@ -71,22 +78,41 @@ void checkNotifiMedical() {
   final hour = DateTime.now().hour;
   final minute = DateTime.now().minute;
 
-  if ((hour == MORNING || hour == NOON || hour == AFTERNOON) && minute == 0) {
-    var message = {
-      "notification": {
-        "title": "Đã tới giờ uống thuốc",
-        "body":
-            "glyceryl trinitrat, isosorbid dinitrat, isosorbid mononitra,\nlovastatin, simvastatin, atorvastatin"
-      },
-      "data": {
-        "click_action": "FLUTTER_NOTIFICATION_CLICK",
-        "status": "done",
-        "screen": "screenA",
-        "message": "ACTION"
-      }
-    };
-    _handleGeneralMessage(message);
-  }
+  // if ((hour == MORNING || hour == NOON || hour == AFTERNOON) && minute == 0) {
+  var message = {
+    "notification": {
+      "title": "Đã tới giờ uống thuốc",
+      "body":
+          "glyceryl trinitrat, isosorbid dinitrat, isosorbid mononitra,\nlovastatin, simvastatin, atorvastatin"
+    },
+    "data": {
+      "click_action": "FLUTTER_NOTIFICATION_CLICK",
+      "status": "done",
+      "screen": "screenA",
+      "message": "ACTION"
+    }
+  };
+  _handleGeneralMessage(message);
+  // }
+}
+
+void callbackDispatcher() {
+  Workmanager.executeTask((task, inputData) async {
+    switch (task) {
+      case simpleTaskKey:
+        break;
+      case simpleDelayedTask:
+        break;
+      case simplePeriodicTask:
+        break;
+      case simplePeriodic1HourTask:
+        break;
+      case Workmanager.iOSBackgroundTask:
+        break;
+    }
+    checkNotifiMedical();
+    return Future.value(true);
+  });
 }
 
 void main() async {
@@ -98,6 +124,28 @@ void main() async {
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
+  if (Platform.isAndroid) {
+    await Workmanager.initialize(callbackDispatcher,
+        isInDebugMode:
+            true); //to true if still in testing lev turn it to false whenever you are launching the app
+    await Workmanager.registerPeriodicTask(
+      "5", simplePeriodicTask,
+      existingWorkPolicy: ExistingWorkPolicy.replace,
+      frequency: Duration(minutes: 15), //when should it check the link
+      initialDelay:
+          Duration(seconds: 5), //duration before showing the notification
+      // constraints: Constraints(
+      //   networkType: NetworkType.connected,
+      // ),
+    );
+  }
+  if (Platform.isIOS) {
+    final cron = Cron()
+      ..schedule(Schedule.parse('*/10 * * * * '), () {
+        checkNotifiMedical();
+        print(DateTime.now());
+      });
+  }
   runApp(HomeDoctor());
 }
 
@@ -239,7 +287,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
             RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
             RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),
-            RoutesHDr.SCHEDULE: (context) => Schedule(),
+            RoutesHDr.SCHEDULE: (context) => ScheduleView(),
             RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
             RoutesHDr.PATIENT_INFORMATION: (context) => PatientInformation(),
           },
