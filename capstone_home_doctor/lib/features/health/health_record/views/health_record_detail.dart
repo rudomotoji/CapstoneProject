@@ -97,16 +97,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                   Padding(
                     padding: EdgeInsets.only(top: 20),
                   ),
-                  Container(
-                    padding: EdgeInsets.only(left: 20, bottom: 5),
-                    child: Text(
-                      'Tạo ngày ${_healthRecordDTO.dateCreated.split(' ')[0].split("-")[2]}, tháng ${_healthRecordDTO.dateCreated.split(' ')[0].split("-")[1]}, năm ${_healthRecordDTO.dateCreated.split(' ')[0].split("-")[0]}',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          color: DefaultTheme.GREY_TEXT, fontSize: 12),
-                    ),
-                  ),
                   Row(
                     children: [
                       Padding(
@@ -212,8 +202,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                   Padding(
                     padding: EdgeInsets.only(bottom: 10),
                   ),
-                  (_healthRecordDTO.description.isNotEmpty ||
-                          _healthRecordDTO.description != '')
+                  (_healthRecordDTO.description != '')
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
@@ -259,6 +248,16 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                           height: 0,
                           width: 0,
                         ),
+                  Container(
+                    padding: EdgeInsets.only(left: 20, bottom: 5),
+                    child: Text(
+                      'Tạo ngày ${_healthRecordDTO.dateCreated?.split(' ')[0].split("-")[2]}, tháng ${_healthRecordDTO?.dateCreated.split(' ')[0].split("-")[1]}, năm ${_healthRecordDTO?.dateCreated.split(' ')[0].split("-")[0]}',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: DefaultTheme.GREY_TEXT, fontSize: 13),
+                    ),
+                  ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
@@ -358,14 +357,14 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              '${listMedicalIns[index].dateStarted.split(' ')[0].split('-')[2]}',
+                                              '${listMedicalIns[index]?.dateStarted.split(' ')[0].split('-')[2]}',
                                               style: TextStyle(
                                                   color:
                                                       DefaultTheme.RED_CALENDAR,
                                                   fontSize: 15),
                                             ),
                                             Text(
-                                              ' th ${listMedicalIns[index].dateStarted.split(' ')[0].split('-')[1]}',
+                                              ' th ${listMedicalIns[index]?.dateStarted.split(' ')[0].split('-')[1]}',
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 color:
@@ -422,11 +421,31 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     //
-                                                    Text('${_typeName}'),
+                                                    Text('${_typeName}',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        )),
                                                     Text(
-                                                        '${listMedicalIns[index].dianose}'),
+                                                        'Chẩn đoán: ${listMedicalIns[index]?.dianose}'),
                                                     Text(
-                                                        '${listMedicalIns[index].dateStarted}'),
+                                                        'img decode length ${listMedicalIns[index]?.image.length}'),
+                                                    Container(
+                                                      width: 80,
+                                                      height: 80,
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                        child: SizedBox(
+                                                          width: 80,
+                                                          height: 80,
+                                                          child: ImageUltility
+                                                              .imageFromBase64String(
+                                                                  '${listMedicalIns[index]?.image}'),
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -505,6 +524,19 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   ),
                                 ),
                                 Spacer(),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 0.5,
+                                ),
+                                ButtonHDr(
+                                  label: 'Chi tiết',
+                                  height: 60,
+                                  labelColor: DefaultTheme.BLUE_TEXT,
+                                  style: BtnStyle.BUTTON_IN_LIST,
+                                  onTap: () {
+                                    //
+                                  },
+                                ),
                                 Divider(
                                   color: DefaultTheme.GREY_TOP_TAB_BAR,
                                   height: 0.5,
@@ -822,7 +854,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     (_startDate == '')
                                         ? Container()
                                         : Text(
-                                            '${_dateView.split("-")[2]}, tháng ${_dateView.split("-")[1]}, ${_dateView.split("-")[0]}',
+                                            '${_dateView?.split("-")[2]}, tháng ${_dateView?.split("-")[1]}, ${_dateView.split("-")[0]}',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w400,
                                                 fontSize: 15),
@@ -1048,7 +1080,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   // print('${_dianoseController.text}');
                                   print(
                                       'HR ID when prepare submit is ${_healthRecordDTO.healthRecordId}');
-                                  // print('${_imgString}');
+                                  print('${_imgString.length}');
                                   print(
                                       'INDEX SELECTED IS ALSO ID TYPE ${indexSelectMedIns.toString()}');
 
@@ -1087,8 +1119,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         });
   }
 
-  getHRId() {
-    _healthRecordHelper.getHRId().then((value) {
+  getHRId() async {
+    await _healthRecordHelper.getHRId().then((value) {
       print('HR ID IN SHARED_PR ${value}');
       setState(() {
         _hrId = value;
@@ -1117,7 +1149,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     });
   }
 
-  _insertMedicalInstruction(MedicalInstructionDTO dto) {
+  _insertMedicalInstruction(MedicalInstructionDTO dto) async {
     _sqfLiteHelper.insertMedicalIns(dto);
   }
 

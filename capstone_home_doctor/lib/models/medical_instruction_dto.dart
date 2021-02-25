@@ -44,4 +44,10 @@ class MedicalInstructionDTO {
     medicalInstructionTypeId = map['medical_instruction_type_id'];
     healthRecordId = map['health_record_id'];
   }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return '$medicalIntructionId - $dianose - $medicalInstructionTypeId - $dateStarted';
+  }
 }

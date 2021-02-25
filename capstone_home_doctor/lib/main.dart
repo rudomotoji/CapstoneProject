@@ -213,7 +213,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
             RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
             RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),
-            RoutesHDr.SCHEDULE: (context) => Schedule(),
+            RoutesHDr.SCHEDULE: (context) => ScheduleView(),
             RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
             RoutesHDr.PATIENT_INFORMATION: (context) => PatientInformation(),
             //RoutesHDr.CREATE_HEALTH_RECORD: (context) => CreateHealthRecord(),

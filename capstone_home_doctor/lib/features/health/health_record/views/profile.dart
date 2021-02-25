@@ -386,6 +386,10 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                   ),
                                 ),
                                 Spacer(),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 0.5,
+                                ),
                                 ButtonHDr(
                                   label: 'Chi tiết',
                                   height: 60,
