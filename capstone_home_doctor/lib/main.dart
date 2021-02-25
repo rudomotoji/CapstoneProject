@@ -24,15 +24,99 @@ import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:android_alarm_manager/android_alarm_manager.dart';
+import 'package:cron/cron.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'features/home/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:provider/provider.dart';
+
+final MORNING = 6;
+final NOON = 11;
+final AFTERNOON = 16;
+final EVERNING = 21;
+//this is the name given to the background fetch
+const simpleTaskKey = "simpleTask";
+const simpleDelayedTask = "simpleDelayedTask";
+const simplePeriodicTask = "simplePeriodicTask";
+const simplePeriodic1HourTask = "simplePeriodic1HourTask";
+
+void _handleGeneralMessage(Map<String, dynamic> message) {
+  String payload;
+  ReceiveNotification receiveNotification;
+  if (message.containsKey('data')) {
+    final dynamic data = message['data'];
+    payload = jsonEncode(data);
+  }
+  final dynamic notification = message['notification'];
+  receiveNotification = ReceiveNotification(
+      id: 0,
+      title: notification["title"],
+      body: notification["body"],
+      payload: payload);
+  localNotifyManager.show(receiveNotification);
+}
+
+void _handleIOSGeneralMessage(Map<String, dynamic> message) {
+  String payload = jsonEncode(message);
+  ReceiveNotification receiveNotification;
+
+  final dynamic notification = message['aps']['alert'];
+
+  receiveNotification = ReceiveNotification(
+      id: 0,
+      title: notification["title"],
+      body: notification["body"],
+      payload: payload);
+  localNotifyManager.show(receiveNotification);
+}
+
+void checkNotifiMedical() {
+  final hour = DateTime.now().hour;
+  final minute = DateTime.now().minute;
+
+  if ((hour == MORNING || hour == NOON || hour == AFTERNOON) && minute == 0) {
+    var message = {
+      "notification": {
+        "title": "Đã tới giờ uống thuốc",
+        "body":
+            "glyceryl trinitrat, isosorbid dinitrat, isosorbid mononitra,\nlovastatin, simvastatin, atorvastatin"
+      },
+      "data": {
+        "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        "status": "done",
+        "screen": "screenA",
+        "message": "ACTION"
+      }
+    };
+    _handleGeneralMessage(message);
+  }
+}
+
+void callbackDispatcher() {
+  Workmanager.executeTask((task, inputData) async {
+    switch (task) {
+      case simpleTaskKey:
+        break;
+      case simpleDelayedTask:
+        break;
+      case simplePeriodicTask:
+        break;
+      case simplePeriodic1HourTask:
+        break;
+      case Workmanager.iOSBackgroundTask:
+        break;
+    }
+    checkNotifiMedical();
+    return Future.value(true);
+  });
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +127,28 @@ void main() async {
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
+  if (Platform.isAndroid) {
+    await Workmanager.initialize(callbackDispatcher,
+        isInDebugMode:
+            true); //to true if still in testing lev turn it to false whenever you are launching the app
+    await Workmanager.registerPeriodicTask(
+      "5", simplePeriodicTask,
+      existingWorkPolicy: ExistingWorkPolicy.replace,
+      frequency: Duration(minutes: 15), //when should it check the link
+      initialDelay:
+          Duration(seconds: 5), //duration before showing the notification
+      // constraints: Constraints(
+      //   networkType: NetworkType.connected,
+      // ),
+    );
+  }
+  if (Platform.isIOS) {
+    final cron = Cron()
+      ..schedule(Schedule.parse('* * * * * '), () {
+        checkNotifiMedical();
+        print(DateTime.now());
+      });
+  }
   runApp(HomeDoctor());
 }
 
@@ -71,41 +177,6 @@ class _HomeDoctorState extends State<HomeDoctor> {
         : _handleGeneralMessage(message);
   }
 
-  void _handleGeneralMessage(Map<String, dynamic> message) {
-    String payload;
-    ReceiveNotification receiveNotification;
-    if (message.containsKey('data')) {
-      // Handle data message
-      final dynamic data = message['data'];
-      payload = jsonEncode(data);
-    }
-    final dynamic notification = message['notification'];
-    // NotiHelper.show(
-    //     title: notification["title"],
-    //     body: notification["body"],
-    //     payload: payload);
-    receiveNotification = ReceiveNotification(
-        id: 0,
-        title: notification["title"],
-        body: notification["body"],
-        payload: payload);
-    localNotifyManager.show(receiveNotification);
-  }
-
-  void _handleIOSGeneralMessage(Map<String, dynamic> message) {
-    String payload = jsonEncode(message);
-    ReceiveNotification receiveNotification;
-
-    final dynamic notification = message['aps']['alert'];
-
-    receiveNotification = ReceiveNotification(
-        id: 0,
-        title: notification["title"],
-        body: notification["body"],
-        payload: payload);
-    localNotifyManager.show(receiveNotification);
-  }
-
   Future<void> _initialServiceHelper() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('AUTHENTICATION') ||
@@ -123,6 +194,16 @@ class _HomeDoctorState extends State<HomeDoctor> {
   @override
   void initState() {
     super.initState();
+    if (Platform.isAndroid) {
+      final int helloAlarmID = 0;
+      AndroidAlarmManager.initialize();
+      AndroidAlarmManager.periodic(
+        const Duration(minutes: 1),
+        helloAlarmID,
+        checkNotifiMedical,
+        wakeup: true,
+      );
+    }
     _initialServiceHelper();
     authenHelper.isAuthenticated().then((value) {
       print('value authen now ${value}');
