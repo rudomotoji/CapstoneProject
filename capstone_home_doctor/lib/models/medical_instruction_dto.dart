@@ -45,6 +45,30 @@ class MedicalInstructionDTO {
     healthRecordId = map['health_record_id'];
   }
 
+  MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
+    medicalIntructionId = json['medical_instruction_id'];
+    description = json['description'];
+    image = json['image'];
+    dianose = json['dianose'];
+    dateStarted = json['date_start'];
+    dateFinished = json['date_finish'];
+    medicalInstructionTypeId = json['medical_instruction_type_id'];
+    healthRecordId = json['health_record_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['medical_instruction_id'] = this.medicalIntructionId;
+    data['description'] = this.description;
+    data['image'] = this.image;
+    data['dianose'] = this.dianose;
+    data['date_start'] = this.dateStarted;
+    data['date_finish'] = this.dateFinished;
+    data['medical_instruction_type_id'] = this.medicalInstructionTypeId;
+    data['health_record_id'] = this.healthRecordId;
+    return data;
+  }
+
   @override
   String toString() {
     // TODO: implement toString

@@ -52,12 +52,12 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   List<MedicalInstructionDTO> listMedicalIns;
   HealthRecordDTO _healthRecordDTO = HealthRecordDTO(
-      contractId: '',
+      contractId: 0,
       dateCreated: '',
       description: '',
       disease: '',
       doctorName: '',
-      healthRecordId: '',
+      healthRecordId: 0,
       personalHealthRecordId: '',
       place: '');
   //
@@ -87,7 +87,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             HeaderWidget(
-              title: 'Chi tiết bệnh lý',
+              title: 'Chi tiết hồ sơ',
               isMainView: false,
               buttonHeaderType: ButtonHeaderType.NONE,
             ),
@@ -271,7 +271,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  'Danh sách hồ sơ',
+                                  'Danh sách y lệnh',
                                   style: TextStyle(
                                     color: DefaultTheme.BLACK,
                                     fontSize: 18,
@@ -285,7 +285,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                 left: 20,
                               ),
                               child: Text(
-                                'Bao gồm các hồ sơ bệnh án/ y lệnh được thêm trước đó',
+                                'Bao gồm các phiếu bệnh án/ y lệnh được thêm trước đó',
                                 style: TextStyle(
                                     color: DefaultTheme.GREY_TEXT,
                                     fontSize: 13),
@@ -297,7 +297,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                       Expanded(
                         child: ButtonHDr(
                           style: BtnStyle.BUTTON_GREY,
-                          label: 'Thêm hồ sơ',
+                          label: 'Thêm y lệnh',
                           onTap: () {
                             //
                             _showCreateMedInsForm();

@@ -1,5 +1,5 @@
 class HealthRecordDTO {
-  String healthRecordId;
+  int healthRecordId;
   String disease;
   String place;
   String doctorName;
@@ -8,7 +8,7 @@ class HealthRecordDTO {
   String personalHealthRecordId;
   String dateCreated;
   //for currency health record.
-  String contractId;
+  int contractId;
 
   //constructor
   HealthRecordDTO({
@@ -45,5 +45,25 @@ class HealthRecordDTO {
     personalHealthRecordId = map['personal_health_record_id'];
     dateCreated = map['date_create'];
     contractId = map['contract_id'];
+  }
+
+  HealthRecordDTO.fromJson(Map<String, dynamic> json) {
+    healthRecordId = json['healthRecordId'];
+    disease = json['dicease'];
+    place = json['place'];
+    description = json['description'];
+    dateCreated = json['dateCreated'];
+    contractId = json['contractId'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['healthRecordId'] = this.healthRecordId;
+    data['dicease'] = this.disease;
+    data['place'] = this.place;
+    data['description'] = this.description;
+    data['dateCreated'] = this.dateCreated;
+    data['contractId'] = this.contractId;
+    return data;
   }
 }
