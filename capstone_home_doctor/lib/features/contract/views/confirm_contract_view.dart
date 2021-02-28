@@ -669,9 +669,7 @@ class _ConfirmContract extends State<ConfirmContract>
       builder: (context, state) {
         if (state is RequestContractStateLoading) {}
         if (state is RequestContractStateFailure) {}
-        if (state is RequestContractStateSuccess) {
-          print('SEND REQUEST OKE');
-        }
+        if (state is RequestContractStateSuccess) {}
         return null;
       },
     );

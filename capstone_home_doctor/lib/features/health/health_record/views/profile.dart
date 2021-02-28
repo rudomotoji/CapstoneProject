@@ -11,8 +11,6 @@ import 'package:capstone_home_doctor/features/health/health_record/repositories/
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_list_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/create_health_record.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
-import 'package:capstone_home_doctor/services/health_record_helper.dart';
-import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -123,8 +121,14 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
       builder: (context, state) {
         if (state is HRListStateLoading) {
           return Container(
-              width: MediaQuery.of(context).size.width,
-              child: Center(child: CircularProgressIndicator()));
+            width: 200,
+            height: 200,
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: Image.asset('assets/images/loading.gif'),
+            ),
+          );
         }
         if (state is HRListStateFailure) {
           return Container(
@@ -186,10 +190,29 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                         CrossAxisAlignment.start,
                                     children: [
                                       //
+                                      (state.listHealthRecord[index].disease ==
+                                              null)
+                                          ? Text(
+                                              'Hồ sơ',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500),
+                                            )
+                                          : Text(
+                                              'Hồ sơ ${state.listHealthRecord[index].disease}',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500),
+                                            ),
                                       Text(
-                                        'Hồ sơ từ ${state.listHealthRecord[index].place}',
+                                        'Nơi khám: ${state.listHealthRecord[index].place}',
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: DefaultTheme.BLACK_BUTTON,
+                                            fontSize: 12),
                                       ),
                                       Text(
                                         'Ngày tạo: ${_dateValidator.parseToDateView(state.listHealthRecord[index].dateCreated)}',
@@ -270,14 +293,23 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                 Padding(
                                   padding: EdgeInsets.only(
                                       top: 30, left: 10, right: 10),
-                                  child: Text(
-                                    'Bệnh lý ${disease}',
-                                    style: TextStyle(
-                                        color: DefaultTheme.GREY_TEXT),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                  ),
+                                  child: (disease == null)
+                                      ? Text(
+                                          'Hồ sơ ${healthRecordId}',
+                                          style: TextStyle(
+                                              color: DefaultTheme.GREY_TEXT),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.center,
+                                        )
+                                      : Text(
+                                          'Hồ sơ ${disease}',
+                                          style: TextStyle(
+                                              color: DefaultTheme.GREY_TEXT),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.center,
+                                        ),
                                 ),
                                 Spacer(),
                                 Divider(

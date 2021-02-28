@@ -46,7 +46,7 @@ class MedicalInstructionDTO {
   }
 
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
-    medicalIntructionId = json['medical_instruction_id'];
+    medicalIntructionId = json['medicalInstructionId'];
     description = json['description'];
     image = json['image'];
     dianose = json['dianose'];
@@ -58,7 +58,7 @@ class MedicalInstructionDTO {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['medical_instruction_id'] = this.medicalIntructionId;
+    data['medicalInstructionId'] = this.medicalIntructionId;
     data['description'] = this.description;
     data['image'] = this.image;
     data['dianose'] = this.dianose;
@@ -73,5 +73,52 @@ class MedicalInstructionDTO {
   String toString() {
     // TODO: implement toString
     return '$medicalIntructionId - $dianose - $medicalInstructionTypeId - $dateStarted';
+  }
+}
+
+class MedicalInstructionByTypeDTO {
+  String medicalInstructionType;
+  List<MedicalInstructions> medicalInstructions;
+
+  MedicalInstructionByTypeDTO(
+      {this.medicalInstructionType, this.medicalInstructions});
+
+  MedicalInstructionByTypeDTO.fromJson(Map<String, dynamic> json) {
+    medicalInstructionType = json['medicalInstructionType'];
+    if (json['medicalInstructions'] != null) {
+      medicalInstructions = new List<MedicalInstructions>();
+      json['medicalInstructions'].forEach((v) {
+        medicalInstructions.add(new MedicalInstructions.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['medicalInstructionType'] = this.medicalInstructionType;
+    if (this.medicalInstructions != null) {
+      data['medicalInstructions'] =
+          this.medicalInstructions.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class MedicalInstructions {
+  int medicalInstructionId;
+  String image;
+
+  MedicalInstructions({this.medicalInstructionId, this.image});
+
+  MedicalInstructions.fromJson(Map<String, dynamic> json) {
+    medicalInstructionId = json['medicalInstructionId'];
+    image = json['image'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['medicalInstructionId'] = this.medicalInstructionId;
+    data['image'] = this.image;
+    return data;
   }
 }

@@ -7,6 +7,9 @@ import 'package:capstone_home_doctor/features/chat/chat.dart';
 import 'package:capstone_home_doctor/features/contract/views/confirm_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/manage_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/create_health_record.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/health_record_detail.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
@@ -35,10 +38,12 @@ import 'package:cron/cron.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/home/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 final MORNING = 6;
 final NOON = 11;
@@ -246,6 +251,10 @@ const simpleTaskKey = "simpleTask";
 const simpleDelayedTask = "simpleDelayedTask";
 const simplePeriodicTask = "simplePeriodicTask";
 const simplePeriodic1HourTask = "simplePeriodic1HourTask";
+
+//repo for blocs
+HealthRecordRepository _healthRecordRepository =
+    HealthRecordRepository(httpClient: http.Client());
 
 void _handleGeneralMessage(Map<String, dynamic> message) {
   String payload;
@@ -464,50 +473,64 @@ class _HomeDoctorState extends State<HomeDoctor> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(new FocusNode());
-      },
-      child: MultiProvider(
+    return MultiBlocProvider(
         providers: [
-          ChangeNotifierProvider(
-            create: (context) => PhoneAuthDataProvider(),
+          BlocProvider<HealthRecordListBloc>(
+            create: (BuildContext context) => HealthRecordListBloc(
+                healthRecordRepository: _healthRecordRepository),
           ),
-          ChangeNotifierProvider(
-            create: (context) => RequestContractDTOProvider(),
+          BlocProvider<HealthRecordCreateBloc>(
+            create: (BuildContext context) => HealthRecordCreateBloc(
+                healthRecordRepository: _healthRecordRepository),
           ),
-          ChangeNotifierProvider(
-            create: (context) => RContractProvider(),
-          )
         ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          // theme: ThemeData(fontFamily: 'SFPro'),
-          initialRoute: RoutesHDr.INITIAL_ROUTE,
-          routes: {
-            RoutesHDr.LOG_IN: (context) => Login(),
-            RoutesHDr.REGISTER: (context) => Register(),
-            RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
-            RoutesHDr.MAIN_HOME: (context) => MainHome(),
-            RoutesHDr.CONFIRM_CONTRACT: (context) => RequestContract(),
-            RoutesHDr.INTRO_CONNECT_PERIPHERAL: (context) =>
-                IntroConnectDevice(),
-            RoutesHDr.CONNECT_PERIPHERAL: (context) => ConnectPeripheral(),
-            RoutesHDr.CHAT: (context) => ChatScreen(),
-            RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
-            RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
-            RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),
-            RoutesHDr.SCHEDULE: (context) => ScheduleView(),
-            RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
-            RoutesHDr.PATIENT_INFORMATION: (context) => PatientInformation(),
-            //RoutesHDr.CREATE_HEALTH_RECORD: (context) => CreateHealthRecord(),
-            RoutesHDr.HEALTH_RECORD_DETAIL: (context) => HealthRecordDetail(),
-            RoutesHDr.MEDICINE_NOTI_VIEW: (context) => ScheduleMedNotiView(),
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
           },
-          // home: _startScreen,
-          home: MainHome(),
-        ),
-      ),
-    );
+          child: MultiProvider(
+            providers: [
+              ChangeNotifierProvider(
+                create: (context) => PhoneAuthDataProvider(),
+              ),
+              ChangeNotifierProvider(
+                create: (context) => RequestContractDTOProvider(),
+              ),
+              ChangeNotifierProvider(
+                create: (context) => RContractProvider(),
+              )
+            ],
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              // theme: ThemeData(fontFamily: 'SFPro'),
+              initialRoute: RoutesHDr.INITIAL_ROUTE,
+              routes: {
+                RoutesHDr.LOG_IN: (context) => Login(),
+                RoutesHDr.REGISTER: (context) => Register(),
+                RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
+                RoutesHDr.MAIN_HOME: (context) => MainHome(),
+                RoutesHDr.CONFIRM_CONTRACT: (context) => RequestContract(),
+                RoutesHDr.INTRO_CONNECT_PERIPHERAL: (context) =>
+                    IntroConnectDevice(),
+                RoutesHDr.CONNECT_PERIPHERAL: (context) => ConnectPeripheral(),
+                RoutesHDr.CHAT: (context) => ChatScreen(),
+                RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
+                RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
+                RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),
+                RoutesHDr.SCHEDULE: (context) => ScheduleView(),
+                RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
+                RoutesHDr.PATIENT_INFORMATION: (context) =>
+                    PatientInformation(),
+                //RoutesHDr.CREATE_HEALTH_RECORD: (context) => CreateHealthRecord(),
+                RoutesHDr.HEALTH_RECORD_DETAIL: (context) =>
+                    HealthRecordDetail(),
+                RoutesHDr.MEDICINE_NOTI_VIEW: (context) =>
+                    ScheduleMedNotiView(),
+              },
+              // home: _startScreen,
+              home: MainHome(),
+            ),
+          ),
+        ));
   }
 }

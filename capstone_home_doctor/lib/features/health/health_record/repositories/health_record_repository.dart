@@ -42,4 +42,22 @@ class HealthRecordRepository extends BaseApiClient {
       print('ERROR AT GET LIST HEALTH RECORD ${e.toString()}');
     }
   }
+
+  //create new healthRecord
+  Future<bool> createHealthRecord(HealthRecordDTO dto) async {
+    final String url = '/HealthRecords/abcasbcacs';
+    try {
+      final request = await postApi(url, null, dto.toJson());
+      if (request.statusCode == 201) {
+        return true;
+      }
+      if (request.statusCode == 400) {
+        return false;
+      }
+      return false;
+    } catch (e) {
+      print('ERROR AT CREATE HEALTH RECORD API: $e');
+    }
+  }
+//
 }

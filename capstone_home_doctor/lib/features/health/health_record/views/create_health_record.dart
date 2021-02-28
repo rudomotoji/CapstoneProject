@@ -11,18 +11,27 @@
 //   HRTypeDTO(id: 10, typeName: 'Hồ sơ khác'),
 // ];
 
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/events/hr_create_event.dart';
+
+import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
+import 'package:capstone_home_doctor/features/health/health_record/states/hr_create_state.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
-import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CreateHealthRecord extends StatefulWidget {
   final Function refresh;
+
   CreateHealthRecord(this.refresh);
   @override
   State<StatefulWidget> createState() {
@@ -33,18 +42,23 @@ class CreateHealthRecord extends StatefulWidget {
 class _CreateHealthRecord extends State<CreateHealthRecord>
     with WidgetsBindingObserver {
   //
-  SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
+  HealthRecordRepository healthRecordRepository =
+      HealthRecordRepository(httpClient: http.Client());
+  HealthRecordCreateBloc _healthRecordCreateBloc;
+  //
+  //SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   DateValidator _dateValidator = DateValidator();
   var _placeController = TextEditingController();
-  var _doctorNameController = TextEditingController();
+  //var _doctorNameController = TextEditingController();
   var _diseaseController = TextEditingController();
   String _note = '';
-  var uuid = Uuid();
+
   HealthRecordDTO healthRecordDTO;
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+    _healthRecordCreateBloc = BlocProvider.of(context);
   }
 
   @override
@@ -134,43 +148,9 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                         keyboardAction: TextInputAction.next,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 10, right: 20),
+                        padding: EdgeInsets.only(left: 10, right: 0),
                         child: Text(
-                          'Nhập tên bệnh viện hoặc địa chỉ chăm khám...',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 10, bottom: 20),
-                        child: Divider(
-                          color: DefaultTheme.GREY_LIGHT,
-                          height: 0.1,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 5, left: 10),
-                        child: Text(
-                          'Bác sĩ',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: DefaultTheme.BLACK_BUTTON,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16),
-                        ),
-                      ),
-                      TextFieldHDr(
-                        controller: _doctorNameController,
-                        style: TFStyle.BORDERED,
-                        keyboardAction: TextInputAction.next,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10, right: 20),
-                        child: Text(
-                          'Nhập họ tên bác sĩ chăm khám.',
+                          'Nhập tên bệnh viện, tên bác sĩ hoặc địa chỉ chăm khám...',
                           textAlign: TextAlign.start,
                           style: TextStyle(
                               color: DefaultTheme.GREY_TEXT,
@@ -214,15 +194,200 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                               style: BtnStyle.BUTTON_BLACK,
                               label: 'Tạo hồ sơ',
                               onTap: () {
-                                //_insertHealthRecord();
+                                healthRecordDTO = HealthRecordDTO(
+                                  personalHealthRecordId: 1,
+                                  disease: _diseaseController.text,
+                                  place: _placeController.text,
+                                  description: _note,
+                                );
+
+                                _insertHealthRecord(healthRecordDTO);
                                 // widget.refresh();
-                                Navigator.pop(context);
+                                // Navigator.pop(context);
                               })),
                     ]),
               ),
             ]),
       ),
     );
+  }
+
+  _insertHealthRecord(HealthRecordDTO dto) {
+    print(
+        'DTO DUOC TRUYEN DI ${dto.personalHealthRecordId} - ${dto.disease} - ${dto.place} - ${dto.description}');
+    if (dto == null) {
+      return Dialog(
+        child: Container(
+          width: 200,
+          height: 200,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: DefaultTheme.WHITE),
+          child: Text('Bệnh lý rỗng.'),
+        ),
+      );
+    }
+    _healthRecordCreateBloc.add(HRCreateEventSend(dto: dto));
+    return BlocBuilder<HealthRecordCreateBloc, HRCreateState>(
+        builder: (context, state) {
+      //
+      print(
+          'DTO DUOC TRUYEN DI ${dto.personalHealthRecordId} - ${dto.disease} - ${dto.place} - ${dto.description}');
+      if (state is HRCreateStateLoading) {
+        showDialog(
+            //
+            context: context,
+            builder: (BuildContext context) {
+              return Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: DefaultTheme.WHITE.withOpacity(0.8)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: Image.asset('assets/images/loading.gif'),
+                          ),
+                          Text(
+                            'Đang tạo...',
+                            style: TextStyle(
+                                color: DefaultTheme.GREY_TEXT,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                decoration: TextDecoration.none),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            });
+      }
+      if (state is HRCreateStateFailure) {
+        Navigator.of(context).pop();
+        showDialog(
+            //
+            context: context,
+            builder: (BuildContext context) {
+              return Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: DefaultTheme.WHITE.withOpacity(0.8)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: Image.asset('assets/images/ic-failed.png'),
+                          ),
+                          Text(
+                            'Lỗi tạo hồ sơ',
+                            style: TextStyle(
+                                color: DefaultTheme.GREY_TEXT,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                decoration: TextDecoration.none),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            });
+      }
+      if (state is HRCreateStateSuccess) {
+        widget.refresh();
+        Navigator.pop(context);
+      }
+      //FOR FAILED TO OTHER STATE
+
+      return Dialog(
+        child: Container(
+          width: 200,
+          height: 200,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: DefaultTheme.WHITE),
+          child: Text('Không thể tạo hồ sơ'),
+        ),
+      );
+      ;
+    });
+/////////////////////////
+/////
+    // //this is for sucessful Insert
+    // Timer timer = Timer(Duration(milliseconds: 10000), () {
+    //   Navigator.of(context, rootNavigator: true).pop();
+    // });
+    // showDialog(
+    //     //
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return Center(
+    //         child: ClipRRect(
+    //           borderRadius: BorderRadius.all(Radius.circular(5)),
+    //           child: BackdropFilter(
+    //             filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+    //             child: Container(
+    //               width: 200,
+    //               height: 200,
+    //               decoration: BoxDecoration(
+    //                   borderRadius: BorderRadius.circular(10),
+    //                   color: DefaultTheme.WHITE.withOpacity(0.8)),
+    //               child: Column(
+    //                 mainAxisAlignment: MainAxisAlignment.center,
+    //                 crossAxisAlignment: CrossAxisAlignment.center,
+    //                 children: [
+    //                   SizedBox(
+    //                     width: 100,
+    //                     height: 100,
+    //                     child: Image.asset('assets/images/loading.gif'),
+    //                   ),
+    //                   Text(
+    //                     'Đang tạo...',
+    //                     style: TextStyle(
+    //                         color: DefaultTheme.GREY_TEXT,
+    //                         fontSize: 15,
+    //                         fontWeight: FontWeight.w400,
+    //                         decoration: TextDecoration.none),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //       );
+    //     }).then((value) {
+    //   print('OK');
+    //   // dispose the timer in case something else has triggered the dismiss.
+    //   widget.refresh();
+    //   Navigator.pop(context);
+    //   timer?.cancel();
+    //   timer = null;
+    // });
+
+    //
   }
 
   // _insertHealthRecord() {

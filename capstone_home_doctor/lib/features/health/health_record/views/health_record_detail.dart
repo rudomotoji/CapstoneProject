@@ -58,7 +58,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
       disease: '',
       doctorName: '',
       healthRecordId: 0,
-      personalHealthRecordId: '',
+      personalHealthRecordId: 0,
       place: '');
   //
   @override
@@ -67,7 +67,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     super.initState();
     listMedicalIns = [];
     getHRId();
-    refreshListMedicalIns();
+    // refreshListMedicalIns();
     print('LENGTH OF LIST MEDINS: ${listMedicalIns.length}');
   }
 
@@ -79,7 +79,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
   @override
   Widget build(BuildContext context) {
-    _findHealthRecordById();
+    // _findHealthRecordById();
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -1084,8 +1084,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   print(
                                       'INDEX SELECTED IS ALSO ID TYPE ${indexSelectMedIns.toString()}');
 
-                                  _insertMedicalInstruction(medInsDTO);
-                                  refreshListMedicalIns();
+                                  // _insertMedicalInstruction(medInsDTO);
+                                  // refreshListMedicalIns();
                                   Navigator.pop(context);
                                 },
                               ),
@@ -1138,34 +1138,34 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     return result;
   }
 
-  _findHealthRecordById() async {
-    Map<String, Object> arguments = ModalRoute.of(context).settings.arguments;
-    String _healthRecordId = arguments['HR_ID'];
-    //_healthRecordDTO = _sqfLiteHelper.findHealthRecordById(_healthRecordId);
-    await _sqfLiteHelper.findHealthRecordById(_hrId).then((value) {
-      setState(() {
-        _healthRecordDTO = value;
-      });
-    });
-  }
+  // _findHealthRecordById() async {
+  //   Map<String, Object> arguments = ModalRoute.of(context).settings.arguments;
+  //   String _healthRecordId = arguments['HR_ID'];
+  //   //_healthRecordDTO = _sqfLiteHelper.findHealthRecordById(_healthRecordId);
+  //   await _sqfLiteHelper.findHealthRecordById(_hrId).then((value) {
+  //     setState(() {
+  //       _healthRecordDTO = value;
+  //     });
+  //   });
+  // }
 
-  _insertMedicalInstruction(MedicalInstructionDTO dto) async {
-    _sqfLiteHelper.insertMedicalIns(dto);
-  }
+  // _insertMedicalInstruction(MedicalInstructionDTO dto) async {
+  //   _sqfLiteHelper.insertMedicalIns(dto);
+  // }
 
-  refreshListMedicalIns() async {
-    String id = '';
-    await _healthRecordHelper.getHRId().then((value) {
-      setState(() {
-        id = value;
-      });
-    });
-    await _sqfLiteHelper.getListMedicalIns(id).then((values) {
-      setState(() {
-        listMedicalIns.clear();
-        listMedicalIns.addAll(values);
-        print(listMedicalIns);
-      });
-    });
-  }
+  // refreshListMedicalIns() async {
+  //   String id = '';
+  //   await _healthRecordHelper.getHRId().then((value) {
+  //     setState(() {
+  //       id = value;
+  //     });
+  //   });
+  //   await _sqfLiteHelper.getListMedicalIns(id).then((values) {
+  //     setState(() {
+  //       listMedicalIns.clear();
+  //       listMedicalIns.addAll(values);
+  //       print(listMedicalIns);
+  //     });
+  //   });
+  // }
 }

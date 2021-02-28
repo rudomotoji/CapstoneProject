@@ -5,7 +5,7 @@ class HealthRecordDTO {
   String doctorName;
   String description;
   //to get owner
-  String personalHealthRecordId;
+  int personalHealthRecordId;
   String dateCreated;
   //for currency health record.
   int contractId;
@@ -58,12 +58,10 @@ class HealthRecordDTO {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['healthRecordId'] = this.healthRecordId;
+    data['personalHealthRecordId'] = this.personalHealthRecordId;
     data['dicease'] = this.disease;
     data['place'] = this.place;
     data['description'] = this.description;
-    data['dateCreated'] = this.dateCreated;
-    data['contractId'] = this.contractId;
     return data;
   }
 }
