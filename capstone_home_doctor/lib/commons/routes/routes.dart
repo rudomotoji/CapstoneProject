@@ -18,4 +18,5 @@ class RoutesHDr {
   static const String CREATE_HEALTH_RECORD = '/CreateHealthRecord';
   static const String HEALTH_RECORD_DETAIL = '/HealthRecordDetail';
   static const String HEART = '/Heart';
+  static const String MEDICINE_NOTI_VIEW = '/ScheduleMedicineNotiView';
 }

@@ -44,4 +44,81 @@ class MedicalInstructionDTO {
     medicalInstructionTypeId = map['medical_instruction_type_id'];
     healthRecordId = map['health_record_id'];
   }
+
+  MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
+    medicalIntructionId = json['medicalInstructionId'];
+    description = json['description'];
+    image = json['image'];
+    dianose = json['dianose'];
+    dateStarted = json['date_start'];
+    dateFinished = json['date_finish'];
+    medicalInstructionTypeId = json['medical_instruction_type_id'];
+    healthRecordId = json['health_record_id'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['medicalInstructionId'] = this.medicalIntructionId;
+    data['description'] = this.description;
+    data['image'] = this.image;
+    data['dianose'] = this.dianose;
+    data['date_start'] = this.dateStarted;
+    data['date_finish'] = this.dateFinished;
+    data['medical_instruction_type_id'] = this.medicalInstructionTypeId;
+    data['health_record_id'] = this.healthRecordId;
+    return data;
+  }
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return '$medicalIntructionId - $dianose - $medicalInstructionTypeId - $dateStarted';
+  }
+}
+
+class MedicalInstructionByTypeDTO {
+  String medicalInstructionType;
+  List<MedicalInstructions> medicalInstructions;
+
+  MedicalInstructionByTypeDTO(
+      {this.medicalInstructionType, this.medicalInstructions});
+
+  MedicalInstructionByTypeDTO.fromJson(Map<String, dynamic> json) {
+    medicalInstructionType = json['medicalInstructionType'];
+    if (json['medicalInstructions'] != null) {
+      medicalInstructions = new List<MedicalInstructions>();
+      json['medicalInstructions'].forEach((v) {
+        medicalInstructions.add(new MedicalInstructions.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['medicalInstructionType'] = this.medicalInstructionType;
+    if (this.medicalInstructions != null) {
+      data['medicalInstructions'] =
+          this.medicalInstructions.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class MedicalInstructions {
+  int medicalInstructionId;
+  String image;
+
+  MedicalInstructions({this.medicalInstructionId, this.image});
+
+  MedicalInstructions.fromJson(Map<String, dynamic> json) {
+    medicalInstructionId = json['medicalInstructionId'];
+    image = json['image'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['medicalInstructionId'] = this.medicalInstructionId;
+    data['image'] = this.image;
+    return data;
+  }
 }

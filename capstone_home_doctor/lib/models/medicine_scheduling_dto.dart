@@ -1,24 +1,23 @@
-class MedicineSchedulingDTO {
-  String name;
-  String amount;
-  int totalDay;
+class MedicineDTO {
+  String medicationName;
+  String content;
   String unit;
-  int unitPerDay;
-  int timePerDay;
-  String howToUsing;
-  bool isMorning;
-  bool isNoon;
-  bool isNight;
+  String description;
+  String useTime;
+  int morning;
+  int afternoon;
+  int noon;
+  int night;
 
-  MedicineSchedulingDTO(
-      {this.name,
-      this.amount,
-      this.totalDay,
-      this.unit,
-      this.unitPerDay,
-      this.howToUsing,
-      this.timePerDay,
-      this.isMorning,
-      this.isNight,
-      this.isNoon});
+  MedicineDTO({
+    this.medicationName,
+    this.content,
+    this.unit,
+    this.description,
+    this.useTime,
+    this.morning,
+    this.afternoon,
+    this.night,
+    this.noon,
+  });
 }

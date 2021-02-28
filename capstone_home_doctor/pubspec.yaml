@@ -59,6 +59,7 @@ dev_dependencies:
   workmanager: ^0.2.3
   cron: ^0.2.4
   fl_chart: ^0.12.3
+  custom_radio_grouped_button: ^1.0.6+1
 
   agora_rtc_engine: ^3.1.6
   permission_handler: ^5.0.1+1
@@ -120,6 +121,7 @@ flutter:
     - assets/images/ic-more.png
     - assets/images/ic-remove.png
     - assets/images/ic-health-record.png
+    - assets/images/loading-hdr.gif
 
   
   #   - images/a_dot_burr.jpeg
