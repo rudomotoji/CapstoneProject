@@ -9,6 +9,7 @@ import 'package:capstone_home_doctor/features/contract/views/manage_contract_vie
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/create_health_record.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/health_record_detail.dart';
+import 'package:capstone_home_doctor/features/health/vitalsigns/view/heart/heart.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
 import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
 import 'package:capstone_home_doctor/features/login/log_in_view.dart';
@@ -299,6 +300,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
             RoutesHDr.PATIENT_INFORMATION: (context) => PatientInformation(),
             //RoutesHDr.CREATE_HEALTH_RECORD: (context) => CreateHealthRecord(),
             RoutesHDr.HEALTH_RECORD_DETAIL: (context) => HealthRecordDetail(),
+            RoutesHDr.HEART: (context) => Heart(),
           },
           // home: _startScreen,
           home: MainHome(),

@@ -190,7 +190,7 @@ class _VitalSignTabState extends State<VitalSignTab> {
                   label: 'Nhịp tim',
                   image: Image.asset('assets/images/ic-heart-rate.png'),
                   onTap: () {
-                    // startPhoneAuth();
+                    Navigator.of(context).pushNamed(RoutesHDr.HEART);
                   },
                 ),
                 ButtonHDr(
