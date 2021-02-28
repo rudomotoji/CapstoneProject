@@ -107,6 +107,7 @@ class MedicalInstructionByTypeDTO {
 class MedicalInstructions {
   int medicalInstructionId;
   String image;
+  bool check = false;
 
   MedicalInstructions({this.medicalInstructionId, this.image});
 

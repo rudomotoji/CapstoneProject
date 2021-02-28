@@ -1129,26 +1129,42 @@ class _RequestContract extends State<RequestContract>
                                   children: [
                                     Row(
                                       children: [
-                                        InkWell(
-                                          onTap: () => _updateAcceptState(),
-                                          borderRadius:
-                                              BorderRadius.circular(40),
-                                          child: isCheckedSelectedBox
-                                              ? SizedBox(
-                                                  width: 20,
-                                                  height: 20,
-                                                  child: Image.asset(
-                                                      'assets/images/ic-dot.png'),
-                                                )
-                                              : SizedBox(
-                                                  width: 20,
-                                                  height: 20,
-                                                  child: Image.asset(
-                                                      'assets/images/ic-dot-unselect.png'),
-                                                ),
-                                        ),
-                                        Text(
-                                            'ID MED INS ${list[indexSelectMedIns].medicalInstructions[index].medicalInstructionId}'),
+                                        // InkWell(
+                                        //   onTap: () => _updateAcceptState(),
+                                        //   borderRadius:
+                                        //       BorderRadius.circular(40),
+                                        //   child: isCheckedSelectedBox
+                                        //       ? SizedBox(
+                                        //           width: 20,
+                                        //           height: 20,
+                                        //           child: Image.asset(
+                                        //               'assets/images/ic-dot.png'),
+                                        //         )
+                                        //       : SizedBox(
+                                        //           width: 20,
+                                        //           height: 20,
+                                        //           child: Image.asset(
+                                        //               'assets/images/ic-dot-unselect.png'),
+                                        //         ),
+                                        // ),
+                                        // Text(
+                                        //     'ID MED INS ${list[indexSelectMedIns].medicalInstructions[index].medicalInstructionId}'),
+                                        Row(children: [
+                                          new Checkbox(
+                                            value: list[indexSelectMedIns]
+                                                .medicalInstructions[index]
+                                                .check,
+                                            activeColor: Colors.green,
+                                            onChanged: (bool newValue) {
+                                              // list[indexSelectMedIns]
+                                              //     .medicalInstructions[index]
+                                              //     .check = newValue;
+                                              print('new value: $newValue');
+                                            },
+                                          ),
+                                          Text(
+                                              'ID MED INS ${list[indexSelectMedIns].medicalInstructions[index].medicalInstructionId}'),
+                                        ]),
                                       ],
                                     ),
                                   ],
