@@ -1129,26 +1129,6 @@ class _RequestContract extends State<RequestContract>
                                   children: [
                                     Row(
                                       children: [
-                                        // InkWell(
-                                        //   onTap: () => _updateAcceptState(),
-                                        //   borderRadius:
-                                        //       BorderRadius.circular(40),
-                                        //   child: isCheckedSelectedBox
-                                        //       ? SizedBox(
-                                        //           width: 20,
-                                        //           height: 20,
-                                        //           child: Image.asset(
-                                        //               'assets/images/ic-dot.png'),
-                                        //         )
-                                        //       : SizedBox(
-                                        //           width: 20,
-                                        //           height: 20,
-                                        //           child: Image.asset(
-                                        //               'assets/images/ic-dot-unselect.png'),
-                                        //         ),
-                                        // ),
-                                        // Text(
-                                        //     'ID MED INS ${list[indexSelectMedIns].medicalInstructions[index].medicalInstructionId}'),
                                         Expanded(
                                           child: CheckboxListTile(
                                             title: Text(
@@ -1157,14 +1137,29 @@ class _RequestContract extends State<RequestContract>
                                                 .medicalInstructions[index]
                                                 .check,
                                             onChanged: (bool newValue) {
-                                              print(newValue);
+                                              if (list.length > 0) {
+                                                BlocProvider.of<
+                                                            MedInsWithTypeListBloc>(
+                                                        context)
+                                                    .add(
+                                                  MedInsWithTypeSetChecking(
+                                                    indexMedical:
+                                                        indexSelectMedIns,
+                                                    itemID: list[
+                                                            indexSelectMedIns]
+                                                        .medicalInstructions[
+                                                            index]
+                                                        .medicalInstructionId,
+                                                    isCheck: newValue,
+                                                    listMedical: list,
+                                                  ),
+                                                );
+                                              }
                                             },
-                                            controlAffinity: ListTileControlAffinity
-                                                .leading, //  <-- leading Checkbox
+                                            controlAffinity:
+                                                ListTileControlAffinity.leading,
                                           ),
                                         ),
-                                        Text(
-                                            'ID MED INS ${list[indexSelectMedIns].medicalInstructions[index].medicalInstructionId}'),
                                       ],
                                     ),
                                   ],
@@ -1178,6 +1173,14 @@ class _RequestContract extends State<RequestContract>
                           label: 'Đồng ý',
                           onTap: () {
                             //
+                            list.forEach((element) {
+                              element.medicalInstructions.forEach((medical) {
+                                if (medical.check) {
+                                  print(
+                                      'medical choosen: ${medical.medicalInstructionId}');
+                                }
+                              });
+                            });
                             _selectedHRType = '';
                             indexSelectMedIns = null;
                             Navigator.of(context).pop();

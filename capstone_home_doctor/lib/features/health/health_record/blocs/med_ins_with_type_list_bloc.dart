@@ -29,6 +29,15 @@ class MedInsWithTypeListBloc
       }
     }
 
-    if (event is MedInsWithTypeSetChecking) {}
+    if (event is MedInsWithTypeSetChecking) {
+      for (var item
+          in event.listMedical[event.indexMedical].medicalInstructions) {
+        if (event.itemID == item.medicalInstructionId) {
+          item.check = event.isCheck;
+          break;
+        }
+      }
+      yield MedInsWithTypeStateSuccess(listMedInsWithType: event.listMedical);
+    }
   }
 }
