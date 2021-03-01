@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,14 @@ class MedInsWithTypeEventGetList extends MedInsWithTypeEvent {
 
 class MedInsWithTypeSetChecking extends MedInsWithTypeEvent {
   final bool isCheck;
-  const MedInsWithTypeSetChecking({@required this.isCheck});
+  final int itemID;
+  final int indexMedical;
+  final List<MedicalInstructionByTypeDTO> listMedical;
+  const MedInsWithTypeSetChecking(
+      {@required this.isCheck,
+      @required this.itemID,
+      @required this.listMedical,
+      @required this.indexMedical});
 
   @override
   // TODO: implement props

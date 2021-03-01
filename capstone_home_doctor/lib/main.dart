@@ -9,7 +9,9 @@ import 'package:capstone_home_doctor/features/contract/views/manage_contract_vie
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_with_type_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
+import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/health_record_detail.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/view/heart/heart.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
@@ -60,6 +62,8 @@ HealthRecordRepository _healthRecordRepository =
     HealthRecordRepository(httpClient: http.Client());
 PrescriptionRepository _prescriptionRepository =
     PrescriptionRepository(httpClient: http.Client());
+MedicalInstructionRepository _medicalInstructionRepository =
+    MedicalInstructionRepository(httpClient: http.Client());
 
 void _handleGeneralMessage(Map<String, dynamic> message) {
   String payload;
@@ -289,6 +293,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<PrescriptionListBloc>(
               create: (BuildContext context) => PrescriptionListBloc(
                   prescriptionRepository: _prescriptionRepository)),
+          BlocProvider<MedInsWithTypeListBloc>(
+              create: (BuildContext context) => MedInsWithTypeListBloc(
+                  medicalInstructionRepository: _medicalInstructionRepository)),
         ],
         child: GestureDetector(
           onTap: () {
