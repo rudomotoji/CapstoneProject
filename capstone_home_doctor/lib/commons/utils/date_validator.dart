@@ -14,6 +14,17 @@ class DateValidator {
     return result;
   }
 
+  String parseToSumaryDateView(String dateString) {
+    String result = '';
+    String day, month, year;
+    String date = dateString.split('T')[0];
+    day = date.split('-')[2];
+    month = date.split('-')[1];
+    year = date.split('-')[0];
+    result = '${day}/${month}';
+    return result;
+  }
+
   String parseDateInWeekToView(String value) {
     String result = '';
     if (value == 'Monday') {

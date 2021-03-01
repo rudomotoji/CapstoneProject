@@ -473,11 +473,11 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                                       alignment:
                                                           Alignment.bottomRight,
                                                       child: Text(
-                                                        'Từ - đến',
+                                                        'Từ ${_dateValidator.parseToSumaryDateView(_currentPrescription.dateStarted)} - ${_dateValidator.parseToSumaryDateView(_currentPrescription.dateFinished)}',
                                                         style: TextStyle(
                                                             fontSize: 12,
                                                             color: DefaultTheme
-                                                                .GREY_TEXT),
+                                                                .BLACK),
                                                       ),
                                                     ),
                                                   ),
@@ -549,8 +549,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                                             Text(
                                                               'Cách dùng: ${_currentPrescription.medicationSchedules[index].useTime}',
                                                               style: TextStyle(
-                                                                  color: DefaultTheme
-                                                                      .GREY_TEXT,
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .BLACK,
                                                                   fontSize: 12),
                                                               maxLines: 3,
                                                               overflow:

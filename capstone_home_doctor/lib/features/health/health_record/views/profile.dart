@@ -47,11 +47,11 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    // if (null != listHealthRecord) {
-    //   if (listHealthRecord.length > 1) {
-    //     listHealthRecord.sort((a, b) => b.dateCreated.compareTo(a.dateCreated));
-    //   }
-    // }
+    if (null != listHealthRecord) {
+      if (listHealthRecord.length > 1) {
+        listHealthRecord.sort((a, b) => b.dateCreated.compareTo(a.dateCreated));
+      }
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
