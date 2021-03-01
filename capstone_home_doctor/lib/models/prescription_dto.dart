@@ -25,7 +25,7 @@
 class PrescriptionDTO {
   int medicalInstructionId;
   String diagnose;
-  Null description;
+  String description;
   String dateStarted;
   String dateFinished;
   List<MedicationSchedules> medicationSchedules;

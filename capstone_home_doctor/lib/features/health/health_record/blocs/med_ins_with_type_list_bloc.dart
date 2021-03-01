@@ -28,5 +28,7 @@ class MedInsWithTypeListBloc
         yield MedInsWithTypeStateFailure();
       }
     }
+
+    if (event is MedInsWithTypeSetChecking) {}
   }
 }

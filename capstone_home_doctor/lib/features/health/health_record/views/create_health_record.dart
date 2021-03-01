@@ -202,8 +202,8 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                 );
 
                                 _insertHealthRecord(healthRecordDTO);
-                                // widget.refresh();
-                                // Navigator.pop(context);
+                                widget.refresh();
+                                Navigator.pop(context);
                               })),
                     ]),
               ),

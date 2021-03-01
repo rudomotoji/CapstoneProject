@@ -17,3 +17,12 @@ class MedInsWithTypeEventGetList extends MedInsWithTypeEvent {
 }
 
 //
+
+class MedInsWithTypeSetChecking extends MedInsWithTypeEvent {
+  final bool isCheck;
+  const MedInsWithTypeSetChecking({@required this.isCheck});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}

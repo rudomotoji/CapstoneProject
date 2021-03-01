@@ -45,7 +45,7 @@ class HealthRecordRepository extends BaseApiClient {
 
   //create new healthRecord
   Future<bool> createHealthRecord(HealthRecordDTO dto) async {
-    final String url = '/HealthRecords/abcasbcacs';
+    final String url = '/HealthRecords';
     try {
       final request = await postApi(url, null, dto.toJson());
       if (request.statusCode == 201) {
