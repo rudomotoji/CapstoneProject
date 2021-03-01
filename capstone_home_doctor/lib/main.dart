@@ -10,7 +10,6 @@ import 'package:capstone_home_doctor/features/contract/views/request_contract_vi
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
-import 'package:capstone_home_doctor/features/health/health_record/views/create_health_record.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/health_record_detail.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/view/heart/heart.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
@@ -22,10 +21,9 @@ import 'package:capstone_home_doctor/features/peripheral/connect_peripheral_view
 import 'package:capstone_home_doctor/features/peripheral/intro_connect_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/peripheral_service_view.dart';
 import 'package:capstone_home_doctor/features/register/register_view.dart';
-import 'package:capstone_home_doctor/features/schedule/views/schedule_medicine_noti_view.dart';
+import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
+import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
-import 'package:capstone_home_doctor/models/medicine_scheduling_dto.dart';
-import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
@@ -51,202 +49,6 @@ final NOON = 11;
 final AFTERNOON = 14;
 final EVERNING = 18;
 
-final List<PrescriptionDTO> _listPrescription = [
-  PrescriptionDTO(
-    diagnose: 'Đau đầu, tim đập nhanh, khó thở',
-    healthRecordId: '1',
-    startDate: '2021-02-24',
-    endDate: '2021-03-03',
-    listMedicine: _listMedicine1,
-  ),
-  PrescriptionDTO(
-    diagnose: 'Đau đầu, tim đập nhanh, khó thở',
-    healthRecordId: '1',
-    startDate: '2021-02-16',
-    endDate: '2021-02-23',
-    listMedicine: _listMedicine2,
-  ),
-  PrescriptionDTO(
-    diagnose: 'Đau đầu, tim đập nhanh, khó thở',
-    healthRecordId: '1',
-    startDate: '2021-02-08',
-    endDate: '2021-03-15',
-    listMedicine: _listMedicine3,
-  ),
-];
-
-final List<MedicineDTO> _listMedicine1 = [
-  MedicineDTO(
-    medicationName: 'Cefadroxil',
-    content: '10 mg',
-    description: 'mô tả số 1. Mô tả số 1. Mô tả số 1.',
-    afternoon: 0,
-    morning: 2,
-    night: 2,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Trước bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine2',
-    content: '20 mg',
-    description: 'mô tả số 12. Mô tả số 2. Mô tả số 2.',
-    afternoon: 0,
-    morning: 4,
-    night: 4,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Sau bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine3',
-    content: '24 mg',
-    description: 'mô tả số 4. Mô tả số 3. Mô tả số 3.',
-    afternoon: 0,
-    morning: 2,
-    night: 2,
-    noon: 0,
-    unit: 'viên',
-    useTime: 'Sau bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine4',
-    content: '10 mg',
-    description: 'mô tả số 4. Mô tả số 4. Mô tả số 4.',
-    afternoon: 0,
-    morning: 2,
-    night: 2,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Trước bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine5',
-    content: '10 mg',
-    description: 'mô tả số 5. Mô tả số 4. Mô tả số 5.',
-    afternoon: 0,
-    morning: 4,
-    night: 0,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Trước bữa ăn',
-  ),
-];
-final List<MedicineDTO> _listMedicine2 = [
-  MedicineDTO(
-    medicationName: 'Cefadroxil222',
-    content: '10 mg',
-    description: 'mô tả số 1. Mô tả số 1. Mô tả số 1.',
-    afternoon: 0,
-    morning: 2,
-    night: 2,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Trước bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine233',
-    content: '20 mg',
-    description: 'mô tả số 12. Mô tả số 2. Mô tả số 2.',
-    afternoon: 0,
-    morning: 4,
-    night: 4,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Sau bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine344',
-    content: '10 mg',
-    description: 'mô tả số 4. Mô tả số 3. Mô tả số 3.',
-    afternoon: 0,
-    morning: 2,
-    night: 2,
-    noon: 0,
-    unit: 'viên',
-    useTime: 'Sau bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine455',
-    content: '10 mg',
-    description: 'mô tả số 4. Mô tả số 4. Mô tả số 4.',
-    afternoon: 0,
-    morning: 2,
-    night: 2,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Trước bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine566',
-    content: '40 mg',
-    description: 'mô tả số 5. Mô tả số 4. Mô tả số 5.',
-    afternoon: 0,
-    morning: 4,
-    night: 0,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Trước bữa ăn',
-  ),
-];
-final List<MedicineDTO> _listMedicine3 = [
-  MedicineDTO(
-    medicationName: 'Cefadroxil666',
-    content: '30 mg',
-    description: 'mô tả số 1. Mô tả số 1. Mô tả số 1.',
-    afternoon: 0,
-    morning: 2,
-    night: 2,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Trước bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine2666',
-    content: '20 mg',
-    description: 'mô tả số 12. Mô tả số 2. Mô tả số 2.',
-    afternoon: 0,
-    morning: 4,
-    night: 4,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Sau bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine344',
-    content: '10 mg',
-    description: 'mô tả số 4. Mô tả số 3. Mô tả số 3.',
-    afternoon: 0,
-    morning: 2,
-    night: 2,
-    noon: 0,
-    unit: 'viên',
-    useTime: 'Sau bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine456',
-    content: '30 mg',
-    description: 'mô tả số 4. Mô tả số 4. Mô tả số 4.',
-    afternoon: 0,
-    morning: 2,
-    night: 2,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Trước bữa ăn',
-  ),
-  MedicineDTO(
-    medicationName: 'Medicine5523',
-    content: '20 mg',
-    description: 'mô tả số 5. Mô tả số 4. Mô tả số 5.',
-    afternoon: 0,
-    morning: 4,
-    night: 0,
-    noon: 2,
-    unit: 'viên',
-    useTime: 'Trước bữa ăn',
-  ),
-];
-PrescriptionDTO _currentPrescription = PrescriptionDTO();
 //this is the name given to the background fetch
 const simpleTaskKey = "simpleTask";
 const simpleDelayedTask = "simpleDelayedTask";
@@ -256,6 +58,8 @@ const simplePeriodic1HourTask = "simplePeriodic1HourTask";
 //repo for blocs
 HealthRecordRepository _healthRecordRepository =
     HealthRecordRepository(httpClient: http.Client());
+PrescriptionRepository _prescriptionRepository =
+    PrescriptionRepository(httpClient: http.Client());
 
 void _handleGeneralMessage(Map<String, dynamic> message) {
   String payload;
@@ -290,14 +94,12 @@ void _handleIOSGeneralMessage(Map<String, dynamic> message) {
 void checkNotifiMedical() {
   final hour = DateTime.now().hour;
   final minute = DateTime.now().minute;
-  _listPrescription.sort((a, b) => b.startDate.compareTo(a.startDate));
-  _currentPrescription = _listPrescription[0];
+
   if ((hour == MORNING || hour == NOON || hour == AFTERNOON) && minute == 02) {
     var message = {
       "notification": {
         "title": "Nhắc nhở uống thuốc",
-        "body":
-            "${_listMedicine1[0].medicationName}, ${_listMedicine1[1].medicationName}, ${_listMedicine1[2].medicationName}, ${_listMedicine1[3].medicationName}, ${_listMedicine1[4].medicationName}"
+        "body": "Sample A, Sample B, Sample C"
       },
       "data": {
         "click_action": "FLUTTER_NOTIFICATION_CLICK",
@@ -484,6 +286,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
             create: (BuildContext context) => HealthRecordCreateBloc(
                 healthRecordRepository: _healthRecordRepository),
           ),
+          BlocProvider<PrescriptionListBloc>(
+              create: (BuildContext context) => PrescriptionListBloc(
+                  prescriptionRepository: _prescriptionRepository)),
         ],
         child: GestureDetector(
           onTap: () {
@@ -518,16 +323,16 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
                 RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
                 RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),
-                RoutesHDr.SCHEDULE: (context) => ScheduleView(),
-                RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
+                // RoutesHDr.SCHEDULE: (context) => ScheduleView(),
+                // RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
                 RoutesHDr.PATIENT_INFORMATION: (context) =>
                     PatientInformation(),
                 //RoutesHDr.CREATE_HEALTH_RECORD: (context) => CreateHealthRecord(),
                 RoutesHDr.HEALTH_RECORD_DETAIL: (context) =>
                     HealthRecordDetail(),
                 RoutesHDr.HEART: (context) => Heart(),
-                RoutesHDr.MEDICINE_NOTI_VIEW: (context) =>
-                    ScheduleMedNotiView(),
+                // RoutesHDr.MEDICINE_NOTI_VIEW: (context) =>
+                //     ScheduleMedNotiView(),
               },
               // home: _startScreen,
               home: MainHome(),

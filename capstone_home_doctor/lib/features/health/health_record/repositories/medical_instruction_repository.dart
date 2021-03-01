@@ -12,9 +12,10 @@ class MedicalInstructionRepository extends BaseApiClient {
 
   Future<List<MedicalInstructionByTypeDTO>> getListMedInsWithType(
       int patientId) async {
-    final String url = '/MedicalInstructions?patientId=${patientId}';
+    final String url =
+        '/MedicalInstructions/GetMedicalInstructionToCreateContract?patientId=${patientId}';
     try {
-      final response = await getApi2(url, null);
+      final response = await getApi(url, null);
       print('${response.body}');
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body) as List;

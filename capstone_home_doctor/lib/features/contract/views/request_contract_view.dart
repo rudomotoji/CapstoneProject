@@ -1149,22 +1149,22 @@ class _RequestContract extends State<RequestContract>
                                         // ),
                                         // Text(
                                         //     'ID MED INS ${list[indexSelectMedIns].medicalInstructions[index].medicalInstructionId}'),
-                                        Row(children: [
-                                          new Checkbox(
+                                        Expanded(
+                                          child: CheckboxListTile(
+                                            title: Text(
+                                                'ID MED INS ${list[indexSelectMedIns].medicalInstructions[index].medicalInstructionId}'),
                                             value: list[indexSelectMedIns]
                                                 .medicalInstructions[index]
                                                 .check,
-                                            activeColor: Colors.green,
                                             onChanged: (bool newValue) {
-                                              // list[indexSelectMedIns]
-                                              //     .medicalInstructions[index]
-                                              //     .check = newValue;
-                                              print('new value: $newValue');
+                                              print(newValue);
                                             },
+                                            controlAffinity: ListTileControlAffinity
+                                                .leading, //  <-- leading Checkbox
                                           ),
-                                          Text(
-                                              'ID MED INS ${list[indexSelectMedIns].medicalInstructions[index].medicalInstructionId}'),
-                                        ]),
+                                        ),
+                                        Text(
+                                            'ID MED INS ${list[indexSelectMedIns].medicalInstructions[index].medicalInstructionId}'),
                                       ],
                                     ),
                                   ],
