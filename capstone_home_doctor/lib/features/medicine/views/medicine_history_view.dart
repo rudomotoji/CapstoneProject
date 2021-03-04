@@ -8,10 +8,12 @@ import 'package:capstone_home_doctor/features/schedule/events/prescription_list_
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 
+final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final DateValidator _dateValidator = DateValidator();
 List<PrescriptionDTO> listPrescription = [];
 PrescriptionRepository prescriptionRepository =
@@ -27,12 +29,23 @@ class MedicineHistory extends StatefulWidget {
 
 class _MedicineHistory extends State<MedicineHistory>
     with WidgetsBindingObserver {
+  int _patientId = 0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _getPatientId();
     _prescriptionListBloc = BlocProvider.of(context);
-    _prescriptionListBloc.add(PrescriptionListEventsetPatientId(patientId: 2));
+  }
+
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) {
+      setState(() {
+        _patientId = value;
+      });
+    });
+    _prescriptionListBloc
+        .add(PrescriptionListEventsetPatientId(patientId: _patientId));
   }
 
   @override

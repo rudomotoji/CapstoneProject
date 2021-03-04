@@ -4,20 +4,26 @@ import 'dart:io';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/features/chat/chat.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
 import 'package:capstone_home_doctor/features/contract/views/confirm_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/manage_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_with_type_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/health_record_detail.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/view/heart/heart.dart';
+import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
+import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
-import 'package:capstone_home_doctor/features/login/confirm_log_in_view.dart';
-import 'package:capstone_home_doctor/features/login/log_in_view.dart';
-import 'package:capstone_home_doctor/features/login/phone_auth.dart';
+import 'package:capstone_home_doctor/features/login/blocs/account_bloc.dart';
+import 'package:capstone_home_doctor/features/login/repositories/account_repository.dart';
+import 'package:capstone_home_doctor/features/login/views/log_in_view.dart';
 import 'package:capstone_home_doctor/features/medicine/views/medicine_history_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/intro_connect_view.dart';
@@ -64,6 +70,12 @@ PrescriptionRepository _prescriptionRepository =
     PrescriptionRepository(httpClient: http.Client());
 MedicalInstructionRepository _medicalInstructionRepository =
     MedicalInstructionRepository(httpClient: http.Client());
+ContractRepository _contractRepository =
+    ContractRepository(httpClient: http.Client());
+AccountRepository accountRepository =
+    AccountRepository(httpClient: http.Client());
+PatientRepository patientRepository =
+    PatientRepository(httpClient: http.Client());
 
 void _handleGeneralMessage(Map<String, dynamic> message) {
   String payload;
@@ -259,6 +271,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
     _fcm.getToken().then((String token) {
       assert(token != null);
       setState(() {
+        print('TOKEN IN DEVICE $token');
         _token = '$token';
       });
     });
@@ -282,6 +295,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
+          BlocProvider<RequestContractBloc>(
+            create: (BuildContext context) =>
+                RequestContractBloc(requestContractAPI: _contractRepository),
+          ),
           BlocProvider<HealthRecordListBloc>(
             create: (BuildContext context) => HealthRecordListBloc(
                 healthRecordRepository: _healthRecordRepository),
@@ -296,6 +313,17 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<MedInsWithTypeListBloc>(
               create: (BuildContext context) => MedInsWithTypeListBloc(
                   medicalInstructionRepository: _medicalInstructionRepository)),
+          BlocProvider<HealthRecordDetailBloc>(
+            create: (BuildContext context) => HealthRecordDetailBloc(
+                healthRecordRepository: _healthRecordRepository),
+          ),
+          BlocProvider<AccountBloc>(
+            create: (BuildContext context) =>
+                AccountBloc(accountRepository: accountRepository),
+          ),
+          BlocProvider<PatientBloc>(
+              create: (BuildContext context) =>
+                  PatientBloc(patientRepository: patientRepository)),
         ],
         child: GestureDetector(
           onTap: () {
@@ -303,9 +331,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
           },
           child: MultiProvider(
             providers: [
-              ChangeNotifierProvider(
-                create: (context) => PhoneAuthDataProvider(),
-              ),
+              // ChangeNotifierProvider(
+              //   create: (context) => PhoneAuthDataProvider(),
+              // ),
               ChangeNotifierProvider(
                 create: (context) => RequestContractDTOProvider(),
               ),
@@ -320,7 +348,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
               routes: {
                 RoutesHDr.LOG_IN: (context) => Login(),
                 RoutesHDr.REGISTER: (context) => Register(),
-                RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
+                // RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
                 RoutesHDr.MAIN_HOME: (context) => MainHome(),
                 RoutesHDr.CONFIRM_CONTRACT: (context) => RequestContract(),
                 RoutesHDr.INTRO_CONNECT_PERIPHERAL: (context) =>
@@ -341,8 +369,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 // RoutesHDr.MEDICINE_NOTI_VIEW: (context) =>
                 //     ScheduleMedNotiView(),
               },
-              // home: _startScreen,
-              home: MainHome(),
+              home: _startScreen,
             ),
           ),
         ));

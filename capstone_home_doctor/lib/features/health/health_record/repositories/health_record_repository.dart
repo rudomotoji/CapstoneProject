@@ -13,7 +13,8 @@ class HealthRecordRepository extends BaseApiClient {
 
   //get list healthRecord
   Future<List<HealthRecordDTO>> getListHealthRecord(int patientId) async {
-    String url = '/HealthRecords?patientId=${patientId}';
+    String url =
+        '/HealthRecords/GetHealthRecordByPatientId?patientId=${patientId}';
     try {
       //
       final response = await getApi(url, null);
@@ -40,6 +41,21 @@ class HealthRecordRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT GET LIST HEALTH RECORD ${e.toString()}');
+    }
+  }
+
+  //get healthRecord by id
+  Future<HealthRecordDTO> getHealthRecordById(int healthRecordId) async {
+    String url = '/HealthRecords?healthRecordId=${healthRecordId}';
+    try {
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        HealthRecordDTO data =
+            HealthRecordDTO.fromJson(jsonDecode(response.body));
+        return data;
+      }
+    } catch (e) {
+      print('ERROR AT GET HEALTH RECORD DETAIL ${e}');
     }
   }
 

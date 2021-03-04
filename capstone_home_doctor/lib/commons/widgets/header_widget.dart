@@ -7,12 +7,14 @@ import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dar
 import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
-import 'package:capstone_home_doctor/features/login/phone_auth.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+
+final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
 enum ButtonHeaderType {
   NONE,
@@ -50,12 +52,22 @@ class _HeaderWidget extends State<HeaderWidget> {
   PatientRepository patientRepository =
       PatientRepository(httpClient: http.Client());
 
+  //patient Id
+  int _patientId = 0;
+
   @override
   _HeaderWidget(
     this._title,
     this._buttonHeaderType,
     this._isMainView,
   );
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getPatientId();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,9 +189,24 @@ class _HeaderWidget extends State<HeaderWidget> {
     );
   }
 
-  _signOut() {
-    Provider.of<PhoneAuthDataProvider>(context, listen: false).signOut();
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) {
+      setState(() {
+        _patientId = value;
+      });
+    });
+  }
 
+  _signOut() {
+    // Provider.of<PhoneAuthDataProvider>(context, listen: false).signOut();
+    // _authenticateHelper.isAuthenticated().then((value) {
+
+    //     Navigator.pushNamedAndRemoveUntil(
+    //         context, RoutesHDr.LOG_IN, (Route<dynamic> route) => false);
+
+    // });
+
+    _authenticateHelper.updateAuth(false, null);
     Navigator.pushNamedAndRemoveUntil(
         context, RoutesHDr.LOG_IN, (Route<dynamic> route) => false);
   }
@@ -238,7 +265,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                                         create: (context4) => PatientBloc(
                                             patientRepository:
                                                 patientRepository)
-                                          ..add(PatientEventSetId(id: 2)),
+                                          ..add(PatientEventSetId(
+                                              id: _patientId)),
                                         child: BlocBuilder<PatientBloc,
                                                 PatientState>(
                                             builder: (context, state) {

@@ -11,6 +11,8 @@ import 'package:capstone_home_doctor/features/health/health_record/repositories/
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_list_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/create_health_record.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +22,9 @@ class ProfileTab extends StatefulWidget {
   _ProfileTabState createState() => _ProfileTabState();
 }
 
+//
+final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+
 class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   // SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   // HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
@@ -28,7 +33,9 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   List<HealthRecordDTO> listHealthRecord = [];
   DateValidator _dateValidator = DateValidator();
   HealthRecordListBloc _healthRecordListBloc;
-
+  HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
+  //
+  int _patientId = 0;
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -36,7 +43,16 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     _healthRecordListBloc = BlocProvider.of(context);
     //for local list
     // listHealthRecord = [];
+    _getPatientId();
     refreshListHR();
+  }
+
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) {
+      setState(() {
+        _patientId = value;
+      });
+    });
   }
 
   @override
@@ -322,12 +338,11 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                   labelColor: DefaultTheme.BLUE_TEXT,
                                   style: BtnStyle.BUTTON_IN_LIST,
                                   onTap: () {
-                                    // _healthRecordHelper
-                                    //     .setHealthReCordId(healthRecordId);
-                                    // Navigator.of(context).pop();
-                                    // Navigator.of(context).pushNamed(
-                                    //     RoutesHDr.HEALTH_RECORD_DETAIL,
-                                    //     arguments: {'HR_ID': healthRecordId});
+                                    _healthRecordHelper
+                                        .setHealthReCordId(healthRecordId);
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pushNamed(
+                                        RoutesHDr.HEALTH_RECORD_DETAIL);
                                   },
                                 ),
                                 Divider(
@@ -382,16 +397,11 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
         });
   }
 
-  refreshListHR() {
-    //getListHealthRecord(personal health record ID)
-
-    // _sqfLiteHelper.getListHealthRecord('1').then((hrs) {
-    //   setState(() {
-    //     listHealthRecord.clear();
-    //     listHealthRecord.addAll(hrs);
-    //   });
-    // });
-    _healthRecordListBloc
-        .add(HRListEventSetPersonalHRId(personalHealthRecordId: 2));
+  refreshListHR() async {
+    await _getPatientId();
+    if (_patientId != 0) {
+      _healthRecordListBloc
+          .add(HRListEventSetPersonalHRId(personalHealthRecordId: _patientId));
+    }
   }
 }

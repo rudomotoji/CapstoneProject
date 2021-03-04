@@ -4,16 +4,21 @@ import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/events/contract_request_event.dart';
 
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
 import 'package:capstone_home_doctor/features/contract/states/contract_request_state.dart';
 import 'package:capstone_home_doctor/models/disease_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+
+//
+// final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
 class ConfirmContract extends StatefulWidget {
   @override
@@ -26,10 +31,36 @@ class _ConfirmContract extends State<ConfirmContract>
     with WidgetsBindingObserver {
   ContractRepository requestContractRepository =
       ContractRepository(httpClient: http.Client());
+  RequestContractBloc _requestContractBloc;
 
   DateValidator _dateValidator = DateValidator();
   String _currentDate = DateTime.now().toString().split(' ')[0];
   String _dateInWeek = DateFormat('EEEE').format(DateTime.now());
+  //
+  // int _patientId = 0;
+
+  //
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+    // _getPatientId();
+    _requestContractBloc = BlocProvider.of(context);
+  }
+
+  // _getPatientId() async {
+  //   await _authenticateHelper.getPatientId().then((value) {
+  //     setState(() {
+  //       _patientId = value;
+  //     });
+  //   });
+  // }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.addObserver(this);
+    super.dispose();
+  }
 
   //
   bool _isAccept = false;
@@ -45,7 +76,8 @@ class _ConfirmContract extends State<ConfirmContract>
     Map<String, Object> arguments = ModalRoute.of(context).settings.arguments;
     RequestContractDTO _requestContract = arguments['REQUEST_OBJ'];
     ContractViewObj _componentViews = arguments['VIEWS_OBJ'];
-
+    print(
+        'request Contract, medicalins list: ${_requestContract.medicalInstructionIds}');
     return Scaffold(
         body: SafeArea(
       child: Column(
@@ -649,6 +681,11 @@ class _ConfirmContract extends State<ConfirmContract>
                         style: BtnStyle.BUTTON_BLACK,
                         onTap: () {
                           if (_isAccept) {
+                            //
+                            print(
+                                'DTO PATIENT ID: ${_requestContract.patientId}');
+                            _requestContractBloc.add(RequestContractEventSend(
+                                dto: _requestContract));
                             Navigator.pushNamedAndRemoveUntil(
                                 context,
                                 RoutesHDr.MAIN_HOME,
@@ -662,16 +699,5 @@ class _ConfirmContract extends State<ConfirmContract>
         ],
       ),
     ));
-  }
-
-  _sendRequest() {
-    return BlocBuilder<RequestContractBloc, RequestContractState>(
-      builder: (context, state) {
-        if (state is RequestContractStateLoading) {}
-        if (state is RequestContractStateFailure) {}
-        if (state is RequestContractStateSuccess) {}
-        return null;
-      },
-    );
   }
 }

@@ -22,6 +22,7 @@ import 'package:capstone_home_doctor/features/health/health_record/events/med_in
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_with_type_state.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
 import 'package:capstone_home_doctor/features/contract/events/doctor_info_event.dart';
 
@@ -46,7 +47,7 @@ import 'package:provider/provider.dart';
 
 String _medInsDefaultSelected = 'Chọn loại phiếu';
 int indexSelectMedIns = 0;
-
+final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 String _selectedHRType = '';
 
 class RequestContract extends StatefulWidget {
@@ -83,6 +84,7 @@ class _RequestContract extends State<RequestContract>
   //
   DateValidator _dateValidator = DateValidator();
   //
+  int _patientId = 0;
 
   //view to move next
   String _dname = '';
@@ -99,6 +101,15 @@ class _RequestContract extends State<RequestContract>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+    _getPatientId();
+  }
+
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) async {
+      setState(() {
+        _patientId = value;
+      });
+    });
   }
 
   @override
@@ -112,6 +123,8 @@ class _RequestContract extends State<RequestContract>
   //
   List<MedicalInstructionByTypeDTO> _medInswithType = [];
   List<MedicalInstructionByTypeDTO> _medInswithTypeSelected = [];
+  List<MedicalInstructions> listMedInsChecked = [];
+  List<int> listMedInsCheckedID = [];
 
   //
   bool isCheckedSelectedBox = false;
@@ -131,12 +144,14 @@ class _RequestContract extends State<RequestContract>
     final requestContractProvider =
         Provider.of<RequestContractDTOProvider>(context, listen: false);
     requestContractProvider.setProvider(
-        doctorId: int.parse(arguments.trim()),
-        patientId: 2,
-        dateStarted: _startDate,
-        licenseId: 1,
-        note: _note,
-        diseaseIds: _diseaseIds);
+      doctorId: int.parse(arguments.trim()),
+      patientId: _patientId,
+      dateStarted: _startDate,
+      licenseId: 1,
+      note: _note,
+      diseaseIds: _diseaseIds,
+      medicalInstructionIds: listMedInsCheckedID,
+    );
 
     final rContractViewProvider =
         Provider.of<RContractProvider>(context, listen: false);
@@ -148,6 +163,7 @@ class _RequestContract extends State<RequestContract>
         pname: _pname,
         pSdt: _pSdt,
         diseases: _listDiseaseSelected,
+        listMedInsChecked: listMedInsChecked,
         duration: _dayOfTrackingView,
         note: _note,
         pGender: _pGender,
@@ -237,6 +253,7 @@ class _RequestContract extends State<RequestContract>
                               fontWeight: FontWeight.w600, fontSize: 20),
                         ),
                       ),
+
                       _makePatientInfo(),
                       Padding(
                         padding: EdgeInsets.only(
@@ -340,55 +357,37 @@ class _RequestContract extends State<RequestContract>
 
   //make patient information
   _makePatientInfo() {
-    return Padding(
-      padding: EdgeInsets.only(left: 20, right: 20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          //in right way loading
-          BlocProvider(
-            create: (context4) =>
-                PatientBloc(patientRepository: patientRepository)
-                  ..add(PatientEventSetId(id: 2)),
-            child: BlocBuilder<PatientBloc, PatientState>(
-              builder: (context4, state4) {
-                if (state4 is PatientStateLoading) {
-                  return Container(
-                    margin: EdgeInsets.only(left: 20, right: 20),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: DefaultTheme.GREY_BUTTON),
-                    child: Center(
-                      child: SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: Image.asset('assets/images/loading.gif'),
+    // int _patientIdShared = await _authenticateHelper.getPatientId();
+    if (_patientId != 0) {
+      return Padding(
+        padding: EdgeInsets.only(left: 20, right: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            //in right way loading
+            BlocProvider(
+              create: (context4) =>
+                  PatientBloc(patientRepository: patientRepository)
+                    ..add(PatientEventSetId(id: _patientId)),
+              child: BlocBuilder<PatientBloc, PatientState>(
+                builder: (context4, state4) {
+                  if (state4 is PatientStateLoading) {
+                    return Container(
+                      margin: EdgeInsets.only(left: 20, right: 20),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: DefaultTheme.GREY_BUTTON),
+                      child: Center(
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
                       ),
-                    ),
-                  );
-                }
-                if (state4 is PatientStateFailure) {
-                  return Container(
-                    margin: EdgeInsets.only(
-                        left: 20, right: 20, bottom: 10, top: 10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: DefaultTheme.GREY_BUTTON),
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                          top: 10, bottom: 10, left: 20, right: 20),
-                      child: Text('Không thể tải thông tin cá nhân',
-                          style: TextStyle(
-                            color: DefaultTheme.GREY_TEXT,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          )),
-                    ),
-                  );
-                }
-                if (state4 is PatientStateSuccess) {
-                  if (state4.dto == null) {
+                    );
+                  }
+                  if (state4 is PatientStateFailure) {
                     return Container(
                       margin: EdgeInsets.only(
                           left: 20, right: 20, bottom: 10, top: 10),
@@ -407,235 +406,243 @@ class _RequestContract extends State<RequestContract>
                       ),
                     );
                   }
-                  String _gender = '';
-                  if (state4.dto.gender == 'Male') {
-                    _gender = 'Ông';
-                    _pGender = 'Nam';
-                  }
-                  if (state4.dto.gender == 'Female') {
-                    _gender = 'Bà';
-                    _pGender = 'Nữ';
-                  }
-                  // _views.add(state4.dto.gender);
-                  // _views.add(state4.dto.fullName);
-                  // _views.add(state4.dto.dateOfBirth);
-                  // _views.add(state4.dto.address);
+                  if (state4 is PatientStateSuccess) {
+                    if (state4.dto == null) {
+                      return Container(
+                        margin: EdgeInsets.only(
+                            left: 20, right: 20, bottom: 10, top: 10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: DefaultTheme.GREY_BUTTON),
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              top: 10, bottom: 10, left: 20, right: 20),
+                          child: Text('Không thể tải thông tin cá nhân',
+                              style: TextStyle(
+                                color: DefaultTheme.GREY_TEXT,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              )),
+                        ),
+                      );
+                    }
+                    String _gender = '';
+                    if (state4.dto.gender == 'Male') {
+                      _gender = 'Ông';
+                      _pGender = 'Nam';
+                    }
+                    if (state4.dto.gender == 'Female') {
+                      _gender = 'Bà';
+                      _pGender = 'Nữ';
+                    }
+                    // _views.add(state4.dto.gender);
+                    // _views.add(state4.dto.fullName);
+                    // _views.add(state4.dto.dateOfBirth);
+                    // _views.add(state4.dto.address);
 
-                  _pname = state4.dto.fullName;
-                  _pSdt = state4.dto.phoneNumber;
-                  _pBirthdate = state4.dto.dateOfBirth;
-                  _pAdd = state4.dto.address;
-                  return Container(
-                    padding: EdgeInsets.only(
-                        top: 20, bottom: 20, left: 20, right: 20),
-                    width: MediaQuery.of(context).size.width - 40,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: DefaultTheme.GREY_VIEW),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          children: [
-                            Container(
-                              width: 120,
-                              child: Text(
-                                '$_gender',
-                                style: TextStyle(
-                                  color: DefaultTheme.GREY_TEXT,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width -
-                                  (80 + 120 + 10),
-                              child: Text(
-                                '${state4.dto.fullName}',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 3,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 120,
-                              child: Text(
-                                'Số điện thoại',
-                                style: TextStyle(
-                                  color: DefaultTheme.GREY_TEXT,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width -
-                                  (80 + 120 + 10),
-                              child: Text(
-                                '${state4.dto.phoneNumber}',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 3,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 120,
-                              child: Text(
-                                'Sinh ngày',
-                                style: TextStyle(
-                                  color: DefaultTheme.GREY_TEXT,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width -
-                                  (80 + 120 + 10),
-                              child: Text(
-                                '${_dateValidator.parseToDateView(state4.dto.dateOfBirth)}',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 3,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              width: 120,
-                              child: Text(
-                                'ĐC thường trú',
-                                style: TextStyle(
-                                  color: DefaultTheme.GREY_TEXT,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width -
-                                  (80 + 120 + 10),
-                              child: Text(
-                                '${state4.dto.address}',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 3,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                return Container(
-                  margin:
-                      EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: DefaultTheme.GREY_BUTTON),
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        top: 10, bottom: 10, left: 20, right: 20),
-                    child: Text('Không thể tải thông tin cá nhân',
-                        style: TextStyle(
-                          color: DefaultTheme.GREY_TEXT,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        )),
-                  ),
-                );
-              },
-            ),
-          ),
-          //
-          Padding(
-            padding: EdgeInsets.only(bottom: 20),
-          ),
-          BlocProvider(
-              create: (context2) =>
-                  DiseaseListBloc(diseaseRepository: diseaseRepository)
-                    ..add(DiseaseListEventSetStatus(status: 'ACTIVE')),
-              child: BlocBuilder<DiseaseListBloc, DiseaseListState>(
-                builder: (context2, state2) {
-                  if (state2 is DiseaseListStateLoading) {
+                    _pname = state4.dto.fullName;
+                    _pSdt = state4.dto.phoneNumber;
+                    _pBirthdate = state4.dto.dateOfBirth;
+                    _pAdd = state4.dto.address;
                     return Container(
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: DefaultTheme.GREY_BUTTON),
-                      child: Center(
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: Image.asset('assets/images/loading.gif'),
-                        ),
-                      ),
-                    );
-                  }
-                  if (state2 is DiseaseListStateFailure) {
-                    return Container(
-                      margin: EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10, top: 10),
+                      padding: EdgeInsets.only(
+                          top: 20, bottom: 20, left: 20, right: 20),
+                      width: MediaQuery.of(context).size.width - 40,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
-                          color: DefaultTheme.GREY_BUTTON),
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            top: 10, bottom: 10, left: 20, right: 20),
-                        child: Text('Không thể tải',
-                            style: TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            )),
+                          color: DefaultTheme.GREY_VIEW),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: [
+                              Container(
+                                width: 120,
+                                child: Text(
+                                  '$_gender',
+                                  style: TextStyle(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width -
+                                    (80 + 120 + 10),
+                                child: Text(
+                                  '${state4.dto.fullName}',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                width: 120,
+                                child: Text(
+                                  'Số điện thoại',
+                                  style: TextStyle(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width -
+                                    (80 + 120 + 10),
+                                child: Text(
+                                  '${state4.dto.phoneNumber}',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                width: 120,
+                                child: Text(
+                                  'Sinh ngày',
+                                  style: TextStyle(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width -
+                                    (80 + 120 + 10),
+                                child: Text(
+                                  '${_dateValidator.parseToDateView(state4.dto.dateOfBirth)}',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Row(
+                            children: [
+                              Container(
+                                width: 120,
+                                child: Text(
+                                  'ĐC thường trú',
+                                  style: TextStyle(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width -
+                                    (80 + 120 + 10),
+                                child: (state4.dto.address == null)
+                                    ? Text(
+                                        'Chưa cập nhật',
+                                        style: TextStyle(
+                                          color: DefaultTheme.GREY_TEXT,
+                                          fontSize: 15,
+                                        ),
+                                      )
+                                    : Text(
+                                        '${state4.dto.address}',
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 3,
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     );
                   }
-                  if (state2 is DiseaseListStateSuccess) {
-                    if (state2.listDisease == null) {
+
+                  return Container(
+                    margin: EdgeInsets.only(
+                        left: 20, right: 20, bottom: 10, top: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: DefaultTheme.GREY_BUTTON),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: 10, bottom: 10, left: 20, right: 20),
+                      child: Text('Không thể tải thông tin cá nhân',
+                          style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          )),
+                    ),
+                  );
+                },
+              ),
+            ),
+            //
+            Padding(
+              padding: EdgeInsets.only(bottom: 20),
+            ),
+            BlocProvider(
+                create: (context2) =>
+                    DiseaseListBloc(diseaseRepository: diseaseRepository)
+                      ..add(DiseaseListEventSetStatus(status: 'ACTIVE')),
+                child: BlocBuilder<DiseaseListBloc, DiseaseListState>(
+                  builder: (context2, state2) {
+                    if (state2 is DiseaseListStateLoading) {
+                      return Container(
+                        margin: EdgeInsets.only(left: 20, right: 20),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: DefaultTheme.GREY_BUTTON),
+                        child: Center(
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Image.asset('assets/images/loading.gif'),
+                          ),
+                        ),
+                      );
+                    }
+                    if (state2 is DiseaseListStateFailure) {
                       return Container(
                         margin: EdgeInsets.only(
                             left: 20, right: 20, bottom: 10, top: 10),
@@ -654,123 +661,123 @@ class _RequestContract extends State<RequestContract>
                         ),
                       );
                     }
-                    _listDisease = state2.listDisease;
-                  }
-                  final _itemsView = _listDisease
-                      .map((disease) => MultiSelectItem<DiseaseDTO>(
-                          disease, disease.toString()))
-                      .toList();
-                  return Container(
-                    padding: EdgeInsets.only(
-                        top: 10, bottom: 10, left: 20, right: 20),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: DefaultTheme.GREY_VIEW),
-                    child: MultiSelectBottomSheetField(
-                      initialChildSize: 0.3,
-                      selectedItemsTextStyle:
-                          TextStyle(color: DefaultTheme.WHITE),
-                      listType: MultiSelectListType.CHIP,
-                      searchable: true,
-                      buttonText: Text(
-                        "Bệnh lý tim mạch",
-                        style: TextStyle(color: Colors.black, fontSize: 16),
-                      ),
-                      title: Text(
-                        "Chọn các bệnh lý",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600, fontSize: 20),
-                      ),
-                      items: _itemsView,
-                      onConfirm: (values) {
-                        setState(() {
-                          _listDiseaseSelected = values;
-                        });
-                        //  print('VALUES: ${values.toString()}');
-                        String _idDisease = '';
-                        for (var i = 0; i < values.length; i++) {
-                          _idDisease = values[i].toString().split(':')[0];
-                          _diseaseIds.add(_idDisease);
-                        }
-                        print('LIST ID DISEASE NOW ${_diseaseIds}');
-                        print(
-                            'LIST DISEASE SELECTED WHEN CHOOSE NOW ${_listDiseaseSelected}');
-                      },
-                      chipDisplay: MultiSelectChipDisplay(
-                        onTap: (value) {
+                    if (state2 is DiseaseListStateSuccess) {
+                      if (state2.listDisease == null) {
+                        return Container(
+                          margin: EdgeInsets.only(
+                              left: 20, right: 20, bottom: 10, top: 10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: DefaultTheme.GREY_BUTTON),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: 10, bottom: 10, left: 20, right: 20),
+                            child: Text('Không thể tải',
+                                style: TextStyle(
+                                  color: DefaultTheme.GREY_TEXT,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                )),
+                          ),
+                        );
+                      }
+                      _listDisease = state2.listDisease;
+                    }
+                    final _itemsView = _listDisease
+                        .map((disease) => MultiSelectItem<DiseaseDTO>(
+                            disease, disease.toString()))
+                        .toList();
+                    return Container(
+                      padding: EdgeInsets.only(
+                          top: 10, bottom: 10, left: 20, right: 20),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: DefaultTheme.GREY_VIEW),
+                      child: MultiSelectBottomSheetField(
+                        initialChildSize: 0.3,
+                        selectedItemsTextStyle:
+                            TextStyle(color: DefaultTheme.WHITE),
+                        listType: MultiSelectListType.CHIP,
+                        searchable: true,
+                        buttonText: Text(
+                          "Bệnh lý tim mạch(*)",
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                        ),
+                        title: Text(
+                          "Chọn các bệnh lý",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 20),
+                        ),
+                        items: _itemsView,
+                        onConfirm: (values) {
                           setState(() {
-                            _listDiseaseSelected.remove(value);
-                            print(
-                                'DISEASE LIST SELECT WHEN REMOVE NOW: ${_listDiseaseSelected.toString()}');
+                            _listDiseaseSelected = values;
                           });
+                          //  print('VALUES: ${values.toString()}');
+                          String _idDisease = '';
+                          for (var i = 0; i < values.length; i++) {
+                            _idDisease = values[i].toString().split(':')[0];
+                            _diseaseIds.add(_idDisease);
+                          }
+                          print('LIST ID DISEASE NOW ${_diseaseIds}');
+                          print(
+                              'LIST DISEASE SELECTED WHEN CHOOSE NOW ${_listDiseaseSelected}');
                         },
-                      ),
-                    ),
-                  );
-                },
-              )),
-          //
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(top: 5, left: 10, right: 20),
-              child: Text(
-                'Chọn chính xác bệnh lý tim mạch giúp bác sĩ xem xét sự khả quan trong vấn đề xét duyệt.',
-                style: TextStyle(
-                    color: DefaultTheme.GREY_TEXT,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400),
-              ),
-            ),
-          ),
-          /////////////////////////////////////////
-          ///////////////
-          //Select medical instruction
-          Padding(
-            padding: EdgeInsets.only(bottom: 10),
-          ),
-          BlocProvider(
-              create: (context5) => MedInsWithTypeListBloc(
-                  medicalInstructionRepository: medicalInstructionRepository)
-                ..add(MedInsWithTypeEventGetList(patientId: 2)),
-              child: BlocBuilder<MedInsWithTypeListBloc, MedInsWithTypeState>(
-                builder: (context5, state5) {
-                  if (state5 is MedInsWithTypeStateLoading) {
-                    return Container(
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: DefaultTheme.GREY_BUTTON),
-                      child: Center(
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: Image.asset('assets/images/loading.gif'),
+                        chipDisplay: MultiSelectChipDisplay(
+                          onTap: (value) {
+                            setState(() {
+                              _listDiseaseSelected.remove(value);
+                              print(
+                                  'DISEASE LIST SELECT WHEN REMOVE NOW: ${_listDiseaseSelected.toString()}');
+                            });
+                          },
                         ),
                       ),
                     );
-                  }
-                  if (state5 is MedInsWithTypeStateFailure) {
-                    return Container(
-                      margin: EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10, top: 10),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: DefaultTheme.GREY_BUTTON),
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            top: 10, bottom: 10, left: 20, right: 20),
-                        child: Text('Không thể tải',
-                            style: TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            )),
-                      ),
-                    );
-                  }
-                  if (state5 is MedInsWithTypeStateSuccess) {
-                    if (state5.listMedInsWithType == null) {
+                  },
+                )),
+            //
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(top: 5, left: 10, right: 20),
+                child: Text(
+                  'Chọn chính xác bệnh lý tim mạch giúp bác sĩ xem xét sự khả quan trong vấn đề xét duyệt.',
+                  style: TextStyle(
+                      color: DefaultTheme.GREY_TEXT,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400),
+                ),
+              ),
+            ),
+            /////////////////////////////////////////
+            ///////////////
+            //Select medical instruction
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+            ),
+            BlocProvider(
+                create: (context5) => MedInsWithTypeListBloc(
+                    medicalInstructionRepository: medicalInstructionRepository)
+                  ..add(MedInsWithTypeEventGetList(patientId: 2)),
+                child: BlocBuilder<MedInsWithTypeListBloc, MedInsWithTypeState>(
+                  builder: (context5, state5) {
+                    if (state5 is MedInsWithTypeStateLoading) {
+                      return Container(
+                        margin: EdgeInsets.only(left: 20, right: 20),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            color: DefaultTheme.GREY_BUTTON),
+                        child: Center(
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Image.asset('assets/images/loading.gif'),
+                          ),
+                        ),
+                      );
+                    }
+                    if (state5 is MedInsWithTypeStateFailure) {
                       return Container(
                         margin: EdgeInsets.only(
                             left: 20, right: 20, bottom: 10, top: 10),
@@ -789,117 +796,136 @@ class _RequestContract extends State<RequestContract>
                         ),
                       );
                     }
-                    _medInswithType = state5.listMedInsWithType;
-                  }
+                    if (state5 is MedInsWithTypeStateSuccess) {
+                      if (state5.listMedInsWithType == null) {
+                        return Container(
+                          margin: EdgeInsets.only(
+                              left: 20, right: 20, bottom: 10, top: 10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: DefaultTheme.GREY_BUTTON),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: 10, bottom: 10, left: 20, right: 20),
+                            child: Text('Không thể tải',
+                                style: TextStyle(
+                                  color: DefaultTheme.GREY_TEXT,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                )),
+                          ),
+                        );
+                      }
+                      _medInswithType = state5.listMedInsWithType;
+                    }
 
-                  return Container(
-                    width: MediaQuery.of(context).size.width - 40,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: DefaultTheme.GREY_VIEW,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: ButtonHDr(
-                      label: 'Chia sẻ phiếu y lệnh',
-                      bgColor: DefaultTheme.GREY_VIEW,
-                      labelColor: DefaultTheme.BLACK,
-                      image: Image.asset('assets/images/ic-dropdown.png'),
-                      style: BtnStyle.BUTTON_FULL,
-                      onTap: () {
-                        print('tapped');
-                        _showPopupChoosingMedInsList(_medInswithType);
-                      },
-                    ),
-                  );
-                  //     initialChildSize: 0.3,
-                  //     selectedItemsTextStyle:
-                  //         TextStyle(color: DefaultTheme.WHITE),
-                  //     listType: MultiSelectListType.LIST,
-                  //     searchable: false,
-                  //     buttonText: Text(
-                  //       'Phiếu y lệnh',
-                  //       style: TextStyle(color: Colors.black, fontSize: 16),
-                  //     ),
-                  //     title: Text(
-                  //       "Chọn phiếu y lệnh",
-                  //       style: TextStyle(
-                  //           fontWeight: FontWeight.w600, fontSize: 20),
-                  //     ),
-                  //     items: _itemsView,
-                  //     onConfirm: (values) {
-                  //       setState(() {
-                  //         _medInswithTypeSelected = values;
-                  //       });
-                  //       //  print('VALUES: ${values.toString()}');
-                  //       int _idMedInsSelect = 0;
-                  //       for (var i = 0; i < values.length; i++) {
-                  //         _idMedInsSelect = values[i];
-                  //         _medinsId.add(_idMedInsSelect);
-                  //       }
-                  //     },
-                  //     chipDisplay: MultiSelectChipDisplay(
-                  //       onTap: (value) {
-                  //         setState(() {
-                  //           _medInswithTypeSelected.remove(value);
-                  //         });
-                  //       },
-                  //     ),
-                  //   ),
-                  // );
-                  // );
-                },
-              )),
-          //
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(top: 5, left: 10, right: 20, bottom: 20),
-              child: Text(
-                'Chọn các phiếu y lệnh đã thêm vào trước đó để chia sẻ với bác sĩ.',
-                style: TextStyle(
-                    color: DefaultTheme.GREY_TEXT,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400),
+                    return Column(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width - 40,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: DefaultTheme.GREY_VIEW,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: ButtonHDr(
+                            label: 'Chia sẻ phiếu y lệnh(*)',
+                            bgColor: DefaultTheme.GREY_VIEW,
+                            labelColor: DefaultTheme.BLACK,
+                            image: Image.asset('assets/images/ic-dropdown.png'),
+                            style: BtnStyle.BUTTON_FULL,
+                            onTap: () {
+                              print('tapped');
+                              _showPopupChoosingMedInsList(_medInswithType);
+                            },
+                          ),
+                        ),
+                        (listMedInsChecked == 0)
+                            ? Container()
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: listMedInsChecked.length,
+                                itemBuilder:
+                                    (BuildContext buildContext, int index) {
+                                  return Container(
+                                    width:
+                                        MediaQuery.of(context).size.width - 40,
+                                    margin: EdgeInsets.only(bottom: 5, top: 5),
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: Image.network(
+                                              'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMedInsChecked[index].image}'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 20),
+                                        ),
+                                        Text(
+                                            'ID ${listMedInsChecked[index].medicalInstructionId}'),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                      ],
+                    );
+                  },
+                )),
+            //
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding:
+                    EdgeInsets.only(top: 5, left: 10, right: 20, bottom: 20),
+                child: Text(
+                  'Chọn các phiếu y lệnh đã thêm vào trước đó để chia sẻ với bác sĩ.',
+                  style: TextStyle(
+                      color: DefaultTheme.GREY_TEXT,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400),
+                ),
               ),
             ),
-          ),
-          //
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: 5, left: 10),
-                child: Text(
-                  'Ghi chú',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      color: DefaultTheme.BLACK_BUTTON,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16),
+            //
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 5, left: 10),
+                  child: Text(
+                    'Ghi chú',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        color: DefaultTheme.BLACK_BUTTON,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16),
+                  ),
                 ),
-              ),
-              Container(
-                alignment: Alignment.topLeft,
-                height: 150,
-                child: TextFieldHDr(
-                  placeHolder: 'Mô tả thêm các triệu chứng đang gặp',
-                  controller: _noteController,
-                  keyboardAction: TextInputAction.done,
-                  onChange: (text) {
-                    setState(() {
-                      _note = text;
-                    });
-                    // _views.add(_note);
-                  },
-                  style: TFStyle.TEXT_AREA,
+                Container(
+                  alignment: Alignment.topLeft,
+                  height: 150,
+                  child: TextFieldHDr(
+                    placeHolder: 'Mô tả thêm các triệu chứng đang gặp',
+                    controller: _noteController,
+                    keyboardAction: TextInputAction.done,
+                    onChange: (text) {
+                      setState(() {
+                        _note = text;
+                      });
+                      // _views.add(_note);
+                    },
+                    style: TFStyle.TEXT_AREA,
+                  ),
                 ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
+              ],
+            )
+          ],
+        ),
+      );
+    }
   }
 
   _showPopupChoosingMedInsList(List<MedicalInstructionByTypeDTO> list) {
@@ -1173,16 +1199,24 @@ class _RequestContract extends State<RequestContract>
                           label: 'Đồng ý',
                           onTap: () {
                             //
-                            list.forEach((element) {
-                              element.medicalInstructions.forEach((medical) {
-                                if (medical.check) {
-                                  print(
-                                      'medical choosen: ${medical.medicalInstructionId}');
-                                }
+                            setState(() {
+                              listMedInsChecked.clear();
+                              listMedInsCheckedID.clear();
+                              list.forEach((element) {
+                                element.medicalInstructions.forEach((medical) {
+                                  if (medical.check) {
+                                    listMedInsChecked.add(medical);
+                                    listMedInsCheckedID
+                                        .add(medical.medicalInstructionId);
+                                  }
+                                });
                               });
+                              print('listChecked: ${listMedInsChecked}');
+                              print('listCheckedID: ${listMedInsCheckedID}');
+                              _selectedHRType = '';
+                              indexSelectMedIns = null;
                             });
-                            _selectedHRType = '';
-                            indexSelectMedIns = null;
+
                             Navigator.of(context).pop();
                           },
                         ),
@@ -1626,6 +1660,7 @@ class ContractViewObj {
   String pBirthdate = '';
   String pAdd = '';
   List<DiseaseDTO> diseases = [];
+  List<MedicalInstructions> listMedInsChecked = [];
   String note = '';
   String sDate = '';
   String duration = '';
@@ -1640,6 +1675,7 @@ class ContractViewObj {
       this.pGender,
       this.pBirthdate,
       this.diseases,
+      this.listMedInsChecked,
       this.duration,
       this.note,
       this.pAdd,
@@ -1652,6 +1688,7 @@ class RContractProvider extends ChangeNotifier {
       dSdt: '',
       dEmail: '',
       diseases: [],
+      listMedInsChecked: [],
       pGender: '',
       dname: '',
       dplace: '',
@@ -1673,6 +1710,7 @@ class RContractProvider extends ChangeNotifier {
       String pBirthdate,
       String pAdd,
       List<DiseaseDTO> diseases,
+      List<MedicalInstructions> listMedInsChecked,
       String note,
       String sDate,
       String duration}) async {
@@ -1686,6 +1724,7 @@ class RContractProvider extends ChangeNotifier {
     this.obj.pBirthdate = pBirthdate;
     this.obj.pAdd = pAdd;
     this.obj.diseases = diseases;
+    this.obj.listMedInsChecked = listMedInsChecked;
     this.obj.note = note;
     this.obj.sDate = sDate;
     this.obj.duration = duration;

@@ -3,24 +3,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 class HealthRecordHelper {
   Future<void> initialHRId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('HEALTH_RECORD_ID', '');
+    prefs.setInt('HEALTH_RECORD_ID', 0);
   }
 
-  Future<void> setHealthReCordId(String hrId) async {
+  Future<void> setHealthReCordId(int hrId) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('HEALTH_RECORD_ID') ||
-        prefs.getString('HEALTH_RECORD_ID') == '') {
+        prefs.getInt('HEALTH_RECORD_ID') == null) {
       initialHRId();
     }
-    prefs.setString('HEALTH_RECORD_ID', hrId);
+    prefs.setInt('HEALTH_RECORD_ID', hrId);
   }
 
-  Future<String> getHRId() async {
+  Future<int> getHRId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('HEALTH_RECORD_ID') ||
-        prefs.getString('HEALTH_RECORD_ID') == '') {
+        prefs.getInt('HEALTH_RECORD_ID') == null) {
       initialHRId();
     }
-    return prefs.getString('HEALTH_RECORD_ID');
+    return prefs.getInt('HEALTH_RECORD_ID');
   }
 }

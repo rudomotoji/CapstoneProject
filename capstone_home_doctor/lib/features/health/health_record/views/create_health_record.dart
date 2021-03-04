@@ -1,17 +1,3 @@
-// final List<HRTypeDTO> _listHealthRecordType = [
-//   HRTypeDTO(id: 1, typeName: 'Phiếu khám bệnh'),
-//   HRTypeDTO(id: 2, typeName: 'Bệnh án nội khoa'),
-//   HRTypeDTO(id: 3, typeName: 'Phiếu xét nghiệm huyết học'),
-//   HRTypeDTO(id: 4, typeName: 'Phiếu xét nghiệm hoá sinh máu'),
-//   HRTypeDTO(id: 5, typeName: 'Phiếu chụp X-Quang'),
-//   HRTypeDTO(id: 6, typeName: 'Phiếu siêu âm'),
-//   HRTypeDTO(id: 7, typeName: 'Phiếu điện tim'),
-//   HRTypeDTO(id: 8, typeName: 'Phiếu theo dõi chức năng sống'),
-//   HRTypeDTO(id: 9, typeName: 'Phiếu chăm sóc'),
-//   HRTypeDTO(id: 10, typeName: 'Hồ sơ khác'),
-// ];
-
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -25,9 +11,12 @@ import 'package:capstone_home_doctor/features/health/health_record/events/hr_cre
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_create_state.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
 class CreateHealthRecord extends StatefulWidget {
   final Function refresh;
@@ -42,6 +31,8 @@ class CreateHealthRecord extends StatefulWidget {
 class _CreateHealthRecord extends State<CreateHealthRecord>
     with WidgetsBindingObserver {
   //
+  //
+  int _patientId = 0;
   HealthRecordRepository healthRecordRepository =
       HealthRecordRepository(httpClient: http.Client());
   HealthRecordCreateBloc _healthRecordCreateBloc;
@@ -58,7 +49,16 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+    _getPatientId();
     _healthRecordCreateBloc = BlocProvider.of(context);
+  }
+
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) {
+      setState(() {
+        _patientId = value;
+      });
+    });
   }
 
   @override
@@ -193,17 +193,18 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                           child: ButtonHDr(
                               style: BtnStyle.BUTTON_BLACK,
                               label: 'Tạo hồ sơ',
-                              onTap: () {
-                                healthRecordDTO = HealthRecordDTO(
-                                  personalHealthRecordId: 1,
-                                  disease: _diseaseController.text,
-                                  place: _placeController.text,
-                                  description: _note,
-                                );
-
-                                _insertHealthRecord(healthRecordDTO);
-                                widget.refresh();
-                                Navigator.pop(context);
+                              onTap: () async {
+                                if (_patientId != 0) {
+                                  healthRecordDTO = HealthRecordDTO(
+                                    patientId: _patientId,
+                                    disease: _diseaseController.text,
+                                    place: _placeController.text,
+                                    description: _note,
+                                  );
+                                  await _insertHealthRecord(healthRecordDTO);
+                                  widget.refresh();
+                                  Navigator.pop(context);
+                                }
                               })),
                     ]),
               ),
@@ -212,9 +213,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
     );
   }
 
-  _insertHealthRecord(HealthRecordDTO dto) {
-    print(
-        'DTO DUOC TRUYEN DI ${dto.personalHealthRecordId} - ${dto.disease} - ${dto.place} - ${dto.description}');
+  _insertHealthRecord(HealthRecordDTO dto) async {
     if (dto == null) {
       return Dialog(
         child: Container(
@@ -227,12 +226,10 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
         ),
       );
     }
-    _healthRecordCreateBloc.add(HRCreateEventSend(dto: dto));
+    await _healthRecordCreateBloc.add(HRCreateEventSend(dto: dto));
     return BlocBuilder<HealthRecordCreateBloc, HRCreateState>(
         builder: (context, state) {
       //
-      print(
-          'DTO DUOC TRUYEN DI ${dto.personalHealthRecordId} - ${dto.disease} - ${dto.place} - ${dto.description}');
       if (state is HRCreateStateLoading) {
         showDialog(
             //
