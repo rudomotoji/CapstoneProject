@@ -1,4 +1,4 @@
-#!/Users/vuongnguyen/Desktop/pythonProject/capstone_homedoctor/venv/bin/python
+#!/Users/vuongnguyen/Desktop/capstone/CapstoneProject/capstone_homedoctor_python/venv/bin/python
 # EASY-INSTALL-ENTRY-SCRIPT: 'pytesseract==0.3.7','console_scripts','pytesseract'
 import re
 import sys
