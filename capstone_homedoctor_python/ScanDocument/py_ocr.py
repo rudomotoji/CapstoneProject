@@ -2,6 +2,7 @@ from PIL import Image
 import pytesseract
 import cv2
 import os
+from flask import jsonify
 
 def converseOCR(gray,filename):
 	# Ghi tạm ảnh xuống ổ cứng để sau đó apply OCR
@@ -15,6 +16,23 @@ def converseOCR(gray,filename):
 	# os.remove(filename)
 
 	arrData = list(filter(str.strip, text.split('\n')))
-	print(arrData)
+	return getInfo(arrData)
 
-	return text
+def getInfo(arrData):
+	strSymptom=""
+	title=""
+	for element in arrData:
+		if element.find('PHIẾU') != -1:
+			title=element
+		elif element.find("Chẩn đoán") != -1:
+			strSymptom += element
+		elif strSymptom.find(":") != -1:
+			if element.find('-') != -1:
+				strSymptom += element
+			elif element.find('('):
+				strSymptom += element
+
+	listStr=list(filter(str.strip, strSymptom.split(': ')))
+	symptom = listStr[1].replace("'","")
+
+	return jsonify({"title":title,"symptom":symptom})

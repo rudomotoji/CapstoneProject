@@ -4,6 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
 
+final BehaviorSubject<String> selectNotificationSubject =
+    BehaviorSubject<String>();
+
 class NotiHelper {
   // static final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
   FlutterLocalNotificationsPlugin _plugin;
@@ -48,16 +51,29 @@ class NotiHelper {
         android: initSettingAndroid, iOS: initSettingIOS);
   }
 
+  // setOnNotificationReceive(Function onNotificationReceive) {
+  //   didReceiveNotificationSubject.listen((nontification) {
+  //     onNotificationReceive(nontification);
+  //   });
+  // }
+
+  // setNotificationnOnClick(Function onNotificationOnClick) async {
+  //   await _plugin.initialize(initSetting,
+  //       onSelectNotification: (String payload) async {
+  //     onNotificationOnClick(payload);
+  //   });
+  // }
+
   setOnNotificationReceive(Function onNotificationReceive) {
     didReceiveNotificationSubject.listen((nontification) {
       onNotificationReceive(nontification);
     });
   }
 
-  setNotificationnOnClick(Function onNotificationOnClick) async {
+  setNotificationnOnClick(BehaviorSubject selectNotificationSubject) async {
     await _plugin.initialize(initSetting,
         onSelectNotification: (String payload) async {
-      onNotificationOnClick(payload);
+      selectNotificationSubject.add(payload);
     });
   }
 

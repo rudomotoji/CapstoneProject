@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/features/dashboard/dashboard.dart';
 import 'package:capstone_home_doctor/features/health/health.dart';
 import 'package:capstone_home_doctor/features/message/message.dart';
 import 'package:capstone_home_doctor/features/notification/notification.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
 
 class MainHome extends StatefulWidget {
   @override
@@ -18,6 +22,18 @@ class _MainHomeState extends State<MainHome> {
   void initState() {
     super.initState();
     _initialServiceHelper();
+    selectNotificationSubject.stream.listen((String payload) async {
+      print(payload);
+      var navigate = jsonDecode(payload);
+
+      await Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
+    });
+  }
+
+  @override
+  void dispose() {
+    selectNotificationSubject.close();
+    super.dispose();
   }
 
   Future<void> _initialServiceHelper() async {

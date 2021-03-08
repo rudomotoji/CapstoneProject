@@ -283,20 +283,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
     });
     // _fcm.subscribeToTopic("");
 
-    localNotifyManager.setOnNotificationReceive(onNotificationReceive);
-    localNotifyManager.setNotificationnOnClick(onNotificationOnClick);
-  }
-
-  onNotificationReceive(ReceiveNotification notification) {
-    print('Notification receive: ${notification.id}');
-    //
-  }
-
-  onNotificationOnClick(String payload) async {
-    print('Notification onclick: ${payload}');
-    // await Navigator.of(context).pushNamed(RoutesHDr.MEDICINE_NOTI_VIEW);
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs.setString('NAVIGATOR', RoutesHDr.PATIENT_INFORMATION);
+    // localNotifyManager.setOnNotificationReceive(onNotificationReceive);
+    localNotifyManager.setNotificationnOnClick(selectNotificationSubject);
   }
 
   @override
