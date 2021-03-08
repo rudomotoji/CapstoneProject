@@ -275,28 +275,28 @@ class DescriptorTile extends StatelessWidget {
   }
 }
 
-class AdapterStateTile extends StatelessWidget {
-  const AdapterStateTile({Key key, @required this.state}) : super(key: key);
+// class AdapterStateTile extends StatelessWidget {
+//   const AdapterStateTile({Key key, @required this.state}) : super(key: key);
 
-  final BluetoothState state;
+//   final BluetoothState state;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.redAccent,
-      child: ListTile(
-        title: Text(
-          'Bluetooth adapter is ${state.toString().substring(15)}',
-          style: Theme.of(context).primaryTextTheme.subhead,
-        ),
-        trailing: Icon(
-          Icons.error,
-          color: Theme.of(context).primaryTextTheme.subhead.color,
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       color: Colors.redAccent,
+//       child: ListTile(
+//         title: Text(
+//           'Bluetooth adapter is ${state.toString().substring(15)}',
+//           style: Theme.of(context).primaryTextTheme.subhead,
+//         ),
+//         trailing: Icon(
+//           Icons.error,
+//           color: Theme.of(context).primaryTextTheme.subhead.color,
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class ScannedList extends StatelessWidget {
   final ScanResult result;
@@ -310,17 +310,19 @@ class ScannedList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (result.device.name.length > 0) {
+    print('DEVICE NAME: ${result.device.name}');
+    if (result != null) {
       return ButtonHDr(
         style: BtnStyle.BUTTON_IN_LIST,
-        label: result.device.name,
-        height: 80,
+        imgHeight: 50,
+        label: (result.device.name == null || result.device.name == '')
+            ? 'Thiết bị khác'
+            : result.device.name,
+        height: 100,
         image: Image.asset(_getImageDevice(result.device.name)),
         onTap: this.onTap,
-        // startPhoneAuth();
       );
-    } else
-      return null;
+    }
   }
 
   _getImageDevice(String keyword) {
@@ -345,7 +347,7 @@ class ScannedList extends StatelessWidget {
         return 'assets/images/img-galaxy-fit-e.png';
         break;
       case DeviceHDr.UNKNOWN:
-        return 'assets/images/img-device.png';
+        return 'assets/images/img-unknown-device.png';
         break;
     }
   }

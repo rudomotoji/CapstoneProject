@@ -125,6 +125,8 @@ flutter:
     - assets/images/loading-hdr.gif
     - assets/images/ic-male.png
     - assets/images/ic-female.png
+    - assets/images/img-unknown-device.png
+    - assets/images/ic-medical-instruction.png
 
   
   #   - images/a_dot_burr.jpeg

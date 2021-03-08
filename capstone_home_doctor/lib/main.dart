@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/features/chat/chat.dart';
-import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
+
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
 import 'package:capstone_home_doctor/features/contract/views/confirm_contract_view.dart';
@@ -13,11 +13,16 @@ import 'package:capstone_home_doctor/features/contract/views/request_contract_vi
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_create_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_list_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_type_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_with_type_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/health_record_detail.dart';
+import 'package:capstone_home_doctor/features/health/medical_share/views/medical_share_view.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/view/heart/heart.dart';
+import 'package:capstone_home_doctor/features/health/vitalsigns/views/oxy_chart_view.dart';
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
@@ -25,12 +30,15 @@ import 'package:capstone_home_doctor/features/login/blocs/account_bloc.dart';
 import 'package:capstone_home_doctor/features/login/repositories/account_repository.dart';
 import 'package:capstone_home_doctor/features/login/views/log_in_view.dart';
 import 'package:capstone_home_doctor/features/medicine/views/medicine_history_view.dart';
-import 'package:capstone_home_doctor/features/peripheral/connect_peripheral_view.dart';
-import 'package:capstone_home_doctor/features/peripheral/intro_connect_view.dart';
-import 'package:capstone_home_doctor/features/peripheral/peripheral_service_view.dart';
+
+import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
+import 'package:capstone_home_doctor/features/peripheral/views/intro_connect_view.dart';
+import 'package:capstone_home_doctor/features/peripheral/views/peripheral_service_view.dart';
+
 import 'package:capstone_home_doctor/features/register/register_view.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
+import 'package:capstone_home_doctor/features/schedule/views/schedule_medicine_noti_view.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
@@ -322,8 +330,21 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 AccountBloc(accountRepository: accountRepository),
           ),
           BlocProvider<PatientBloc>(
-              create: (BuildContext context) =>
-                  PatientBloc(patientRepository: patientRepository)),
+            create: (BuildContext context) =>
+                PatientBloc(patientRepository: patientRepository),
+          ),
+          BlocProvider<MedicalInstructionListBloc>(
+            create: (BuildContext context) => MedicalInstructionListBloc(
+                medicalInstructionRepository: _medicalInstructionRepository),
+          ),
+          BlocProvider<MedInsTypeListBloc>(
+            create: (BuildContext context) => MedInsTypeListBloc(
+                medicalInstructionRepository: _medicalInstructionRepository),
+          ),
+          BlocProvider<MedInsCreateBloc>(
+            create: (BuildContext context) => MedInsCreateBloc(
+                medicalInstructionRepository: _medicalInstructionRepository),
+          ),
         ],
         child: GestureDetector(
           onTap: () {
@@ -366,8 +387,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.HEALTH_RECORD_DETAIL: (context) =>
                     HealthRecordDetail(),
                 RoutesHDr.HEART: (context) => Heart(),
-                // RoutesHDr.MEDICINE_NOTI_VIEW: (context) =>
-                //     ScheduleMedNotiView(),
+                RoutesHDr.MEDICINE_NOTI_VIEW: (context) =>
+                    ScheduleMedNotiView(),
+                RoutesHDr.OXY_CHART_VIEW: (context) => OxyChartView(),
+                RoutesHDr.MEDICAL_SHARE: (context) => MedicalShare(),
               },
               home: _startScreen,
             ),
