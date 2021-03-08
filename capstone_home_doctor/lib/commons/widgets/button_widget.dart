@@ -27,25 +27,28 @@ class ButtonHDr extends StatefulWidget {
   final bool isLabelLeft;
   //underline button transparent
   final bool isUnderline;
+  //height of image button in list
+  final double imgHeight;
 
-  const ButtonHDr({
-    Key key,
-    this.onTap,
-    this.label,
-    this.image,
-    this.style,
-    this.width,
-    this.height,
-    this.margin,
-    this.bgColor,
-    this.labelColor,
-    this.isLabelLeft,
-    this.isUnderline,
-  }) : super(key: key);
+  const ButtonHDr(
+      {Key key,
+      this.onTap,
+      this.label,
+      this.image,
+      this.style,
+      this.width,
+      this.height,
+      this.margin,
+      this.bgColor,
+      this.labelColor,
+      this.isLabelLeft,
+      this.isUnderline,
+      this.imgHeight})
+      : super(key: key);
 
   @override
   _ButtonHDr createState() => _ButtonHDr(label, image, style, width, height,
-      margin, bgColor, labelColor, isLabelLeft, isUnderline);
+      margin, bgColor, labelColor, isLabelLeft, isUnderline, imgHeight);
 }
 
 class _ButtonHDr extends State<ButtonHDr> {
@@ -59,6 +62,7 @@ class _ButtonHDr extends State<ButtonHDr> {
   Color _labelColor;
   bool _isLabelLeft;
   bool _isUnderline;
+  double _imgHeight;
 
   @override
   _ButtonHDr(
@@ -72,6 +76,7 @@ class _ButtonHDr extends State<ButtonHDr> {
     this._labelColor,
     this._isLabelLeft,
     this._isUnderline,
+    this._imgHeight,
   );
 
   @override
@@ -188,8 +193,12 @@ class _ButtonHDr extends State<ButtonHDr> {
                 padding: EdgeInsets.only(left: 20),
               ),
               SizedBox(
-                width: DefaultNumeralUI.ICON_SIZE_BUTTON,
-                height: DefaultNumeralUI.ICON_SIZE_BUTTON,
+                width: (_imgHeight != null)
+                    ? _imgHeight
+                    : DefaultNumeralUI.ICON_SIZE_BUTTON,
+                height: (_imgHeight != null)
+                    ? _imgHeight
+                    : DefaultNumeralUI.ICON_SIZE_BUTTON,
                 child: _image,
               ),
               Padding(

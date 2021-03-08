@@ -207,6 +207,7 @@ class _VitalSignTabState extends State<VitalSignTab> {
                   image: Image.asset('assets/images/ic-spo2.png'),
                   onTap: () {
                     // startPhoneAuth();
+                    Navigator.of(context).pushNamed(RoutesHDr.OXY_CHART_VIEW);
                   },
                 ),
                 ButtonHDr(

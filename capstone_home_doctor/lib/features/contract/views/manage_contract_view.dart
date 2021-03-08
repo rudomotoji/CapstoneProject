@@ -680,6 +680,7 @@ class _ManageContract extends State<ManageContract> {
                         child: ListView.builder(
                           itemCount: _listActived.length,
                           itemBuilder: (BuildContext buildContext, int index) {
+                            print(_listActived[index].contractId);
                             return Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.center,

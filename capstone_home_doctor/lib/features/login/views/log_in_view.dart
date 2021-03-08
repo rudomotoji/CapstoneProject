@@ -141,8 +141,9 @@ class _Login extends State<Login> with WidgetsBindingObserver {
   }
 
   _checkLogin(AccountDTO dto) async {
-    if (dto == null) {}
-    _accountBloc.add(AccountEventCheckLogin(dto: dto));
+    if (dto != null) {
+      _accountBloc.add(AccountEventCheckLogin(dto: dto));
+    }
     await _authenticateHelper.isAuthenticated().then((value) {
       if (value == true) {
         //Push navigation.

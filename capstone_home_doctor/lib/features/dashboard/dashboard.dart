@@ -64,8 +64,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     super.initState();
     _getPatientId();
     _prescriptionListBloc = BlocProvider.of(context);
-    _prescriptionListBloc
-        .add(PrescriptionListEventsetPatientId(patientId: _patientId));
   }
 
   @override
@@ -80,6 +78,10 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         _patientId = value;
       });
     });
+    if (_patientId != 0) {
+      _prescriptionListBloc
+          .add(PrescriptionListEventsetPatientId(patientId: _patientId));
+    }
   }
 
   @override

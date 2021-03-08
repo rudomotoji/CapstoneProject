@@ -83,10 +83,16 @@ class _MainHomeState extends State<MainHome> {
             ),
           ),
           BottomNavigationBarItem(
-            icon: new Image.asset(
-              'assets/images/ic-noti.png',
-              height: 30,
-              width: 30,
+            icon: Container(
+              child: Stack(
+                children: [
+                  new Image.asset(
+                    'assets/images/ic-noti.png',
+                    height: 30,
+                    width: 30,
+                  ),
+                ],
+              ),
             ),
             activeIcon: new Image.asset(
               'assets/images/ic-noti-selected.png',

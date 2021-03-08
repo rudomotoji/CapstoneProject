@@ -63,11 +63,6 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    if (null != listHealthRecord) {
-      if (listHealthRecord.length > 1) {
-        listHealthRecord.sort((a, b) => b.dateCreated.compareTo(a.dateCreated));
-      }
-    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -93,6 +88,27 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
             // Navigator.of(context).pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
           },
         ),
+        Padding(
+          padding: EdgeInsets.only(top: 15),
+        ),
+        ButtonArtBoard(
+          title: 'Chia sẻ bệnh án',
+          description:
+              'Các phiếu y lệnh được chia sẻ giúp bác sĩ chẩn đoán tốt hơn',
+          imageAsset: 'assets/images/ic-medical-instruction.png',
+          onTap: () async {
+            //
+            // Navigator.of(context).pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
+            Navigator.of(context).pushNamed(RoutesHDr.MEDICAL_SHARE);
+            //MOVE TO CREATE HR AND CALL BACK REFRESH LIST
+            // Navigator.push(
+            //     context,
+            //     new MaterialPageRoute(
+            //         builder: (context) =>
+            //             new CreateHealthRecord(refreshListHR)));
+            // Navigator.of(context).pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
+          },
+        ),
 
         // Padding(
         //   padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
@@ -113,7 +129,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Danh sách hồ sơ',
+              'Danh sách hồ sơ sức khoẻ',
               style: TextStyle(
                 color: DefaultTheme.BLACK,
                 fontSize: 18,
@@ -154,6 +170,12 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
         }
         if (state is HRListStateSuccess) {
           listHealthRecord = state.listHealthRecord;
+          if (null != listHealthRecord) {
+            if (listHealthRecord.length > 1) {
+              listHealthRecord
+                  .sort((a, b) => b.dateCreated.compareTo(a.dateCreated));
+            }
+          }
           // if (null == state.listHealthRecord.length) {
           //   return Container(
           //       width: MediaQuery.of(context).size.width,

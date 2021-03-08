@@ -4,7 +4,8 @@ import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
-import 'package:capstone_home_doctor/features/peripheral/peripheral_repo.dart';
+import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repo.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -24,113 +25,121 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<BluetoothState>(
-        stream: FlutterBlue.instance.state,
-        initialData: BluetoothState.unknown,
-        builder: (c, snapshot) {
-          final state = snapshot.data;
-          if (state == BluetoothState.on) {
-            FlutterBlue.instance.startScan(timeout: Duration(seconds: 30));
-            return _availableBluetooth();
-          }
-          return _notAvailableBluetooth();
-        });
-  }
-
-  Widget _availableBluetooth() {
     return Scaffold(
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             HeaderWidget(
-              title: 'Trở về',
+              title: 'Quét thiết bị',
               isMainView: false,
               buttonHeaderType: ButtonHeaderType.BACK_HOME,
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 50),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.4,
-              width: MediaQuery.of(context).size.width - 40,
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: DefaultTheme.GREY_BUTTON),
-                child: RefreshIndicator(
-                  onRefresh: () => FlutterBlue.instance
-                      .startScan(timeout: Duration(seconds: 58)),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: <Widget>[
-                        StreamBuilder<List<ScanResult>>(
-                          stream: FlutterBlue.instance.scanResults,
-                          initialData: [],
-                          builder: (c, snapshot) => Column(
-                            children: snapshot.data
-                                .map(
-                                  (result) => ScannedList(
-                                    result: result,
-                                    onTap: () {
-                                      result.device.connect();
-                                      Navigator.pushNamed(
-                                          context, RoutesHDr.PERIPHERAL_SERVICE,
-                                          arguments: {
-                                            'PERIPHERAL_CONNECTED': result
-                                          });
-                                    },
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Spacer(),
-            Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: Text(
-                'Chọn thiết bị',
-                style: TextStyle(
-                  color: DefaultTheme.BLACK,
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  EdgeInsets.only(top: 10, bottom: 40, left: 40, right: 40),
-              child: Text(
-                'Danh sách thiết bị đeo khả dụng',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: DefaultTheme.GREY_TEXT,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            ButtonHDr(
-              style: BtnStyle.BUTTON_BLACK,
-              label: 'Quét lại',
-              onTap: () {
-                FlutterBlue.instance.stopScan();
-                FlutterBlue.instance.startScan(timeout: Duration(seconds: 10));
-              },
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 30),
+            //
+            Expanded(
+              child: StreamBuilder<BluetoothState>(
+                  stream: FlutterBlue.instance.state,
+                  initialData: BluetoothState.unknown,
+                  builder: (c, snapshot) {
+                    final state = snapshot.data;
+                    if (state == BluetoothState.on) {
+                      FlutterBlue.instance
+                          .startScan(timeout: Duration(seconds: 30));
+                      return _availableBluetooth();
+                    }
+                    return _notAvailableBluetooth();
+                  }),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _availableBluetooth() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 50),
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.45,
+          width: MediaQuery.of(context).size.width - 40,
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: DefaultTheme.GREY_BUTTON),
+            child: RefreshIndicator(
+              onRefresh: () => FlutterBlue.instance
+                  .startScan(timeout: Duration(seconds: 10)),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    StreamBuilder<List<ScanResult>>(
+                      stream: FlutterBlue.instance.scanResults,
+                      initialData: [],
+                      builder: (c, snapshot) => Column(
+                        children: snapshot.data
+                            .map(
+                              (result) => ScannedList(
+                                result: result,
+                                onTap: () {
+                                  result.device.connect();
+                                  Navigator.pushNamed(
+                                      context, RoutesHDr.PERIPHERAL_SERVICE,
+                                      arguments: {
+                                        'PERIPHERAL_CONNECTED': result
+                                      });
+                                },
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Spacer(),
+        Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: Text(
+            'Chọn thiết bị',
+            style: TextStyle(
+              color: DefaultTheme.BLACK,
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 10, bottom: 40, left: 40, right: 40),
+          child: Text(
+            'Danh sách thiết bị đeo khả dụng',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: DefaultTheme.GREY_TEXT,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        ButtonHDr(
+          style: BtnStyle.BUTTON_BLACK,
+          label: 'Quét lại',
+          onTap: () async {
+            await FlutterBlue.instance
+                .startScan(timeout: Duration(seconds: 10));
+          },
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 30),
+        ),
+      ],
+
       // floatingActionButton: StreamBuilder<bool>(
       //   stream: FlutterBlue.instance.isScanning,
       //   initialData: false,
@@ -153,62 +162,44 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
   }
 
   Widget _notAvailableBluetooth() {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            HeaderWidget(
-              title: '',
-              isMainView: true,
-              buttonHeaderType: ButtonHeaderType.BACK_HOME,
-            ),
-            Expanded(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width - 80,
-                height: MediaQuery.of(context).size.height - 500,
-                child: Image.asset('assets/images/img-bluetooth.png'),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 20),
-              child: Text(
-                'Bluetooth không khả dụng',
-                style: TextStyle(
-                  color: DefaultTheme.BLACK,
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  EdgeInsets.only(top: 10, bottom: 40, left: 40, right: 40),
-              child: Text(
-                'Bật kết nối bluetooth trong cài đặt để thực hiện ghép nối',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: DefaultTheme.GREY_TEXT,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w300,
-                ),
-              ),
-            ),
-            ButtonHDr(
-              style: BtnStyle.BUTTON_GREY,
-              label: 'Tải lại',
-              onTap: () {
-                Navigator.pushReplacementNamed(
-                    context, RoutesHDr.CONNECT_PERIPHERAL);
-              },
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 30),
-            )
-          ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Expanded(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width - 80,
+            height: MediaQuery.of(context).size.height - 500,
+            child: Image.asset('assets/images/img-bluetooth.png'),
+          ),
         ),
-      ),
+        Padding(
+          padding: EdgeInsets.only(top: 20),
+          child: Text(
+            'Bluetooth không khả dụng',
+            style: TextStyle(
+              color: DefaultTheme.BLACK,
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 10, bottom: 40, left: 40, right: 40),
+          child: Text(
+            'Bật kết nối bluetooth trong cài đặt để thực hiện ghép nối',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: DefaultTheme.GREY_TEXT,
+              fontSize: 15,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 30),
+        )
+      ],
     );
   }
 }
