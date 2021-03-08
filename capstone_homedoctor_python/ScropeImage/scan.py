@@ -281,30 +281,30 @@ class DocScanner(object):
         # convert the warped image to grayscale
         gray = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
 
-        # sharpen image
-        sharpen = cv2.GaussianBlur(gray, (0, 0), 3)
-        sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
+        # # sharpen image
+        # sharpen = cv2.GaussianBlur(gray, (0, 0), 3)
+        # sharpen = cv2.addWeighted(gray, 1.5, sharpen, -0.5, 0)
+        #
+        # # apply adaptive threshold to get black and white effect
+        # thresh = cv2.adaptiveThreshold(
+        #     sharpen, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
+        #
+        # # save the transformed image
+        # basename = os.path.basename(image_path)
+        #
+        # if os.path.exists(OUTPUT_DIR):
+        #     cv2.imwrite(OUTPUT_DIR + '/' + basename, thresh)
+        #     print("Proccessed " + basename)
+        # else:
+        #     os.mkdir(OUTPUT_DIR)
+        #     cv2.imwrite(OUTPUT_DIR + '/' + basename, thresh)
+        #     print("Proccessed " + basename)
 
-        # apply adaptive threshold to get black and white effect
-        thresh = cv2.adaptiveThreshold(
-            sharpen, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 21, 15)
+        return converseOCR(gray,image_path)
 
-        # save the transformed image
-        basename = os.path.basename(image_path)
-
-        if os.path.exists(OUTPUT_DIR):
-            cv2.imwrite(OUTPUT_DIR + '/' + basename, thresh)
-            print("Proccessed " + basename)
-        else:
-            os.mkdir(OUTPUT_DIR)
-            cv2.imwrite(OUTPUT_DIR + '/' + basename, thresh)
-            print("Proccessed " + basename)
-
-        return converseOCR(gray)
-
-def scandemo():
+def scandemo(filename):
     ap = argparse.ArgumentParser()
-    ap.add_argument("-i", "--image", help="Đường dẫn đến ảnh muốn nhận dạng", default="test.jpg")
+    ap.add_argument("-i", "--image", help="Đường dẫn đến ảnh muốn nhận dạng", default=filename)
     ap.add_argument("-p", "--preprocess", type=str, default="thresh", help="Bước tiền xử lý ảnh")
     args = vars(ap.parse_args())
 

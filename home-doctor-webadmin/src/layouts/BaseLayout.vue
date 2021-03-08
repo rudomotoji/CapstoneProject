@@ -8,15 +8,18 @@
       <div class="main-content">
         <slot name="main-content" />
       </div>
+      <NotificationBox />
     </main>
   </div>
 </template>
 
 <script>
 import HeaderDefault from "./header";
+import NotificationBox from "../components/NotificationBox.vue";
 export default {
   components: {
     "header-default": HeaderDefault,
+    NotificationBox,
   },
 };
 </script>

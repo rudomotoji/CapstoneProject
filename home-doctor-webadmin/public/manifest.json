@@ -1,0 +1,6 @@
+{
+    "short_name": "FireStarter",
+    "name": "VueJS + Firebase Starter App",
+    "start_url": "/",
+    "gcm_sender_id": "581919845216"
+}

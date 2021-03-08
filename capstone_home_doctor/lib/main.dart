@@ -37,9 +37,9 @@ import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workmanager/workmanager.dart';
+// import 'package:workmanager/workmanager.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:android_alarm_manager/android_alarm_manager.dart';
+// import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:cron/cron.dart';
 
 import 'package:flutter/material.dart';
@@ -128,24 +128,24 @@ void checkNotifiMedical() {
   }
 }
 
-void callbackDispatcher() {
-  Workmanager.executeTask((task, inputData) async {
-    switch (task) {
-      case simpleTaskKey:
-        break;
-      case simpleDelayedTask:
-        break;
-      case simplePeriodicTask:
-        break;
-      case simplePeriodic1HourTask:
-        break;
-      case Workmanager.iOSBackgroundTask:
-        break;
-    }
-    checkNotifiMedical();
-    return Future.value(true);
-  });
-}
+// void callbackDispatcher() {
+//   Workmanager.executeTask((task, inputData) async {
+//     switch (task) {
+//       case simpleTaskKey:
+//         break;
+//       case simpleDelayedTask:
+//         break;
+//       case simplePeriodicTask:
+//         break;
+//       case simplePeriodic1HourTask:
+//         break;
+//       case Workmanager.iOSBackgroundTask:
+//         break;
+//     }
+//     checkNotifiMedical();
+//     return Future.value(true);
+//   });
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -156,28 +156,28 @@ void main() async {
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
-  if (Platform.isAndroid) {
-    await Workmanager.initialize(callbackDispatcher,
-        isInDebugMode:
-            true); //to true if still in testing lev turn it to false whenever you are launching the app
-    await Workmanager.registerPeriodicTask(
-      "5", simplePeriodicTask,
-      existingWorkPolicy: ExistingWorkPolicy.replace,
-      frequency: Duration(minutes: 15), //when should it check the link
-      initialDelay:
-          Duration(seconds: 5), //duration before showing the notification
-      // constraints: Constraints(
-      //   networkType: NetworkType.connected,
-      // ),
-    );
-  }
-  if (Platform.isIOS) {
-    final cron = Cron()
-      ..schedule(Schedule.parse('* * * * * '), () {
-        checkNotifiMedical();
-        print(DateTime.now());
-      });
-  }
+  // if (Platform.isAndroid) {
+  //   await Workmanager.initialize(callbackDispatcher,
+  //       isInDebugMode:
+  //           true); //to true if still in testing lev turn it to false whenever you are launching the app
+  //   await Workmanager.registerPeriodicTask(
+  //     "5", simplePeriodicTask,
+  //     existingWorkPolicy: ExistingWorkPolicy.replace,
+  //     frequency: Duration(minutes: 15), //when should it check the link
+  //     initialDelay:
+  //         Duration(seconds: 5), //duration before showing the notification
+  //     // constraints: Constraints(
+  //     //   networkType: NetworkType.connected,
+  //     // ),
+  //   );
+  // }
+  // if (Platform.isIOS) {
+  final cron = Cron()
+    ..schedule(Schedule.parse('* * * * * '), () {
+      checkNotifiMedical();
+      print(DateTime.now());
+    });
+  // }
   runApp(HomeDoctor());
 }
 
@@ -199,12 +199,12 @@ class _HomeDoctorState extends State<HomeDoctor> {
     body: Container(),
   );
 
-  Future<dynamic> myBackgroundMessageHandler(
-      Map<String, dynamic> message) async {
-    Platform.isIOS
-        ? _handleIOSGeneralMessage(message)
-        : _handleGeneralMessage(message);
-  }
+  // Future<dynamic> myBackgroundMessageHandler(
+  //     Map<String, dynamic> message) async {
+  //   Platform.isIOS
+  //       ? _handleIOSGeneralMessage(message)
+  //       : _handleGeneralMessage(message);
+  // }
 
   Future<void> _initialServiceHelper() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -223,16 +223,16 @@ class _HomeDoctorState extends State<HomeDoctor> {
   @override
   void initState() {
     super.initState();
-    if (Platform.isAndroid) {
-      final int helloAlarmID = 0;
-      AndroidAlarmManager.initialize();
-      AndroidAlarmManager.periodic(
-        const Duration(minutes: 1),
-        helloAlarmID,
-        checkNotifiMedical,
-        wakeup: true,
-      );
-    }
+    // if (Platform.isAndroid) {
+    //   final int helloAlarmID = 0;
+    //   AndroidAlarmManager.initialize();
+    //   AndroidAlarmManager.periodic(
+    //     const Duration(minutes: 1),
+    //     helloAlarmID,
+    //     checkNotifiMedical,
+    //     wakeup: true,
+    //   );
+    // }
     _initialServiceHelper();
     authenHelper.isAuthenticated().then((value) {
       print('value authen now ${value}');
@@ -261,11 +261,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
       // onBackgroundMessage: myBackgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
-        // _navigateToItemDetail(message);
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
-        // _navigateToItemDetail(message);
       },
     );
     _fcm.getToken().then((String token) {
@@ -286,9 +284,11 @@ class _HomeDoctorState extends State<HomeDoctor> {
     //
   }
 
-  onNotificationOnClick(String payload) {
+  onNotificationOnClick(String payload) async {
     print('Notification onclick: ${payload}');
-    Navigator.pushNamed(context, RoutesHDr.MEDICINE_NOTI_VIEW);
+    // await Navigator.of(context).pushNamed(RoutesHDr.MEDICINE_NOTI_VIEW);
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setString('NAVIGATOR', RoutesHDr.PATIENT_INFORMATION);
   }
 
   @override

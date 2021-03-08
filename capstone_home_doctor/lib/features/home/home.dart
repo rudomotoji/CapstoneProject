@@ -4,6 +4,7 @@ import 'package:capstone_home_doctor/features/health/health.dart';
 import 'package:capstone_home_doctor/features/message/message.dart';
 import 'package:capstone_home_doctor/features/notification/notification.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainHome extends StatefulWidget {
   @override
@@ -12,6 +13,19 @@ class MainHome extends StatefulWidget {
 
 class _MainHomeState extends State<MainHome> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initialServiceHelper();
+  }
+
+  Future<void> _initialServiceHelper() async {
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // if (prefs.containsKey('NAVIGATOR')) {
+    //   Navigator.pushNamed(context, prefs.getString('NAVIGATOR'));
+    // }
+  }
 
   @override
   Widget build(BuildContext context) {
