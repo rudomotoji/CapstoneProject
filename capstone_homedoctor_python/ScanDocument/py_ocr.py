@@ -14,6 +14,7 @@ def converseOCR(gray,filename):
 
 	# # Xóa ảnh tạm sau khi nhận dạng
 	# os.remove(filename)
+	print(text)
 
 	arrData = list(filter(str.strip, text.split('\n')))
 	return getInfo(arrData)
@@ -24,15 +25,19 @@ def getInfo(arrData):
 	for element in arrData:
 		if element.find('PHIẾU') != -1:
 			title=element
-		elif element.find("Chẩn đoán") != -1:
+		elif element.find("Triệu chứng") != -1:
 			strSymptom += element
 		elif strSymptom.find(":") != -1:
 			if element.find('-') != -1:
 				strSymptom += element
-			elif element.find('('):
+			elif element.find('(') != -1:
 				strSymptom += element
+		elif element.find('BỆNH ÁN') != -1:
+			title = element
 
 	listStr=list(filter(str.strip, strSymptom.split(': ')))
-	symptom = listStr[1].replace("'","")
-
-	return jsonify({"title":title,"symptom":symptom})
+	if len(listStr)>2:
+		symptom = listStr[1].replace("'","")
+		return jsonify({"title": title, "symptom": symptom})
+	else:
+		return jsonify({"title":title})
