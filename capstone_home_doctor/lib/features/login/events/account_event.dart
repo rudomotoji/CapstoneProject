@@ -15,3 +15,9 @@ class AccountEventCheckLogin extends AccountEvent {
   // TODO: implement props
   List<Object> get props => [dto];
 }
+
+class AccountEventStartLogin extends AccountEvent {
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}

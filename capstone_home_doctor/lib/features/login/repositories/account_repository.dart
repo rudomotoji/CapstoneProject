@@ -1,5 +1,6 @@
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
 import 'package:capstone_home_doctor/models/account_dto.dart';
+import 'package:capstone_home_doctor/models/account_token_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -9,15 +10,16 @@ class AccountRepository extends BaseApiClient {
   AccountRepository({@required this.httpClient}) : assert(httpClient != null);
 
   //
-  Future<int> checkLogin(AccountDTO dto) async {
+  Future<AccountTokenDTO> checkLogin(AccountDTO dto) async {
     final url = '/Accounts/Login';
     try {
       final request = await postApi(url, null, dto.toJson());
       if (request.statusCode == 200) {
         //
-        String a = request.body;
-        Map<String, dynamic> decodedToken = JwtDecoder.decode(a);
-        return int.tryParse(decodedToken["patientId"]);
+        String response = request.body;
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(response);
+        //return int.tryParse(decodedToken["patientId"]);
+        return AccountTokenDTO.fromJson(decodedToken);
       } else {
         return null;
       }

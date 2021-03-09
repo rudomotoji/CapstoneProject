@@ -62,6 +62,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
   String dropdownValue = 'One';
   String _selectedHRType = '';
+  String _note = '';
   //
   DateValidator _dateValidator = DateValidator();
   HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
@@ -806,7 +807,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
           String _dateView = '${nowDate.split(" ")[0]}';
           String _startDate = '${nowDate}';
 
-          String _note = '';
           int indexSelectMedIns = 0;
           return StatefulBuilder(
               builder: (BuildContext context2, StateSetter setModalState) {
@@ -1140,6 +1140,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       setState(() {
                                         _note = text;
                                       });
+                                      setModalState(() {
+                                        _note = text;
+                                      });
                                     }),
                               ),
                               Padding(
@@ -1310,15 +1313,15 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     });
   }
 
-  String getMedInsTypeName(String id) {
-    String result = "";
-    for (MedicalInstructionTypeDTO i in _listMedInsType) {
-      if (id.trim() == i.medicalInstructionTypeId) {
-        result = i.name;
-      }
-    }
-    return result;
-  }
+  // String getMedInsTypeName(String id) {
+  //   String result = "";
+  //   for (MedicalInstructionTypeDTO i in _listMedInsType) {
+  //     if (id.trim() == i.medicalInstructionTypeId) {
+  //       result = i.name;
+  //     }
+  //   }
+  //   return result;
+  // }
 
   // _findHealthRecordById() async {
   //   Map<String, Object> arguments = ModalRoute.of(context).settings.arguments;

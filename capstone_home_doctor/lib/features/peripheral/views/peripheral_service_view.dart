@@ -13,14 +13,21 @@ class PeripheralService extends StatefulWidget {
 }
 
 class _PeripheralService extends State<PeripheralService> {
-  List<Object> listService = [];
+  List<BluetoothService> listService = [];
 
   _getListServices(BluetoothDevice device) async {
     List<BluetoothService> services = await device.discoverServices();
     services.forEach((value) {
       listService.add(value);
-      print('VALUE ${value}');
+      print('VALUE ${value.uuid}');
     });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    FlutterBlue.instance.stopScan();
   }
 
   @override
@@ -34,9 +41,8 @@ class _PeripheralService extends State<PeripheralService> {
     // listService.forEach((service) {
     //   print('Service ${service}');
     // });
-    //
 
-    //
+    // //
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -58,7 +64,13 @@ class _PeripheralService extends State<PeripheralService> {
                             return Container(
                                 color: DefaultTheme.GREY_VIEW,
                                 margin: EdgeInsets.only(bottom: 50),
-                                child: Text('${listService[index]}\n'));
+                                child: Column(
+                                  children: [
+                                    Text('${listService[index].uuid}\n'),
+                                    Text(
+                                        '${listService[index].characteristics}\n'),
+                                  ],
+                                ));
                           })
                       : Container(),
                 ],
