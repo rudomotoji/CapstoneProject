@@ -43,6 +43,7 @@ import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart'
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
+import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:workmanager/workmanager.dart';
@@ -199,10 +200,11 @@ class _HomeDoctorState extends State<HomeDoctor> {
   final AuthenticateHelper authenHelper = AuthenticateHelper();
   final PeripheralHelper peripheralHelper = PeripheralHelper();
   final HealthRecordHelper hrHelper = HealthRecordHelper();
-
+  final MobileDeviceHelper mobileDeviceHelper = MobileDeviceHelper();
   //
   final FirebaseMessaging _fcm = FirebaseMessaging();
-  String _token = 'Generate Token';
+  String _token = '';
+  String mobileDevice = '';
   Widget _startScreen = Scaffold(
     body: Container(),
   );
@@ -225,6 +227,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('HEALTH_RECORD_ID')) {
       hrHelper.initialHRId();
+    }
+    if (!prefs.containsKey('TOKEN_DEVICE')) {
+      mobileDeviceHelper.initialTokenDevice();
     }
   }
 
@@ -279,7 +284,16 @@ class _HomeDoctorState extends State<HomeDoctor> {
       setState(() {
         print('TOKEN IN DEVICE $token');
         _token = '$token';
+        if (_token != '') {
+          mobileDeviceHelper.updatelTokenDevice(_token);
+          // mobileDeviceHelper.getTokenDevice().then((value) {
+          //   mobileDevice = value;
+          //   print('VALUE TOKEN DEVICE ${value}');
+          //   print('TOKEN DEVICE IN SHARED_PREFERENCED: ${mobileDevice}');
+          // });
+        }
       });
+      //
     });
     // _fcm.subscribeToTopic("");
 

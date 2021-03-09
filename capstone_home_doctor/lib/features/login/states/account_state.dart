@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/models/account_token_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -16,10 +17,10 @@ class AccountStateLoading extends AccountState {}
 class AccountStateFailure extends AccountState {}
 
 class AccountStateSuccess extends AccountState {
-  final int isLoggedIn;
-  const AccountStateSuccess({@required this.isLoggedIn});
+  final AccountTokenDTO accountTokenDTO;
+  const AccountStateSuccess({@required this.accountTokenDTO});
 
   @override
   // TODO: implement props
-  List<Object> get props => [isLoggedIn];
+  List<Object> get props => [accountTokenDTO];
 }

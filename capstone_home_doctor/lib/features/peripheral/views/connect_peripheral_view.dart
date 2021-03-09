@@ -5,9 +5,12 @@ import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repo.dart';
+import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+
+PeripheralHelper peripheralHelper = PeripheralHelper();
 
 class ConnectPeripheral extends StatefulWidget {
   @override
@@ -84,8 +87,12 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                             .map(
                               (result) => ScannedList(
                                 result: result,
-                                onTap: () {
+                                onTap: () async {
+                                  //
                                   result.device.connect();
+                                  // await peripheralHelper
+                                  //     .updatePeripheralChecking(
+                                  //         false, '${result.device.id}');
                                   Navigator.pushNamed(
                                       context, RoutesHDr.PERIPHERAL_SERVICE,
                                       arguments: {

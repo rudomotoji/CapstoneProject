@@ -310,7 +310,7 @@ class ScannedList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('DEVICE NAME: ${result.device.name}');
+    // print('DEVICE NAME: ${result.device.name}');
     if (result != null) {
       return ButtonHDr(
         style: BtnStyle.BUTTON_IN_LIST,
