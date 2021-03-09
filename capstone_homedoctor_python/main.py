@@ -19,9 +19,13 @@ def parse_image():
     filename=saveimage(request.files['file'])
 
     scanORCBeforeScrop = py_ocr.getGrayImage(filename)
-    if scanORCBeforeScrop.json['title'] == '':
+    if scanORCBeforeScrop.json['title'] != '':
+        # # # Xóa ảnh tạm sau khi nhận dạng
+        # os.remove(filename)
         return scanORCBeforeScrop
     else:
+        # # # Xóa ảnh tạm sau khi nhận dạng
+        # os.remove(filename)
         return scan.scandemo(filename)
 
 def saveimage(image_file):
