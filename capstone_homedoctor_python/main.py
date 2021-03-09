@@ -6,6 +6,7 @@ import os
 from PIL import Image
 from io import BytesIO
 from ScropeImage import scan
+from ScanDocument import py_ocr
 
 app = Flask(__name__)
 
@@ -16,9 +17,12 @@ def index():
 @app.route("/scanMedicalInsurance", methods=["POST"])
 def parse_image():
     filename=saveimage(request.files['file'])
-    data=scan.scandemo(filename)
-    # return send_file(filename, mimetype='image')
-    return data
+
+    scanORCBeforeScrop = py_ocr.getGrayImage(filename)
+    if scanORCBeforeScrop.json['title'] == '':
+        return scanORCBeforeScrop
+    else:
+        return scan.scandemo(filename)
 
 def saveimage(image_file):
     data = base64.b64encode(image_file.read())
