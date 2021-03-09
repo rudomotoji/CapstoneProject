@@ -411,8 +411,14 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 //
                 return BlocListener(
                   listener: (context, state) {
-                    if (state is AccountStateUnauthenticate) {}
-                    if (state is AccountStateAuthenticated) {}
+                    if (state is AccountStateUnauthenticate) {
+                      Navigator.pushNamedAndRemoveUntil(context,
+                          RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+                    }
+                    if (state is AccountStateAuthenticated) {
+                      Navigator.pushNamedAndRemoveUntil(context,
+                          RoutesHDr.LOG_IN, (Route<dynamic> route) => false);
+                    }
                   },
                   child: child,
                 );
