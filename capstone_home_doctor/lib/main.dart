@@ -27,7 +27,9 @@ import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dar
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
 import 'package:capstone_home_doctor/features/login/blocs/account_bloc.dart';
+import 'package:capstone_home_doctor/features/login/events/account_event.dart';
 import 'package:capstone_home_doctor/features/login/repositories/account_repository.dart';
+import 'package:capstone_home_doctor/features/login/states/account_state.dart';
 import 'package:capstone_home_doctor/features/login/views/log_in_view.dart';
 import 'package:capstone_home_doctor/features/medicine/views/medicine_history_view.dart';
 
@@ -86,6 +88,9 @@ AccountRepository accountRepository =
 PatientRepository patientRepository =
     PatientRepository(httpClient: http.Client());
 
+//AccountBloc
+AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
+
 void _handleGeneralMessage(Map<String, dynamic> message) {
   String payload;
   ReceiveNotification receiveNotification;
@@ -105,7 +110,7 @@ void _handleGeneralMessage(Map<String, dynamic> message) {
 void _handleIOSGeneralMessage(Map<String, dynamic> message) {
   String payload = jsonEncode(message);
   ReceiveNotification receiveNotification;
-
+  print(payload);
   final dynamic notification = message['aps']['alert'];
 
   receiveNotification = ReceiveNotification(
@@ -196,6 +201,9 @@ class HomeDoctor extends StatefulWidget {
 }
 
 class _HomeDoctorState extends State<HomeDoctor> {
+  //
+  final _navigatorKey = GlobalKey<NavigatorState>();
+
   //helper
   final AuthenticateHelper authenHelper = AuthenticateHelper();
   final PeripheralHelper peripheralHelper = PeripheralHelper();
@@ -246,17 +254,21 @@ class _HomeDoctorState extends State<HomeDoctor> {
     //     wakeup: true,
     //   );
     // }
+
     _initialServiceHelper();
-    authenHelper.isAuthenticated().then((value) {
-      print('value authen now ${value}');
-      setState(() {
-        if (value) {
-          _startScreen = MainHome();
-        } else {
-          _startScreen = Login();
-        }
-      });
-    });
+    _accountBloc = BlocProvider.of(context);
+    _accountBloc.add(AccountEventStartScreen());
+    //
+    // authenHelper.isAuthenticated().then((value) {
+    //   print('value authen now ${value}');
+    //   setState(() {
+    //     if (value) {
+    //       _startScreen = MainHome();
+    //     } else {
+    //       _startScreen = Login();
+    //     }
+    //   });
+    // });
 
     if (Platform.isIOS) {
       _fcm.requestNotificationPermissions(const IosNotificationSettings(
@@ -394,7 +406,17 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.OXY_CHART_VIEW: (context) => OxyChartView(),
                 RoutesHDr.MEDICAL_SHARE: (context) => MedicalShare(),
               },
-              home: _startScreen,
+              navigatorKey: _navigatorKey,
+              builder: (context, child) {
+                //
+                return BlocListener(
+                  listener: (context, state) {
+                    if (state is AccountStateUnauthenticate) {}
+                    if (state is AccountStateAuthenticated) {}
+                  },
+                  child: child,
+                );
+              },
             ),
           ),
         ));

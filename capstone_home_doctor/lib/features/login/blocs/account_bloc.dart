@@ -16,9 +16,30 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
   @override
   Stream<AccountState> mapEventToState(AccountEvent event) async* {
-    if (event is AccountEventStartLogin) {}
-    if (event is AccountEventCheckLogin) {
+    String errorMsg = '';
+    if (event is AccountEventStartScreen) {
+      AuthenticateHelper _authenticateHelper = AuthenticateHelper();
       yield AccountStateLoading();
+      try {
+        //
+        _authenticateHelper.isAuthenticated().then((value) async* {
+          if (value == true) {
+            //
+            yield AccountStateAuthenticated();
+          } else {
+            //
+            yield AccountStateUnauthenticate();
+          }
+        });
+      } catch (e) {
+        print('ERROR AT NAVIGATOR AUTHENTICATE: ${e}');
+        yield AccountStateUnauthenticate();
+      }
+    }
+    //
+    // if (event is AccountEventCheckingFailed) {}
+    // //
+    if (event is AccountEventCheckLogin) {
       try {
         //
         final AccountTokenDTO accountTokenDTO =
@@ -31,10 +52,13 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
               int.tryParse(accountTokenDTO.accountId));
           yield AccountStateSuccess(accountTokenDTO: accountTokenDTO);
         } else {
-          yield AccountStateFailure();
+          errorMsg = 'Vui lòng nhập đủ tên đăng nhập và mật khẩu.';
+          yield AccountStateFailure(errorMsg: errorMsg);
         }
       } catch (e) {
-        yield AccountStateFailure();
+        errorMsg = 'Vui lòng kiểm tra kết nối mạng.';
+        print('ERROR AT EVENT CHECK LOGIN: ${e}');
+        yield AccountStateFailure(errorMsg: errorMsg);
       }
     }
   }

@@ -206,7 +206,7 @@ class _HeaderWidget extends State<HeaderWidget> {
 
     // });
 
-    _authenticateHelper.updateAuth(false, null);
+    _authenticateHelper.updateAuth(false, null, null);
     Navigator.pushNamedAndRemoveUntil(
         context, RoutesHDr.LOG_IN, (Route<dynamic> route) => false);
   }
