@@ -82,8 +82,6 @@ PrescriptionRepository _prescriptionRepository =
     PrescriptionRepository(httpClient: http.Client());
 MedicalInstructionRepository _medicalInstructionRepository =
     MedicalInstructionRepository(httpClient: http.Client());
-MedicalInstructionRepository _medicalInstructionRepository =
-    MedicalInstructionRepository(httpClient: http.Client());
 ContractRepository _contractRepository =
     ContractRepository(httpClient: http.Client());
 AccountRepository accountRepository =

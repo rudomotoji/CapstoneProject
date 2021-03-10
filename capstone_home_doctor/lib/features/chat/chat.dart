@@ -61,26 +61,7 @@ class _ChatScreenState extends State<ChatScreen> {
       readLocal();
     }
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        actions: [
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: CircleAvatar(
-              backgroundColor: Colors.black,
-            ),
-          ),
-        ],
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-        title: Text(
-          receiveName,
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-      ),
-      body: WillPopScope(
+      body: SafeArea(
         child: Stack(children: [
           Column(
             children: [
@@ -89,7 +70,6 @@ class _ChatScreenState extends State<ChatScreen> {
             ],
           ),
         ]),
-        onWillPop: onPressBack,
       ),
     );
   }

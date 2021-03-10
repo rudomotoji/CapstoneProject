@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/models/image_scanner_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -15,7 +16,7 @@ class MedInsScanTextStateInitial extends MedInsScanTextState {}
 class MedInsScanTextStateLoading extends MedInsScanTextState {}
 
 class MedInsScanTextStateSuccess extends MedInsScanTextState {
-  final String data;
+  final imageScannerDTO data;
   const MedInsScanTextStateSuccess({@required this.data});
 
   @override
