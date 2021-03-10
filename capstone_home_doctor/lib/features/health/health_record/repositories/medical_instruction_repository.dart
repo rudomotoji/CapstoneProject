@@ -96,4 +96,16 @@ class MedicalInstructionRepository extends BaseApiClient {
     if (response.statusCode == 200) return true;
     return false;
   }
+
+  //create medical instruction by multiple part
+  Future<String> getTextFromImage(String imagePath) async {
+    var uri = Uri.parse('http://0.0.0.0:80/scanMedicalInsurance');
+    var request = new http.MultipartRequest('POST', uri);
+    request.files.add(http.MultipartFile('file',
+        File(imagePath).readAsBytes().asStream(), File(imagePath).lengthSync(),
+        filename: imagePath.split("/").last));
+    final response = await request.send();
+    if (response.statusCode == 200) return 'true';
+    return 'false';
+  }
 }

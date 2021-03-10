@@ -57,6 +57,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'features/health/health_record/blocs/medical_scan_image_bloc.dart';
 import 'features/home/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
@@ -79,6 +80,8 @@ HealthRecordRepository _healthRecordRepository =
     HealthRecordRepository(httpClient: http.Client());
 PrescriptionRepository _prescriptionRepository =
     PrescriptionRepository(httpClient: http.Client());
+MedicalInstructionRepository _medicalInstructionRepository =
+    MedicalInstructionRepository(httpClient: http.Client());
 MedicalInstructionRepository _medicalInstructionRepository =
     MedicalInstructionRepository(httpClient: http.Client());
 ContractRepository _contractRepository =
@@ -354,6 +357,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
           ),
           BlocProvider<MedInsCreateBloc>(
             create: (BuildContext context) => MedInsCreateBloc(
+                medicalInstructionRepository: _medicalInstructionRepository),
+          ),
+          BlocProvider<MedInsScanTextBloc>(
+            create: (BuildContext context) => MedInsScanTextBloc(
                 medicalInstructionRepository: _medicalInstructionRepository),
           ),
         ],
