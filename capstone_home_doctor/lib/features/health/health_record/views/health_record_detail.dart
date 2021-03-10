@@ -1194,9 +1194,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                         File(pickedFile.path)
                                                             .readAsBytesSync());
 
+                                                // gửi hình ảnh lên để detech phiếu khám bệnh
                                                 _medicalScanText.add(
                                                     MedInsGetTextEventSend(
-                                                        imagePath: _imgString));
+                                                        imagePath:
+                                                            _imgFile.path));
                                               } else {
                                                 print('No image selected.');
                                               }

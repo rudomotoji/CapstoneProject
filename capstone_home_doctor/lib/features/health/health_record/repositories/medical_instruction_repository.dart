@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
+import 'package:capstone_home_doctor/models/image_scanner_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:flutter/material.dart';
@@ -98,14 +99,20 @@ class MedicalInstructionRepository extends BaseApiClient {
   }
 
   //create medical instruction by multiple part
-  Future<String> getTextFromImage(String imagePath) async {
+  Future<imageScannerDTO> getTextFromImage(String imagePath) async {
+    imageScannerDTO dto;
     var uri = Uri.parse('http://0.0.0.0:80/scanMedicalInsurance');
     var request = new http.MultipartRequest('POST', uri);
     request.files.add(http.MultipartFile('file',
         File(imagePath).readAsBytes().asStream(), File(imagePath).lengthSync(),
         filename: imagePath.split("/").last));
     final response = await request.send();
-    if (response.statusCode == 200) return 'true';
-    return 'false';
+    if (response.statusCode == 200) {
+      http.Response.fromStream(response).then((res) {
+        dto = imageScannerDTO.fromJson(json.decode(res.body));
+        return dto;
+      });
+    }
+    return dto;
   }
 }
