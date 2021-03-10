@@ -16,6 +16,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
 class Login extends StatefulWidget {
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => Login());
+  }
+
   @override
   State<StatefulWidget> createState() {
     return _Login();
