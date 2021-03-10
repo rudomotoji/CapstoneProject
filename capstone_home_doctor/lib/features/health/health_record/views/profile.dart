@@ -69,7 +69,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
       children: <Widget>[
         //
         Padding(
-          padding: EdgeInsets.only(top: 30, left: 20, right: 20),
+          padding: EdgeInsets.only(top: 10, left: 20, right: 20),
         ),
         ButtonArtBoard(
           title: 'Tạo hồ sơ sức khoẻ',

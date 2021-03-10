@@ -32,6 +32,8 @@ import 'package:capstone_home_doctor/features/login/repositories/account_reposit
 import 'package:capstone_home_doctor/features/login/states/account_state.dart';
 import 'package:capstone_home_doctor/features/login/views/log_in_view.dart';
 import 'package:capstone_home_doctor/features/medicine/views/medicine_history_view.dart';
+import 'package:capstone_home_doctor/features/notification/blocs/notification_list_bloc.dart';
+import 'package:capstone_home_doctor/features/notification/repositories/notification_repository.dart';
 
 import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/views/intro_connect_view.dart';
@@ -87,6 +89,8 @@ AccountRepository accountRepository =
     AccountRepository(httpClient: http.Client());
 PatientRepository patientRepository =
     PatientRepository(httpClient: http.Client());
+NotificationRepository notificationRepository =
+    NotificationRepository(httpClient: http.Client());
 
 //AccountBloc
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
@@ -355,6 +359,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<MedInsCreateBloc>(
             create: (BuildContext context) => MedInsCreateBloc(
                 medicalInstructionRepository: _medicalInstructionRepository),
+          ),
+          BlocProvider<NotificationListBloc>(
+            create: (BuildContext context) => NotificationListBloc(
+                notificationRepository: notificationRepository),
           ),
         ],
         child: GestureDetector(

@@ -14,6 +14,37 @@ class DateValidator {
     return result;
   }
 
+  String parseDateToNotiView(String importedDate) {
+    String result = '';
+    //imported date
+    if (importedDate != '' || importedDate != null) {
+      String day, month, year;
+      String date = importedDate.split('T')[0];
+      day = date.split('-')[2];
+      month = date.split('-')[1];
+      year = date.split('-')[0];
+      String time = importedDate.split('T')[1].split('.')[0];
+      String hour = time.split(':')[0];
+      String minute = time.split(':')[1];
+
+      //date time now
+      String now = DateTime.now().toString().split(' ')[0];
+      String dayNow = now.split('-')[2];
+      String monthNow = now.split('-')[1];
+      String yearNow = now.split('-')[0];
+
+      //executing
+      if (day == dayNow && month == monthNow && year == yearNow) {
+        result = 'Hôm nay, ${hour}:${minute}';
+      } else if (year == yearNow) {
+        result = '${hour}:${minute}, ${day}-${month}';
+      } else {
+        result = '${hour}:${minute}, ${day}-${month}-${year}';
+      }
+    }
+    return result;
+  }
+
   String parseToSumaryDateView(String dateString) {
     String result = '';
     String day, month, year;

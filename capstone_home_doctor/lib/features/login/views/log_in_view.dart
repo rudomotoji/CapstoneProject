@@ -9,6 +9,7 @@ import 'package:capstone_home_doctor/features/login/repositories/account_reposit
 import 'package:capstone_home_doctor/features/login/states/account_state.dart';
 import 'package:capstone_home_doctor/models/account_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -123,10 +124,41 @@ class _Login extends State<Login> with WidgetsBindingObserver {
               label: 'Đăng nhập',
               onTap: () async {
                 //
-                accountDTO = AccountDTO(
-                    username: _usernameController.text,
-                    password: _passwordController.text);
-                await _checkLogin(accountDTO);
+                setState(() {
+                  accountDTO = AccountDTO(
+                      username: _usernameController.text,
+                      password: _passwordController.text);
+                });
+                if (accountDTO.username != '' && accountDTO.password != '') {
+                  await _checkLogin(accountDTO);
+                } else {
+                  return showDialog(
+                      context: context,
+                      builder: (BuildContext context) => CupertinoAlertDialog(
+                            title: Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Text("Đăng nhập thất bại"),
+                            ),
+                            content: Padding(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              child: Text(
+                                'Vui lòng điền đầy đủ thông tin đăng nhập.',
+                                style: TextStyle(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    height: 1.25),
+                              ),
+                            ),
+                            actions: <Widget>[
+                              CupertinoDialogAction(
+                                isDefaultAction: true,
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          ));
+                }
               },
             ),
             Padding(padding: EdgeInsets.only(top: 20)),
@@ -145,17 +177,65 @@ class _Login extends State<Login> with WidgetsBindingObserver {
   }
 
   _checkLogin(AccountDTO dto) async {
-    if (dto != null) {
-      _accountBloc.add(AccountEventCheckLogin(dto: dto));
-    }
-    await _authenticateHelper.isAuthenticated().then((value) {
-      if (value == true) {
-        //Push navigation.
-        Navigator.pushNamedAndRemoveUntil(
-            context, RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
-      } else {
-        //refresh login
+    setState(() {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => CupertinoAlertDialog(
+                title: Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: Text("Đang đăng nhập"),
+                ),
+                content: Container(
+                  width: 200,
+                  height: 200,
+                  child: SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: Image.asset('assets/images/loading.gif'),
+                  ),
+                ),
+              ));
+      if (dto != null) {
+        _accountBloc.add(AccountEventCheckLogin(dto: dto));
+        Future.delayed(const Duration(seconds: 2), () {
+          // deleayed code here
+          print('delayed execution');
 
+          _authenticateHelper.isAuthenticated().then((value) async {
+            if (value == true) {
+              Navigator.of(context).pop();
+              await Navigator.pushNamedAndRemoveUntil(context,
+                  RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+            } else {
+              Navigator.of(context).pop();
+              return showDialog(
+                  context: context,
+                  builder: (BuildContext context) => CupertinoAlertDialog(
+                        title: Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text("Đăng nhập thất bại"),
+                        ),
+                        content: Padding(
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          child: Text(
+                            'Tên đăng nhập hoặc mật khẩu không đúng',
+                            style: TextStyle(
+                                color: DefaultTheme.GREY_TEXT, height: 1.25),
+                          ),
+                        ),
+                        actions: <Widget>[
+                          CupertinoDialogAction(
+                            isDefaultAction: true,
+                            child: Text('OK'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ));
+            }
+          });
+        });
       }
     });
   }

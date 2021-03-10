@@ -136,7 +136,7 @@ class _PatientInformation extends State<PatientInformation>
           );
         }
         String _gender = '';
-        if (state.dto.gender == 'Male') {
+        if (state.dto.gender == 'Nam') {
           _gender = 'Nam';
         } else {
           _gender = 'Nữ';

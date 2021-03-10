@@ -5,7 +5,7 @@ import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/features/dashboard/dashboard.dart';
 import 'package:capstone_home_doctor/features/health/health.dart';
 import 'package:capstone_home_doctor/features/message/message.dart';
-import 'package:capstone_home_doctor/features/notification/notification.dart';
+import 'package:capstone_home_doctor/features/notification/views/notification_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
