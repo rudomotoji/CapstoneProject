@@ -59,6 +59,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'features/health/health_record/blocs/medical_scan_image_bloc.dart';
 import 'features/home/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
@@ -363,6 +364,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<NotificationListBloc>(
             create: (BuildContext context) => NotificationListBloc(
                 notificationRepository: notificationRepository),
+          ),
+          BlocProvider<MedInsScanTextBloc>(
+            create: (BuildContext context) => MedInsScanTextBloc(
+                medicalInstructionRepository: _medicalInstructionRepository),
           ),
         ],
         child: GestureDetector(

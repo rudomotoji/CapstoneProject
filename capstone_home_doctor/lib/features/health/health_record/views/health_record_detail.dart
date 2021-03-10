@@ -11,6 +11,7 @@ import 'package:capstone_home_doctor/features/health/health_record/blocs/health_
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_type_list_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/medical_scan_image_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/hr_detail_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_create_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_list_event.dart';
@@ -84,6 +85,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   MedicalInstructionListBloc _medicalInstructionListBloc;
   MedInsTypeListBloc _medInsTypeListBloc;
   MedInsCreateBloc _medInsCreateBloc;
+  MedInsScanTextBloc _medicalScanText;
   //
   // SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   List<MedicalInstructionDTO> listMedicalIns = [];
@@ -107,6 +109,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     _medicalInstructionListBloc = BlocProvider.of(context);
     _medInsTypeListBloc = BlocProvider.of(context);
     _medInsCreateBloc = BlocProvider.of(context);
+    _medicalScanText = BlocProvider.of(context);
     _getPatientId();
     getHRId();
   }
@@ -1190,6 +1193,10 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                     ImageUltility.base64String(
                                                         File(pickedFile.path)
                                                             .readAsBytesSync());
+
+                                                _medicalScanText.add(
+                                                    MedInsGetTextEventSend(
+                                                        imagePath: _imgString));
                                               } else {
                                                 print('No image selected.');
                                               }
