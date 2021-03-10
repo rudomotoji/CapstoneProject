@@ -15,3 +15,13 @@ class MedInsCreateEventSend extends MedInsCreateEvent {
   // TODO: implement props
   List<Object> get props => [dto];
 }
+
+class MedInsGetTextEventSend extends MedInsCreateEvent {
+  final String imagePath;
+
+  const MedInsGetTextEventSend({@required this.imagePath});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [imagePath];
+}
