@@ -21,6 +21,7 @@ import 'package:capstone_home_doctor/features/health/health_record/repositories/
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_detail_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_list_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_type_list_state.dart';
+import 'package:capstone_home_doctor/features/health/health_record/states/medical_scan_image_state.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
@@ -75,6 +76,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   //patient Id
   int _patientId = 0;
 
+  String _dataGenerated = '';
+
 //
   HealthRecordRepository healthRecordRepository =
       HealthRecordRepository(httpClient: http.Client());
@@ -93,8 +96,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
       contractId: 0,
       dateCreated: '',
       description: '',
-      disease: '',
-      doctorName: '',
+      // disease: '',
+      // doctorName: '',
       healthRecordId: 0,
       personalHealthRecordId: 0,
       place: '');
@@ -199,7 +202,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       width: MediaQuery.of(context).size.width -
                                           (155),
                                       child: Text(
-                                        '${_healthRecordDTO.disease}',
+                                        '${_healthRecordDTO.diseases}',
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 3,
                                         style: TextStyle(
@@ -411,10 +414,19 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     itemCount: listMedicalIns.length,
                                     itemBuilder:
                                         (BuildContext buildContext, int index) {
+                                      // if (listMedicalIns[index].image != null) {
+                                      //   //
+                                      //   _medicalScanText.add(MedInsGetTextEventSend(
+                                      //       imagePath:
+                                      //           'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMedicalIns[index].image}'));
+                                      // }
+
                                       // String _typeName = getMedInsTypeName(
                                       //     listMedicalIns[index]
                                       //         .medicalInstructionTypeId);
                                       // print('TYPE NAME IS $_typeName');
+                                      //http://45.76.186.233:8000/api/v1/Images?pathImage=
+
                                       return Container(
                                         padding: EdgeInsets.only(
                                             left: 20, right: 20),
@@ -616,21 +628,23 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                                     width: 0.5,
                                                                   ),
                                                                 ),
-                                                                child:
-                                                                    ClipRRect(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  child:
-                                                                      SizedBox(
-                                                                    width: 70,
-                                                                    height: 70,
-                                                                    child: Image
-                                                                        .network(
-                                                                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMedicalIns[index]?.image}'),
-                                                                  ),
-                                                                ),
+                                                                child: (listMedicalIns[index]
+                                                                            ?.image ==
+                                                                        null)
+                                                                    ? Container()
+                                                                    : ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
+                                                                        child:
+                                                                            SizedBox(
+                                                                          width:
+                                                                              70,
+                                                                          height:
+                                                                              70,
+                                                                          child:
+                                                                              Image.network('http://45.76.186.233:8000/api/v1/Images?pathImage=${listMedicalIns[index]?.image}'),
+                                                                        ),
+                                                                      ),
                                                               ),
                                                             ],
                                                           ),
@@ -961,18 +975,18 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                 fontWeight: FontWeight.w500),
                                           ),
                                         ),
-                                        Container(
-                                          padding: EdgeInsets.only(
-                                              left: 0, right: 0, top: 5),
-                                          child: Text(
-                                            'Thuộc hồ sơ ${_healthRecordDTO.disease}',
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ),
+                                        // Container(
+                                        //   padding: EdgeInsets.only(
+                                        //       left: 0, right: 0, top: 5),
+                                        //   child: Text(
+                                        //     'Thuộc hồ sơ ${_healthRecordDTO.disease}',
+                                        //     overflow: TextOverflow.ellipsis,
+                                        //     maxLines: 1,
+                                        //     style: TextStyle(
+                                        //       fontSize: 15,
+                                        //     ),
+                                        //   ),
+                                        // ),
                                       ],
                                     ),
                               Padding(
@@ -1133,94 +1147,155 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                 padding: EdgeInsets.only(
                                     bottom: 5, left: 20, top: 10),
                               ),
-                              Container(
-                                alignment: Alignment.topLeft,
-                                height: 80,
-                                child: TextFieldHDr(
-                                    placeHolder: 'Mô tả thêm các vấn đề khác',
-                                    style: TFStyle.TEXT_AREA,
-                                    onChange: (text) {
-                                      setState(() {
-                                        _note = text;
-                                      });
-                                      setModalState(() {
-                                        _note = text;
-                                      });
-                                    }),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 10),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  (_imgString == '')
-                                      ? InkWell(
-                                          child: Container(
-                                            width: 120,
-                                            height: 120,
-                                            decoration: BoxDecoration(
-                                              color: DefaultTheme.TRANSPARENT,
-                                              border: Border.all(
-                                                color: DefaultTheme
-                                                    .GREY_TOP_TAB_BAR,
-                                                width: 0.5,
+
+                              Expanded(
+                                child: ListView(children: <Widget>[
+                                  Container(
+                                    alignment: Alignment.topLeft,
+                                    height: 80,
+                                    child: TextFieldHDr(
+                                        placeHolder:
+                                            'Mô tả thêm các vấn đề khác',
+                                        style: TFStyle.TEXT_AREA,
+                                        onChange: (text) {
+                                          setState(() {
+                                            _note = text;
+                                          });
+                                          setModalState(() {
+                                            _note = text;
+                                          });
+                                        }),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                  ),
+                                  (_imgFile != null)
+                                      ? BlocBuilder<MedInsScanTextBloc,
+                                              MedInsScanTextState>(
+                                          builder: (context, state) {
+                                          if (state
+                                              is MedInsScanTextStateLoading) {
+                                            return Container(
+                                              width: 50,
+                                              height: 50,
+                                              child: SizedBox(
+                                                width: 50,
+                                                height: 50,
+                                                child: Image.asset(
+                                                    'assets/images/loading.gif'),
                                               ),
+                                            );
+                                          }
+                                          if (state
+                                              is MedInsScanTextStateFailure) {
+                                            return Container();
+                                          }
+                                          if (state
+                                              is MedInsScanTextStateSuccess) {
+                                            print(
+                                                ' DATA GENERATED: ${state.data}');
+                                            return Container(
+                                              child: Text(
+                                                'DATA GENERATE TITLE ${state.data.title}\n DATA SYMTOM ${state.data.symptom}',
+                                              ),
+                                            );
+                                          }
+                                          return Container(
+                                            height: 15,
+                                            child: Text('Cannot load'),
+                                          );
+                                        })
+                                      : Container(),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      (_imgString == '')
+                                          ? InkWell(
+                                              child: Container(
+                                                width: 120,
+                                                height: 120,
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      DefaultTheme.TRANSPARENT,
+                                                  border: Border.all(
+                                                    color: DefaultTheme
+                                                        .GREY_TOP_TAB_BAR,
+                                                    width: 0.5,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Center(
+                                                  child: Text(
+                                                    'Thêm ảnh +',
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: DefaultTheme
+                                                            .BLUE_REFERENCE),
+                                                  ),
+                                                ),
+                                              ),
+                                              onTap: () async {
+                                                var pickedFile =
+                                                    await picker.getImage(
+                                                        source: ImageSource
+                                                            .gallery);
+                                                setModalState(() {
+                                                  if (pickedFile != null) {
+                                                    //
+                                                    setState(() {
+                                                      _imgFile = pickedFile;
+                                                      _imgString = ImageUltility
+                                                          .base64String(File(
+                                                                  pickedFile
+                                                                      .path)
+                                                              .readAsBytesSync());
+                                                    });
+                                                    if (_imgFile.path != null ||
+                                                        _imgFile.path != '') {
+                                                      _medicalScanText.add(
+                                                          MedInsGetTextEventSend(
+                                                              imagePath:
+                                                                  _imgFile
+                                                                      .path));
+                                                    }
+                                                    // _imgFile = pickedFile;
+                                                    // _imgString =
+                                                    //     ImageUltility.base64String(
+                                                    //         File(pickedFile.path)
+                                                    //             .readAsBytesSync());
+
+                                                    // gửi hình ảnh lên để detech phiếu khám bệnh
+
+                                                    ///
+                                                    ///
+
+                                                  } else {
+                                                    print('No image selected.');
+                                                  }
+                                                });
+                                              },
+                                            )
+                                          : Container(),
+                                      (_imgString == '')
+                                          ? Container()
+                                          : ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(10),
+                                              child: SizedBox(
+                                                  width: 120,
+                                                  height: 120,
+                                                  child: ImageUltility
+                                                      .imageFromBase64String(
+                                                          _imgString)),
                                             ),
-                                            child: Center(
-                                              child: Text(
-                                                'Thêm ảnh +',
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: DefaultTheme
-                                                        .BLUE_REFERENCE),
-                                              ),
-                                            ),
-                                          ),
-                                          onTap: () async {
-                                            var pickedFile =
-                                                await picker.getImage(
-                                                    source:
-                                                        ImageSource.gallery);
-                                            setModalState(() {
-                                              if (pickedFile != null) {
-                                                //
-                                                _imgFile = pickedFile;
-                                                _imgString =
-                                                    ImageUltility.base64String(
-                                                        File(pickedFile.path)
-                                                            .readAsBytesSync());
-
-                                                // gửi hình ảnh lên để detech phiếu khám bệnh
-                                                _medicalScanText.add(
-                                                    MedInsGetTextEventSend(
-                                                        imagePath:
-                                                            _imgFile.path));
-                                              } else {
-                                                print('No image selected.');
-                                              }
-                                            });
-                                          },
-                                        )
-                                      : Container(),
-                                  (_imgString == '')
-                                      ? Container()
-                                      : ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: SizedBox(
-                                              width: 120,
-                                              height: 120,
-                                              child: ImageUltility
-                                                  .imageFromBase64String(
-                                                      _imgString)),
-                                        ),
-                                ],
+                                    ],
+                                  ),
+                                ]),
                               ),
-                              Spacer(),
+
                               ButtonHDr(
                                 width: MediaQuery.of(context).size.width - 40,
                                 style: BtnStyle.BUTTON_BLACK,

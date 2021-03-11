@@ -228,7 +228,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                         CrossAxisAlignment.start,
                                     children: [
                                       //
-                                      (state.listHealthRecord[index].disease ==
+                                      (state.listHealthRecord[index].diseases ==
                                               null)
                                           ? Text(
                                               'Hồ sơ',
@@ -238,7 +238,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                                   fontWeight: FontWeight.w500),
                                             )
                                           : Text(
-                                              'Hồ sơ ${state.listHealthRecord[index].disease}',
+                                              'Hồ sơ ${state.listHealthRecord[index].diseases}',
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
@@ -272,10 +272,8 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                       image: Image.asset(
                                           'assets/images/ic-more.png'),
                                       onTap: () {
-                                        _showMorePopup(
-                                            listHealthRecord[index]
-                                                .healthRecordId,
-                                            listHealthRecord[index].disease);
+                                        _showMorePopup(listHealthRecord[index]
+                                            .healthRecordId);
                                       },
                                     ),
                                   ),
@@ -299,7 +297,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     );
   }
 
-  _showMorePopup(int healthRecordId, String disease) {
+  _showMorePopup(int healthRecordId) {
     showModalBottomSheet(
         isScrollControlled: false,
         context: this.context,
@@ -329,26 +327,26 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                             child: Column(
                               children: <Widget>[
                                 Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 30, left: 10, right: 10),
-                                  child: (disease == null)
-                                      ? Text(
-                                          'Hồ sơ ${healthRecordId}',
-                                          style: TextStyle(
-                                              color: DefaultTheme.GREY_TEXT),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
-                                        )
-                                      : Text(
-                                          'Hồ sơ ${disease}',
-                                          style: TextStyle(
-                                              color: DefaultTheme.GREY_TEXT),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                ),
+                                    padding: EdgeInsets.only(
+                                        top: 30, left: 10, right: 10),
+                                    child: Text(
+                                      'Hồ sơ ${healthRecordId}',
+                                      style: TextStyle(
+                                          color: DefaultTheme.GREY_TEXT),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                    )
+
+                                    // : Text(
+                                    //     'Hồ sơ ${disease}',
+                                    //     style: TextStyle(
+                                    //         color: DefaultTheme.GREY_TEXT),
+                                    //     maxLines: 2,
+                                    //     overflow: TextOverflow.ellipsis,
+                                    //     textAlign: TextAlign.center,
+                                    //   ),
+                                    ),
                                 Spacer(),
                                 Divider(
                                   color: DefaultTheme.GREY_TOP_TAB_BAR,

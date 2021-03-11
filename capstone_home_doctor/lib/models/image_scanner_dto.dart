@@ -1,10 +1,10 @@
-class imageScannerDTO {
+class ImageScannerDTO {
   String symptom;
   String title;
 
-  imageScannerDTO({this.symptom, this.title});
+  ImageScannerDTO({this.symptom, this.title});
 
-  imageScannerDTO.fromJson(Map<String, dynamic> json) {
+  ImageScannerDTO.fromJson(Map<String, dynamic> json) {
     symptom = json['symptom'];
     title = json['title'];
   }

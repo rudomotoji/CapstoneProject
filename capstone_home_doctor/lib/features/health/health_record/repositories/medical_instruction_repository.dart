@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
 import 'package:capstone_home_doctor/models/image_scanner_dto.dart';
+import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:flutter/material.dart';
@@ -14,20 +15,20 @@ class MedicalInstructionRepository extends BaseApiClient {
   MedicalInstructionRepository({@required this.httpClient})
       : assert(httpClient != null);
 
-  Future<List<MedicalInstructionByTypeDTO>> getListMedInsWithType(
-      int patientId) async {
+  Future<List<MedInsByDiseaseDTO>> getMedInsByDisease(
+      int patientId, String diseaseId) async {
     final String url =
-        '/MedicalInstructions/GetMedicalInstructionToCreateContract?patientId=${patientId}';
+        '/MedicalInstructions/GetMedicalInstructionToCreateContract?patientId=${patientId}&dieseId=${diseaseId}';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body) as List;
-        List<MedicalInstructionByTypeDTO> list = responseData.map((dto) {
-          return MedicalInstructionByTypeDTO.fromJson(dto);
+        List<MedInsByDiseaseDTO> list = responseData.map((dto) {
+          return MedInsByDiseaseDTO.fromJson(dto);
         }).toList();
         return list;
       } else {
-        return List<MedicalInstructionByTypeDTO>();
+        return List<MedInsByDiseaseDTO>();
       }
     } catch (e) {
       print('ERROR AT GET LIST HEALTH RECORD ${e.toString()}');
@@ -99,20 +100,31 @@ class MedicalInstructionRepository extends BaseApiClient {
   }
 
   //create medical instruction by multiple part
-  Future<imageScannerDTO> getTextFromImage(String imagePath) async {
-    imageScannerDTO dto;
+  Future<ImageScannerDTO> getTextFromImage(String imagePath) async {
+    ImageScannerDTO dto;
     var uri = Uri.parse('http://0.0.0.0:80/scanMedicalInsurance');
     var request = new http.MultipartRequest('POST', uri);
-    request.files.add(http.MultipartFile('file',
-        File(imagePath).readAsBytes().asStream(), File(imagePath).lengthSync(),
-        filename: imagePath.split("/").last));
-    final response = await request.send();
-    if (response.statusCode == 200) {
-      http.Response.fromStream(response).then((res) {
-        dto = imageScannerDTO.fromJson(json.decode(res.body));
-        return dto;
-      });
+    try {
+      request.files.add(http.MultipartFile(
+          'file',
+          File(imagePath).readAsBytes().asStream(),
+          File(imagePath).lengthSync(),
+          filename: imagePath.split("/").last));
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        var responseString = await response.stream.bytesToString();
+        return ImageScannerDTO.fromJson(json.decode(responseString));
+        // http.Response.fromStream(response).then((res) {
+        //   dto = ImageScannerDTO.fromJson(json.decode(res.body));
+        //   return dto;
+        // });
+      }
+      return ImageScannerDTO();
+    } catch (e) {
+      print('ERROR AT getTextIMG repo: ${e}');
     }
-    return dto;
   }
+
+  //get medical instruction in create request contract view
+
 }

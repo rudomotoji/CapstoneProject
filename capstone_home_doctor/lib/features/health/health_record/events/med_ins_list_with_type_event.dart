@@ -8,13 +8,14 @@ abstract class MedInsWithTypeEvent extends Equatable {
 
 class MedInsWithTypeEventGetList extends MedInsWithTypeEvent {
   final int patientId;
+  final String diseaseId;
 
-  const MedInsWithTypeEventGetList({@required this.patientId})
-      : assert(patientId != null);
+  const MedInsWithTypeEventGetList({@required this.patientId, this.diseaseId})
+      : assert(patientId != null && diseaseId != null);
 
   @override
   // TODO: implement props
-  List<Object> get props => [patientId];
+  List<Object> get props => [patientId, diseaseId];
 }
 
 //

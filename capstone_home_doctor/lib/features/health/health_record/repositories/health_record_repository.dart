@@ -33,7 +33,14 @@ class HealthRecordRepository extends BaseApiClient {
         // print('LIST IN HR LIST REPO ${list}');
         // return list;
         List<HealthRecordDTO> list = responseData.map((dto) {
-          return HealthRecordDTO.fromJson(dto);
+          return HealthRecordDTO(
+            healthRecordId: dto['healthRecordId'],
+            place: dto['place'],
+            description: dto['description'],
+            dateCreated: dto['dateCreated'],
+            contractId: dto['contractId'],
+            diseases: dto['diseases'],
+          );
         }).toList();
         return list;
       } else {

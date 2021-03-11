@@ -16,7 +16,7 @@ class MedInsScanTextStateInitial extends MedInsScanTextState {}
 class MedInsScanTextStateLoading extends MedInsScanTextState {}
 
 class MedInsScanTextStateSuccess extends MedInsScanTextState {
-  final imageScannerDTO data;
+  final ImageScannerDTO data;
   const MedInsScanTextStateSuccess({@required this.data});
 
   @override
