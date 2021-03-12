@@ -363,19 +363,18 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                               style: BtnStyle.BUTTON_BLACK,
                               label: 'Tạo hồ sơ',
                               onTap: () async {
-                                print('\n\n\nLIST DISEASE ID: ${_diseaseIds}');
-                                // if (_patientId != 0) {
-                                //   healthRecordDTO = HealthRecordDTO(
-                                //     patientId: _patientId,
-                                //     //
-
-                                //     place: _placeController.text,
-                                //     description: _note,
-                                //   );
-                                //   await _insertHealthRecord(healthRecordDTO);
-                                //   widget.refresh();
-                                //   Navigator.pop(context);
-                                // }
+                                // print('\n\n\nLIST DISEASE ID: ${_diseaseIds}');
+                                if (_patientId != 0) {
+                                  healthRecordDTO = HealthRecordDTO(
+                                    patientId: _patientId,
+                                    diceaseIds: _diseaseIds,
+                                    place: _placeController.text,
+                                    description: _note,
+                                  );
+                                  await _insertHealthRecord(healthRecordDTO);
+                                  widget.refresh();
+                                  Navigator.pop(context);
+                                }
                               })),
                     ]),
               ),

@@ -101,7 +101,6 @@ class MedicalInstructionRepository extends BaseApiClient {
 
   //create medical instruction by multiple part
   Future<ImageScannerDTO> getTextFromImage(String imagePath) async {
-    ImageScannerDTO dto;
     var uri = Uri.parse('http://0.0.0.0:80/scanMedicalInsurance');
     var request = new http.MultipartRequest('POST', uri);
     try {
