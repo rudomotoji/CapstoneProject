@@ -3,6 +3,7 @@ import 'dart:io' as io;
 
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
+import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,6 +14,8 @@ class SQFLiteHelper {
   static const String HEALTH_RECORD_TABLE = 'HealthRecordTbl';
   static const String MEDICAL_INSTRUCTION_TABLE = 'MedicalInstructionTbl';
   static const String MEDICAL_INSTRUCTION_TYPE_TABLE = 'MedicalInsTypeTbl';
+
+  static const String MEDICAL_SCHEDULE_TABLE = 'MedicalScheduleTbl';
 
   Future<Database> get database async {
     if (null != _database) {
@@ -34,11 +37,49 @@ class SQFLiteHelper {
         "CREATE TABLE ${HEALTH_RECORD_TABLE} (health_record_id PRIMARYKEY TEXT, disease TEXT, place TEXT, doctor_name TEXT, description TEXT, personal_health_record_id TEXT, date_create TEXT, contract_id TEXT)");
     await db.execute(
         "CREATE TABLE ${MEDICAL_INSTRUCTION_TABLE} (medical_instruction_id PRIMARYKEY TEXT, description TEXT, image TEXT, dianose TEXT, date_start TEXT, date_finish TEXT, medical_instruction_type_id TEXT, health_record_id TEXT)");
+    await db.execute(
+        "CREATE TABLE ${MEDICAL_SCHEDULE_TABLE} (medical_schedule_id PRIMARYKEY TEXT, medication_name TEXT, content TEXT, useTime TEXT, unit TEXT, morning INTEGER, noon INTEGER, afterNoon INTEGER, night INTEGER, from_date INTEGER, to_date INTEGER)");
   }
 
   Future close() async {
     var dbClient = await database;
     dbClient.close();
+  }
+
+//Medical schaedule
+  Future<void> insertMedicalSchedule(
+      MedicationSchedules medicalScheduleDTO) async {
+    var dbClient = await database;
+    await dbClient.insert(MEDICAL_SCHEDULE_TABLE, medicalScheduleDTO.toMap());
+  }
+
+  Future<List<MedicationSchedules>> getAllBy(String session) async {
+    var dbClient = await database;
+    List<Map> maps = await dbClient.query(MEDICAL_SCHEDULE_TABLE,
+        columns: [
+          'medical_schedule_id',
+          'medication_name',
+          'content',
+          'useTime',
+          'unit',
+          'morning',
+          'noon',
+          'afterNoon',
+          'night'
+        ],
+        where: '$session > 0');
+    List<MedicationSchedules> responseData = [];
+    if (maps.length > 0) {
+      for (var medicationSchedule in maps) {
+        responseData.add(MedicationSchedules.fromMap(medicationSchedule));
+      }
+    }
+    return responseData;
+  }
+
+  Future<void> deleteAllMedicalSchedule() async {
+    var dbClient = await database;
+    await dbClient.delete(MEDICAL_SCHEDULE_TABLE);
   }
 
   // //

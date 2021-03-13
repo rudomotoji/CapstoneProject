@@ -82,8 +82,9 @@ class _MedicineHistory extends State<MedicineHistory>
                 }
                 if (state is PrescriptionListStateSuccess) {
                   listPrescription = state.listPrescription;
-                  listPrescription
-                      .sort((a, b) => b.dateStarted.compareTo(a.dateStarted));
+                  listPrescription.sort((a, b) => b
+                      .medicationsRespone.dateStarted
+                      .compareTo(a.medicationsRespone.dateStarted));
 
                   return (state.listPrescription.length == 0)
                       ? Container(
@@ -184,7 +185,8 @@ class _MedicineHistory extends State<MedicineHistory>
                                                     ),
                                                     Container(
                                                       child: Text(
-                                                        'Chẩn đoán: ${listPrescription[index].diagnose}',
+                                                        // 'Chẩn đoán: ${listPrescription[index].diagnose}',
+                                                        'Chẩn đoán:',
                                                         style: TextStyle(
                                                           color: DefaultTheme
                                                               .BLACK_BUTTON,
@@ -204,7 +206,7 @@ class _MedicineHistory extends State<MedicineHistory>
                                                     Container(
                                                       height: 15,
                                                       child: Text(
-                                                        'Ngày kê đơn: ${_dateValidator.parseToDateView(listPrescription[index].dateStarted)}',
+                                                        'Ngày kê đơn: ${_dateValidator.parseToDateView(listPrescription[index].medicationsRespone.dateStarted)}',
                                                         style: TextStyle(
                                                             color: DefaultTheme
                                                                 .GREY_TEXT,
@@ -217,7 +219,7 @@ class _MedicineHistory extends State<MedicineHistory>
                                                     Container(
                                                       height: 15,
                                                       child: Text(
-                                                        'Đến ngày: ${_dateValidator.parseToDateView(listPrescription[index].dateFinished)}',
+                                                        'Đến ngày: ${_dateValidator.parseToDateView(listPrescription[index].medicationsRespone.dateFinished)}',
                                                         style: TextStyle(
                                                             color: DefaultTheme
                                                                 .GREY_TEXT,

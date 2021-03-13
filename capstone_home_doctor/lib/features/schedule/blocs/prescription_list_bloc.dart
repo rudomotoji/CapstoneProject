@@ -14,12 +14,9 @@ class PrescriptionListBloc
   @override
   Stream<PrescriptionListState> mapEventToState(
       PrescriptionListEvent event) async* {
-    //
     if (event is PrescriptionListEventsetPatientId) {
-      //
       yield PrescriptionListStateLoading();
       try {
-        //
         final List<PrescriptionDTO> list =
             await prescriptionRepository.getListPrecription(event.patientId);
         yield PrescriptionListStateSuccess(listPrescription: list);

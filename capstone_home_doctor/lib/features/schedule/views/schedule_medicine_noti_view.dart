@@ -13,7 +13,7 @@ class ScheduleMedNotiView extends StatefulWidget {
 
 class _ScheduleMedNotiView extends State<ScheduleMedNotiView>
     with WidgetsBindingObserver {
-  PrescriptionDTO _currentPrescription = PrescriptionDTO();
+  // PrescriptionDTO _currentPrescription = PrescriptionDTO();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

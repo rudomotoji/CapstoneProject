@@ -49,15 +49,15 @@ import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_b
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_medicine_noti_view.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
+import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
+import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:workmanager/workmanager.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:cron/cron.dart';
 
 import 'package:flutter/material.dart';
@@ -74,7 +74,8 @@ import 'package:http/http.dart' as http;
 final MORNING = 6;
 final NOON = 11;
 final AFTERNOON = 14;
-final EVERNING = 18;
+final NIGHT = 18;
+final MINUTES = 14;
 
 //this is the name given to the background fetch
 const simpleTaskKey = "simpleTask";
@@ -132,15 +133,47 @@ void _handleIOSGeneralMessage(Map<String, dynamic> message) {
 }
 
 void checkNotifiMedical() {
+  SQFLiteHelper _sqLiteHelper = SQFLiteHelper();
   final hour = DateTime.now().hour;
   final minute = DateTime.now().minute;
+  var body = "";
 
-  if ((hour == MORNING || hour == NOON || hour == AFTERNOON) && minute == 02) {
+  if (hour == MORNING && minute == MINUTES) {
+    _sqLiteHelper.getAllBy('morning').then((value) {
+      for (var schedule in value) {
+        body += schedule.medicationName + ', ';
+      }
+    });
+  }
+
+  if (hour == MORNING && minute == MINUTES) {
+    _sqLiteHelper.getAllBy('noon').then((value) {
+      for (var schedule in value) {
+        body += schedule.medicationName + ', ';
+      }
+    });
+  }
+
+  if (hour == AFTERNOON && minute == MINUTES) {
+    _sqLiteHelper.getAllBy('afterNoon').then((value) {
+      for (var schedule in value) {
+        body += schedule.medicationName + ', ';
+      }
+    });
+  }
+
+  if (hour == NIGHT && minute == MINUTES) {
+    _sqLiteHelper.getAllBy('night').then((value) {
+      for (var schedule in value) {
+        body += schedule.medicationName + ', ';
+      }
+    });
+  }
+
+  if ((hour == MORNING || hour == NOON || hour == AFTERNOON || hour == NIGHT) &&
+      minute == MINUTES) {
     var message = {
-      "notification": {
-        "title": "Nhắc nhở uống thuốc",
-        "body": "Sample A, Sample B, Sample C"
-      },
+      "notification": {"title": "Nhắc nhở uống thuốc", "body": body},
       "data": {
         "click_action": "FLUTTER_NOTIFICATION_CLICK",
         "status": "done",
@@ -152,25 +185,6 @@ void checkNotifiMedical() {
   }
 }
 
-// void callbackDispatcher() {
-//   Workmanager.executeTask((task, inputData) async {
-//     switch (task) {
-//       case simpleTaskKey:
-//         break;
-//       case simpleDelayedTask:
-//         break;
-//       case simplePeriodicTask:
-//         break;
-//       case simplePeriodic1HourTask:
-//         break;
-//       case Workmanager.iOSBackgroundTask:
-//         break;
-//     }
-//     checkNotifiMedical();
-//     return Future.value(true);
-//   });
-// }
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -180,28 +194,11 @@ void main() async {
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
-  // if (Platform.isAndroid) {
-  //   await Workmanager.initialize(callbackDispatcher,
-  //       isInDebugMode:
-  //           true); //to true if still in testing lev turn it to false whenever you are launching the app
-  //   await Workmanager.registerPeriodicTask(
-  //     "5", simplePeriodicTask,
-  //     existingWorkPolicy: ExistingWorkPolicy.replace,
-  //     frequency: Duration(minutes: 15), //when should it check the link
-  //     initialDelay:
-  //         Duration(seconds: 5), //duration before showing the notification
-  //     // constraints: Constraints(
-  //     //   networkType: NetworkType.connected,
-  //     // ),
-  //   );
-  // }
-  // if (Platform.isIOS) {
   final cron = Cron()
     ..schedule(Schedule.parse('* * * * * '), () {
       checkNotifiMedical();
       print(DateTime.now());
     });
-  // }
   runApp(HomeDoctor());
 }
 
@@ -226,13 +223,6 @@ class _HomeDoctorState extends State<HomeDoctor> {
     body: Container(),
   );
 
-  // Future<dynamic> myBackgroundMessageHandler(
-  //     Map<String, dynamic> message) async {
-  //   Platform.isIOS
-  //       ? _handleIOSGeneralMessage(message)
-  //       : _handleGeneralMessage(message);
-  // }
-
   Future<void> _initialServiceHelper() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('AUTHENTICATION') ||
@@ -253,16 +243,6 @@ class _HomeDoctorState extends State<HomeDoctor> {
   @override
   void initState() {
     super.initState();
-    // if (Platform.isAndroid) {
-    //   final int helloAlarmID = 0;
-    //   AndroidAlarmManager.initialize();
-    //   AndroidAlarmManager.periodic(
-    //     const Duration(minutes: 1),
-    //     helloAlarmID,
-    //     checkNotifiMedical,
-    //     wakeup: true,
-    //   );
-    // }
 
     _initialServiceHelper();
 

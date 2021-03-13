@@ -21,27 +21,93 @@
 //       this.endDate,
 //       this.listMedicine});
 // }
+import 'package:uuid/uuid.dart';
+
+// class PrescriptionDTO {
+//   String dateStarted;
+//   String dateFinished;
+//   List<MedicationSchedules> medicationSchedules;
+
+//   PrescriptionDTO(
+//       {this.dateStarted, this.dateFinished, this.medicationSchedules});
+
+//   PrescriptionDTO.fromJson(Map<String, dynamic> json) {
+//     dateStarted = json['dateStarted'];
+//     dateFinished = json['dateFinished'];
+//     if (json['medicationSchedules'] != null) {
+//       medicationSchedules = new List<MedicationSchedules>();
+//       json['medicationSchedules'].forEach((v) {
+//         medicationSchedules.add(new MedicationSchedules.fromJson(v));
+//       });
+//     }
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     data['dateStarted'] = this.dateStarted;
+//     data['dateFinished'] = this.dateFinished;
+//     if (this.medicationSchedules != null) {
+//       data['medicationSchedules'] =
+//           this.medicationSchedules.map((v) => v.toJson()).toList();
+//     }
+//     return data;
+//   }
+// }
 
 class PrescriptionDTO {
   int medicalInstructionId;
-  String diagnose;
+  String medicalInstructionType;
+  String image;
   String description;
+  String diagnose;
+  String placeHealthRecord;
+  MedicationsRespone medicationsRespone;
+
+  PrescriptionDTO(
+      {this.medicalInstructionId,
+      this.medicalInstructionType,
+      this.image,
+      this.description,
+      this.diagnose,
+      this.placeHealthRecord,
+      this.medicationsRespone});
+
+  PrescriptionDTO.fromJson(Map<String, dynamic> json) {
+    medicalInstructionId = json['medicalInstructionId'];
+    medicalInstructionType = json['medicalInstructionType'];
+    image = json['image'];
+    description = json['description'];
+    diagnose = json['diagnose'];
+    placeHealthRecord = json['placeHealthRecord'];
+    medicationsRespone = json['medicationsRespone'] != null
+        ? new MedicationsRespone.fromJson(json['medicationsRespone'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['medicalInstructionId'] = this.medicalInstructionId;
+    data['medicalInstructionType'] = this.medicalInstructionType;
+    data['image'] = this.image;
+    data['description'] = this.description;
+    data['diagnose'] = this.diagnose;
+    data['placeHealthRecord'] = this.placeHealthRecord;
+    if (this.medicationsRespone != null) {
+      data['medicationsRespone'] = this.medicationsRespone.toJson();
+    }
+    return data;
+  }
+}
+
+class MedicationsRespone {
   String dateStarted;
   String dateFinished;
   List<MedicationSchedules> medicationSchedules;
 
-  PrescriptionDTO(
-      {this.medicalInstructionId,
-      this.diagnose,
-      this.description,
-      this.dateStarted,
-      this.dateFinished,
-      this.medicationSchedules});
+  MedicationsRespone(
+      {this.dateStarted, this.dateFinished, this.medicationSchedules});
 
-  PrescriptionDTO.fromJson(Map<String, dynamic> json) {
-    medicalInstructionId = json['medicalInstructionId'];
-    diagnose = json['diagnose'];
-    description = json['description'];
+  MedicationsRespone.fromJson(Map<String, dynamic> json) {
     dateStarted = json['dateStarted'];
     dateFinished = json['dateFinished'];
     if (json['medicationSchedules'] != null) {
@@ -54,9 +120,6 @@ class PrescriptionDTO {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['medicalInstructionId'] = this.medicalInstructionId;
-    data['diagnose'] = this.diagnose;
-    data['description'] = this.description;
     data['dateStarted'] = this.dateStarted;
     data['dateFinished'] = this.dateFinished;
     if (this.medicationSchedules != null) {
@@ -77,6 +140,10 @@ class MedicationSchedules {
   int afterNoon;
   int night;
 
+  int fromDate;
+  int toDate;
+  String medicalScheduleId;
+
   MedicationSchedules(
       {this.medicationName,
       this.content,
@@ -85,7 +152,38 @@ class MedicationSchedules {
       this.morning,
       this.noon,
       this.afterNoon,
-      this.night});
+      this.night,
+      this.fromDate,
+      this.toDate});
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{
+      'medical_schedule_id': Uuid().v1(),
+      'medication_name': medicationName,
+      'content': content,
+      'useTime': useTime,
+      'unit': unit,
+      'morning': morning,
+      'noon': noon,
+      'afterNoon': afterNoon,
+      'night': night,
+      'from_date': fromDate,
+      'to_date': toDate,
+    };
+    return map;
+  }
+
+  MedicationSchedules.fromMap(Map<String, dynamic> map) {
+    medicalScheduleId = map['medical_schedule_id'];
+    medicationName = map['medication_name'];
+    content = map['content'];
+    useTime = map['useTime'];
+    unit = map['unit'];
+    morning = map['morning'];
+    noon = map['noon'];
+    afterNoon = map['afterNoon'];
+    night = map['night'];
+  }
 
   MedicationSchedules.fromJson(Map<String, dynamic> json) {
     medicationName = json['medicationName'];

@@ -25,7 +25,7 @@ class ScheduleView extends StatefulWidget {
 class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
   //
   DateValidator _dateValidator = DateValidator();
-  PrescriptionDTO _currentPrescription = PrescriptionDTO();
+  MedicationsRespone _currentPrescription = MedicationsRespone();
   //
   List<PrescriptionDTO> listPrescription = [];
   PrescriptionRepository prescriptionRepository =
@@ -173,18 +173,13 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
         listPrescription = state.listPrescription;
 
         if (state.listPrescription != null) {
-          listPrescription
-              .sort((a, b) => b.dateStarted.compareTo(a.dateStarted));
+          listPrescription.sort((a, b) => b.medicationsRespone.dateStarted
+              .compareTo(a.medicationsRespone.dateStarted));
         }
         if (listPrescription.isNotEmpty) {
-          _currentPrescription = PrescriptionDTO(
-              medicalInstructionId: 0,
-              dateFinished: '',
-              dateStarted: '',
-              description: '',
-              diagnose: '',
-              medicationSchedules: []);
-          _currentPrescription = listPrescription[0];
+          _currentPrescription = MedicationsRespone(
+              dateFinished: '', dateStarted: '', medicationSchedules: []);
+          _currentPrescription = listPrescription[0].medicationsRespone;
         }
         return (state.listPrescription == null ||
                 state.listPrescription.isEmpty)
@@ -337,7 +332,8 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                               width: MediaQuery.of(context).size.width -
                                   (40 + 120 + 20 + 30),
                               child: Text(
-                                '${_currentPrescription.diagnose}',
+                                // '${_currentPrescription.diagnose}',
+                                '',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 5,
                                 style: TextStyle(

@@ -13,11 +13,13 @@ import 'package:capstone_home_doctor/features/schedule/repositories/prescription
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 //
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
@@ -49,7 +51,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   var _idDoctorController = TextEditingController();
   String _idDoctor = '';
   DateValidator _dateValidator = DateValidator();
-  PrescriptionDTO _currentPrescription = PrescriptionDTO();
+  MedicationsRespone _currentPrescription = MedicationsRespone();
   //
   int _patientId = 0;
   //
@@ -57,6 +59,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   PrescriptionRepository prescriptionRepository =
       PrescriptionRepository(httpClient: http.Client());
   PrescriptionListBloc _prescriptionListBloc;
+  SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 
   @override
   void initState() {
@@ -64,6 +67,20 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     super.initState();
     _getPatientId();
     _prescriptionListBloc = BlocProvider.of(context);
+    // DateTime tempDate =
+    //     new DateFormat("yyyy-MM-dd").parse('2021-03-13T00:00:00');
+    // int date = int.parse(DateFormat("yyyyMMdd").format(tempDate));
+    // _sqfLiteHelper.insertMedicalSchedule(MedicationSchedules(
+    //     medicationName: null,
+    //     content: '0.125mg',
+    //     useTime: 'Trước bữa ăn; 30p',
+    //     unit: 'viên',
+    //     morning: 1,
+    //     noon: 0,
+    //     afterNoon: 0,
+    //     night: 2,
+    //     fromDate: 1,
+    //     toDate: 2));
   }
 
   @override
@@ -429,19 +446,25 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         if (state is PrescriptionListStateSuccess) {
           listPrescription = state.listPrescription;
 
+          for (var presc in state.listPrescription) {
+            DateTime tempDate1 = new DateFormat("yyyy-MM-dd")
+                .parse(presc.medicationsRespone.dateStarted);
+            DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
+                .parse(presc.medicationsRespone.dateFinished);
+            DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
+                .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+            _sqfLiteHelper.deleteAllMedicalSchedule();
+            if (tempDate1 <= curentDateNow && tempDate2 >= curentDateNow) {}
+//  _sqfLiteHelper.insertMedicalSchedule(presc);
+          }
+
           if (state.listPrescription != null) {
-            listPrescription
-                .sort((a, b) => b.dateStarted.compareTo(a.dateStarted));
+            listPrescription.sort((a, b) => b.medicationsRespone.dateStarted
+                .compareTo(a.medicationsRespone.dateStarted));
           }
           if (listPrescription.isNotEmpty) {
-            _currentPrescription = PrescriptionDTO(
-                medicalInstructionId: 0,
-                dateFinished: '',
-                dateStarted: '',
-                description: '',
-                diagnose: '',
-                medicationSchedules: []);
-            _currentPrescription = listPrescription[0];
+            _currentPrescription = MedicationsRespone();
+            _currentPrescription = listPrescription[0].medicationsRespone;
           }
           return (state.listPrescription == null ||
                   state.listPrescription.isEmpty)
