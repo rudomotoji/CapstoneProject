@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
@@ -16,6 +17,7 @@ import 'package:capstone_home_doctor/features/contract/states/disease_list_state
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_with_type_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/hr_create_event.dart';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_create_state.dart';
@@ -48,6 +50,29 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
   HealthRecordCreateBloc _healthRecordCreateBloc;
   DiseaseRepository diseaseRepository =
       DiseaseRepository(httpClient: http.Client());
+  List<String> suggestions = [
+    'Bệnh Viện Đại Học Y Dược',
+    'Bệnh Viện Chợ Rẫy',
+    'Bệnh Viện Từ Dũ',
+    'Bệnh Viện Nhi Đồng 1',
+    'Bệnh Viện Nhi Đồng 2',
+    'Bệnh viện Đại học Y Dược TP. HCM',
+    'Viện Tim Tp.HCM',
+    'Bệnh viện Tim Tâm Đức',
+    'Phòng khám Bệnh viện Đại học Y Dược 1',
+    'Bệnh viện Đa khoa Quốc tế Vinmec',
+    'Phòng khám Đa khoa Saigon Healthcare',
+    'Bệnh Viện Thống Nhất',
+    'Bệnh Viện Ung Bướu',
+    'Bệnh viện truyền máu huyết học',
+    'Bệnh viện Nhân dân 115',
+    'Bệnh viện Nhân dân Gia Định',
+    'Bệnh viện Nguyễn Trãi',
+    'Bệnh viện Nguyễn Tri Phương',
+    'Bệnh viện Bệnh Nhiệt đới',
+    'Viện Y dược học cổ truyền',
+    'Bệnh viện Đa khoa Khu vực Thủ Đức'
+  ];
 
   //
   //SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
@@ -311,10 +336,55 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                               fontSize: 16),
                         ),
                       ),
-                      TextFieldHDr(
+                      // TextFieldHDr(
+                      //   controller: _placeController,
+                      //   style: TFStyle.BORDERED,
+                      //   keyboardAction: TextInputAction.next,
+                      // ),
+                      AutoCompleteTextField(
                         controller: _placeController,
-                        style: TFStyle.BORDERED,
-                        keyboardAction: TextInputAction.next,
+                        clearOnSubmit: false,
+                        suggestions: suggestions,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          counter: Offstage(),
+                          // labelText: _label,
+                          // helperText: _helperText,
+                          filled: true,
+                          fillColor: DefaultTheme.GREY_BUTTON.withOpacity(0.8),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.fromLTRB(
+                              DefaultNumeralUI.PADDING,
+                              0,
+                              DefaultNumeralUI.PADDING,
+                              0),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                              width: 0.25,
+                              color: DefaultTheme.TRANSPARENT,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                              width: 0.25,
+                              color: DefaultTheme.TRANSPARENT,
+                            ),
+                          ),
+                          errorBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                        ),
+                        itemFilter: (suggestion, input) => suggestion
+                            .toLowerCase()
+                            .startsWith(input.toLowerCase()),
+                        itemSorter: (a, b) {
+                          return a.compareTo(b);
+                        },
+                        itemSubmitted: (item) => _placeController.text = item,
+                        itemBuilder: (context, suggestion) => new Padding(
+                            child: new ListTile(title: new Text(suggestion)),
+                            padding: EdgeInsets.all(8.0)),
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 10, right: 0),

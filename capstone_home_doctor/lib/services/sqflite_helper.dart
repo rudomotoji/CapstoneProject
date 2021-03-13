@@ -46,7 +46,7 @@ class SQFLiteHelper {
     dbClient.close();
   }
 
-//Medical schaedule
+//Medical schedule
   Future<bool> insertMedicalSchedule(
       MedicationSchedules medicalScheduleDTO) async {
     var dbClient = await database;

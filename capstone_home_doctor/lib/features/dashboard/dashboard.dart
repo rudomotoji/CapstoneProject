@@ -505,454 +505,454 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                         scale: i == _index ? 1 : 0.9,
                         alignment: Alignment.centerLeft,
                         child: Card(
-                            elevation: 0,
-                            shadowColor: DefaultTheme.GREY_TEXT,
-                            color: DefaultTheme.GREY_VIEW,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: (i == 0)
-                                ? Column(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 20,
-                                            right: 20,
-                                            bottom: 5,
-                                            top: 20),
-                                        child: Row(
-                                          children: [
-                                            Align(
-                                              alignment: Alignment.centerLeft,
-                                              child: Text(
-                                                'Lịch dùng thuốc',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 17,
-                                                  color:
-                                                      DefaultTheme.RED_CALENDAR,
-                                                ),
+                          elevation: 0,
+                          shadowColor: DefaultTheme.GREY_TEXT,
+                          color: DefaultTheme.GREY_VIEW,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          child: (i == 0)
+                              ? Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          bottom: 5,
+                                          top: 20),
+                                      child: Row(
+                                        children: [
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              'Lịch dùng thuốc',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 17,
+                                                color:
+                                                    DefaultTheme.RED_CALENDAR,
                                               ),
                                             ),
-                                            Spacer(),
-                                            (_currentPrescription
-                                                        .medicationSchedules
-                                                        .length ==
-                                                    0)
-                                                ? Container()
-                                                : Container(
-                                                    height: 17,
-                                                    child: Align(
-                                                      alignment:
-                                                          Alignment.bottomRight,
-                                                      child: Text(
-                                                        'Từ ${_dateValidator.parseToSumaryDateView(_currentPrescription.dateStarted)} - ${_dateValidator.parseToSumaryDateView(_currentPrescription.dateFinished)}',
-                                                        style: TextStyle(
-                                                            fontSize: 12,
-                                                            color: DefaultTheme
-                                                                .BLACK),
-                                                      ),
+                                          ),
+                                          Spacer(),
+                                          (_currentPrescription
+                                                      .medicationSchedules
+                                                      .length ==
+                                                  0)
+                                              ? Container()
+                                              : Container(
+                                                  height: 17,
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.bottomRight,
+                                                    child: Text(
+                                                      'Từ ${_dateValidator.parseToSumaryDateView(_currentPrescription.dateStarted)} - ${_dateValidator.parseToSumaryDateView(_currentPrescription.dateFinished)}',
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: DefaultTheme
+                                                              .BLACK),
                                                     ),
                                                   ),
-                                          ],
-                                        ),
+                                                ),
+                                        ],
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 20, right: 20, bottom: 5),
-                                        child: Text(
-                                          'Tổng quan lịch sử dụng thuốc đang hiện hành, bấm chi tiết để xem thêm thông tin.',
-                                          style: TextStyle(
-                                              color: DefaultTheme.GREY_TEXT,
-                                              fontSize: 13),
-                                        ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 20, right: 20, bottom: 5),
+                                      child: Text(
+                                        'Tổng quan lịch sử dụng thuốc đang hiện hành, bấm chi tiết để xem thêm thông tin.',
+                                        style: TextStyle(
+                                            color: DefaultTheme.GREY_TEXT,
+                                            fontSize: 13),
                                       ),
-                                      Divider(
-                                        height: 0.1,
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 10),
-                                      ),
-                                      Expanded(
-                                        child: ListView.builder(
-                                            itemCount: _currentPrescription
-                                                .medicationSchedules.length,
-                                            itemBuilder:
-                                                (BuildContext buildContext,
-                                                    int index) {
-                                              return Container(
-                                                padding: EdgeInsets.only(
-                                                    left: 20, right: 20),
-                                                child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        '${_currentPrescription.medicationSchedules[index].medicationName} (${_currentPrescription.medicationSchedules[index].content})',
-                                                        maxLines: 3,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 3),
-                                                      ),
-                                                      Text(
-                                                        'Cách dùng: ${_currentPrescription.medicationSchedules[index].useTime}',
-                                                        style: TextStyle(
-                                                            color: DefaultTheme
-                                                                .BLACK,
-                                                            fontSize: 12),
-                                                        maxLines: 3,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 10),
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          (_currentPrescription
-                                                                      .medicationSchedules[
-                                                                          index]
-                                                                      .morning ==
-                                                                  0)
-                                                              ? Container(
-                                                                  width: 0,
-                                                                  height: 0,
-                                                                )
-                                                              : Container(
-                                                                  margin: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              5,
-                                                                          right:
-                                                                              5),
-                                                                  width: 60,
-                                                                  height: 60,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: DefaultTheme
-                                                                        .WHITE,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10),
-                                                                  ),
-                                                                  child: Column(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      Text(
-                                                                        'Sáng',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.RED_CALENDAR,
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        '${_currentPrescription.medicationSchedules[index].morning}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.BLACK,
-                                                                          fontSize:
-                                                                              18,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        '${_currentPrescription.medicationSchedules[index].unit}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.GREY_TEXT,
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                          //noon
-                                                          (_currentPrescription
-                                                                      .medicationSchedules[
-                                                                          index]
-                                                                      .noon ==
-                                                                  0)
-                                                              ? Container(
-                                                                  width: 0,
-                                                                  height: 0,
-                                                                )
-                                                              : Container(
-                                                                  margin: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              5,
-                                                                          right:
-                                                                              5),
-                                                                  width: 60,
-                                                                  height: 60,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: DefaultTheme
-                                                                        .WHITE,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10),
-                                                                  ),
-                                                                  child: Column(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      Text(
-                                                                        'Trưa',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.RED_CALENDAR,
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        '${_currentPrescription.medicationSchedules[index].noon}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.BLACK,
-                                                                          fontSize:
-                                                                              18,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        '${_currentPrescription.medicationSchedules[index].unit}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.GREY_TEXT,
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                          //afternoon
-                                                          (_currentPrescription
-                                                                      .medicationSchedules[
-                                                                          index]
-                                                                      .afterNoon ==
-                                                                  0)
-                                                              ? Container(
-                                                                  width: 0,
-                                                                  height: 0,
-                                                                )
-                                                              : Container(
-                                                                  margin: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              5,
-                                                                          right:
-                                                                              5),
-                                                                  width: 60,
-                                                                  height: 60,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: DefaultTheme
-                                                                        .WHITE,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10),
-                                                                  ),
-                                                                  child: Column(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      Text(
-                                                                        'Chiều',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.RED_CALENDAR,
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        '${_currentPrescription.medicationSchedules[index].afterNoon}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.BLACK,
-                                                                          fontSize:
-                                                                              18,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        '${_currentPrescription.medicationSchedules[index].unit}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.GREY_TEXT,
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                          //night
-                                                          (_currentPrescription
-                                                                      .medicationSchedules[
-                                                                          index]
-                                                                      .night ==
-                                                                  0)
-                                                              ? Container(
-                                                                  width: 0,
-                                                                  height: 0,
-                                                                )
-                                                              : Container(
-                                                                  margin: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              5,
-                                                                          right:
-                                                                              5),
-                                                                  width: 60,
-                                                                  height: 60,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: DefaultTheme
-                                                                        .WHITE,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10),
-                                                                  ),
-                                                                  child: Column(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      Text(
-                                                                        'Tối',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.RED_CALENDAR,
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        '${_currentPrescription.medicationSchedules[index].night}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.BLACK,
-                                                                          fontSize:
-                                                                              18,
-                                                                        ),
-                                                                      ),
-                                                                      Text(
-                                                                        '${_currentPrescription.medicationSchedules[index].unit}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.GREY_TEXT,
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-
-                                                          //
-                                                        ],
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 10,
-                                                                top: 10),
-                                                        child: Divider(
-                                                          height: 3,
+                                    ),
+                                    Divider(
+                                      height: 0.1,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10),
+                                    ),
+                                    Expanded(
+                                      child: ListView.builder(
+                                          itemCount: _currentPrescription
+                                              .medicationSchedules.length,
+                                          itemBuilder:
+                                              (BuildContext buildContext,
+                                                  int index) {
+                                            return Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 20, right: 20),
+                                              child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '${_currentPrescription.medicationSchedules[index].medicationName} (${_currentPrescription.medicationSchedules[index].content})',
+                                                      maxLines: 3,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 3),
+                                                    ),
+                                                    Text(
+                                                      'Cách dùng: ${_currentPrescription.medicationSchedules[index].useTime}',
+                                                      style: TextStyle(
                                                           color: DefaultTheme
-                                                              .GREY_TOP_TAB_BAR,
-                                                        ),
+                                                              .BLACK,
+                                                          fontSize: 12),
+                                                      maxLines: 3,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 10),
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        (_currentPrescription
+                                                                    .medicationSchedules[
+                                                                        index]
+                                                                    .morning ==
+                                                                0)
+                                                            ? Container(
+                                                                width: 0,
+                                                                height: 0,
+                                                              )
+                                                            : Container(
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        left: 5,
+                                                                        right:
+                                                                            5),
+                                                                width: 60,
+                                                                height: 60,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .WHITE,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                ),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Text(
+                                                                      'Sáng',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .RED_CALENDAR,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${_currentPrescription.medicationSchedules[index].morning}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLACK,
+                                                                        fontSize:
+                                                                            18,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${_currentPrescription.medicationSchedules[index].unit}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .GREY_TEXT,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                        //noon
+                                                        (_currentPrescription
+                                                                    .medicationSchedules[
+                                                                        index]
+                                                                    .noon ==
+                                                                0)
+                                                            ? Container(
+                                                                width: 0,
+                                                                height: 0,
+                                                              )
+                                                            : Container(
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        left: 5,
+                                                                        right:
+                                                                            5),
+                                                                width: 60,
+                                                                height: 60,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .WHITE,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                ),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Text(
+                                                                      'Trưa',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .RED_CALENDAR,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${_currentPrescription.medicationSchedules[index].noon}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLACK,
+                                                                        fontSize:
+                                                                            18,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${_currentPrescription.medicationSchedules[index].unit}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .GREY_TEXT,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                        //afternoon
+                                                        (_currentPrescription
+                                                                    .medicationSchedules[
+                                                                        index]
+                                                                    .afterNoon ==
+                                                                0)
+                                                            ? Container(
+                                                                width: 0,
+                                                                height: 0,
+                                                              )
+                                                            : Container(
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        left: 5,
+                                                                        right:
+                                                                            5),
+                                                                width: 60,
+                                                                height: 60,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .WHITE,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                ),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Text(
+                                                                      'Chiều',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .RED_CALENDAR,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${_currentPrescription.medicationSchedules[index].afterNoon}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLACK,
+                                                                        fontSize:
+                                                                            18,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${_currentPrescription.medicationSchedules[index].unit}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .GREY_TEXT,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                        //night
+                                                        (_currentPrescription
+                                                                    .medicationSchedules[
+                                                                        index]
+                                                                    .night ==
+                                                                0)
+                                                            ? Container(
+                                                                width: 0,
+                                                                height: 0,
+                                                              )
+                                                            : Container(
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        left: 5,
+                                                                        right:
+                                                                            5),
+                                                                width: 60,
+                                                                height: 60,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .WHITE,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                ),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    Text(
+                                                                      'Tối',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .RED_CALENDAR,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${_currentPrescription.medicationSchedules[index].night}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLACK,
+                                                                        fontSize:
+                                                                            18,
+                                                                      ),
+                                                                    ),
+                                                                    Text(
+                                                                      '${_currentPrescription.medicationSchedules[index].unit}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .GREY_TEXT,
+                                                                        fontSize:
+                                                                            12,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+
+                                                        //
+                                                      ],
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 10, top: 10),
+                                                      child: Divider(
+                                                        height: 3,
+                                                        color: DefaultTheme
+                                                            .GREY_TOP_TAB_BAR,
                                                       ),
-                                                    ]),
-                                              );
-                                            }),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 10),
-                                      ),
-                                    ],
-                                  )
-                                : Column(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 20,
-                                            right: 20,
-                                            bottom: 10,
-                                            top: 20),
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            'Lịch tái khám',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 17,
-                                              color: DefaultTheme.RED_CALENDAR,
-                                            ),
+                                                    ),
+                                                  ]),
+                                            );
+                                          }),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          bottom: 10,
+                                          top: 20),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          'Lịch tái khám',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 17,
+                                            color: DefaultTheme.RED_CALENDAR,
                                           ),
                                         ),
                                       ),
-                                      Divider(
-                                        height: 0.1,
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                    Divider(
+                                      height: 0.1,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 20),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        'Hiện không có lịch tái khám',
+                                        style: TextStyle(
+                                            color: DefaultTheme.GREY_TEXT),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 20),
-                                      ),
-                                      Expanded(
-                                        flex: 3,
-                                        child: Text(
-                                          'Hiện không có lịch tái khám',
-                                          style: TextStyle(
-                                              color: DefaultTheme.GREY_TEXT),
-                                        ),
-                                      ),
-                                    ],
-                                  )),
+                                    ),
+                                  ],
+                                ),
+                        ),
                       );
                     },
                   ));

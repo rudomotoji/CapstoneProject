@@ -472,17 +472,17 @@ class _HeaderWidget extends State<HeaderWidget> {
                             color: DefaultTheme.GREY_TEXT,
                             height: 0.1,
                           ),
-                          ButtonHDr(
-                            style: BtnStyle.BUTTON_IN_LIST,
-                            labelColor: DefaultTheme.BLUE_TEXT,
-                            label: 'Gói dịch vụ',
-                            isLabelLeft: true,
-                            onTap: () {},
-                          ),
-                          Divider(
-                            color: DefaultTheme.GREY_TEXT,
-                            height: 0.1,
-                          ),
+                          // ButtonHDr(
+                          //   style: BtnStyle.BUTTON_IN_LIST,
+                          //   labelColor: DefaultTheme.BLUE_TEXT,
+                          //   label: 'Gói dịch vụ',
+                          //   isLabelLeft: true,
+                          //   onTap: () {},
+                          // ),
+                          // Divider(
+                          //   color: DefaultTheme.GREY_TEXT,
+                          //   height: 0.1,
+                          // ),
                           Padding(
                             padding: EdgeInsets.only(bottom: 30),
                           ),
