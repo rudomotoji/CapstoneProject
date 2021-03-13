@@ -21,4 +21,5 @@ class RoutesHDr {
   static const String MEDICINE_NOTI_VIEW = '/ScheduleMedicineNotiView';
   static const String OXY_CHART_VIEW = '/OxyChartView';
   static const String MEDICAL_SHARE = '/MedicalShare';
+  static const String CONTRACT_DETAIL_STATUS = '/ContractStatusDetail';
 }

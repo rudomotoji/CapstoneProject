@@ -1,10 +1,16 @@
 import 'dart:convert';
 
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
+import 'package:capstone_home_doctor/models/contract_detail_dto.dart';
+import 'package:capstone_home_doctor/models/contract_full_dto.dart';
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
+import 'package:capstone_home_doctor/models/contract_update_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
+import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+
+final ContractHelper _contractHelper = ContractHelper();
 
 class ContractRepository extends BaseApiClient {
   final http.Client httpClient;
@@ -43,14 +49,74 @@ class ContractRepository extends BaseApiClient {
     try {
       final request = await postApi(url, null, dto.toJson());
       if (request.statusCode == 201) {
+        //
+        _contractHelper.updateContractSendStatus(
+            true, 'Gửi yêu cầu thành công');
         return true;
       }
       if (request.statusCode == 400) {
+        _contractHelper.updateContractSendStatus(
+            false, 'Bạn đang có hợp đồng với bác sĩ này');
         return false;
       }
+      _contractHelper.updateContractSendStatus(false, 'Kiểm tra lại kết nối');
       return false;
     } catch (e) {
       print('ERROR AT MAKE REQUEST CONTRACT API: $e');
+    }
+  }
+
+  Future<int> getIdContractNow(int doctorId, int patientId) async {
+    final url =
+        '/Contracts?doctorId=${doctorId}&patientId=${patientId}&status=PENDING';
+    try {
+      //
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body) as List;
+        List<ContractDetailDTO> list = responseData.map((dto) {
+          return ContractDetailDTO.fromJson(dto);
+        }).toList();
+        return list[0].contractId;
+      }
+      return 0;
+    } catch (e) {
+      print('ERROR AT GET ID CONTRACT NOW API: ${e}');
+    }
+  }
+
+  Future<ContractFullDTO> getFullContract(int contractId) async {
+    final url = '/Contracts/${contractId}';
+    try {
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        ContractFullDTO dto =
+            ContractFullDTO.fromJson(jsonDecode(response.body));
+        return dto;
+      } else {
+        return ContractFullDTO();
+      }
+    } catch (e) {
+      print('ERROR AT GET FULL CONTRACT API: ${e}');
+    }
+  }
+
+  //update status contract
+  Future<bool> changeStatusContract(ContractUpdateDTO dto) async {
+    //
+    final url =
+        '/Contracts/${dto.contractId}?doctorId=${dto.doctorId}&patientId=${dto.patientId}&status=${dto.status}';
+    try {
+      //
+      final request = await putApi(url, null, dto.toJson());
+      print('${request.body}');
+      if (request.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('ERROR AT UPDATE STATUS CONTRACT API: ${e}');
     }
   }
 }

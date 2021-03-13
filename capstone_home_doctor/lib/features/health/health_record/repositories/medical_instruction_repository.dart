@@ -18,7 +18,7 @@ class MedicalInstructionRepository extends BaseApiClient {
   Future<List<MedInsByDiseaseDTO>> getMedInsByDisease(
       int patientId, String diseaseId) async {
     final String url =
-        '/MedicalInstructions/GetMedicalInstructionToCreateContract?patientId=${patientId}&dieseId=${diseaseId}';
+        '/MedicalInstructions/GetMedicalInstructionToCreateContract?patientId=${patientId}&diseaseId=${diseaseId}';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
@@ -125,6 +125,21 @@ class MedicalInstructionRepository extends BaseApiClient {
     }
   }
 
-  //get medical instruction in create request contract view
+  //get medical instruction by Id
+  Future<MedicalInstructionDTO> getMedicalInstructionById(
+      int medicalInstructionId) async {
+    final String url = '/MedicalInstructions/${medicalInstructionId}';
 
+    try {
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        MedicalInstructionDTO data =
+            MedicalInstructionDTO.fromJson(jsonDecode(response.body));
+        return data;
+      }
+      return null;
+    } catch (e) {
+      print('ERROR AT GET DOCTOR BY DOCTOR_ID API $e');
+    }
+  }
 }

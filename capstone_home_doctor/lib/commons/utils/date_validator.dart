@@ -14,6 +14,20 @@ class DateValidator {
     return result;
   }
 
+  String parseToDateView2(String dateString) {
+    String result = '';
+    if (dateString != null) {
+      String day, month, year;
+      String date = dateString.split('T')[0];
+      day = date.split('-')[2];
+      month = date.split('-')[1];
+      year = date.split('-')[0];
+      result = '${day} tháng ${month}, năm ${year}';
+    }
+
+    return result;
+  }
+
   String parseDateToNotiView(String importedDate) {
     String result = '';
     //imported date

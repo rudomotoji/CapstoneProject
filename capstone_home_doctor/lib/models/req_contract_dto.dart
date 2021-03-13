@@ -6,8 +6,7 @@ class RequestContractDTO {
   int patientId;
   String dateStarted;
   int licenseId;
-  List<String> diseaseIds;
-  List<int> medicalInstructionIds = [];
+  List<Diseases> diseases;
   String note;
 
   RequestContractDTO(
@@ -15,8 +14,7 @@ class RequestContractDTO {
       this.patientId,
       this.dateStarted,
       this.licenseId,
-      this.diseaseIds,
-      this.medicalInstructionIds,
+      this.diseases,
       this.note});
 
   RequestContractDTO.fromJson(Map<String, dynamic> json) {
@@ -24,8 +22,12 @@ class RequestContractDTO {
     patientId = json['patientId'];
     dateStarted = json['dateStarted'];
     licenseId = json['licenseId'];
-    diseaseIds = json['diseaseIds'].cast<String>();
-    medicalInstructionIds = json['medicalInstructionIds'].cast<int>();
+    if (json['diseases'] != null) {
+      diseases = new List<Diseases>();
+      json['diseases'].forEach((v) {
+        diseases.add(new Diseases.fromJson(v));
+      });
+    }
     note = json['note'];
   }
 
@@ -35,47 +37,96 @@ class RequestContractDTO {
     data['patientId'] = this.patientId;
     data['dateStarted'] = this.dateStarted;
     data['licenseId'] = this.licenseId;
-    data['diseaseIds'] = this.diseaseIds;
-    data['medicalInstructionIds'] = this.medicalInstructionIds;
+    if (this.diseases != null) {
+      data['diseases'] = this.diseases.map((v) => v.toJson()).toList();
+    }
     data['note'] = this.note;
+    return data;
+  }
+}
+
+class Diseases {
+  String diseaseId;
+  List<int> medicalInstructionIds;
+
+  Diseases({this.diseaseId, this.medicalInstructionIds});
+
+  Diseases.fromJson(Map<String, dynamic> json) {
+    diseaseId = json['diseaseId'];
+    medicalInstructionIds = json['medicalInstructionIds'].cast<int>();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['diseaseId'] = this.diseaseId;
+    data['medicalInstructionIds'] = this.medicalInstructionIds;
     return data;
   }
 
   @override
   String toString() {
     // TODO: implement toString
-    return '${doctorId} - ${diseaseIds}';
+    return 'diseaseId: $diseaseId \nmedicalInstructionIds: ${medicalInstructionIds}\n';
   }
 }
 
 class RequestContractDTOProvider extends ChangeNotifier {
   RequestContractDTO dto = new RequestContractDTO(
-    doctorId: 0,
     patientId: 0,
+    doctorId: 0,
     dateStarted: '',
-    diseaseIds: [],
     licenseId: 0,
+    diseases: [],
     note: '',
-    medicalInstructionIds: [],
   );
 
-  setProvider(
-      {int doctorId,
-      int patientId,
-      String dateStarted,
-      List<String> diseaseIds,
-      List<int> medicalInstructionIds,
-      int licenseId,
-      String note,
-      List<MedicalInstructions> listMedInsChecked}) async {
+  setProvider({
+    int doctorId,
+    int patientId,
+    String dateStarted,
+    int licenseId,
+    List<Diseases> diseases,
+    String note,
+  }) async {
     this.dto.doctorId = doctorId;
     this.dto.patientId = patientId;
     this.dto.dateStarted = dateStarted;
-    this.dto.diseaseIds = diseaseIds;
     this.dto.licenseId = licenseId;
+    this.dto.diseases = diseases;
     this.dto.note = note;
-    this.dto.medicalInstructionIds = medicalInstructionIds;
   }
 
   RequestContractDTO get getProvider => dto;
 }
+
+// class RequestContractDTOProvider extends ChangeNotifier {
+//   RequestContractDTO dto = new RequestContractDTO(
+//     doctorId: 0,
+//     patientId: 0,
+//     dateStarted: '',
+//     diseaseIds: [],
+//     licenseId: 0,
+//     note: '',
+//     medicalInstructionIds: [],
+//   );
+
+//   setProvider(
+//       {int doctorId,
+//       int patientId,
+//       String dateStarted,
+//       List<String> diseaseIds,
+//       List<int> medicalInstructionIds,
+//       int licenseId,
+//       String note,
+//       List<MedicalInstructions> listMedInsChecked}) async {
+//     this.dto.doctorId = doctorId;
+//     this.dto.patientId = patientId;
+//     this.dto.dateStarted = dateStarted;
+//     this.dto.diseaseIds = diseaseIds;
+//     this.dto.licenseId = licenseId;
+//     this.dto.note = note;
+//     this.dto.medicalInstructionIds = medicalInstructionIds;
+//   }
+
+//   RequestContractDTO get getProvider => dto;
+// }

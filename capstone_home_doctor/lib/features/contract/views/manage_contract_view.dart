@@ -151,48 +151,48 @@ class _ManageContract extends State<ManageContract> {
               Padding(
                 padding: EdgeInsets.only(bottom: 20),
               ),
-              TabBar(
-                  isScrollable: true,
-                  //labelColor: Colors.black,
-                  labelStyle: TextStyle(
-                      fontSize: 28,
-                      foreground: Paint()..shader = _normalHealthColors),
-                  indicatorPadding: EdgeInsets.only(left: 20),
-                  unselectedLabelStyle:
-                      TextStyle(color: DefaultTheme.BLACK.withOpacity(0.6)),
-                  indicatorColor: Colors.white.withOpacity(0.0),
-                  tabs: [
-                    Tab(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.55,
-                        height: 40,
-                        child: Text(
-                          'Chờ xét duyệt',
-                        ),
-                      ),
-                    ),
-                    Tab(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        height: 40,
-                        child: Text(
-                          'Đang hiện hành',
-                        ),
-                      ),
-                    ),
-                    Tab(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        height: 40,
-                        child: Text(
-                          'Đã hoàn tất',
-                        ),
-                      ),
-                    ),
-                  ]),
-              Expanded(
-                child: _loadListContract(),
-              ),
+              // TabBar(
+              //     isScrollable: true,
+              //     //labelColor: Colors.black,
+              //     labelStyle: TextStyle(
+              //         fontSize: 28,
+              //         foreground: Paint()..shader = _normalHealthColors),
+              //     indicatorPadding: EdgeInsets.only(left: 20),
+              //     unselectedLabelStyle:
+              //         TextStyle(color: DefaultTheme.BLACK.withOpacity(0.6)),
+              //     indicatorColor: Colors.white.withOpacity(0.0),
+              //     tabs: [
+              //       Tab(
+              //         child: Container(
+              //           width: MediaQuery.of(context).size.width * 0.55,
+              //           height: 40,
+              //           child: Text(
+              //             'Chờ xét duyệt',
+              //           ),
+              //         ),
+              //       ),
+              //       Tab(
+              //         child: Container(
+              //           width: MediaQuery.of(context).size.width * 0.6,
+              //           height: 40,
+              //           child: Text(
+              //             'Đang hiện hành',
+              //           ),
+              //         ),
+              //       ),
+              //       Tab(
+              //         child: Container(
+              //           width: MediaQuery.of(context).size.width * 0.6,
+              //           height: 40,
+              //           child: Text(
+              //             'Đã hoàn tất',
+              //           ),
+              //         ),
+              //       ),
+              //     ]),
+              // Expanded(
+              //   child: _loadListContract(),
+              // ),
               Padding(
                 padding: EdgeInsets.only(bottom: 10),
               ),
@@ -529,237 +529,238 @@ class _ManageContract extends State<ManageContract> {
     );
   }
 
-  _loadListContract() {
-    if (_patientId != 0) {
-      return BlocProvider(
-        create: (context) =>
-            ContractListBloc(contractAPI: listContractRepository)
-              ..add(ListContractEventSetPatientId(id: _patientId)),
-        child: BlocBuilder<ContractListBloc, ListContractState>(
-            builder: (context, state) {
-          if (state is ListContractStateLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (state is ListContractStateFailure) {
-            return Center(
-                child: Text('Kiểm tra lại đường truyền kết nối mạng'));
-          }
-          if (state is ListContractStateSuccess) {
-            for (var i = 0; i < state.listContract.length; i++) {
-              if (state.listContract[i].status == 'ACTIVE') {
-                _listActived.add(ContractListDTO(
-                    contractId: state.listContract[i].contractId,
-                    contractCode: state.listContract[i].contractCode,
-                    daysOfTracking: state.listContract[i].daysOfTracking,
-                    fullNameDoctor: state.listContract[i].fullNameDoctor,
-                    dateCreated: state.listContract[i].dateCreated,
-                    dateFinished: state.listContract[i].dateFinished,
-                    dateStarted: state.listContract[i].dateStarted,
-                    status: state.listContract[i].status));
-              }
-              if (state.listContract[i].status == 'PENDING') {
-                _listPending.add(ContractListDTO(
-                    contractId: state.listContract[i].contractId,
-                    contractCode: state.listContract[i].contractCode,
-                    daysOfTracking: state.listContract[i].daysOfTracking,
-                    fullNameDoctor: state.listContract[i].fullNameDoctor,
-                    dateCreated: state.listContract[i].dateCreated,
-                    dateFinished: state.listContract[i].dateFinished,
-                    dateStarted: state.listContract[i].dateStarted,
-                    status: state.listContract[i].status));
-              }
-              if (state.listContract[i].status == 'FINISHED') {
-                _listFinished.add(ContractListDTO(
-                    contractId: state.listContract[i].contractId,
-                    contractCode: state.listContract[i].contractCode,
-                    daysOfTracking: state.listContract[i].daysOfTracking,
-                    fullNameDoctor: state.listContract[i].fullNameDoctor,
-                    dateCreated: state.listContract[i].dateCreated,
-                    dateFinished: state.listContract[i].dateFinished,
-                    dateStarted: state.listContract[i].dateStarted,
-                    status: state.listContract[i].status));
-              }
-            }
-            return TabBarView(
-              children: <Widget>[
-                (_listPending.length == 0)
-                    ? Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: Image.asset(
-                                  'assets/images/ic-contract-empty.png'),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 20),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left:
-                                    MediaQuery.of(context).size.width * (1 / 4),
-                                right:
-                                    MediaQuery.of(context).size.width * (1 / 4),
-                              ),
-                              child: Text(
-                                'Không có hợp đồng chờ xét duyệt nào.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: DefaultTheme.GREY_TEXT,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 30),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(
-                        child: ListView.builder(
-                          itemCount: _listPending.length,
-                          itemBuilder: (BuildContext buildContext, int index) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(top: 10),
-                                ),
-                                _showContractComponent(_listPending[index]),
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 5),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                (_listActived.length == 0)
-                    ? Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: Image.asset(
-                                  'assets/images/ic-contract-empty.png'),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 20),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left:
-                                    MediaQuery.of(context).size.width * (1 / 4),
-                                right:
-                                    MediaQuery.of(context).size.width * (1 / 4),
-                              ),
-                              child: Text(
-                                'Không có hợp đồng đang hiện hành nào.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: DefaultTheme.GREY_TEXT,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 30),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(
-                        child: ListView.builder(
-                          itemCount: _listActived.length,
-                          itemBuilder: (BuildContext buildContext, int index) {
-                            print(_listActived[index].contractId);
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(top: 10),
-                                ),
-                                _showContractComponent(_listActived[index]),
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 10),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                (_listFinished.length == 0)
-                    ? Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: Image.asset(
-                                  'assets/images/ic-contract-empty.png'),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 20),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                left:
-                                    MediaQuery.of(context).size.width * (1 / 4),
-                                right:
-                                    MediaQuery.of(context).size.width * (1 / 4),
-                              ),
-                              child: Text(
-                                'Không có hợp đồng đã hoàn tất nào.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: DefaultTheme.GREY_TEXT,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 30),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(
-                        child: ListView.builder(
-                          itemCount: _listFinished.length,
-                          itemBuilder: (BuildContext buildContext, int index) {
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.only(top: 10),
-                                ),
-                                _showContractComponent(_listFinished[index]),
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 10),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-              ],
-            );
-          }
-          return Text('Lỗi');
-        }),
-      );
-    }
-  }
+  // _loadListContract() {
+  //   if (_patientId != 0) {
+  //     return BlocProvider(
+  //       create: (context) =>
+  //           ContractListBloc(contractAPI: listContractRepository)
+  //             ..add(ListContractEventSetPatientId(id: _patientId)),
+  //       child: BlocBuilder<ContractListBloc, ListContractState>(
+  //           builder: (context, state) {
+  //         if (state is ListContractStateLoading) {
+  //           return Center(child: CircularProgressIndicator());
+  //         }
+  //         if (state is ListContractStateFailure) {
+  //           return Center(
+  //               child: Text('Kiểm tra lại đường truyền kết nối mạng'));
+  //         }
+  //         if (state is ListContractStateSuccess) {
+  //           for (var i = 0; i < state.listContract.length; i++) {
+  //             if (state.listContract[i].status == 'ACTIVE') {
+  //               _listActived.add(ContractListDTO(
+  //                   contractId: state.listContract[i].contractId,
+  //                   contractCode: state.listContract[i].contractCode,
+  //                   daysOfTracking: state.listContract[i].daysOfTracking,
+  //                   fullNameDoctor: state.listContract[i].fullNameDoctor,
+  //                   dateCreated: state.listContract[i].dateCreated,
+  //                   dateFinished: state.listContract[i].dateFinished,
+  //                   dateStarted: state.listContract[i].dateStarted,
+  //                   status: state.listContract[i].status));
+  //             }
+  //             if (state.listContract[i].status == 'PENDING') {
+  //               _listPending.add(ContractListDTO(
+  //                   contractId: state.listContract[i].contractId,
+  //                   contractCode: state.listContract[i].contractCode,
+  //                   daysOfTracking: state.listContract[i].daysOfTracking,
+  //                   fullNameDoctor: state.listContract[i].fullNameDoctor,
+  //                   dateCreated: state.listContract[i].dateCreated,
+  //                   dateFinished: state.listContract[i].dateFinished,
+  //                   dateStarted: state.listContract[i].dateStarted,
+  //                   status: state.listContract[i].status));
+  //             }
+  //             if (state.listContract[i].status == 'FINISHED') {
+  //               _listFinished.add(ContractListDTO(
+  //                   contractId: state.listContract[i].contractId,
+  //                   contractCode: state.listContract[i].contractCode,
+  //                   daysOfTracking: state.listContract[i].daysOfTracking,
+  //                   fullNameDoctor: state.listContract[i].fullNameDoctor,
+  //                   dateCreated: state.listContract[i].dateCreated,
+  //                   dateFinished: state.listContract[i].dateFinished,
+  //                   dateStarted: state.listContract[i].dateStarted,
+  //                   status: state.listContract[i].status));
+  //             }
+  //           }
+  //           return TabBarView(
+  //             children: <Widget>[
+  //               (_listPending.length == 0)
+  //                   ? Container(
+  //                       child: Column(
+  //                         mainAxisAlignment: MainAxisAlignment.center,
+  //                         crossAxisAlignment: CrossAxisAlignment.center,
+  //                         children: [
+  //                           SizedBox(
+  //                             width: 80,
+  //                             height: 80,
+  //                             child: Image.asset(
+  //                                 'assets/images/ic-contract-empty.png'),
+  //                           ),
+  //                           Padding(
+  //                             padding: EdgeInsets.only(bottom: 20),
+  //                           ),
+  //                           Padding(
+  //                             padding: EdgeInsets.only(
+  //                               left:
+  //                                   MediaQuery.of(context).size.width * (1 / 4),
+  //                               right:
+  //                                   MediaQuery.of(context).size.width * (1 / 4),
+  //                             ),
+  //                             child: Text(
+  //                               'Không có hợp đồng chờ xét duyệt nào.',
+  //                               textAlign: TextAlign.center,
+  //                               style: TextStyle(
+  //                                 color: DefaultTheme.GREY_TEXT,
+  //                                 fontSize: 15,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           Padding(
+  //                             padding: EdgeInsets.only(bottom: 30),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     )
+  //                   : Container(
+  //                       child: ListView.builder(
+  //                         itemCount: _listPending.length,
+  //                         itemBuilder: (BuildContext buildContext, int index) {
+  //                           return Column(
+  //                             mainAxisAlignment: MainAxisAlignment.start,
+  //                             crossAxisAlignment: CrossAxisAlignment.center,
+  //                             children: <Widget>[
+  //                               Padding(
+  //                                 padding: EdgeInsets.only(top: 10),
+  //                               ),
+  //                               _showContractComponent(_listPending[index]),
+  //                               Padding(
+  //                                 padding: EdgeInsets.only(bottom: 5),
+  //                               ),
+  //                             ],
+  //                           );
+  //                         },
+  //                       ),
+  //                     ),
+  //               (_listActived.length == 0)
+  //                   ? Container(
+  //                       child: Column(
+  //                         mainAxisAlignment: MainAxisAlignment.center,
+  //                         crossAxisAlignment: CrossAxisAlignment.center,
+  //                         children: [
+  //                           SizedBox(
+  //                             width: 80,
+  //                             height: 80,
+  //                             child: Image.asset(
+  //                                 'assets/images/ic-contract-empty.png'),
+  //                           ),
+  //                           Padding(
+  //                             padding: EdgeInsets.only(bottom: 20),
+  //                           ),
+  //                           Padding(
+  //                             padding: EdgeInsets.only(
+  //                               left:
+  //                                   MediaQuery.of(context).size.width * (1 / 4),
+  //                               right:
+  //                                   MediaQuery.of(context).size.width * (1 / 4),
+  //                             ),
+  //                             child: Text(
+  //                               'Không có hợp đồng đang hiện hành nào.',
+  //                               textAlign: TextAlign.center,
+  //                               style: TextStyle(
+  //                                 color: DefaultTheme.GREY_TEXT,
+  //                                 fontSize: 15,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           Padding(
+  //                             padding: EdgeInsets.only(bottom: 30),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     )
+  //                   : Container(
+  //                       child: ListView.builder(
+  //                         itemCount: _listActived.length,
+  //                         itemBuilder: (BuildContext buildContext, int index) {
+  //                           print(_listActived[index].contractId);
+  //                           return Column(
+  //                             mainAxisAlignment: MainAxisAlignment.start,
+  //                             crossAxisAlignment: CrossAxisAlignment.center,
+  //                             children: <Widget>[
+  //                               Padding(
+  //                                 padding: EdgeInsets.only(top: 10),
+  //                               ),
+  //                               _showContractComponent(_listActived[index]),
+  //                               Padding(
+  //                                 padding: EdgeInsets.only(bottom: 10),
+  //                               ),
+  //                             ],
+  //                           );
+  //                         },
+  //                       ),
+  //                     ),
+  //               (_listFinished.length == 0)
+  //                   ? Container(
+  //                       child: Column(
+  //                         mainAxisAlignment: MainAxisAlignment.center,
+  //                         crossAxisAlignment: CrossAxisAlignment.center,
+  //                         children: [
+  //                           SizedBox(
+  //                             width: 80,
+  //                             height: 80,
+  //                             child: Image.asset(
+  //                                 'assets/images/ic-contract-empty.png'),
+  //                           ),
+  //                           Padding(
+  //                             padding: EdgeInsets.only(bottom: 20),
+  //                           ),
+  //                           Padding(
+  //                             padding: EdgeInsets.only(
+  //                               left:
+  //                                   MediaQuery.of(context).size.width * (1 / 4),
+  //                               right:
+  //                                   MediaQuery.of(context).size.width * (1 / 4),
+  //                             ),
+  //                             child: Text(
+  //                               'Không có hợp đồng đã hoàn tất nào.',
+  //                               textAlign: TextAlign.center,
+  //                               style: TextStyle(
+  //                                 color: DefaultTheme.GREY_TEXT,
+  //                                 fontSize: 15,
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           Padding(
+  //                             padding: EdgeInsets.only(bottom: 30),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     )
+  //                   : Container(
+  //                       child: ListView.builder(
+  //                         itemCount: _listFinished.length,
+  //                         itemBuilder: (BuildContext buildContext, int index) {
+  //                           return Column(
+  //                             mainAxisAlignment: MainAxisAlignment.start,
+  //                             crossAxisAlignment: CrossAxisAlignment.center,
+  //                             children: <Widget>[
+  //                               Padding(
+  //                                 padding: EdgeInsets.only(top: 10),
+  //                               ),
+  //                               _showContractComponent(_listFinished[index]),
+  //                               Padding(
+  //                                 padding: EdgeInsets.only(bottom: 10),
+  //                               ),
+  //                             ],
+  //                           );
+  //                         },
+  //                       ),
+  //                     ),
+  //             ],
+  //           );
+  //         }
+  //         return Text('Lỗi');
+  //       }),
+  //     );
+  //   }
+  // }
+
 }

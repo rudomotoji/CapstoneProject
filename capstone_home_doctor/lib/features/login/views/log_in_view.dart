@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
@@ -134,30 +136,75 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                 } else {
                   return showDialog(
                       context: context,
-                      builder: (BuildContext context) => CupertinoAlertDialog(
-                            title: Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                              child: Text("Đăng nhập thất bại"),
-                            ),
-                            content: Padding(
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              child: Text(
-                                'Vui lòng điền đầy đủ thông tin đăng nhập.',
-                                style: TextStyle(
-                                    color: DefaultTheme.GREY_TEXT,
-                                    height: 1.25),
+                      builder: (BuildContext context) {
+                        return Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    left: 10, top: 10, right: 10),
+                                width: 250,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  color: DefaultTheme.WHITE.withOpacity(0.7),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(bottom: 10, top: 10),
+                                      child: Text(
+                                        'Đăng nhập thất bại',
+                                        style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.BLACK,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          'Vui lòng điền đầy đủ thông tin đăng nhập',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            decoration: TextDecoration.none,
+                                            color: DefaultTheme.GREY_TEXT,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Divider(
+                                      height: 1,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                    ButtonHDr(
+                                      height: 40,
+                                      style: BtnStyle.BUTTON_TRANSPARENT,
+                                      label: 'OK',
+                                      labelColor: DefaultTheme.BLUE_TEXT,
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            actions: <Widget>[
-                              CupertinoDialogAction(
-                                isDefaultAction: true,
-                                child: Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          ));
+                          ),
+                        );
+                      });
                 }
               },
             ),
@@ -180,26 +227,50 @@ class _Login extends State<Login> with WidgetsBindingObserver {
     setState(() {
       showDialog(
           context: context,
-          builder: (BuildContext context) => CupertinoAlertDialog(
-                title: Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                  child: Text("Đang đăng nhập"),
-                ),
-                content: Container(
-                  width: 200,
-                  height: 200,
-                  child: SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: Image.asset('assets/images/loading.gif'),
+          builder: (BuildContext context) {
+            return Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    width: 250,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.7),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 130,
+                          // height: 100,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                        // Spacer(),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Đang đăng nhập',
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.GREY_TEXT,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ));
+              ),
+            );
+          });
       if (dto != null) {
         _accountBloc.add(AccountEventCheckLogin(dto: dto));
         Future.delayed(const Duration(seconds: 2), () {
           // deleayed code here
-          print('delayed execution');
 
           _authenticateHelper.isAuthenticated().then((value) async {
             if (value == true) {
@@ -210,29 +281,73 @@ class _Login extends State<Login> with WidgetsBindingObserver {
               Navigator.of(context).pop();
               return showDialog(
                   context: context,
-                  builder: (BuildContext context) => CupertinoAlertDialog(
-                        title: Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text("Đăng nhập thất bại"),
-                        ),
-                        content: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10),
-                          child: Text(
-                            'Tên đăng nhập hoặc mật khẩu không đúng',
-                            style: TextStyle(
-                                color: DefaultTheme.GREY_TEXT, height: 1.25),
+                  builder: (BuildContext context) {
+                    return Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                          child: Container(
+                            padding:
+                                EdgeInsets.only(left: 10, top: 10, right: 10),
+                            width: 250,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: DefaultTheme.WHITE.withOpacity(0.7),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.only(bottom: 10, top: 10),
+                                  child: Text(
+                                    'Đăng nhập thất bại',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.none,
+                                      color: DefaultTheme.BLACK,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Tên đăng nhập hoặc mật khẩu không đúng',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        decoration: TextDecoration.none,
+                                        color: DefaultTheme.GREY_TEXT,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                Divider(
+                                  height: 1,
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                ),
+                                ButtonHDr(
+                                  height: 40,
+                                  style: BtnStyle.BUTTON_TRANSPARENT,
+                                  label: 'OK',
+                                  labelColor: DefaultTheme.BLUE_TEXT,
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        actions: <Widget>[
-                          CupertinoDialogAction(
-                            isDefaultAction: true,
-                            child: Text('OK'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      ));
+                      ),
+                    );
+                  });
             }
           });
         });

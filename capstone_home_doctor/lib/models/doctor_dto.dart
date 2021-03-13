@@ -42,25 +42,43 @@
 
 //REAL API CLASS
 class DoctorDTO {
+  int doctorId;
+  int accountId;
   String username;
   String fullName;
   String workLocation;
+  Null experience;
+  String specialization;
+  String address;
+  String details;
   String phone;
   String email;
   String dateOfBirth;
 
   DoctorDTO(
-      {this.username,
+      {this.doctorId,
+      this.accountId,
+      this.username,
       this.fullName,
       this.workLocation,
+      this.experience,
+      this.specialization,
+      this.address,
+      this.details,
       this.phone,
       this.email,
       this.dateOfBirth});
 
   DoctorDTO.fromJson(Map<String, dynamic> json) {
+    doctorId = json['doctorId'];
+    accountId = json['accountId'];
     username = json['username'];
     fullName = json['fullName'];
     workLocation = json['workLocation'];
+    experience = json['experience'];
+    specialization = json['specialization'];
+    address = json['address'];
+    details = json['details'];
     phone = json['phone'];
     email = json['email'];
     dateOfBirth = json['dateOfBirth'];
@@ -68,9 +86,15 @@ class DoctorDTO {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['doctorId'] = this.doctorId;
+    data['accountId'] = this.accountId;
     data['username'] = this.username;
     data['fullName'] = this.fullName;
     data['workLocation'] = this.workLocation;
+    data['experience'] = this.experience;
+    data['specialization'] = this.specialization;
+    data['address'] = this.address;
+    data['details'] = this.details;
     data['phone'] = this.phone;
     data['email'] = this.email;
     data['dateOfBirth'] = this.dateOfBirth;

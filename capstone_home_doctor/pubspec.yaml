@@ -122,11 +122,12 @@ flutter:
     - assets/images/ic-more.png
     - assets/images/ic-remove.png
     - assets/images/ic-health-record.png
-    - assets/images/loading-hdr.gif
     - assets/images/ic-male.png
     - assets/images/ic-female.png
     - assets/images/img-unknown-device.png
     - assets/images/ic-medical-instruction.png
+    - assets/images/ic-map.png
+    - assets/images/ic-note.png
 
   
   #   - images/a_dot_burr.jpeg

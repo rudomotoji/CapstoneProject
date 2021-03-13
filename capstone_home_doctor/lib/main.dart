@@ -4,16 +4,21 @@ import 'dart:io';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/features/chat/chat.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
 
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_update_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
 import 'package:capstone_home_doctor/features/contract/views/confirm_contract_view.dart';
+import 'package:capstone_home_doctor/features/contract/views/contract_detail_status_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/manage_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_create_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_type_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_with_type_list_bloc.dart';
@@ -266,6 +271,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
       setState(() {
         if (value) {
           _startScreen = MainHome();
+          // _startScreen = ContractStatusDetail();
         } else {
           _startScreen = Login();
         }
@@ -369,6 +375,22 @@ class _HomeDoctorState extends State<HomeDoctor> {
             create: (BuildContext context) => MedInsScanTextBloc(
                 medicalInstructionRepository: _medicalInstructionRepository),
           ),
+          BlocProvider<MedicalInstructionDetailBloc>(
+            create: (BuildContext context) => MedicalInstructionDetailBloc(
+                medicalInstructionRepository: _medicalInstructionRepository),
+          ),
+          BlocProvider<ContractIdNowBloc>(
+            create: (BuildContext context) =>
+                ContractIdNowBloc(contractRepository: _contractRepository),
+          ),
+          BlocProvider<ContractFullBloc>(
+            create: (BuildContext context) =>
+                ContractFullBloc(contractRepository: _contractRepository),
+          ),
+          BlocProvider<ContractUpdateBloc>(
+            create: (BuildContext context) =>
+                ContractUpdateBloc(contractRepository: _contractRepository),
+          ),
         ],
         child: GestureDetector(
           onTap: () {
@@ -415,6 +437,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
                     ScheduleMedNotiView(),
                 RoutesHDr.OXY_CHART_VIEW: (context) => OxyChartView(),
                 RoutesHDr.MEDICAL_SHARE: (context) => MedicalShare(),
+                RoutesHDr.CONTRACT_DETAIL_STATUS: (context) =>
+                    ContractStatusDetail(),
               },
               home: _startScreen,
             ),
