@@ -8,6 +8,7 @@ import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:string_similarity/string_similarity.dart';
 
 class MedicalInstructionRepository extends BaseApiClient {
   final http.Client httpClient;
@@ -101,7 +102,6 @@ class MedicalInstructionRepository extends BaseApiClient {
 
   //create medical instruction by multiple part
   Future<ImageScannerDTO> getTextFromImage(String imagePath) async {
-    ImageScannerDTO dto;
     var uri = Uri.parse('http://0.0.0.0:80/scanMedicalInsurance');
     var request = new http.MultipartRequest('POST', uri);
     try {
@@ -113,11 +113,34 @@ class MedicalInstructionRepository extends BaseApiClient {
       final response = await request.send();
       if (response.statusCode == 200) {
         var responseString = await response.stream.bytesToString();
-        return ImageScannerDTO.fromJson(json.decode(responseString));
-        // http.Response.fromStream(response).then((res) {
-        //   dto = ImageScannerDTO.fromJson(json.decode(res.body));
-        //   return dto;
-        // });
+        dynamic dto = json.decode(responseString);
+
+        var newArrData = dto['data'].split("\n");
+        var str_list = newArrData.where((s) => !s.isEmpty).toList();
+
+        String strSymptom = "";
+        String title = "";
+
+        for (var itemString in str_list) {
+          if (itemString.similarityTo('PHIẾU') > 0.8) {
+            title += itemString;
+          } else if (itemString.similarityTo('Triệu chứng') > 0.8) {
+            strSymptom += itemString;
+          } else if (itemString.similarityTo(':') > 0.8) {
+            strSymptom += itemString;
+            if (itemString.similarityTo('-') > 0.8) {
+              strSymptom += itemString;
+            } else if (itemString.similarityTo('(') > 0.8) {
+              strSymptom += itemString;
+            }
+          } else if (itemString.similarityTo('BỆNH ÁN') > 0.8) {
+            title = itemString;
+          }
+        }
+
+        return ImageScannerDTO(symptom: strSymptom.trim(), title: title);
+
+        // return ImageScannerDTO.fromJson(json.decode(responseString));
       }
       return ImageScannerDTO();
     } catch (e) {

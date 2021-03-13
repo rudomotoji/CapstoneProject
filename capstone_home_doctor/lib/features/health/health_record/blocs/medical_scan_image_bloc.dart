@@ -18,7 +18,12 @@ class MedInsScanTextBloc extends Bloc<MedInsCreateEvent, MedInsScanTextState> {
       try {
         final ImageScannerDTO data = await medicalInstructionRepository
             .getTextFromImage(event.imagePath);
-        yield MedInsScanTextStateSuccess(data: data);
+
+        if (data != null) {
+          yield MedInsScanTextStateSuccess(data: data);
+        } else {
+          yield MedInsScanTextStateFailure();
+        }
       } catch (e) {
         yield MedInsScanTextStateFailure();
       }

@@ -14,7 +14,7 @@ class HealthRecordDTO {
   //patient Id
   int patientId;
   //list diseaseId to insert
-  List<int> diceaseIds;
+  List<String> diceaseIds;
   //list diseases to get
   List<dynamic> diseases;
 

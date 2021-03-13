@@ -81,10 +81,11 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
 
             //MOVE TO CREATE HR AND CALL BACK REFRESH LIST
             Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (context) =>
-                        new CreateHealthRecord(refreshListHR)));
+                    context,
+                    new MaterialPageRoute(
+                        builder: (context) =>
+                            new CreateHealthRecord(refreshListHR)))
+                .then((value) => {print('call back to refresh: $value')});
             // Navigator.of(context).pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
           },
         ),

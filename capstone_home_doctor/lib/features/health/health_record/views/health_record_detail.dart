@@ -19,6 +19,7 @@ import 'package:capstone_home_doctor/features/health/health_record/events/med_in
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_detail_state.dart';
+import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_create_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_list_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_type_list_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/medical_scan_image_state.dart';
@@ -33,6 +34,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:string_similarity/string_similarity.dart';
 
 List<MedicalInstructionTypeDTO> _listMedInsType = [];
 //   MedicalInstructionTypeDTO(id: 1, typeName: 'Phiếu khám bệnh'),
@@ -202,7 +204,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       width: MediaQuery.of(context).size.width -
                                           (155),
                                       child: Text(
-                                        '${_healthRecordDTO.diseases}',
+                                        '${_healthRecordDTO.diseases[0]['diseaseName']}', //lấy tên bệnh lý
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 3,
                                         style: TextStyle(
@@ -402,8 +404,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                               if (state.listMedIns != null ||
                                   state.listMedIns.isNotEmpty) {
                                 listMedicalIns = state.listMedIns;
-                                listMedicalIns.sort((a, b) =>
-                                    b.dateStarted.compareTo(a.dateStarted));
+                                // listMedicalIns.sort((a, b) =>
+                                //     b.dateStarted.compareTo(a.dateStarted));
                               }
                             }
                             return (listMedicalIns.length != 0 ||
@@ -458,21 +460,21 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                         MainAxisAlignment
                                                             .center,
                                                     children: [
-                                                      Text(
-                                                        '${listMedicalIns[index]?.dateStarted.split('T')[0].split('-')[2]}',
-                                                        style: TextStyle(
-                                                            color: DefaultTheme
-                                                                .RED_CALENDAR,
-                                                            fontSize: 15),
-                                                      ),
-                                                      Text(
-                                                        ' th ${listMedicalIns[index]?.dateStarted.split('T')[0].split('-')[1]}',
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: DefaultTheme
-                                                              .BLACK_BUTTON,
-                                                        ),
-                                                      ),
+                                                      // Text(
+                                                      //   '${listMedicalIns[index]?.dateStarted.split('T')[0].split('-')[2]}',
+                                                      //   style: TextStyle(
+                                                      //       color: DefaultTheme
+                                                      //           .RED_CALENDAR,
+                                                      //       fontSize: 15),
+                                                      // ),
+                                                      // Text(
+                                                      //   ' th ${listMedicalIns[index]?.dateStarted.split('T')[0].split('-')[1]}',
+                                                      //   style: TextStyle(
+                                                      //     fontSize: 12,
+                                                      //     color: DefaultTheme
+                                                      //         .BLACK_BUTTON,
+                                                      //   ),
+                                                      // ),
                                                     ],
                                                   ),
                                                 ),
@@ -813,6 +815,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         });
   }
 
+//popup create new medical instruction
   void _showCreateMedInsForm() {
     showModalBottomSheet(
         isScrollControlled: true,
@@ -1147,7 +1150,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                 padding: EdgeInsets.only(
                                     bottom: 5, left: 20, top: 10),
                               ),
-
                               Expanded(
                                 child: ListView(children: <Widget>[
                                   Container(
@@ -1194,16 +1196,26 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                               is MedInsScanTextStateSuccess) {
                                             print(
                                                 ' DATA GENERATED: ${state.data}');
-                                            return Container(
-                                              child: Text(
-                                                'DATA GENERATE TITLE ${state.data.title}\n DATA SYMTOM ${state.data.symptom}',
-                                              ),
-                                            );
+                                            var percentCompare = _selectedHRType
+                                                .toLowerCase()
+                                                .similarityTo(state.data.title
+                                                    .toLowerCase());
+                                            if (percentCompare > 0.7) {
+                                              _dianoseController.text =
+                                                  "hien thi them data";
+                                              return Container();
+                                            } else {
+                                              return Container(
+                                                  height: 35,
+                                                  child: Text(
+                                                      'Bạn có chắc đây là $_selectedHRType',
+                                                      style: TextStyle(
+                                                        color: DefaultTheme
+                                                            .RED_TEXT,
+                                                        fontSize: 24,
+                                                      )));
+                                            }
                                           }
-                                          return Container(
-                                            height: 15,
-                                            child: Text('Cannot load'),
-                                          );
                                         })
                                       : Container(),
                                   Row(
@@ -1295,7 +1307,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   ),
                                 ]),
                               ),
-
                               ButtonHDr(
                                 width: MediaQuery.of(context).size.width - 40,
                                 style: BtnStyle.BUTTON_BLACK,
@@ -1334,13 +1345,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     _medInsCreateBloc.add(
                                         MedInsCreateEventSend(dto: medInsDTO));
                                   }
-
-                                  //
-                                  // print('${uuid.v1()}');
-                                  // print('${_note}');
-                                  // print('${_startDate}');
-
-                                  // print('${_dianoseController.text}');
                                   print(
                                       'HR ID when prepare submit is ${_healthRecordDTO.healthRecordId}');
                                   print('${_imgString.length}');
