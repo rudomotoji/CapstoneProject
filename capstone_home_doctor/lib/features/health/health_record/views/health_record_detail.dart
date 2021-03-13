@@ -401,12 +401,12 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                           'Kiểm tra lại đường truyền kết nối mạng')));
                             }
                             if (state is MedicalInstructionListStateSuccess) {
-                              // if (state.listMedIns != null ||
-                              //     state.listMedIns.isNotEmpty) {
-                              //   listMedicalIns = state.listMedIns;
-                              //   listMedicalIns.sort((a, b) =>
-                              //       b.dateStarted.compareTo(a.dateStarted));
-                              // }
+                              if (state.listMedIns != null ||
+                                  state.listMedIns.isNotEmpty) {
+                                listMedicalIns = state.listMedIns;
+                                // listMedicalIns.sort((a, b) =>
+                                //     b.dateStarted.compareTo(a.dateStarted));
+                              }
                             }
                             return (listMedicalIns.length != 0 ||
                                     !listMedicalIns.isEmpty)
