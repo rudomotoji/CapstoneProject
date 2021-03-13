@@ -172,522 +172,535 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                   if (state.healthRecordDTO != null) {
                     _healthRecordDTO = state.healthRecordDTO;
                     return Expanded(
-                      child: ListView(
-                        children: <Widget>[
-                          Container(
-                            // margin: EdgeInsets.only(left: 20, right: 20),
-                            padding: EdgeInsets.only(top: 10, bottom: 10),
-                            decoration: BoxDecoration(
-                              color: DefaultTheme.GREY_VIEW,
-                            ),
-                            child: Column(
-                              children: <Widget>[
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 20),
-                                    ),
-                                    Container(
-                                      width: 125,
-                                      child: Text(
-                                        'Bệnh lý tim mạch',
-                                        style: TextStyle(
-                                          color: DefaultTheme.GREY_TEXT,
-                                          fontSize: 15,
+                      child: RefreshIndicator(
+                        onRefresh: _pullRefresh,
+                        child: ListView(
+                          children: <Widget>[
+                            Container(
+                              // margin: EdgeInsets.only(left: 20, right: 20),
+                              padding: EdgeInsets.only(top: 10, bottom: 10),
+                              decoration: BoxDecoration(
+                                color: DefaultTheme.GREY_VIEW,
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                      ),
+                                      Container(
+                                        width: 125,
+                                        child: Text(
+                                          'Bệnh lý tim mạch',
+                                          style: TextStyle(
+                                            color: DefaultTheme.GREY_TEXT,
+                                            fontSize: 15,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width -
-                                          (155),
-                                      child: Text(
-                                        '${_healthRecordDTO.diseases[0]['diseaseName']}', //lấy tên bệnh lý
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 3,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15,
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                (155),
+                                        child: Text(
+                                          '${_healthRecordDTO.diseases[0]['diseaseName']}', //lấy tên bệnh lý
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 3,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 15,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 10),
-                                ),
-                                Row(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 20),
-                                    ),
-                                    Container(
-                                      width: 125,
-                                      child: Text(
-                                        'Chăm khám tại ',
-                                        style: TextStyle(
-                                          color: DefaultTheme.GREY_TEXT,
-                                          fontSize: 15,
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                      ),
+                                      Container(
+                                        width: 125,
+                                        child: Text(
+                                          'Chăm khám tại ',
+                                          style: TextStyle(
+                                            color: DefaultTheme.GREY_TEXT,
+                                            fontSize: 15,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width -
-                                          (155),
-                                      child: Text(
-                                        '${_healthRecordDTO.place}',
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 3,
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 15,
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                (155),
+                                        child: Text(
+                                          '${_healthRecordDTO.place}',
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 3,
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 15,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 10),
-                                ),
-                                (_healthRecordDTO.description != '')
-                                    ? Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: <Widget>[
-                                          Row(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 20),
-                                              ),
-                                              Container(
-                                                width: 125,
-                                                child: Text(
-                                                  'Ghi chú',
-                                                  style: TextStyle(
-                                                    color:
-                                                        DefaultTheme.GREY_TEXT,
-                                                    fontSize: 15,
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                  ),
+                                  (_healthRecordDTO.description != '')
+                                      ? Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Row(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      EdgeInsets.only(left: 20),
+                                                ),
+                                                Container(
+                                                  width: 125,
+                                                  child: Text(
+                                                    'Ghi chú',
+                                                    style: TextStyle(
+                                                      color: DefaultTheme
+                                                          .GREY_TEXT,
+                                                      fontSize: 15,
+                                                    ),
                                                   ),
                                                 ),
+                                                Padding(
+                                                  padding:
+                                                      EdgeInsets.only(left: 10),
+                                                ),
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      (155),
+                                                  child: Text(
+                                                    '${_healthRecordDTO.description}',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 3,
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 15,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        )
+                                      : Container(
+                                          height: 0,
+                                          width: 0,
+                                        ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding:
+                                  EdgeInsets.only(left: 20, bottom: 5, top: 5),
+                              child: Text(
+                                'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: DefaultTheme.BLACK, fontSize: 13),
+                              ),
+                            ),
+
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.6,
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 30, left: 20, bottom: 0),
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Danh sách y lệnh',
+                                            style: TextStyle(
+                                              color: DefaultTheme.BLACK,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 20,
+                                        ),
+                                        child: Text(
+                                          'Bao gồm các phiếu bệnh án/ y lệnh được thêm trước đó',
+                                          style: TextStyle(
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontSize: 13),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ButtonHDr(
+                                    style: BtnStyle.BUTTON_GREY,
+                                    label: 'Thêm y lệnh',
+                                    onTap: () {
+                                      //
+                                      _showCreateMedInsForm();
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(right: 20),
+                                )
+                              ],
+                            ),
+                            //
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            //
+                            //
+                            //
+                            BlocBuilder<MedicalInstructionListBloc,
+                                    MedicalInstructionListState>(
+                                builder: (context, state) {
+                              //
+                              if (state is MedicalInstructionListStateLoading) {
+                                return Container(
+                                  width: 200,
+                                  height: 200,
+                                  child: SizedBox(
+                                    width: 100,
+                                    height: 100,
+                                    child: Image.asset(
+                                        'assets/images/loading.gif'),
+                                  ),
+                                );
+                              }
+                              if (state is MedicalInstructionListStateFailed) {
+                                return Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Center(
+                                        child: Text(
+                                            'Kiểm tra lại đường truyền kết nối mạng')));
+                              }
+                              if (state is MedicalInstructionListStateSuccess) {
+                                if (state.listMedIns != null ||
+                                    state.listMedIns.isNotEmpty) {
+                                  listMedicalIns = state.listMedIns;
+                                  // listMedicalIns.sort((a, b) =>
+                                  //     b.dateStarted.compareTo(a.dateStarted));
+                                }
+                              }
+                              return (listMedicalIns.length != 0 ||
+                                      !listMedicalIns.isEmpty)
+                                  ? ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: listMedicalIns.length,
+                                      itemBuilder: (BuildContext buildContext,
+                                          int index) {
+                                        // if (listMedicalIns[index].image != null) {
+                                        //   //
+                                        //   _medicalScanText.add(MedInsGetTextEventSend(
+                                        //       imagePath:
+                                        //           'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMedicalIns[index].image}'));
+                                        // }
+
+                                        // String _typeName = getMedInsTypeName(
+                                        //     listMedicalIns[index]
+                                        //         .medicalInstructionTypeId);
+                                        // print('TYPE NAME IS $_typeName');
+                                        //http://45.76.186.233:8000/api/v1/Images?pathImage=
+
+                                        return Container(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20),
+                                          child: Row(
+                                            children: [
+                                              Column(
+                                                children: <Widget>[
+                                                  Container(
+                                                    width: 0.5,
+                                                    height: 65,
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT,
+                                                  ),
+                                                  Container(
+                                                    width: 60,
+                                                    height: 60,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      border: Border.all(
+                                                        color: DefaultTheme
+                                                            .GREY_TOP_TAB_BAR,
+                                                        width: 0.5,
+                                                      ),
+                                                      color: DefaultTheme.WHITE,
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        // Text(
+                                                        //   '${listMedicalIns[index]?.dateStarted.split('T')[0].split('-')[2]}',
+                                                        //   style: TextStyle(
+                                                        //       color: DefaultTheme
+                                                        //           .RED_CALENDAR,
+                                                        //       fontSize: 15),
+                                                        // ),
+                                                        // Text(
+                                                        //   ' th ${listMedicalIns[index]?.dateStarted.split('T')[0].split('-')[1]}',
+                                                        //   style: TextStyle(
+                                                        //     fontSize: 12,
+                                                        //     color: DefaultTheme
+                                                        //         .BLACK_BUTTON,
+                                                        //   ),
+                                                        // ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    width: 0.5,
+                                                    height: 65,
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT,
+                                                  ),
+                                                ],
                                               ),
                                               Padding(
                                                 padding:
                                                     EdgeInsets.only(left: 10),
                                               ),
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width -
-                                                    (155),
-                                                child: Text(
-                                                  '${_healthRecordDTO.description}',
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 3,
-                                                  style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 15,
-                                                  ),
+                                              Expanded(
+                                                child: Stack(
+                                                  children: <Widget>[
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          height: 180,
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                    blurRadius:
+                                                                        10,
+                                                                    color: DefaultTheme
+                                                                        .GREY_VIEW)
+                                                              ]),
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width -
+                                                              70,
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 10,
+                                                                    top: 15,
+                                                                    bottom: 10),
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                //
+                                                                Text(
+                                                                    '${listMedicalIns[index].medicalInstructionType}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                    )),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <
+                                                                      Widget>[
+                                                                    //
+                                                                    Container(
+                                                                      width: 80,
+                                                                      child:
+                                                                          Text(
+                                                                        'Chẩn đoán:',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                DefaultTheme.GREY_TEXT),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width -
+                                                                          200,
+                                                                      child:
+                                                                          Text(
+                                                                        '${listMedicalIns[index].diagnose}',
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            2,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: <
+                                                                      Widget>[
+                                                                    //
+                                                                    Container(
+                                                                      width: 80,
+                                                                      child:
+                                                                          Text(
+                                                                        'Ghi chú:',
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                DefaultTheme.GREY_TEXT),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width -
+                                                                          200,
+                                                                      child:
+                                                                          Text(
+                                                                        '${listMedicalIns[index].description}',
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            2,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+
+                                                                Spacer(),
+                                                                Container(
+                                                                  width: 70,
+                                                                  height: 70,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10),
+                                                                    border:
+                                                                        Border
+                                                                            .all(
+                                                                      color: DefaultTheme
+                                                                          .GREY_TOP_TAB_BAR,
+                                                                      width:
+                                                                          0.5,
+                                                                    ),
+                                                                  ),
+                                                                  child: (listMedicalIns[index]
+                                                                              ?.image ==
+                                                                          null)
+                                                                      ? Container()
+                                                                      : ClipRRect(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(10),
+                                                                          child:
+                                                                              SizedBox(
+                                                                            width:
+                                                                                70,
+                                                                            height:
+                                                                                70,
+                                                                            child:
+                                                                                Image.network('http://45.76.186.233:8000/api/v1/Images?pathImage=${listMedicalIns[index]?.image}'),
+                                                                          ),
+                                                                        ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Positioned(
+                                                      width: 35,
+                                                      height: 35,
+                                                      top: 7,
+                                                      right: 0,
+                                                      child: ButtonHDr(
+                                                        style: BtnStyle
+                                                            .BUTTON_IMAGE,
+                                                        image: Image.asset(
+                                                            'assets/images/ic-more.png'),
+                                                        onTap: () {
+                                                          _showMorePopup();
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      )
-                                    : Container(
-                                        height: 0,
-                                        width: 0,
+                                        );
+                                      })
+                                  : Container(
+                                      height: 200,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Center(
+                                        child: Text('Không có hồ sơ nào'),
                                       ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding:
-                                EdgeInsets.only(left: 20, bottom: 5, top: 5),
-                            child: Text(
-                              'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: DefaultTheme.BLACK, fontSize: 13),
-                            ),
-                          ),
+                                    );
+                            }),
+                            //list medIns
 
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.6,
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 30, left: 20, bottom: 0),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          'Danh sách y lệnh',
-                                          style: TextStyle(
-                                            color: DefaultTheme.BLACK,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 20,
-                                      ),
-                                      child: Text(
-                                        'Bao gồm các phiếu bệnh án/ y lệnh được thêm trước đó',
-                                        style: TextStyle(
-                                            color: DefaultTheme.GREY_TEXT,
-                                            fontSize: 13),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: ButtonHDr(
-                                  style: BtnStyle.BUTTON_GREY,
-                                  label: 'Thêm y lệnh',
-                                  onTap: () {
-                                    //
-                                    _showCreateMedInsForm();
-                                  },
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(right: 20),
-                              )
-                            ],
-                          ),
-                          //
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                          ),
-                          //
-                          //
-                          //
-                          BlocBuilder<MedicalInstructionListBloc,
-                                  MedicalInstructionListState>(
-                              builder: (context, state) {
                             //
-                            if (state is MedicalInstructionListStateLoading) {
-                              return Container(
-                                width: 200,
-                                height: 200,
-                                child: SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child:
-                                      Image.asset('assets/images/loading.gif'),
-                                ),
-                              );
-                            }
-                            if (state is MedicalInstructionListStateFailed) {
-                              return Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Center(
-                                      child: Text(
-                                          'Kiểm tra lại đường truyền kết nối mạng')));
-                            }
-                            if (state is MedicalInstructionListStateSuccess) {
-                              if (state.listMedIns != null ||
-                                  state.listMedIns.isNotEmpty) {
-                                listMedicalIns = state.listMedIns;
-                                // listMedicalIns.sort((a, b) =>
-                                //     b.dateStarted.compareTo(a.dateStarted));
-                              }
-                            }
-                            return (listMedicalIns.length != 0 ||
-                                    !listMedicalIns.isEmpty)
-                                ? ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                    itemCount: listMedicalIns.length,
-                                    itemBuilder:
-                                        (BuildContext buildContext, int index) {
-                                      // if (listMedicalIns[index].image != null) {
-                                      //   //
-                                      //   _medicalScanText.add(MedInsGetTextEventSend(
-                                      //       imagePath:
-                                      //           'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMedicalIns[index].image}'));
-                                      // }
-
-                                      // String _typeName = getMedInsTypeName(
-                                      //     listMedicalIns[index]
-                                      //         .medicalInstructionTypeId);
-                                      // print('TYPE NAME IS $_typeName');
-                                      //http://45.76.186.233:8000/api/v1/Images?pathImage=
-
-                                      return Container(
-                                        padding: EdgeInsets.only(
-                                            left: 20, right: 20),
-                                        child: Row(
-                                          children: [
-                                            Column(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 0.5,
-                                                  height: 65,
-                                                  color: DefaultTheme.GREY_TEXT,
-                                                ),
-                                                Container(
-                                                  width: 60,
-                                                  height: 60,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    border: Border.all(
-                                                      color: DefaultTheme
-                                                          .GREY_TOP_TAB_BAR,
-                                                      width: 0.5,
-                                                    ),
-                                                    color: DefaultTheme.WHITE,
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      // Text(
-                                                      //   '${listMedicalIns[index]?.dateStarted.split('T')[0].split('-')[2]}',
-                                                      //   style: TextStyle(
-                                                      //       color: DefaultTheme
-                                                      //           .RED_CALENDAR,
-                                                      //       fontSize: 15),
-                                                      // ),
-                                                      // Text(
-                                                      //   ' th ${listMedicalIns[index]?.dateStarted.split('T')[0].split('-')[1]}',
-                                                      //   style: TextStyle(
-                                                      //     fontSize: 12,
-                                                      //     color: DefaultTheme
-                                                      //         .BLACK_BUTTON,
-                                                      //   ),
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Container(
-                                                  width: 0.5,
-                                                  height: 65,
-                                                  color: DefaultTheme.GREY_TEXT,
-                                                ),
-                                              ],
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 10),
-                                            ),
-                                            Expanded(
-                                              child: Stack(
-                                                children: <Widget>[
-                                                  Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Container(
-                                                        height: 180,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10),
-                                                            boxShadow: [
-                                                              BoxShadow(
-                                                                  blurRadius:
-                                                                      10,
-                                                                  color: DefaultTheme
-                                                                      .GREY_VIEW)
-                                                            ]),
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width -
-                                                            70,
-                                                        child: Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 10,
-                                                                  top: 15,
-                                                                  bottom: 10),
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              //
-                                                              Text(
-                                                                  '${listMedicalIns[index].medicalInstructionType}',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                  )),
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <
-                                                                    Widget>[
-                                                                  //
-                                                                  Container(
-                                                                    width: 80,
-                                                                    child: Text(
-                                                                      'Chẩn đoán:',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.GREY_TEXT),
-                                                                    ),
-                                                                  ),
-                                                                  Container(
-                                                                    width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width -
-                                                                        200,
-                                                                    child: Text(
-                                                                      '${listMedicalIns[index].diagnose}',
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines:
-                                                                          2,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: <
-                                                                    Widget>[
-                                                                  //
-                                                                  Container(
-                                                                    width: 80,
-                                                                    child: Text(
-                                                                      'Ghi chú:',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              DefaultTheme.GREY_TEXT),
-                                                                    ),
-                                                                  ),
-                                                                  Container(
-                                                                    width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width -
-                                                                        200,
-                                                                    child: Text(
-                                                                      '${listMedicalIns[index].description}',
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      maxLines:
-                                                                          2,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-
-                                                              Spacer(),
-                                                              Container(
-                                                                width: 70,
-                                                                height: 70,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  border: Border
-                                                                      .all(
-                                                                    color: DefaultTheme
-                                                                        .GREY_TOP_TAB_BAR,
-                                                                    width: 0.5,
-                                                                  ),
-                                                                ),
-                                                                child: (listMedicalIns[index]
-                                                                            ?.image ==
-                                                                        null)
-                                                                    ? Container()
-                                                                    : ClipRRect(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10),
-                                                                        child:
-                                                                            SizedBox(
-                                                                          width:
-                                                                              70,
-                                                                          height:
-                                                                              70,
-                                                                          child:
-                                                                              Image.network('http://45.76.186.233:8000/api/v1/Images?pathImage=${listMedicalIns[index]?.image}'),
-                                                                        ),
-                                                                      ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Positioned(
-                                                    width: 35,
-                                                    height: 35,
-                                                    top: 7,
-                                                    right: 0,
-                                                    child: ButtonHDr(
-                                                      style:
-                                                          BtnStyle.BUTTON_IMAGE,
-                                                      image: Image.asset(
-                                                          'assets/images/ic-more.png'),
-                                                      onTap: () {
-                                                        _showMorePopup();
-                                                      },
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    })
-                                : Container(
-                                    height: 200,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Center(
-                                      child: Text('Không có hồ sơ nào'),
-                                    ),
-                                  );
-                          }),
-                          //list medIns
-
-                          //
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   }
@@ -697,15 +710,23 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                   //
                 }
                 return Container(
-                    width: MediaQuery.of(context).size.width,
-                    child:
-                        Center(child: Text('Không thể tải danh sách hồ sơ')));
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Text(
+                      'Không thể tải danh sách hồ sơ',
+                    ),
+                  ),
+                );
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _pullRefresh() async {
+    getHRId();
   }
 
   _showMorePopup() {
