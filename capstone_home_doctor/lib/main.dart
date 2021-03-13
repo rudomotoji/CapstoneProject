@@ -74,14 +74,8 @@ import 'package:http/http.dart' as http;
 final MORNING = 6;
 final NOON = 11;
 final AFTERNOON = 14;
-final NIGHT = 18;
-final MINUTES = 14;
-
-//this is the name given to the background fetch
-const simpleTaskKey = "simpleTask";
-const simpleDelayedTask = "simpleDelayedTask";
-const simplePeriodicTask = "simplePeriodicTask";
-const simplePeriodic1HourTask = "simplePeriodic1HourTask";
+final NIGHT = 19;
+final MINUTES = 00;
 
 //repo for blocs
 HealthRecordRepository _healthRecordRepository =
@@ -132,53 +126,46 @@ void _handleIOSGeneralMessage(Map<String, dynamic> message) {
   localNotifyManager.show(receiveNotification);
 }
 
-void checkNotifiMedical() {
+void checkNotifiMedical() async {
   SQFLiteHelper _sqLiteHelper = SQFLiteHelper();
   final hour = DateTime.now().hour;
   final minute = DateTime.now().minute;
   var body = "";
 
   if (hour == MORNING && minute == MINUTES) {
-    _sqLiteHelper.getAllBy('morning').then((value) {
+    await _sqLiteHelper.getAllBy('morning').then((value) {
       for (var schedule in value) {
         body += schedule.medicationName + ', ';
       }
     });
   }
-
-  if (hour == MORNING && minute == MINUTES) {
-    _sqLiteHelper.getAllBy('noon').then((value) {
+  if (hour == NOON && minute == MINUTES) {
+    await _sqLiteHelper.getAllBy('noon').then((value) {
       for (var schedule in value) {
         body += schedule.medicationName + ', ';
       }
     });
   }
-
   if (hour == AFTERNOON && minute == MINUTES) {
-    _sqLiteHelper.getAllBy('afterNoon').then((value) {
+    await _sqLiteHelper.getAllBy('afterNoon').then((value) {
       for (var schedule in value) {
         body += schedule.medicationName + ', ';
       }
     });
   }
-
   if (hour == NIGHT && minute == MINUTES) {
-    _sqLiteHelper.getAllBy('night').then((value) {
+    await _sqLiteHelper.getAllBy('night').then((value) {
       for (var schedule in value) {
         body += schedule.medicationName + ', ';
       }
     });
   }
-
   if ((hour == MORNING || hour == NOON || hour == AFTERNOON || hour == NIGHT) &&
       minute == MINUTES) {
     var message = {
       "notification": {"title": "Nhắc nhở uống thuốc", "body": body},
       "data": {
-        "click_action": "FLUTTER_NOTIFICATION_CLICK",
-        "status": "done",
-        "screen": "screenA",
-        "message": "ACTION"
+        "NAVIGATE_TO_SCREEN": RoutesHDr.SCHEDULE,
       }
     };
     _handleGeneralMessage(message);
@@ -197,7 +184,6 @@ void main() async {
   final cron = Cron()
     ..schedule(Schedule.parse('* * * * * '), () {
       checkNotifiMedical();
-      print(DateTime.now());
     });
   runApp(HomeDoctor());
 }
@@ -285,7 +271,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
         print('TOKEN IN DEVICE $token');
         _token = '$token';
         if (_token != '') {
-          mobileDeviceHelper.updatelTokenDevice(_token);
+          // mobileDeviceHelper.updatelTokenDevice(_token);
           // mobileDeviceHelper.getTokenDevice().then((value) {
           //   mobileDevice = value;
           //   print('VALUE TOKEN DEVICE ${value}');

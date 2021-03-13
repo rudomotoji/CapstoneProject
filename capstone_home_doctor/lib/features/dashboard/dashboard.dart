@@ -70,17 +70,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     // DateTime tempDate =
     //     new DateFormat("yyyy-MM-dd").parse('2021-03-13T00:00:00');
     // int date = int.parse(DateFormat("yyyyMMdd").format(tempDate));
-    // _sqfLiteHelper.insertMedicalSchedule(MedicationSchedules(
-    //     medicationName: null,
-    //     content: '0.125mg',
-    //     useTime: 'Trước bữa ăn; 30p',
-    //     unit: 'viên',
-    //     morning: 1,
-    //     noon: 0,
-    //     afterNoon: 0,
-    //     night: 2,
-    //     fromDate: 1,
-    //     toDate: 2));
   }
 
   @override
@@ -446,18 +435,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         if (state is PrescriptionListStateSuccess) {
           listPrescription = state.listPrescription;
 
-          for (var presc in state.listPrescription) {
-            DateTime tempDate1 = new DateFormat("yyyy-MM-dd")
-                .parse(presc.medicationsRespone.dateStarted);
-            DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
-                .parse(presc.medicationsRespone.dateFinished);
-            DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
-                .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
-            _sqfLiteHelper.deleteAllMedicalSchedule();
-            if (tempDate1 <= curentDateNow && tempDate2 >= curentDateNow) {}
-//  _sqfLiteHelper.insertMedicalSchedule(presc);
-          }
-
           if (state.listPrescription != null) {
             listPrescription.sort((a, b) => b.medicationsRespone.dateStarted
                 .compareTo(a.medicationsRespone.dateStarted));
@@ -465,6 +442,19 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           if (listPrescription.isNotEmpty) {
             _currentPrescription = MedicationsRespone();
             _currentPrescription = listPrescription[0].medicationsRespone;
+
+            DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
+                .parse(_currentPrescription.dateFinished);
+            DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
+                .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+
+            if (tempDate2.millisecondsSinceEpoch >=
+                curentDateNow.millisecondsSinceEpoch) {
+              _sqfLiteHelper.deleteAllMedicalSchedule();
+              for (var item in _currentPrescription.medicationSchedules) {
+                _sqfLiteHelper.insertMedicalSchedule(item);
+              }
+            }
           }
           return (state.listPrescription == null ||
                   state.listPrescription.isEmpty)

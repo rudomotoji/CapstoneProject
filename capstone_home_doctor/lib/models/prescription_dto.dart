@@ -139,9 +139,6 @@ class MedicationSchedules {
   int noon;
   int afterNoon;
   int night;
-
-  int fromDate;
-  int toDate;
   String medicalScheduleId;
 
   MedicationSchedules(
@@ -152,9 +149,7 @@ class MedicationSchedules {
       this.morning,
       this.noon,
       this.afterNoon,
-      this.night,
-      this.fromDate,
-      this.toDate});
+      this.night});
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
@@ -166,9 +161,7 @@ class MedicationSchedules {
       'morning': morning,
       'noon': noon,
       'afterNoon': afterNoon,
-      'night': night,
-      'from_date': fromDate,
-      'to_date': toDate,
+      'night': night
     };
     return map;
   }
