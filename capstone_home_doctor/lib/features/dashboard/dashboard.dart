@@ -480,9 +480,13 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                   : _medicalScheduleNotNull(),
                             )
                           : Container(
-                              child: Center(
-                                child: Text('Hiện chưa có lịch tái khám'),
-                              ),
+                              child: (_currentPrescription
+                                          .medicationSchedules ==
+                                      null)
+                                  ? Center(
+                                      child: Text('Hiện chưa có lịch tái khám'),
+                                    )
+                                  : _appointmentNotNull(),
                             ),
                     ),
                   );

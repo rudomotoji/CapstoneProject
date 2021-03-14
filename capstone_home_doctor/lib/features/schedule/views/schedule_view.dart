@@ -7,6 +7,7 @@ import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_b
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
+import 'package:capstone_home_doctor/models/appointment_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
@@ -53,8 +54,8 @@ class _ScheduleView extends State<ScheduleView>
     final _selectedDay = DateTime.now();
 
     _events = {
-      _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
-      _selectedDay: ['Event A7'],
+      // _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
+      _selectedDay: [AppointmentDTO(date: 'asd', time: 'zxc', place: '123')],
     };
 
     _selectedEvents = _events[_selectedDay] ?? [];
@@ -221,8 +222,8 @@ class _ScheduleView extends State<ScheduleView>
                 margin:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 child: ListTile(
-                  title: Text(event.toString()),
-                  onTap: () => print('$event tapped!'),
+                  title: Text(event.date.toString()),
+                  onTap: () => print('${event.date} tapped!'),
                 ),
               ))
           .toList(),
