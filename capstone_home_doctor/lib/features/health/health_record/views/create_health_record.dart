@@ -377,7 +377,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                         ),
                         itemFilter: (suggestion, input) => suggestion
                             .toLowerCase()
-                            .startsWith(input.toLowerCase()),
+                            .contains(input.toLowerCase()),
                         itemSorter: (a, b) {
                           return a.compareTo(b);
                         },

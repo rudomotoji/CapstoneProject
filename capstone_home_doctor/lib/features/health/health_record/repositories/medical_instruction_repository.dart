@@ -121,24 +121,43 @@ class MedicalInstructionRepository extends BaseApiClient {
         String strSymptom = "";
         String title = "";
 
+        // for (var itemString in str_list) {
+        //   if (itemString.similarityTo('PHIẾU') > 0.8) {
+        //     title += itemString;
+        //   } else if (itemString.similarityTo('Triệu chứng') > 0.8) {
+        //     strSymptom += itemString;
+        //   } else if (itemString.similarityTo(':') > 0.8) {
+        //     strSymptom += itemString;
+        //     if (itemString.similarityTo('-') > 0.8) {
+        //       strSymptom += itemString;
+        //     } else if (itemString.similarityTo('(') > 0.8) {
+        //       strSymptom += itemString;
+        //     }
+        //   } else if (itemString.similarityTo('BỆNH ÁN') > 0.8) {
+        //     title = itemString;
+        //   }
+        // }
         for (var itemString in str_list) {
-          if (itemString.similarityTo('PHIẾU') > 0.8) {
+          if (itemString.contains('PHIẾU')) {
             title += itemString;
-          } else if (itemString.similarityTo('Triệu chứng') > 0.8) {
-            strSymptom += itemString;
-          } else if (itemString.similarityTo(':') > 0.8) {
-            strSymptom += itemString;
-            if (itemString.similarityTo('-') > 0.8) {
-              strSymptom += itemString;
-            } else if (itemString.similarityTo('(') > 0.8) {
+          } else if (itemString.contains('BỆNH ÁN')) {
+            title = itemString;
+          }
+          if (title != "") {
+            if (strSymptom.contains('Triệu')) {
+              if (itemString.contains(' - ')) {
+                strSymptom += itemString;
+              } else if (itemString.contains('(')) {
+                strSymptom += itemString;
+              }
+            }
+            if (itemString.contains('Triệu ')) {
               strSymptom += itemString;
             }
-          } else if (itemString.similarityTo('BỆNH ÁN') > 0.8) {
-            title = itemString;
           }
         }
 
-        return ImageScannerDTO(symptom: strSymptom.trim(), title: title);
+        return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
 
         // return ImageScannerDTO.fromJson(json.decode(responseString));
       }

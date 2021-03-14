@@ -79,6 +79,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   int _patientId = 0;
 
   String _dataGenerated = '';
+  String titleCompare = '';
 
 //
   HealthRecordRepository healthRecordRepository =
@@ -1215,26 +1216,37 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                           }
                                           if (state
                                               is MedInsScanTextStateSuccess) {
-                                            print(
-                                                ' DATA GENERATED: ${state.data}');
+                                            titleCompare = state.data.title;
                                             var percentCompare = _selectedHRType
                                                 .toLowerCase()
-                                                .similarityTo(state.data.title
-                                                    .toLowerCase());
+                                                .similarityTo(
+                                                    titleCompare.toLowerCase());
                                             if (percentCompare > 0.7) {
                                               _dianoseController.text =
                                                   "hien thi them data";
                                               return Container();
                                             } else {
-                                              return Container(
-                                                  height: 35,
-                                                  child: Text(
-                                                      'Bạn có chắc đây là $_selectedHRType',
-                                                      style: TextStyle(
-                                                        color: DefaultTheme
-                                                            .RED_TEXT,
-                                                        fontSize: 24,
-                                                      )));
+                                              if (_selectedHRType == "") {
+                                                return Container(
+                                                    height: 35,
+                                                    child: Text(
+                                                        'Bạn chưa chọn loại phiếu',
+                                                        style: TextStyle(
+                                                          color: DefaultTheme
+                                                              .RED_TEXT,
+                                                          fontSize: 20,
+                                                        )));
+                                              } else {
+                                                return Container(
+                                                    height: 35,
+                                                    child: Text(
+                                                        'Bạn có chắc đây là $_selectedHRType',
+                                                        style: TextStyle(
+                                                          color: DefaultTheme
+                                                              .RED_TEXT,
+                                                          fontSize: 20,
+                                                        )));
+                                              }
                                             }
                                           }
                                         })
