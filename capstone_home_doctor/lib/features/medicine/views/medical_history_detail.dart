@@ -1,19 +1,9 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
-import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
-import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
-import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
-import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
-import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
-import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
 class MedicalHistoryDetailView extends StatefulWidget {
   @override
@@ -56,13 +46,6 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
                 isMainView: false,
                 buttonHeaderType: ButtonHeaderType.NONE,
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 5, bottom: 0),
-                child: Divider(
-                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                  height: 0.1,
-                ),
-              ),
               Expanded(
                 child: _getMedicineSchedule(),
               ),
@@ -77,23 +60,6 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
     return ListView(
       padding: EdgeInsets.only(left: 20, right: 20),
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 20),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 30, left: 0, right: 0, bottom: 20),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Đơn thuốc hiện hành',
-              style: TextStyle(
-                color: DefaultTheme.BLACK,
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ),
         Container(
           padding: EdgeInsets.only(top: 30, bottom: 10),
           width: MediaQuery.of(context).size.width - 40,
