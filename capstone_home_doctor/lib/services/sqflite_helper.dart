@@ -62,6 +62,26 @@ class SQFLiteHelper {
     dbClient.close();
   }
 
+  Future<bool> deleteDb() async {
+    bool databaseDeleted = false;
+
+    try {
+      io.Directory documentDirectory = await getApplicationDocumentsDirectory();
+      String path = join(documentDirectory.path, DATABASE_NAME);
+      await deleteDatabase(path).whenComplete(() {
+        databaseDeleted = true;
+      }).catchError((onError) {
+        databaseDeleted = false;
+      });
+    } on DatabaseException catch (error) {
+      print(error);
+    } catch (error) {
+      print(error);
+    }
+
+    return databaseDeleted;
+  }
+
   //Medical response
   Future<String> insertMedicalResponse(PrescriptionDTO medicalResponse) async {
     String uuid = Uuid().v1();
