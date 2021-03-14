@@ -63,8 +63,7 @@ class SQFLiteHelper {
   }
 
   //Medical response
-  Future<String> insertMedicalResponse(
-      MedicationsRespone medicalResponse) async {
+  Future<String> insertMedicalResponse(PrescriptionDTO medicalResponse) async {
     String uuid = Uuid().v1();
     medicalResponse.medicalResponseID = uuid;
     var dbClient = await database;
@@ -72,13 +71,13 @@ class SQFLiteHelper {
     return uuid;
   }
 
-  Future<MedicationsRespone> getMedicationsRespone() async {
+  Future<PrescriptionDTO> getMedicationsRespone() async {
     var dbClient = await database;
-    MedicationsRespone medicationsRespone = MedicationsRespone();
+    PrescriptionDTO medicationsRespone = PrescriptionDTO();
     List<Map> maps = await dbClient.query(MEDICAL_RESPONSE_TABLE,
         columns: ['medical_response_id', 'date_start', 'date_finish']);
     if (maps.length > 0)
-      medicationsRespone = MedicationsRespone.fromMap(maps.first);
+      medicationsRespone = PrescriptionDTO.fromMap(maps.first);
     return medicationsRespone;
   }
 

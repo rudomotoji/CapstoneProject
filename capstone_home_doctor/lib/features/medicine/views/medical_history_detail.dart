@@ -1,6 +1,7 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class MedicalHistoryDetailView extends StatefulWidget {
 class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
     with WidgetsBindingObserver {
   DateValidator _dateValidator = DateValidator();
-  PrescriptionDTO _currentPrescription = PrescriptionDTO();
+  MedicalInstructionDTO _currentPrescription = MedicalInstructionDTO();
 
   @override
   void initState() {

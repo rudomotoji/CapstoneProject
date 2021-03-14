@@ -1,6 +1,7 @@
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,7 +18,7 @@ class PrescriptionListBloc
     if (event is PrescriptionListEventsetPatientId) {
       yield PrescriptionListStateLoading();
       try {
-        final List<PrescriptionDTO> list =
+        final List<MedicalInstructionDTO> list =
             await prescriptionRepository.getListPrecription(event.patientId);
         yield PrescriptionListStateSuccess(listPrescription: list);
       } catch (e) {

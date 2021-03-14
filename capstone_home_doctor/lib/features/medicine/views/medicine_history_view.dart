@@ -8,6 +8,7 @@ import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_b
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:http/http.dart' as http;
@@ -16,7 +17,7 @@ import 'package:flutter/material.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final DateValidator _dateValidator = DateValidator();
-List<PrescriptionDTO> listPrescription = [];
+List<MedicalInstructionDTO> listPrescription = [];
 PrescriptionRepository prescriptionRepository =
     PrescriptionRepository(httpClient: http.Client());
 PrescriptionListBloc _prescriptionListBloc;

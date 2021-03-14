@@ -11,6 +11,7 @@ import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_b
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
@@ -51,11 +52,11 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   var _idDoctorController = TextEditingController();
   String _idDoctor = '';
   DateValidator _dateValidator = DateValidator();
-  MedicationsRespone _currentPrescription = MedicationsRespone();
+  PrescriptionDTO _currentPrescription = PrescriptionDTO();
   //
   int _patientId = 0;
   //
-  List<PrescriptionDTO> listPrescription = [];
+  List<MedicalInstructionDTO> listPrescription = [];
   PrescriptionRepository prescriptionRepository =
       PrescriptionRepository(httpClient: http.Client());
   PrescriptionListBloc _prescriptionListBloc;
@@ -115,71 +116,25 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           ),
         ),
         Expanded(
-          child: ListView(
-            padding: EdgeInsets.only(left: 20, right: 20),
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: Image.asset('assets/images/ic-calendar.png'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10),
-                  ),
-                  Text(
-                    'Lịch',
-                    style: TextStyle(
-                      color: DefaultTheme.BLACK,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Spacer(),
-                  ButtonHDr(
-                    style: BtnStyle.BUTTON_TRANSPARENT,
-                    label: 'Chi tiết',
-                    labelColor: DefaultTheme.BLACK_BUTTON.withOpacity(0.8),
-                    isUnderline: true,
-                    width: 40,
-                    onTap: () {
-                      Navigator.of(context).pushNamed(RoutesHDr.SCHEDULE);
-                    },
-                  ),
-                ],
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: 280,
-                child: OverflowBox(
-                    // alignment: Alignment.centerRight,
-                    minWidth: MediaQuery.of(context).size.width,
-                    maxWidth: MediaQuery.of(context).size.width,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 0),
-                      child: _showCalendarOverview(),
-                    )),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Row(
+          child: RefreshIndicator(
+            onRefresh: _pullRefresh,
+            child: ListView(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              children: <Widget>[
+                Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     SizedBox(
-                      width: 25,
-                      height: 25,
-                      child:
-                          Image.asset('assets/images/ic-health-selected.png'),
+                      width: 20,
+                      height: 20,
+                      child: Image.asset('assets/images/ic-calendar.png'),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 10),
                     ),
                     Text(
-                      'Trạng thái',
+                      'Lịch',
                       style: TextStyle(
                         color: DefaultTheme.BLACK,
                         fontSize: 20,
@@ -189,32 +144,81 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     Spacer(),
                     ButtonHDr(
                       style: BtnStyle.BUTTON_TRANSPARENT,
-                      label: 'Xem tổng quan',
-                      isUnderline: true,
+                      label: 'Chi tiết',
                       labelColor: DefaultTheme.BLACK_BUTTON.withOpacity(0.8),
+                      isUnderline: true,
                       width: 40,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).pushNamed(RoutesHDr.SCHEDULE);
+                      },
                     ),
                   ],
                 ),
-              ),
-              _showStatusOverview(),
-              //
-              _showSuggestionDashboard(),
-
-              Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Text(
-                  'Lần đo gần đây',
-                  style: TextStyle(
-                    color: DefaultTheme.BLACK,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 280,
+                  child: OverflowBox(
+                      // alignment: Alignment.centerRight,
+                      minWidth: MediaQuery.of(context).size.width,
+                      maxWidth: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 0),
+                        child: _showCalendarOverview(),
+                      )),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 25,
+                        height: 25,
+                        child:
+                            Image.asset('assets/images/ic-health-selected.png'),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                      ),
+                      Text(
+                        'Trạng thái',
+                        style: TextStyle(
+                          color: DefaultTheme.BLACK,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Spacer(),
+                      ButtonHDr(
+                        style: BtnStyle.BUTTON_TRANSPARENT,
+                        label: 'Xem tổng quan',
+                        isUnderline: true,
+                        labelColor: DefaultTheme.BLACK_BUTTON.withOpacity(0.8),
+                        width: 40,
+                        onTap: () {},
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              //_showLastMeasurement(),
-            ],
+                _showStatusOverview(),
+                //
+                _showSuggestionDashboard(),
+
+                Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text(
+                    'Lần đo gần đây',
+                    style: TextStyle(
+                      color: DefaultTheme.BLACK,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                //_showLastMeasurement(),
+              ],
+            ),
           ),
         ),
       ],
@@ -955,16 +959,16 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   }
 
   getLocalStorage() async {
-    MedicationsRespone data = await _sqfLiteHelper.getMedicationsRespone();
+    PrescriptionDTO data = await _sqfLiteHelper.getMedicationsRespone();
 
-    DateTime dateFinished =
-        new DateFormat("yyyy-MM-dd").parse(data.dateFinished);
-    DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
-        .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
-    //nếu ngày kết thúc lớn hơn ngày hiện tại thì lấy lịch uống thuốc
-    if (dateFinished.millisecondsSinceEpoch >=
-        curentDateNow.millisecondsSinceEpoch) {
-      if (data.dateFinished != null) {
+    if (data.dateFinished != null) {
+      DateTime dateFinished =
+          new DateFormat("yyyy-MM-dd").parse(data.dateFinished);
+      DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
+          .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+      //nếu ngày kết thúc lớn hơn ngày hiện tại thì lấy lịch uống thuốc
+      if (dateFinished.millisecondsSinceEpoch >=
+          curentDateNow.millisecondsSinceEpoch) {
         List<MedicationSchedules> listMedical = await _sqfLiteHelper
             .getAllByMedicalResponseID(data.medicalResponseID);
         data.medicationSchedules = listMedical;
@@ -1288,5 +1292,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         await _sqfLiteHelper.insertMedicalSchedule(item);
       }
     }
+  }
+
+  Future<void> _pullRefresh() async {
+    _getPatientId();
   }
 }

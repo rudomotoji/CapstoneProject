@@ -1021,13 +1021,31 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   color: DefaultTheme.GREY_LIGHT,
                                 ),
                               ),
-                              TextFieldHDr(
-                                controller: _dianoseController,
-                                style: TFStyle.NO_BORDER,
-                                label: 'Chẩn đoán*',
-                                placeHolder: 'Nhập tên bệnh lý',
-                                keyboardAction: TextInputAction.done,
+                              // TextFieldHDr(
+                              //   controller: _dianoseController,
+                              //   style: TFStyle.NO_BORDER,
+                              //   label: 'Chẩn đoán*',
+                              //   placeHolder: 'Nhập tên bệnh lý',
+                              //   keyboardAction: TextInputAction.done,
+                              // ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 10, bottom: 10),
+                                child: Column(
+                                  children: [
+                                    Text('Chẩn đoán*'),
+                                    Container(
+                                      height: 100,
+                                      child: TextFieldHDr(
+                                        controller: _dianoseController,
+                                        placeHolder: 'Nhập tên bệnh lý',
+                                        style: TFStyle.TEXT_AREA,
+                                        keyboardAction: TextInputAction.done,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+
                               Divider(
                                 height: 0.1,
                                 color: DefaultTheme.GREY_LIGHT,
@@ -1181,6 +1199,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                         placeHolder:
                                             'Mô tả thêm các vấn đề khác',
                                         style: TFStyle.TEXT_AREA,
+                                        keyboardAction: TextInputAction.done,
                                         onChange: (text) {
                                           setState(() {
                                             _note = text;
@@ -1223,7 +1242,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                     titleCompare.toLowerCase());
                                             if (percentCompare > 0.7) {
                                               _dianoseController.text =
-                                                  "hien thi them data";
+                                                  state.data.symptom;
                                               return Container();
                                             } else {
                                               if (_selectedHRType == "") {

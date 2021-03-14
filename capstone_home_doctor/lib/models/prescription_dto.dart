@@ -54,64 +54,19 @@
 // }
 
 class PrescriptionDTO {
-  int medicalInstructionId;
-  String medicalInstructionType;
-  String image;
-  String description;
-  String diagnose;
-  String placeHealthRecord;
-  MedicationsRespone medicationsRespone;
-
-  PrescriptionDTO(
-      {this.medicalInstructionId,
-      this.medicalInstructionType,
-      this.image,
-      this.description,
-      this.diagnose,
-      this.placeHealthRecord,
-      this.medicationsRespone});
-
-  PrescriptionDTO.fromJson(Map<String, dynamic> json) {
-    medicalInstructionId = json['medicalInstructionId'];
-    medicalInstructionType = json['medicalInstructionType'];
-    image = json['image'];
-    description = json['description'];
-    diagnose = json['diagnose'];
-    placeHealthRecord = json['placeHealthRecord'];
-    medicationsRespone = json['medicationsRespone'] != null
-        ? new MedicationsRespone.fromJson(json['medicationsRespone'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['medicalInstructionId'] = this.medicalInstructionId;
-    data['medicalInstructionType'] = this.medicalInstructionType;
-    data['image'] = this.image;
-    data['description'] = this.description;
-    data['diagnose'] = this.diagnose;
-    data['placeHealthRecord'] = this.placeHealthRecord;
-    if (this.medicationsRespone != null) {
-      data['medicationsRespone'] = this.medicationsRespone.toJson();
-    }
-    return data;
-  }
-}
-
-class MedicationsRespone {
   String dateStarted;
   String dateFinished;
   List<MedicationSchedules> medicationSchedules;
   String medicalResponseID;
 
-  MedicationsRespone({
+  PrescriptionDTO({
     this.dateStarted,
     this.dateFinished,
     this.medicationSchedules,
     this.medicalResponseID,
   });
 
-  MedicationsRespone.fromJson(Map<String, dynamic> json) {
+  PrescriptionDTO.fromJson(Map<String, dynamic> json) {
     dateStarted = json['dateStarted'];
     dateFinished = json['dateFinished'];
     if (json['medicationSchedules'] != null) {
@@ -142,7 +97,7 @@ class MedicationsRespone {
     return map;
   }
 
-  MedicationsRespone.fromMap(Map<String, dynamic> map) {
+  PrescriptionDTO.fromMap(Map<String, dynamic> map) {
     medicalResponseID = map['medical_response_id'];
     dateStarted = map['date_start'];
     dateFinished = map['date_finish'];

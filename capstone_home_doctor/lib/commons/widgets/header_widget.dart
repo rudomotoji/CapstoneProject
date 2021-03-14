@@ -8,6 +8,7 @@ import 'package:capstone_home_doctor/features/information/events/patient_event.d
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +55,7 @@ class _HeaderWidget extends State<HeaderWidget> {
 
   //patient Id
   int _patientId = 0;
+  SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 
   @override
   _HeaderWidget(
@@ -510,7 +512,11 @@ class _HeaderWidget extends State<HeaderWidget> {
                                   style: BtnStyle.BUTTON_IN_LIST,
                                   labelColor: DefaultTheme.RED_TEXT,
                                   label: 'Đăng xuất',
-                                  onTap: () {
+                                  onTap: () async {
+                                    await _sqfLiteHelper
+                                        .deleteAllMedicalSchedule();
+                                    await _sqfLiteHelper
+                                        .deleteMedicalResponse();
                                     _signOut();
                                   },
                                 ),

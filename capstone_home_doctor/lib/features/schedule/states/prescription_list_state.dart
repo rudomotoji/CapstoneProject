@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +16,7 @@ class PrescriptionListStateInitial extends PrescriptionListState {}
 class PrescriptionListStateLoading extends PrescriptionListState {}
 
 class PrescriptionListStateSuccess extends PrescriptionListState {
-  final List<PrescriptionDTO> listPrescription;
+  final List<MedicalInstructionDTO> listPrescription;
   const PrescriptionListStateSuccess({@required this.listPrescription});
 
   @override

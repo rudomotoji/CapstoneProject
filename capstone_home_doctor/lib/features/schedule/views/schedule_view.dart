@@ -7,6 +7,7 @@ import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_b
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +28,9 @@ class _ScheduleView extends State<ScheduleView>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   //
   DateValidator _dateValidator = DateValidator();
-  PrescriptionDTO _currentPrescription = PrescriptionDTO();
+  MedicalInstructionDTO _currentPrescription = MedicalInstructionDTO();
   //
-  List<PrescriptionDTO> listPrescription = [];
+  List<MedicalInstructionDTO> listPrescription = [];
   PrescriptionRepository prescriptionRepository =
       PrescriptionRepository(httpClient: http.Client());
   PrescriptionListBloc _prescriptionListBloc;
@@ -91,7 +92,7 @@ class _ScheduleView extends State<ScheduleView>
               HeaderWidget(
                 title: 'Lịch',
                 isMainView: false,
-                buttonHeaderType: ButtonHeaderType.NONE,
+                buttonHeaderType: ButtonHeaderType.BACK_HOME,
               ),
               Padding(
                 padding: EdgeInsets.only(top: 5, bottom: 0),
@@ -258,7 +259,6 @@ class _ScheduleView extends State<ScheduleView>
               .compareTo(a.medicationsRespone.dateFinished));
         }
         if (listPrescription.isNotEmpty) {
-          // _currentPrescription = PrescriptionDTO();
           _currentPrescription = listPrescription[0];
         }
         return (state.listPrescription == null ||
