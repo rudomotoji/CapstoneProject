@@ -253,7 +253,8 @@ class _MedicineHistory extends State<MedicineHistory>
                                                                 .MEDICAL_HISTORY_DETAIL,
                                                             arguments:
                                                                 listPrescription[
-                                                                    index]);
+                                                                        index]
+                                                                    .medicalInstructionId);
                                                       },
                                                     ),
                                                   ],

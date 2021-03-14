@@ -121,22 +121,6 @@ class MedicalInstructionRepository extends BaseApiClient {
         String strSymptom = "";
         String title = "";
 
-        // for (var itemString in str_list) {
-        //   if (itemString.similarityTo('PHIẾU') > 0.8) {
-        //     title += itemString;
-        //   } else if (itemString.similarityTo('Triệu chứng') > 0.8) {
-        //     strSymptom += itemString;
-        //   } else if (itemString.similarityTo(':') > 0.8) {
-        //     strSymptom += itemString;
-        //     if (itemString.similarityTo('-') > 0.8) {
-        //       strSymptom += itemString;
-        //     } else if (itemString.similarityTo('(') > 0.8) {
-        //       strSymptom += itemString;
-        //     }
-        //   } else if (itemString.similarityTo('BỆNH ÁN') > 0.8) {
-        //     title = itemString;
-        //   }
-        // }
         for (var itemString in str_list) {
           if (itemString.contains('PHIẾU')) {
             title += itemString;
@@ -158,8 +142,6 @@ class MedicalInstructionRepository extends BaseApiClient {
         }
 
         return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
-
-        // return ImageScannerDTO.fromJson(json.decode(responseString));
       }
       return ImageScannerDTO();
     } catch (e) {
@@ -167,7 +149,7 @@ class MedicalInstructionRepository extends BaseApiClient {
     }
   }
 
-  //get medical instruction by Id
+  //// lấy chi tiết đơn thuốc
   Future<MedicalInstructionDTO> getMedicalInstructionById(
       int medicalInstructionId) async {
     final String url = '/MedicalInstructions/${medicalInstructionId}';
