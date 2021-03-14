@@ -12,8 +12,8 @@ class PrescriptionRepository extends BaseApiClient {
   //get list prescription
   Future<List<PrescriptionDTO>> getListPrecription(int patientId) async {
     String url =
-        '/MedicalInstructions/GetPrescriptionByPatientId?patientId=1005&healthRecordId=5032';
-    //     '/MedicalInstructions/GetPrescriptionByPatientId?patientId=${patientId}';
+        // '/MedicalInstructions/GetPrescriptionByPatientId?patientId=1005';
+        '/MedicalInstructions/GetPrescriptionByPatientId?patientId=${patientId}';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {

@@ -67,9 +67,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     super.initState();
     _getPatientId();
     _prescriptionListBloc = BlocProvider.of(context);
-    // DateTime tempDate =
-    //     new DateFormat("yyyy-MM-dd").parse('2021-03-13T00:00:00');
-    // int date = int.parse(DateFormat("yyyyMMdd").format(tempDate));
   }
 
   @override
@@ -441,25 +438,13 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
             listPrescription.sort((a, b) => b.medicationsRespone.dateFinished
                 .compareTo(a.medicationsRespone.dateFinished));
           }
-          if (listPrescription.isNotEmpty) {
-            _currentPrescription = MedicationsRespone();
+          if (state.listPrescription.length > 0) {
             _currentPrescription = listPrescription[0].medicationsRespone;
-
-            DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
-                .parse(_currentPrescription.dateFinished);
-            DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
-                .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
-
-            if (tempDate2.millisecondsSinceEpoch >=
-                curentDateNow.millisecondsSinceEpoch) {
-              _sqfLiteHelper.deleteAllMedicalSchedule();
-              for (var item in _currentPrescription.medicationSchedules) {
-                _sqfLiteHelper.insertMedicalSchedule(item);
-              }
-            }
+            handlingMEdicalResponse();
+          } else {
+            getLocalStorage();
           }
-          return (state.listPrescription == null ||
-                  state.listPrescription.isEmpty)
+          return (_currentPrescription.medicationSchedules == null)
               ? SizedBox(
                   height: 280,
                   width: MediaQuery.of(context).size.width,
@@ -960,10 +945,40 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                   ));
         }
         return Container(
-            width: MediaQuery.of(context).size.width,
-            child: Center(child: Text('Không thể tải danh sách hồ sơ')));
+          width: MediaQuery.of(context).size.width,
+          child: Center(
+            child: Text('Không thể tải danh sách hồ sơ'),
+          ),
+        );
       },
     );
+  }
+
+  getLocalStorage() async {
+    MedicationsRespone data = await _sqfLiteHelper.getMedicationsRespone();
+
+    DateTime dateFinished =
+        new DateFormat("yyyy-MM-dd").parse(data.dateFinished);
+    DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
+        .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    //nếu ngày kết thúc lớn hơn ngày hiện tại thì lấy lịch uống thuốc
+    if (dateFinished.millisecondsSinceEpoch >=
+        curentDateNow.millisecondsSinceEpoch) {
+      if (data.dateFinished != null) {
+        List<MedicationSchedules> listMedical = await _sqfLiteHelper
+            .getAllByMedicalResponseID(data.medicalResponseID);
+        data.medicationSchedules = listMedical;
+        if (listMedical.length > 0) {
+          setState(() {
+            _currentPrescription = data;
+          });
+        }
+      }
+    } else {
+      // nếu ngày kết thúc nhỏ hơn ngày hiện tại thì xóa data trong local
+      await _sqfLiteHelper.deleteAllMedicalSchedule();
+      await _sqfLiteHelper.deleteMedicalResponse();
+    }
   }
 
   _showStatusOverview() {
@@ -1252,5 +1267,26 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     setState(() {
       location = position;
     });
+  }
+
+  handlingMEdicalResponse() async {
+    DateTime tempDate2 =
+        new DateFormat("yyyy-MM-dd").parse(_currentPrescription.dateFinished);
+    DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
+        .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+
+    if (tempDate2.millisecondsSinceEpoch >=
+        curentDateNow.millisecondsSinceEpoch) {
+      await _sqfLiteHelper.deleteAllMedicalSchedule();
+      await _sqfLiteHelper.deleteMedicalResponse();
+
+      String responseID =
+          await _sqfLiteHelper.insertMedicalResponse(_currentPrescription);
+
+      for (var item in _currentPrescription.medicationSchedules) {
+        item.medicalResponseID = responseID;
+        await _sqfLiteHelper.insertMedicalSchedule(item);
+      }
+    }
   }
 }

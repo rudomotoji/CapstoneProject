@@ -21,7 +21,6 @@
 //       this.endDate,
 //       this.listMedicine});
 // }
-import 'package:uuid/uuid.dart';
 
 // class PrescriptionDTO {
 //   String dateStarted;
@@ -103,9 +102,14 @@ class MedicationsRespone {
   String dateStarted;
   String dateFinished;
   List<MedicationSchedules> medicationSchedules;
+  String medicalResponseID;
 
-  MedicationsRespone(
-      {this.dateStarted, this.dateFinished, this.medicationSchedules});
+  MedicationsRespone({
+    this.dateStarted,
+    this.dateFinished,
+    this.medicationSchedules,
+    this.medicalResponseID,
+  });
 
   MedicationsRespone.fromJson(Map<String, dynamic> json) {
     dateStarted = json['dateStarted'];
@@ -128,6 +132,21 @@ class MedicationsRespone {
     }
     return data;
   }
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{
+      'medical_response_id': medicalResponseID,
+      'date_start': dateStarted,
+      'date_finish': dateFinished,
+    };
+    return map;
+  }
+
+  MedicationsRespone.fromMap(Map<String, dynamic> map) {
+    medicalResponseID = map['medical_response_id'];
+    dateStarted = map['date_start'];
+    dateFinished = map['date_finish'];
+  }
 }
 
 class MedicationSchedules {
@@ -140,6 +159,7 @@ class MedicationSchedules {
   int afterNoon;
   int night;
   String medicalScheduleId;
+  String medicalResponseID;
 
   MedicationSchedules(
       {this.medicationName,
@@ -149,11 +169,13 @@ class MedicationSchedules {
       this.morning,
       this.noon,
       this.afterNoon,
-      this.night});
+      this.night,
+      this.medicalResponseID,
+      this.medicalScheduleId});
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
-      'medical_schedule_id': Uuid().v1(),
+      'medical_schedule_id': medicalScheduleId,
       'medication_name': medicationName,
       'content': content,
       'useTime': useTime,
@@ -161,7 +183,8 @@ class MedicationSchedules {
       'morning': morning,
       'noon': noon,
       'afterNoon': afterNoon,
-      'night': night
+      'night': night,
+      'medical_response_id': medicalResponseID
     };
     return map;
   }
@@ -176,6 +199,7 @@ class MedicationSchedules {
     noon = map['noon'];
     afterNoon = map['afterNoon'];
     night = map['night'];
+    medicalResponseID = map['medical_response_id'];
   }
 
   MedicationSchedules.fromJson(Map<String, dynamic> json) {
