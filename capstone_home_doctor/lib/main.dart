@@ -36,6 +36,7 @@ import 'package:capstone_home_doctor/features/login/events/account_event.dart';
 import 'package:capstone_home_doctor/features/login/repositories/account_repository.dart';
 import 'package:capstone_home_doctor/features/login/states/account_state.dart';
 import 'package:capstone_home_doctor/features/login/views/log_in_view.dart';
+import 'package:capstone_home_doctor/features/medicine/views/medical_history_detail.dart';
 import 'package:capstone_home_doctor/features/medicine/views/medicine_history_view.dart';
 import 'package:capstone_home_doctor/features/notification/blocs/notification_list_bloc.dart';
 import 'package:capstone_home_doctor/features/notification/repositories/notification_repository.dart';
@@ -405,6 +406,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.MEDICAL_SHARE: (context) => MedicalShare(),
                 RoutesHDr.CONTRACT_DETAIL_STATUS: (context) =>
                     ContractStatusDetail(),
+                RoutesHDr.MEDICAL_HISTORY_DETAIL: (context) =>
+                    MedicalHistoryDetailView(),
               },
               home: _startScreen,
             ),

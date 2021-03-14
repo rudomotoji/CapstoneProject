@@ -1,4 +1,5 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
@@ -82,9 +83,11 @@ class _MedicineHistory extends State<MedicineHistory>
                 }
                 if (state is PrescriptionListStateSuccess) {
                   listPrescription = state.listPrescription;
+                  listPrescription.sort((a, b) =>
+                      b.medicalInstructionId.compareTo(a.medicalInstructionId));
                   listPrescription.sort((a, b) => b
-                      .medicationsRespone.dateStarted
-                      .compareTo(a.medicationsRespone.dateStarted));
+                      .medicationsRespone.dateFinished
+                      .compareTo(a.medicationsRespone.dateFinished));
 
                   return (state.listPrescription.length == 0)
                       ? Container(
@@ -185,8 +188,7 @@ class _MedicineHistory extends State<MedicineHistory>
                                                     ),
                                                     Container(
                                                       child: Text(
-                                                        // 'Chẩn đoán: ${listPrescription[index].diagnose}',
-                                                        'Chẩn đoán:',
+                                                        'Chẩn đoán: ${listPrescription[index].diagnose}',
                                                         style: TextStyle(
                                                           color: DefaultTheme
                                                               .BLACK_BUTTON,
@@ -243,7 +245,15 @@ class _MedicineHistory extends State<MedicineHistory>
                                                           .BLACK_BUTTON
                                                           .withOpacity(0.8),
                                                       height: 40,
-                                                      onTap: () {},
+                                                      onTap: () {
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            RoutesHDr
+                                                                .MEDICAL_HISTORY_DETAIL,
+                                                            arguments:
+                                                                listPrescription[
+                                                                    index]);
+                                                      },
                                                     ),
                                                   ],
                                                 ),

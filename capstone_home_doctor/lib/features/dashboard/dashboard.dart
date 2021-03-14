@@ -436,8 +436,10 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           listPrescription = state.listPrescription;
 
           if (state.listPrescription != null) {
-            listPrescription.sort((a, b) => b.medicationsRespone.dateStarted
-                .compareTo(a.medicationsRespone.dateStarted));
+            listPrescription.sort((a, b) =>
+                b.medicalInstructionId.compareTo(a.medicalInstructionId));
+            listPrescription.sort((a, b) => b.medicationsRespone.dateFinished
+                .compareTo(a.medicationsRespone.dateFinished));
           }
           if (listPrescription.isNotEmpty) {
             _currentPrescription = MedicationsRespone();

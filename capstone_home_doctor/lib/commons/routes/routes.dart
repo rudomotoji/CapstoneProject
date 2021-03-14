@@ -22,4 +22,5 @@ class RoutesHDr {
   static const String OXY_CHART_VIEW = '/OxyChartView';
   static const String MEDICAL_SHARE = '/MedicalShare';
   static const String CONTRACT_DETAIL_STATUS = '/ContractStatusDetail';
+  static const String MEDICAL_HISTORY_DETAIL = '/MedicalHistoryDetail';
 }

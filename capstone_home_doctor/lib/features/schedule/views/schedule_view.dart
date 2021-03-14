@@ -25,7 +25,7 @@ class ScheduleView extends StatefulWidget {
 class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
   //
   DateValidator _dateValidator = DateValidator();
-  MedicationsRespone _currentPrescription = MedicationsRespone();
+  PrescriptionDTO _currentPrescription = PrescriptionDTO();
   //
   List<PrescriptionDTO> listPrescription = [];
   PrescriptionRepository prescriptionRepository =
@@ -173,13 +173,14 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
         listPrescription = state.listPrescription;
 
         if (state.listPrescription != null) {
-          listPrescription.sort((a, b) => b.medicationsRespone.dateStarted
-              .compareTo(a.medicationsRespone.dateStarted));
+          listPrescription.sort((a, b) =>
+              b.medicalInstructionId.compareTo(a.medicalInstructionId));
+          listPrescription.sort((a, b) => b.medicationsRespone.dateFinished
+              .compareTo(a.medicationsRespone.dateFinished));
         }
         if (listPrescription.isNotEmpty) {
-          _currentPrescription = MedicationsRespone(
-              dateFinished: '', dateStarted: '', medicationSchedules: []);
-          _currentPrescription = listPrescription[0].medicationsRespone;
+          // _currentPrescription = PrescriptionDTO();
+          _currentPrescription = listPrescription[0];
         }
         return (state.listPrescription == null ||
                 state.listPrescription.isEmpty)
@@ -255,7 +256,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                               width: MediaQuery.of(context).size.width -
                                   (40 + 120 + 20 + 30),
                               child: Text(
-                                '${_dateValidator.parseToDateView(_currentPrescription.dateStarted)}',
+                                '${_dateValidator.parseToDateView(_currentPrescription.medicationsRespone.dateStarted)}',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,
                                 style: TextStyle(
@@ -289,7 +290,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                               width: MediaQuery.of(context).size.width -
                                   (40 + 120 + 20 + 30),
                               child: Text(
-                                '${_dateValidator.parseToDateView(_currentPrescription.dateFinished)}',
+                                '${_dateValidator.parseToDateView(_currentPrescription.medicationsRespone.dateFinished)}',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,
                                 style: TextStyle(
@@ -332,8 +333,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                               width: MediaQuery.of(context).size.width -
                                   (40 + 120 + 20 + 30),
                               child: Text(
-                                // '${_currentPrescription.diagnose}',
-                                '',
+                                '${_currentPrescription.diagnose}',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 5,
                                 style: TextStyle(
@@ -362,12 +362,16 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                             ),
                           ),
                         ),
-                        (_currentPrescription.medicationSchedules.length != 0)
+                        (_currentPrescription.medicationsRespone
+                                    .medicationSchedules.length !=
+                                0)
                             ? ListView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemCount: _currentPrescription
-                                    .medicationSchedules.length,
+                                    .medicationsRespone
+                                    .medicationSchedules
+                                    .length,
                                 itemBuilder:
                                     (BuildContext buildContext, int index) {
                                   return Container(
@@ -415,7 +419,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                       .width -
                                                   150,
                                               child: Text(
-                                                '${_currentPrescription.medicationSchedules[index].medicationName} (${_currentPrescription.medicationSchedules[index].content})',
+                                                '${_currentPrescription.medicationsRespone.medicationSchedules[index].medicationName} (${_currentPrescription.medicationsRespone.medicationSchedules[index].content})',
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     fontWeight:
@@ -431,7 +435,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                 alignment:
                                                     Alignment.bottomRight,
                                                 child: Text(
-                                                    'Đơn vị: ${_currentPrescription.medicationSchedules[index].unit}',
+                                                    'Đơn vị: ${_currentPrescription.medicationsRespone.medicationSchedules[index].unit}',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -476,7 +480,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                   40 -
                                                   60,
                                               child: Text(
-                                                '${_currentPrescription.medicationSchedules[index].useTime}',
+                                                '${_currentPrescription.medicationsRespone.medicationSchedules[index].useTime}',
                                                 textAlign: TextAlign.right,
                                                 maxLines: 5,
                                                 overflow: TextOverflow.ellipsis,
@@ -498,6 +502,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                           padding: EdgeInsets.only(bottom: 5),
                                         ),
                                         (_currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules[index]
                                                     .morning ==
                                                 0)
@@ -536,7 +541,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                               40 -
                                                               60,
                                                       child: Text(
-                                                        '${_currentPrescription.medicationSchedules[index].morning} ${_currentPrescription.medicationSchedules[index].unit}',
+                                                        '${_currentPrescription.medicationsRespone.medicationSchedules[index].morning} ${_currentPrescription.medicationsRespone.medicationSchedules[index].unit}',
                                                         maxLines: 5,
                                                         overflow: TextOverflow
                                                             .ellipsis,
@@ -559,6 +564,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                 ),
                                               ),
                                         (_currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules[index]
                                                     .noon ==
                                                 0)
@@ -597,7 +603,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                               40 -
                                                               60,
                                                       child: Text(
-                                                        '${_currentPrescription.medicationSchedules[index].noon} ${_currentPrescription.medicationSchedules[index].unit}',
+                                                        '${_currentPrescription.medicationsRespone.medicationSchedules[index].noon} ${_currentPrescription.medicationsRespone.medicationSchedules[index].unit}',
                                                         maxLines: 5,
                                                         textAlign:
                                                             TextAlign.right,
@@ -620,6 +626,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                 ),
                                               ),
                                         (_currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules[index]
                                                     .afterNoon ==
                                                 0)
@@ -658,7 +665,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                               40 -
                                                               60,
                                                       child: Text(
-                                                        '${_currentPrescription.medicationSchedules[index].afterNoon} ${_currentPrescription.medicationSchedules[index].unit}',
+                                                        '${_currentPrescription.medicationsRespone.medicationSchedules[index].afterNoon} ${_currentPrescription.medicationsRespone.medicationSchedules[index].unit}',
                                                         maxLines: 5,
                                                         textAlign:
                                                             TextAlign.right,
@@ -681,6 +688,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                 ),
                                               ),
                                         (_currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules[index]
                                                     .night ==
                                                 0)
@@ -719,7 +727,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                               40 -
                                                               60,
                                                       child: Text(
-                                                        '${_currentPrescription.medicationSchedules[index].night} ${_currentPrescription.medicationSchedules[index].unit}',
+                                                        '${_currentPrescription.medicationsRespone.medicationSchedules[index].night} ${_currentPrescription.medicationsRespone.medicationSchedules[index].unit}',
                                                         maxLines: 5,
                                                         textAlign:
                                                             TextAlign.right,
@@ -745,6 +753,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                         //divider
                                         if (index !=
                                             _currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules
                                                     .length -
                                                 1)
@@ -759,6 +768,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                           )),
                                         if (index ==
                                             _currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules
                                                     .length -
                                                 1)
