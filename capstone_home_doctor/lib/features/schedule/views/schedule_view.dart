@@ -7,11 +7,14 @@ import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_b
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
+import 'package:capstone_home_doctor/models/appointment_dto.dart';
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
@@ -22,17 +25,24 @@ class ScheduleView extends StatefulWidget {
   }
 }
 
-class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
+class _ScheduleView extends State<ScheduleView>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   //
   DateValidator _dateValidator = DateValidator();
-  PrescriptionDTO _currentPrescription = PrescriptionDTO();
+  MedicalInstructionDTO _currentPrescription = MedicalInstructionDTO();
   //
-  List<PrescriptionDTO> listPrescription = [];
+  List<MedicalInstructionDTO> listPrescription = [];
   PrescriptionRepository prescriptionRepository =
       PrescriptionRepository(httpClient: http.Client());
   PrescriptionListBloc _prescriptionListBloc;
   //
   int _patientId = 0;
+
+  //use for calendar
+  Map<DateTime, List> _events;
+  List _selectedEvents;
+  AnimationController _animationController;
+  CalendarController _calendarController;
 
   @override
   void initState() {
@@ -40,11 +50,30 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
     super.initState();
     _getPatientId();
     _prescriptionListBloc = BlocProvider.of(context);
+
+    final _selectedDay = DateTime.now();
+
+    _events = {
+      // _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
+      _selectedDay: [AppointmentDTO(date: 'asd', time: 'zxc', place: '123')],
+    };
+
+    _selectedEvents = _events[_selectedDay] ?? [];
+    _calendarController = CalendarController();
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+
+    _animationController.forward();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
+    _animationController.dispose();
+    _calendarController.dispose();
     super.dispose();
   }
 
@@ -64,7 +93,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
               HeaderWidget(
                 title: 'Lịch',
                 isMainView: false,
-                buttonHeaderType: ButtonHeaderType.NONE,
+                buttonHeaderType: ButtonHeaderType.BACK_HOME,
               ),
               Padding(
                 padding: EdgeInsets.only(top: 5, bottom: 0),
@@ -133,8 +162,16 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                 child: TabBarView(
                   children: <Widget>[
                     _getMedicineSchedule(),
-                    Container(
-                      child: Text('2'),
+                    Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        // Switch out 2 lines below to play with TableCalendar's settings
+                        //-----------------------
+                        _buildTableCalendar(),
+                        // _buildTableCalendarWithBuilders(),
+                        const SizedBox(height: 8.0),
+                        Expanded(child: _buildEventList()),
+                      ],
                     ),
                     Container(
                       child: Text('3'),
@@ -146,6 +183,50 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
           ),
         ),
       ),
+    );
+  }
+
+  // Simple TableCalendar configuration (using Styles)
+  Widget _buildTableCalendar() {
+    return TableCalendar(
+      calendarController: _calendarController,
+      events: _events,
+      startingDayOfWeek: StartingDayOfWeek.monday,
+      calendarStyle: CalendarStyle(
+        selectedColor: DefaultTheme.CHIP_BLUE,
+        todayColor: DefaultTheme.BLUE_REFERENCE,
+        markersColor: DefaultTheme.RED_CALENDAR,
+        outsideDaysVisible: false,
+      ),
+      headerStyle: HeaderStyle(
+        formatButtonTextStyle:
+            TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
+        formatButtonDecoration: BoxDecoration(
+          color: Colors.deepOrange[400],
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+      ),
+      onDaySelected: _onDaySelected,
+      onVisibleDaysChanged: _onVisibleDaysChanged,
+    );
+  }
+
+  Widget _buildEventList() {
+    return ListView(
+      children: _selectedEvents
+          .map((event) => Container(
+                decoration: BoxDecoration(
+                  border: Border.all(width: 0.8),
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                child: ListTile(
+                  title: Text(event.date.toString()),
+                  onTap: () => print('${event.date} tapped!'),
+                ),
+              ))
+          .toList(),
     );
   }
 
@@ -173,17 +254,12 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
         listPrescription = state.listPrescription;
 
         if (state.listPrescription != null) {
-          listPrescription
-              .sort((a, b) => b.dateStarted.compareTo(a.dateStarted));
+          listPrescription.sort((a, b) =>
+              b.medicalInstructionId.compareTo(a.medicalInstructionId));
+          listPrescription.sort((a, b) => b.medicationsRespone.dateFinished
+              .compareTo(a.medicationsRespone.dateFinished));
         }
         if (listPrescription.isNotEmpty) {
-          _currentPrescription = PrescriptionDTO(
-              medicalInstructionId: 0,
-              dateFinished: '',
-              dateStarted: '',
-              description: '',
-              diagnose: '',
-              medicationSchedules: []);
           _currentPrescription = listPrescription[0];
         }
         return (state.listPrescription == null ||
@@ -260,7 +336,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                               width: MediaQuery.of(context).size.width -
                                   (40 + 120 + 20 + 30),
                               child: Text(
-                                '${_dateValidator.parseToDateView(_currentPrescription.dateStarted)}',
+                                '${_dateValidator.parseToDateView(_currentPrescription.medicationsRespone.dateStarted)}',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,
                                 style: TextStyle(
@@ -294,7 +370,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                               width: MediaQuery.of(context).size.width -
                                   (40 + 120 + 20 + 30),
                               child: Text(
-                                '${_dateValidator.parseToDateView(_currentPrescription.dateFinished)}',
+                                '${_dateValidator.parseToDateView(_currentPrescription.medicationsRespone.dateFinished)}',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,
                                 style: TextStyle(
@@ -366,12 +442,16 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                             ),
                           ),
                         ),
-                        (_currentPrescription.medicationSchedules.length != 0)
+                        (_currentPrescription.medicationsRespone
+                                    .medicationSchedules.length !=
+                                0)
                             ? ListView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemCount: _currentPrescription
-                                    .medicationSchedules.length,
+                                    .medicationsRespone
+                                    .medicationSchedules
+                                    .length,
                                 itemBuilder:
                                     (BuildContext buildContext, int index) {
                                   return Container(
@@ -419,7 +499,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                       .width -
                                                   150,
                                               child: Text(
-                                                '${_currentPrescription.medicationSchedules[index].medicationName} (${_currentPrescription.medicationSchedules[index].content})',
+                                                '${_currentPrescription.medicationsRespone.medicationSchedules[index].medicationName} (${_currentPrescription.medicationsRespone.medicationSchedules[index].content})',
                                                 style: TextStyle(
                                                     fontSize: 16,
                                                     fontWeight:
@@ -435,7 +515,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                 alignment:
                                                     Alignment.bottomRight,
                                                 child: Text(
-                                                    'Đơn vị: ${_currentPrescription.medicationSchedules[index].unit}',
+                                                    'Đơn vị: ${_currentPrescription.medicationsRespone.medicationSchedules[index].unit}',
                                                     style: TextStyle(
                                                         fontSize: 13,
                                                         fontWeight:
@@ -480,7 +560,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                   40 -
                                                   60,
                                               child: Text(
-                                                '${_currentPrescription.medicationSchedules[index].useTime}',
+                                                '${_currentPrescription.medicationsRespone.medicationSchedules[index].useTime}',
                                                 textAlign: TextAlign.right,
                                                 maxLines: 5,
                                                 overflow: TextOverflow.ellipsis,
@@ -502,6 +582,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                           padding: EdgeInsets.only(bottom: 5),
                                         ),
                                         (_currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules[index]
                                                     .morning ==
                                                 0)
@@ -540,7 +621,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                               40 -
                                                               60,
                                                       child: Text(
-                                                        '${_currentPrescription.medicationSchedules[index].morning} ${_currentPrescription.medicationSchedules[index].unit}',
+                                                        '${_currentPrescription.medicationsRespone.medicationSchedules[index].morning} ${_currentPrescription.medicationsRespone.medicationSchedules[index].unit}',
                                                         maxLines: 5,
                                                         overflow: TextOverflow
                                                             .ellipsis,
@@ -563,6 +644,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                 ),
                                               ),
                                         (_currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules[index]
                                                     .noon ==
                                                 0)
@@ -601,7 +683,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                               40 -
                                                               60,
                                                       child: Text(
-                                                        '${_currentPrescription.medicationSchedules[index].noon} ${_currentPrescription.medicationSchedules[index].unit}',
+                                                        '${_currentPrescription.medicationsRespone.medicationSchedules[index].noon} ${_currentPrescription.medicationsRespone.medicationSchedules[index].unit}',
                                                         maxLines: 5,
                                                         textAlign:
                                                             TextAlign.right,
@@ -624,6 +706,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                 ),
                                               ),
                                         (_currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules[index]
                                                     .afterNoon ==
                                                 0)
@@ -662,7 +745,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                               40 -
                                                               60,
                                                       child: Text(
-                                                        '${_currentPrescription.medicationSchedules[index].afterNoon} ${_currentPrescription.medicationSchedules[index].unit}',
+                                                        '${_currentPrescription.medicationsRespone.medicationSchedules[index].afterNoon} ${_currentPrescription.medicationsRespone.medicationSchedules[index].unit}',
                                                         maxLines: 5,
                                                         textAlign:
                                                             TextAlign.right,
@@ -685,6 +768,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                 ),
                                               ),
                                         (_currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules[index]
                                                     .night ==
                                                 0)
@@ -723,7 +807,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                                               40 -
                                                               60,
                                                       child: Text(
-                                                        '${_currentPrescription.medicationSchedules[index].night} ${_currentPrescription.medicationSchedules[index].unit}',
+                                                        '${_currentPrescription.medicationsRespone.medicationSchedules[index].night} ${_currentPrescription.medicationsRespone.medicationSchedules[index].unit}',
                                                         maxLines: 5,
                                                         textAlign:
                                                             TextAlign.right,
@@ -749,6 +833,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                         //divider
                                         if (index !=
                                             _currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules
                                                     .length -
                                                 1)
@@ -763,6 +848,7 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
                                           )),
                                         if (index ==
                                             _currentPrescription
+                                                    .medicationsRespone
                                                     .medicationSchedules
                                                     .length -
                                                 1)
@@ -804,6 +890,17 @@ class _ScheduleView extends State<ScheduleView> with WidgetsBindingObserver {
     });
     _prescriptionListBloc
         .add(PrescriptionListEventsetPatientId(patientId: _patientId));
+  }
+
+  void _onDaySelected(DateTime day, List events, List holidays) {
+    setState(() {
+      _selectedEvents = events;
+    });
+  }
+
+  void _onVisibleDaysChanged(
+      DateTime first, DateTime last, CalendarFormat format) {
+    print('CALLBACK: _onVisibleDaysChanged');
   }
 }
 

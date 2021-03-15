@@ -75,6 +75,7 @@
 //     return '$medicalIntructionId - $dianose - $medicalInstructionTypeId - $dateStarted';
 //   }
 // }
+import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MedicalInstructionByTypeDTO {
@@ -106,6 +107,7 @@ class MedicalInstructionByTypeDTO {
 }
 
 class MedicalInstructionDTO {
+  int medicalInstructionId;
   String medicalInstructionType;
   String image;
   String description;
@@ -113,6 +115,7 @@ class MedicalInstructionDTO {
   String placeHealthRecord;
   String dateStarted;
   String dateFinished;
+  PrescriptionDTO medicationsRespone;
   //for multiple part post api
   int medicalInstructionTypeId;
   int healthRecordId;
@@ -121,6 +124,7 @@ class MedicalInstructionDTO {
 
   MedicalInstructionDTO(
       {this.medicalInstructionType,
+      this.medicalInstructionId,
       this.image,
       this.description,
       this.diagnose,
@@ -133,6 +137,7 @@ class MedicalInstructionDTO {
       this.imageFile});
 
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
+    medicalInstructionId = json['medicalInstructionId'];
     medicalInstructionType = json['medicalInstructionType'];
     image = json['image'];
     description = json['description'];
@@ -140,6 +145,9 @@ class MedicalInstructionDTO {
     placeHealthRecord = json['placeHealthRecord'];
     dateStarted = json['dateStarted'];
     dateFinished = json['dateFinished'];
+    medicationsRespone = json['medicationsRespone'] != null
+        ? new PrescriptionDTO.fromJson(json['medicationsRespone'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {

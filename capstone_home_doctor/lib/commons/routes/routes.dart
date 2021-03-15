@@ -26,4 +26,5 @@ class RoutesHDr {
   static const String DOCTOR_INFORMATION = '/DoctorInformation';
   static const String CONTRACT_SHARE_VIEW = '/ContractShareView';
   static const String CONTRACT_REASON_VIEW = '/ReasonContractView';
+  static const String MEDICAL_HISTORY_DETAIL = '/MedicalHistoryDetail';
 }

@@ -274,6 +274,8 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
                     onChanged: widget.onChange,
                     keyboardType: TextInputType.multiline,
                     maxLines: 10,
+                    controller: _controller,
+                    textInputAction: _keyboardAction,
                     decoration: InputDecoration(
                       hintStyle: TextStyle(fontSize: 15),
                       hintText: _placeHolder,

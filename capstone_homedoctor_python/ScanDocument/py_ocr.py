@@ -12,9 +12,10 @@ def converseOCR(gray,filename):
 	# Load ảnh và apply nhận dạng bằng Tesseract OCR
 	text = pytesseract.image_to_string(Image.open(filename), lang='vie')
 	print(text)
+	return jsonify({"data": text})
 
-	arrData = list(filter(str.strip, text.split('\n')))
-	return getInfo(arrData)
+	# arrData = list(filter(str.strip, text.split('\n')))
+	# return getInfo(arrData)
 
 def getInfo(arrData):
 	strSymptom=""
