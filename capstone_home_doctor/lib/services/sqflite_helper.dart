@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:io' as io;
+import 'package:uuid/uuid.dart';
 
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
+import 'package:capstone_home_doctor/models/prescription_dto.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,6 +16,9 @@ class SQFLiteHelper {
   static const String HEALTH_RECORD_TABLE = 'HealthRecordTbl';
   static const String MEDICAL_INSTRUCTION_TABLE = 'MedicalInstructionTbl';
   static const String MEDICAL_INSTRUCTION_TYPE_TABLE = 'MedicalInsTypeTbl';
+
+  static const String MEDICAL_RESPONSE_TABLE = 'MedicalResponseTbl';
+  static const String MEDICAL_SCHEDULE_TABLE = 'MedicalScheduleTbl';
 
   Future<Database> get database async {
     if (null != _database) {
@@ -25,7 +31,7 @@ class SQFLiteHelper {
   initDatabase() async {
     io.Directory documentDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentDirectory.path, DATABASE_NAME);
-    var database = await openDatabase(path, version: 1, onCreate: _onCreate);
+    var database = await openDatabase(path, version: 2, onCreate: _onCreate);
     return database;
   }
 
@@ -34,11 +40,124 @@ class SQFLiteHelper {
         "CREATE TABLE ${HEALTH_RECORD_TABLE} (health_record_id PRIMARYKEY TEXT, disease TEXT, place TEXT, doctor_name TEXT, description TEXT, personal_health_record_id TEXT, date_create TEXT, contract_id TEXT)");
     await db.execute(
         "CREATE TABLE ${MEDICAL_INSTRUCTION_TABLE} (medical_instruction_id PRIMARYKEY TEXT, description TEXT, image TEXT, dianose TEXT, date_start TEXT, date_finish TEXT, medical_instruction_type_id TEXT, health_record_id TEXT)");
+    await db.execute(
+        'CREATE TABLE ${MEDICAL_RESPONSE_TABLE}(medical_response_id PRIMARYKEY TEXT, date_start TEXT, date_finish TEXT)');
+    await db.execute(
+        """CREATE TABLE ${MEDICAL_SCHEDULE_TABLE} (medical_schedule_id PRIMARYKEY TEXT, 
+        medication_name TEXT, 
+        content TEXT, 
+        useTime TEXT, 
+        unit TEXT, 
+        morning INTEGER, 
+        noon INTEGER, 
+        afterNoon INTEGER, 
+        night INTEGER,
+        medical_response_id TEXT,
+        FOREIGN KEY (medical_response_id) REFERENCES $MEDICAL_RESPONSE_TABLE (medical_response_id) ON DELETE NO ACTION ON UPDATE NO ACTION
+        )""");
   }
 
   Future close() async {
     var dbClient = await database;
     dbClient.close();
+  }
+
+  Future<bool> deleteDb() async {
+    bool databaseDeleted = false;
+
+    try {
+      io.Directory documentDirectory = await getApplicationDocumentsDirectory();
+      String path = join(documentDirectory.path, DATABASE_NAME);
+      await deleteDatabase(path).whenComplete(() {
+        databaseDeleted = true;
+      }).catchError((onError) {
+        databaseDeleted = false;
+      });
+    } on DatabaseException catch (error) {
+      print(error);
+    } catch (error) {
+      print(error);
+    }
+
+    return databaseDeleted;
+  }
+
+  //Medical response
+  Future<String> insertMedicalResponse(PrescriptionDTO medicalResponse) async {
+    String uuid = Uuid().v1();
+    medicalResponse.medicalResponseID = uuid;
+    var dbClient = await database;
+    await dbClient.insert(MEDICAL_RESPONSE_TABLE, medicalResponse.toMap());
+    return uuid;
+  }
+
+  Future<PrescriptionDTO> getMedicationsRespone() async {
+    var dbClient = await database;
+    PrescriptionDTO medicationsRespone = PrescriptionDTO();
+    List<Map> maps = await dbClient.query(MEDICAL_RESPONSE_TABLE,
+        columns: ['medical_response_id', 'date_start', 'date_finish']);
+    if (maps.length > 0)
+      medicationsRespone = PrescriptionDTO.fromMap(maps.first);
+    return medicationsRespone;
+  }
+
+  Future<void> deleteMedicalResponse() async {
+    var dbClient = await database;
+    await dbClient.delete(MEDICAL_RESPONSE_TABLE);
+  }
+
+  //Medical schedule
+  Future<bool> insertMedicalSchedule(
+      MedicationSchedules medicalScheduleDTO) async {
+    var dbClient = await database;
+    String uuid = Uuid().v1();
+    medicalScheduleDTO.medicalScheduleId = uuid;
+    await dbClient.insert(MEDICAL_SCHEDULE_TABLE, medicalScheduleDTO.toMap());
+  }
+
+  Future<List<MedicationSchedules>> getAllBy(String session) async {
+    var dbClient = await database;
+    List<Map> maps = await dbClient.query(MEDICAL_SCHEDULE_TABLE,
+        columns: [
+          'medical_schedule_id',
+          'medication_name',
+          'content',
+          'useTime',
+          'unit',
+          'morning',
+          'noon',
+          'afterNoon',
+          'night',
+          'medical_response_id'
+        ],
+        where: '$session > 0');
+    List<MedicationSchedules> responseData = [];
+    if (maps.length > 0) {
+      for (var medicationSchedule in maps) {
+        responseData.add(MedicationSchedules.fromMap(medicationSchedule));
+      }
+    }
+    return responseData;
+  }
+
+  Future<List<MedicationSchedules>> getAllByMedicalResponseID(
+      String medicalResponseID) async {
+    var dbClient = await database;
+    List<Map> maps = await dbClient.rawQuery(
+        'SELECT * FROM $MEDICAL_SCHEDULE_TABLE WHERE medical_response_id = ?',
+        [medicalResponseID]);
+    List<MedicationSchedules> responseData = [];
+    if (maps.length > 0) {
+      for (var medicationSchedule in maps) {
+        responseData.add(MedicationSchedules.fromMap(medicationSchedule));
+      }
+    }
+    return responseData;
+  }
+
+  Future<void> deleteAllMedicalSchedule() async {
+    var dbClient = await database;
+    await dbClient.delete(MEDICAL_SCHEDULE_TABLE);
   }
 
   // //

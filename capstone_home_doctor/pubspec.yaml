@@ -65,6 +65,8 @@ dev_dependencies:
 
   agora_rtc_engine: ^3.1.6
   permission_handler: ^5.0.1+1
+  autocomplete_textfield: ^1.7.3
+  table_calendar: ^2.3.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

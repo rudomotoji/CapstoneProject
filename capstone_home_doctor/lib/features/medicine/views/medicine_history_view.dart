@@ -1,4 +1,5 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
@@ -7,6 +8,7 @@ import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_b
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:http/http.dart' as http;
@@ -15,7 +17,7 @@ import 'package:flutter/material.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final DateValidator _dateValidator = DateValidator();
-List<PrescriptionDTO> listPrescription = [];
+List<MedicalInstructionDTO> listPrescription = [];
 PrescriptionRepository prescriptionRepository =
     PrescriptionRepository(httpClient: http.Client());
 PrescriptionListBloc _prescriptionListBloc;
@@ -82,8 +84,11 @@ class _MedicineHistory extends State<MedicineHistory>
                 }
                 if (state is PrescriptionListStateSuccess) {
                   listPrescription = state.listPrescription;
-                  listPrescription
-                      .sort((a, b) => b.dateStarted.compareTo(a.dateStarted));
+                  listPrescription.sort((a, b) =>
+                      b.medicalInstructionId.compareTo(a.medicalInstructionId));
+                  listPrescription.sort((a, b) => b
+                      .medicationsRespone.dateFinished
+                      .compareTo(a.medicationsRespone.dateFinished));
 
                   return (state.listPrescription.length == 0)
                       ? Container(
@@ -204,7 +209,7 @@ class _MedicineHistory extends State<MedicineHistory>
                                                     Container(
                                                       height: 15,
                                                       child: Text(
-                                                        'Ngày kê đơn: ${_dateValidator.parseToDateView(listPrescription[index].dateStarted)}',
+                                                        'Ngày kê đơn: ${_dateValidator.parseToDateView(listPrescription[index].medicationsRespone.dateStarted)}',
                                                         style: TextStyle(
                                                             color: DefaultTheme
                                                                 .GREY_TEXT,
@@ -217,7 +222,7 @@ class _MedicineHistory extends State<MedicineHistory>
                                                     Container(
                                                       height: 15,
                                                       child: Text(
-                                                        'Đến ngày: ${_dateValidator.parseToDateView(listPrescription[index].dateFinished)}',
+                                                        'Đến ngày: ${_dateValidator.parseToDateView(listPrescription[index].medicationsRespone.dateFinished)}',
                                                         style: TextStyle(
                                                             color: DefaultTheme
                                                                 .GREY_TEXT,
@@ -241,7 +246,16 @@ class _MedicineHistory extends State<MedicineHistory>
                                                           .BLACK_BUTTON
                                                           .withOpacity(0.8),
                                                       height: 40,
-                                                      onTap: () {},
+                                                      onTap: () {
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            RoutesHDr
+                                                                .MEDICAL_HISTORY_DETAIL,
+                                                            arguments:
+                                                                listPrescription[
+                                                                        index]
+                                                                    .medicalInstructionId);
+                                                      },
                                                     ),
                                                   ],
                                                 ),
