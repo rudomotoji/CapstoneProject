@@ -44,12 +44,144 @@ class _ReasonContractView extends State<ReasonContractView>
                 children: <Widget>[
                   //CONTENT
                   Container(
+                    margin: EdgeInsets.only(left: 20, right: 20),
                     decoration: BoxDecoration(
                       color: DefaultTheme.GREY_VIEW,
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         //
+                        Container(
+                          padding: EdgeInsets.only(
+                              left: 20, right: 20, top: 30, bottom: 10),
+                          child: Text(
+                            'Quyền lợi',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                          child: Text(
+                            '1. Hệ thống hỗ trợ lưu trữ hồ sơ bệnh án của bệnh nhân để phục vụ cho việc khám chữa bệnh trong tương lai.',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                          child: Text(
+                            '2. Hệ thống đảm bảo theo dõi các chỉ số sức khỏe, sinh hiệu của bệnh nhân để bác sĩ đưa ra các y lệnh cần thiết trong quá trình khám chữa bệnh.',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                          child: Text(
+                            '3. Hệ thống đưa ra các cảnh báo nguy hiểm khi có các chỉ số sinh hiệu bất thường đến bệnh nhân và bác sĩ.',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                          child: Text(
+                            '4. Hệ thống đưa ra các nhắc nhở về lịch uống thuốc, lịch đo sinh hiệu hằng ngày.',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                          child: Text(
+                            '5. Hệ thống hỗ trợ việc giao tiếp với bác sĩ thông qua hệ thống nhắn tin và gọi điện trực tuyến.',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                          child: Text(
+                            '6. Bác sĩ đảm bảo một cuộc hẹn thăm khám với bệnh nhân vào mỗi tuần.',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                          child: Text(
+                            '7. Bác sĩ đảm bảo kiểm tra và cập nhật đơn thuốc vào mỗi tuần.',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(
+                              left: 20, right: 20, top: 30, bottom: 10),
+                          child: Text(
+                            'Nghĩa vụ',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                          child: Text(
+                            '1. Bệnh nhân yêu cầu phải kết nối với thiết bị đồng hồ thông minh có tính năng theo dõi sinh hiệu để được hưởng các quyền lợi ở mục 2 và mục 3.',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                          child: Text(
+                            '2. Bệnh nhân đảm bảo việc chia sẽ các y lệnh cần thiết mà bác sĩ yêu cầu trong suốt quá trình.',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                          child: Text(
+                            '3. Bệnh nhân đảm bảo việc thực hiện đủ và đúng các y lệnh mà bác sĩ đưa ra trong suốt quá trình.',
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

@@ -35,6 +35,13 @@ class ContractDraftView extends StatefulWidget {
   }
 }
 
+final Shader _normalHealthColors = LinearGradient(
+  colors: <Color>[
+    DefaultTheme.GRADIENT_1,
+    DefaultTheme.GRADIENT_2,
+  ],
+).createShader(new Rect.fromLTWH(10.0, 1.0, 100.0, 90.0));
+
 class _ContractDraftView extends State<ContractDraftView>
     with WidgetsBindingObserver {
   //
@@ -44,6 +51,7 @@ class _ContractDraftView extends State<ContractDraftView>
   RequestContractBloc _requestContractBloc;
   DoctorDTO doctorDTO = DoctorDTO();
   bool _isAccept = false;
+  bool _isAccept2 = false;
 
   @override
   void initState() {
@@ -61,6 +69,12 @@ class _ContractDraftView extends State<ContractDraftView>
   _updateAcceptState() {
     setState(() {
       _isAccept = !_isAccept;
+    });
+  }
+
+  _updateAcceptState2() {
+    setState(() {
+      _isAccept2 = !_isAccept2;
     });
   }
 
@@ -288,9 +302,9 @@ class _ContractDraftView extends State<ContractDraftView>
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
+                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       InkWell(
@@ -323,7 +337,47 @@ class _ContractDraftView extends State<ContractDraftView>
                     ],
                   ),
                 ),
-
+                Container(
+                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () => _updateAcceptState2(),
+                        borderRadius: BorderRadius.circular(40),
+                        child: _isAccept2
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Image.asset('assets/images/ic-dot.png'),
+                              )
+                            : SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Image.asset(
+                                    'assets/images/ic-dot-unselect.png'),
+                              ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width - 70,
+                        child: Text(
+                          'Tôi xác nhận tất cả các thông tin chia sẻ là sự thật và hoàn toàn chịu trách nhiệm trước pháp luật.',
+                          style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 //
               ]),
             ),
@@ -390,7 +444,7 @@ class _ContractDraftView extends State<ContractDraftView>
                     ),
                   ),
                   //
-                  (_isAccept == false)
+                  (_isAccept == false || _isAccept2 == false)
                       ? Container(
                           margin: EdgeInsets.only(left: 20, right: 20, top: 10),
                           height: 50,
@@ -1045,21 +1099,313 @@ class _ContractDraftView extends State<ContractDraftView>
           });
       //
       if (dto != null) {
-        print('doctor id ${dto.doctorId}');
-        print('doctor id ${dto.patientId}');
-        print('doctor id ${dto.dateStarted}');
-        print('doctor id ${dto.diseaseIds}');
-        print('doctor id ${dto.medicalInstructionIds}');
-        print('doctor id ${dto.note}');
+        //
+
         _requestContractBloc.add(RequestContractEventSend(dto: dto));
         Future.delayed(const Duration(seconds: 3), () {
           //
           _contractHelper.isSent().then((value) async {
             //
             if (value == true) {
+              // Navigator.of(context).pop();
+              // await Navigator.pushNamedAndRemoveUntil(context,
+              //     RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
               Navigator.of(context).pop();
-              await Navigator.pushNamedAndRemoveUntil(context,
-                  RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+              Future.delayed(const Duration(seconds: 1), () {
+                return showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                            child: Container(
+                              padding:
+                                  EdgeInsets.only(left: 10, top: 10, right: 10),
+                              width: MediaQuery.of(context).size.width - 40,
+                              height: MediaQuery.of(context).size.height * 0.8,
+                              decoration: BoxDecoration(
+                                color: DefaultTheme.WHITE.withOpacity(0.8),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                      bottom: 10,
+                                      top: 10,
+                                      left: 20,
+                                    ),
+                                    child: Text(
+                                      'Yêu cầu hợp đồng',
+                                      style: TextStyle(
+                                        decoration: TextDecoration.none,
+                                        color: DefaultTheme.BLACK,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 25,
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                      ),
+                                      Container(
+                                        width: 10,
+                                        height: 10,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment.topRight,
+                                              end: Alignment.bottomLeft,
+                                              colors: [
+                                                DefaultTheme.GRADIENT_1,
+                                                DefaultTheme.GRADIENT_2
+                                              ]),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 10, right: 20),
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Thành công',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              decoration: TextDecoration.none,
+                                              foreground: Paint()
+                                                ..shader = _normalHealthColors,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 20,
+                                        right: 20,
+                                        top: 10,
+                                        bottom: 20),
+                                    child: Divider(
+                                      height: 2,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        left: 20, right: 20, bottom: 5),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'THÔNG TIN BÁC SĨ',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.GREY_TEXT,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Họ và tên',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              decoration: TextDecoration.none,
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            '${doctorDTO.fullName}',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              decoration: TextDecoration.none,
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Số điện thoại',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              decoration: TextDecoration.none,
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            '${doctorDTO.phone}',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              decoration: TextDecoration.none,
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 20,
+                                        right: 20,
+                                        top: 10,
+                                        bottom: 20),
+                                    child: Divider(
+                                      height: 2,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        left: 20, right: 20, bottom: 10),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'THÔNG TIN CHI TIẾT',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.GREY_TEXT,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Ngày tạo',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              decoration: TextDecoration.none,
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            '${_dateValidator.parseToDateView(_currentDate)}',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              decoration: TextDecoration.none,
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        left: 20, right: 20, top: 30),
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Yêu cầu của bạn đã được gửi đến bác sĩ, giá trị của hợp đồng sẽ được bác sĩ đưa ra và sẽ được thông báo đến bạn trong thời gian sớm nhất (chậm nhất là 3 ngày kể từ ngày gửi yêu cầu).',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.BLACK,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 6,
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Divider(
+                                    height: 1,
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: ButtonHDr(
+                                      height: 40,
+                                      style: BtnStyle.BUTTON_TRANSPARENT,
+                                      label: 'XÁC NHẬN',
+                                      labelColor: DefaultTheme.BLUE_TEXT,
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    });
+              });
             } else {
               String msg = '';
               _contractHelper.getMsgSendContract().then((value) async {
