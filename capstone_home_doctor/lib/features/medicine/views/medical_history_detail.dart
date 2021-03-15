@@ -3,11 +3,10 @@ import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_get_by_id_event.dart';
+import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_list_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_get_by_id_state.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
-import 'package:capstone_home_doctor/models/prescription_dto.dart';
-import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -44,6 +43,7 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
   @override
   Widget build(BuildContext context) {
     medicalInstructionId = ModalRoute.of(context).settings.arguments;
+    _pullRefresh();
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -61,42 +61,35 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
                 child: ListView(
                   padding: EdgeInsets.only(left: 20, right: 20),
                   children: [
-                    BlocProvider(
-                      create: (context) => MedicalInstructionDetailBloc(
-                          medicalInstructionRepository:
-                              medicalInstructionRepository)
-                        ..add(
-                            MedInsDetailEventGetById(id: medicalInstructionId)),
-                      child: BlocBuilder<MedicalInstructionDetailBloc,
-                          MedInsDetailState>(
-                        builder: (context, state) {
-                          if (state is MedInsDetailStateLoading) {
-                            return Container(
-                              width: 200,
-                              height: 200,
-                              child: SizedBox(
-                                width: 100,
-                                height: 100,
-                                child: Image.asset('assets/images/loading.gif'),
-                              ),
-                            );
-                          }
-                          if (state is MedInsDetailStateFailure) {
-                            return Container(
-                              child: Text(
-                                  'Không thể lấy được thông tin đơn thuốc!'),
-                            );
-                          }
-                          if (state is MedInsDetailStateSuccess) {
-                            _currentPrescription = state.dto;
-                            return (_currentPrescription != null)
-                                ? _getMedicineSchedule()
-                                : Container();
-                          }
-                          return Container();
-                        },
-                      ),
-                    )
+                    BlocBuilder<MedicalInstructionDetailBloc,
+                        MedInsDetailState>(
+                      builder: (context, state) {
+                        if (state is MedInsDetailStateLoading) {
+                          return Container(
+                            width: 200,
+                            height: 200,
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/images/loading.gif'),
+                            ),
+                          );
+                        }
+                        if (state is MedInsDetailStateFailure) {
+                          return Container(
+                            child:
+                                Text('Không thể lấy được thông tin đơn thuốc!'),
+                          );
+                        }
+                        if (state is MedInsDetailStateSuccess) {
+                          _currentPrescription = state.dto;
+                          return (_currentPrescription != null)
+                              ? _getMedicineSchedule()
+                              : Container();
+                        }
+                        return Container();
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -583,10 +576,3 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
     );
   }
 }
-
-final Shader _normalHealthColors = LinearGradient(
-  colors: <Color>[
-    DefaultTheme.GRADIENT_1,
-    DefaultTheme.GRADIENT_2,
-  ],
-).createShader(new Rect.fromLTWH(0.0, 0.0, 200.0, 90.0));
