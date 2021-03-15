@@ -17,10 +17,7 @@ class DiseaseRepository extends BaseApiClient {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body) as List;
         List<DiseaseDTO> list = responseData.map((dto) {
-          return DiseaseDTO(
-              diseaseId: dto['diseaseId'],
-              name: dto['name'],
-              status: dto['status']);
+          return dto.fromJson();
         }).toList();
         return list;
       } else {

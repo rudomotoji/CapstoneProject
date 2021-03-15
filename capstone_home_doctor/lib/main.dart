@@ -147,28 +147,36 @@ void checkNotifiMedical() async {
   if (hour == MORNING && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('morning').then((value) {
       for (var schedule in value) {
-        body += schedule.medicationName + ', ';
+        if (!body.contains(schedule.medicationName)) {
+          body += schedule.medicationName + ', ';
+        }
       }
     });
   }
   if (hour == NOON && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('noon').then((value) {
       for (var schedule in value) {
-        body += schedule.medicationName + ', ';
+        if (!body.contains(schedule.medicationName)) {
+          body += schedule.medicationName + ', ';
+        }
       }
     });
   }
   if (hour == AFTERNOON && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('afterNoon').then((value) {
       for (var schedule in value) {
-        body += schedule.medicationName + ', ';
+        if (!body.contains(schedule.medicationName)) {
+          body += schedule.medicationName + ', ';
+        }
       }
     });
   }
   if (hour == NIGHT && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('night').then((value) {
       for (var schedule in value) {
-        body += schedule.medicationName + ', ';
+        if (!body.contains(schedule.medicationName)) {
+          body += schedule.medicationName + ', ';
+        }
       }
     });
   }

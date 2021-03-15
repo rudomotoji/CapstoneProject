@@ -207,8 +207,7 @@ class _HeaderWidget extends State<HeaderWidget> {
     //         context, RoutesHDr.LOG_IN, (Route<dynamic> route) => false);
 
     // });
-    await _sqfLiteHelper.deleteAllMedicalSchedule();
-    await _sqfLiteHelper.deleteMedicalResponse();
+    await _sqfLiteHelper.cleanDatabase();
 
     _authenticateHelper.updateAuth(false, null, null);
     Navigator.pushNamedAndRemoveUntil(
