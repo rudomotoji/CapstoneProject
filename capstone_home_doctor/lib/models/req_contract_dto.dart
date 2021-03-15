@@ -1,33 +1,27 @@
-import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:flutter/material.dart';
 
 class RequestContractDTO {
   int doctorId;
   int patientId;
   String dateStarted;
-  int licenseId;
-  List<Diseases> diseases;
+  List<String> diseaseIds;
+  List<int> medicalInstructionIds;
   String note;
 
   RequestContractDTO(
       {this.doctorId,
       this.patientId,
       this.dateStarted,
-      this.licenseId,
-      this.diseases,
+      this.diseaseIds,
+      this.medicalInstructionIds,
       this.note});
 
   RequestContractDTO.fromJson(Map<String, dynamic> json) {
     doctorId = json['doctorId'];
     patientId = json['patientId'];
     dateStarted = json['dateStarted'];
-    licenseId = json['licenseId'];
-    if (json['diseases'] != null) {
-      diseases = new List<Diseases>();
-      json['diseases'].forEach((v) {
-        diseases.add(new Diseases.fromJson(v));
-      });
-    }
+    diseaseIds = json['diseaseIds'].cast<String>();
+    medicalInstructionIds = json['medicalInstructionIds'].cast<int>();
     note = json['note'];
   }
 
@@ -36,37 +30,10 @@ class RequestContractDTO {
     data['doctorId'] = this.doctorId;
     data['patientId'] = this.patientId;
     data['dateStarted'] = this.dateStarted;
-    data['licenseId'] = this.licenseId;
-    if (this.diseases != null) {
-      data['diseases'] = this.diseases.map((v) => v.toJson()).toList();
-    }
+    data['diseaseIds'] = this.diseaseIds;
+    data['medicalInstructionIds'] = this.medicalInstructionIds;
     data['note'] = this.note;
     return data;
-  }
-}
-
-class Diseases {
-  String diseaseId;
-  List<int> medicalInstructionIds;
-
-  Diseases({this.diseaseId, this.medicalInstructionIds});
-
-  Diseases.fromJson(Map<String, dynamic> json) {
-    diseaseId = json['diseaseId'];
-    medicalInstructionIds = json['medicalInstructionIds'].cast<int>();
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['diseaseId'] = this.diseaseId;
-    data['medicalInstructionIds'] = this.medicalInstructionIds;
-    return data;
-  }
-
-  @override
-  String toString() {
-    // TODO: implement toString
-    return 'diseaseId: $diseaseId \nmedicalInstructionIds: ${medicalInstructionIds}\n';
   }
 }
 
@@ -75,24 +42,24 @@ class RequestContractDTOProvider extends ChangeNotifier {
     patientId: 0,
     doctorId: 0,
     dateStarted: '',
-    licenseId: 0,
-    diseases: [],
+    diseaseIds: [],
+    medicalInstructionIds: [],
     note: '',
   );
 
   setProvider({
-    int doctorId,
     int patientId,
+    int doctorId,
     String dateStarted,
-    int licenseId,
-    List<Diseases> diseases,
+    List<String> diseaseIds,
+    List<int> medicalInstructionIds,
     String note,
   }) async {
     this.dto.doctorId = doctorId;
     this.dto.patientId = patientId;
     this.dto.dateStarted = dateStarted;
-    this.dto.licenseId = licenseId;
-    this.dto.diseases = diseases;
+    this.dto.diseaseIds = diseaseIds;
+    this.dto.medicalInstructionIds = medicalInstructionIds;
     this.dto.note = note;
   }
 

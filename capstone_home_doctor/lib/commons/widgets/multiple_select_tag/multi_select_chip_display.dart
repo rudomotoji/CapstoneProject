@@ -28,7 +28,7 @@ class MultiSelectChipDisplay<V> extends StatelessWidget {
   final Color Function(V) colorator;
 
   /// An icon to display prior to the chip's label.
-  final Icon icon;
+  final Widget icon;
 
   /// Set a ShapeBorder. Typically a RoundedRectangularBorder.
   final ShapeBorder shape;
@@ -90,7 +90,7 @@ class MultiSelectChipDisplay<V> extends StatelessWidget {
     return Container(
       decoration: decoration,
       alignment: alignment ?? Alignment.centerLeft,
-      padding: EdgeInsets.symmetric(horizontal: scroll ? 0 : 10),
+      padding: EdgeInsets.symmetric(horizontal: scroll ? 0 : 0),
       child: scroll
           ? Container(
               width: MediaQuery.of(context).size.width,
@@ -132,17 +132,10 @@ class MultiSelectChipDisplay<V> extends StatelessWidget {
       padding: const EdgeInsets.all(2.0),
       child: ChoiceChip(
         shape: shape,
-        avatar: icon != null
-            ? Icon(
-                icon.icon,
-                color: colorator != null && colorator(item.value) != null
-                    ? colorator(item.value).withOpacity(1)
-                    : icon.color ?? Theme.of(context).primaryColor,
-              )
-            : null,
+        avatar: icon != null ? icon : null,
         label: Container(
           width: chipWidth,
-          padding: EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
+          padding: EdgeInsets.only(bottom: 5, top: 5),
           // alignment: Alignment.center,
           child: Text(
             item.label,
@@ -160,11 +153,12 @@ class MultiSelectChipDisplay<V> extends StatelessWidget {
                           ? chipColor.withOpacity(1)
                           : null,
               fontSize: textStyle != null ? textStyle.fontSize : null,
+              // fontWeight: FontWeight.w600,
             ),
           ),
         ),
         selected: items.contains(item),
-        selectedColor: DefaultTheme.BLUE_REFERENCE,
+        selectedColor: DefaultTheme.BLUE_REFERENCE.withOpacity(0.5),
         onSelected: (_) {
           if (onTap != null) onTap(item.value);
         },

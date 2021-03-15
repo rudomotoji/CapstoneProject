@@ -342,7 +342,9 @@ class __MultiSelectBottomSheetFieldViewState<V>
                   : null),
           alignment: widget.chipDisplay.alignment,
           // textStyle: TextStyle(color: Colors.white),
-          textStyle: TextStyle(color: DefaultTheme.WHITE),
+          textStyle: TextStyle(
+            color: DefaultTheme.BLACK,
+          ),
           icon: widget.chipDisplay.icon,
           shape: widget.chipDisplay.shape,
           scroll: widget.chipDisplay.scroll,
@@ -366,7 +368,7 @@ class __MultiSelectBottomSheetFieldViewState<V>
         barrierColor: widget.barrierColor,
         shape: widget.shape ??
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(33.33)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
             ),
         isScrollControlled: true,
         context: context,

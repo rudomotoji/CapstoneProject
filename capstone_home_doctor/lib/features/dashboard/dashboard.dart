@@ -82,6 +82,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       _prescriptionListBloc
           .add(PrescriptionListEventsetPatientId(patientId: _patientId));
     }
+    await _authenticateHelper.getAccountId().then((value) {
+      print('ACCOUNT ID ${value}');
+    });
   }
 
   @override
@@ -1102,7 +1105,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                       label: 'Tiếp theo',
                       onTap: () {
                         Navigator.of(context).pop();
-                        Navigator.pushNamed(context, RoutesHDr.CONFIRM_CONTRACT,
+                        Navigator.pushNamed(
+                            context, RoutesHDr.DOCTOR_INFORMATION,
                             arguments: _idDoctor);
                       },
                     ),
@@ -1178,7 +1182,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                               if (codeScanner != null) {
                                 Navigator.of(context).pop();
                                 Navigator.pushNamed(
-                                    context, RoutesHDr.CONFIRM_CONTRACT,
+                                    context, RoutesHDr.DOCTOR_INFORMATION,
                                     arguments: codeScanner);
                               }
                             },

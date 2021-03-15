@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
+import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
+import 'package:capstone_home_doctor/models/medical_share_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -80,6 +82,28 @@ class HealthRecordRepository extends BaseApiClient {
       return false;
     } catch (e) {
       print('ERROR AT CREATE HEALTH RECORD API: $e');
+    }
+  }
+
+  //get medicalShare to Create contract
+  Future<List<MedicalShareDTO>> getListMedicalShare(
+      List<String> diseaseIds, int patientId) async {
+    final String url =
+        '/MedicalInstructions/GetMedicalInstructionToCreateContract?patientId=${patientId}';
+    try {
+      //
+      final request = await postApi(url, null, diseaseIds);
+      if (request.statusCode == 200) {
+        final responseData = json.decode(request.body) as List;
+        List<MedicalShareDTO> list = responseData.map((dto) {
+          return MedicalShareDTO.fromJson(dto);
+        }).toList();
+        return list;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('ERROR AT getListMedicalShare: ${e}');
     }
   }
 //

@@ -317,9 +317,9 @@ class _MultiSelectBottomSheetState<V> extends State<MultiSelectBottomSheet<V>> {
               ),
               Padding(
                 padding:
-                    EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 50),
+                    EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 20),
                 child: ButtonHDr(
-                  style: BtnStyle.BUTTON_GREY,
+                  style: BtnStyle.BUTTON_BLACK,
                   label: 'Xong',
                   onTap: () {
                     widget.onConfirmTap(

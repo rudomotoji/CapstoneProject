@@ -29,15 +29,15 @@ final Shader _normalHealthColors = LinearGradient(
   ],
 ).createShader(new Rect.fromLTWH(10.0, 1.0, 100.0, 90.0));
 
-class ContractStatusDetail extends StatefulWidget {
+class DetailContractView extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _ContractStatusDetail();
+    return _DetailContractView();
   }
 }
 
-class _ContractStatusDetail extends State<ContractStatusDetail>
+class _DetailContractView extends State<DetailContractView>
     with WidgetsBindingObserver {
   int _patientId = 0;
   int _doctorId = 0;
@@ -51,27 +51,26 @@ class _ContractStatusDetail extends State<ContractStatusDetail>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    _getContractId();
+    // _getContractId();
     _contractIdNowBloc = BlocProvider.of(context);
     _contractFullBloc = BlocProvider.of(context);
     _contractUpdateBloc = BlocProvider.of(context);
   }
 
-  _getContractId() async {
-    await _authenticateHelper.getPatientId().then((value) {
-      setState(() {
-        _patientId = value;
-      });
-    });
-    await _contractHelper.getDoctorId().then((value) {
-      _doctorId = value;
-    });
-
-    if (_patientId != 0 && _doctorId != 0) {
-      _contractIdNowBloc
-          .add(ContractIdNowEventSetPIdAndDId(pId: _patientId, dId: _doctorId));
-    }
-  }
+  // _getContractId() async {
+  //   await _authenticateHelper.getPatientId().then((value) {
+  //     setState(() {
+  //       _patientId = value;
+  //     });
+  //   });
+  //   await _contractHelper.getDoctorId().then((value) {
+  //     _doctorId = value;
+  //   });
+  //   if (_patientId != 0 && _doctorId != 0) {
+  //     _contractIdNowBloc
+  //         .add(ContractIdNowEventSetPIdAndDId(pId: _patientId, dId: _doctorId));
+  //   }
+  // }
 
   // _refreshPage() async {
   //   if (_patientId != 0 && _doctorId != 0) {
@@ -100,6 +99,14 @@ class _ContractStatusDetail extends State<ContractStatusDetail>
 
   @override
   Widget build(BuildContext context) {
+    //idContract
+    Map<String, dynamic> arguments = ModalRoute.of(context).settings.arguments;
+    //
+
+    //
+    setState(() {
+      _contractId = arguments['C_ID'];
+    });
     return Scaffold(
       // resizeToAvoidBottomPadding: false,
       // backgroundColor: DefaultTheme.WHITE,

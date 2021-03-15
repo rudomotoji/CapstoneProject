@@ -47,7 +47,7 @@ class DoctorDTO {
   String username;
   String fullName;
   String workLocation;
-  Null experience;
+  String experience;
   String specialization;
   String address;
   String details;

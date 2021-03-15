@@ -6,13 +6,21 @@ import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/features/chat/chat.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
 
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_update_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
 import 'package:capstone_home_doctor/features/contract/views/confirm_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/contract_detail_status_view.dart';
+import 'package:capstone_home_doctor/features/contract/views/contract_share_view.dart';
+import 'package:capstone_home_doctor/features/contract/views/detail_contract_view.dart';
+import 'package:capstone_home_doctor/features/contract/views/doctor_information_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/manage_contract_view.dart';
+import 'package:capstone_home_doctor/features/contract/views/reason_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_detail_bloc.dart';
@@ -97,6 +105,8 @@ PatientRepository patientRepository =
     PatientRepository(httpClient: http.Client());
 NotificationRepository notificationRepository =
     NotificationRepository(httpClient: http.Client());
+DoctorRepository _doctorRepository =
+    DoctorRepository(httpClient: http.Client());
 
 //AccountBloc
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
@@ -391,6 +401,18 @@ class _HomeDoctorState extends State<HomeDoctor> {
             create: (BuildContext context) =>
                 ContractUpdateBloc(contractRepository: _contractRepository),
           ),
+          BlocProvider<ContractListBloc>(
+            create: (BuildContext context) =>
+                ContractListBloc(contractAPI: _contractRepository),
+          ),
+          BlocProvider<DoctorInfoBloc>(
+            create: (BuildContext context) =>
+                DoctorInfoBloc(doctorAPI: _doctorRepository),
+          ),
+          BlocProvider<MedicalShareBloc>(
+            create: (BuildContext context) => MedicalShareBloc(
+                healthRecordRepository: _healthRecordRepository),
+          ),
         ],
         child: GestureDetector(
           onTap: () {
@@ -404,9 +426,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
               ChangeNotifierProvider(
                 create: (context) => RequestContractDTOProvider(),
               ),
-              ChangeNotifierProvider(
-                create: (context) => RContractProvider(),
-              )
+              // ChangeNotifierProvider(
+              //   create: (context) => RContractProvider(),
+              // )
             ],
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -417,18 +439,20 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.REGISTER: (context) => Register(),
                 // RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
                 RoutesHDr.MAIN_HOME: (context) => MainHome(),
-                RoutesHDr.CONFIRM_CONTRACT: (context) => RequestContract(),
+                // RoutesHDr.CONFIRM_CONTRACT: (context) => RequestContract(),
                 RoutesHDr.INTRO_CONNECT_PERIPHERAL: (context) =>
                     IntroConnectDevice(),
                 RoutesHDr.CONNECT_PERIPHERAL: (context) => ConnectPeripheral(),
                 RoutesHDr.CHAT: (context) => ChatScreen(),
                 RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
                 RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
-                RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),
+                // RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),
                 RoutesHDr.SCHEDULE: (context) => ScheduleView(),
                 RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
                 RoutesHDr.PATIENT_INFORMATION: (context) =>
                     PatientInformation(),
+                RoutesHDr.CONTRACT_REASON_VIEW: (context) =>
+                    ReasonContractView(),
                 //RoutesHDr.CREATE_HEALTH_RECORD: (context) => CreateHealthRecord(),
                 RoutesHDr.HEALTH_RECORD_DETAIL: (context) =>
                     HealthRecordDetail(),
@@ -439,6 +463,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.MEDICAL_SHARE: (context) => MedicalShare(),
                 RoutesHDr.CONTRACT_DETAIL_STATUS: (context) =>
                     ContractStatusDetail(),
+                RoutesHDr.DETAIL_CONTRACT_VIEW: (context) =>
+                    DetailContractView(),
+                RoutesHDr.DOCTOR_INFORMATION: (context) => DoctorInformation(),
+                RoutesHDr.CONTRACT_SHARE_VIEW: (context) => ContractShareView(),
               },
               home: _startScreen,
             ),
