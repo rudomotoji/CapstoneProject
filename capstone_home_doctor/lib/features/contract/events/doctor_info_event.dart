@@ -6,7 +6,7 @@ abstract class DoctorInfoEvent extends Equatable {
 }
 
 class DoctorInfoEventSetId extends DoctorInfoEvent {
-  final String id;
+  final int id;
 
   const DoctorInfoEventSetId({@required this.id}) : assert(id != null);
 

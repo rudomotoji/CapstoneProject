@@ -16,6 +16,7 @@ import 'package:capstone_home_doctor/features/contract/repositories/contract_rep
 import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
 import 'package:capstone_home_doctor/features/contract/views/confirm_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/contract_detail_status_view.dart';
+import 'package:capstone_home_doctor/features/contract/views/contract_draft_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/contract_share_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/detail_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/doctor_information_view.dart';
@@ -467,6 +468,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                     DetailContractView(),
                 RoutesHDr.DOCTOR_INFORMATION: (context) => DoctorInformation(),
                 RoutesHDr.CONTRACT_SHARE_VIEW: (context) => ContractShareView(),
+                RoutesHDr.CONTRACT_DRAFT_VIEW: (context) => ContractDraftView(),
               },
               home: _startScreen,
             ),

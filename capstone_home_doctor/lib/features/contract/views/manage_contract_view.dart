@@ -92,79 +92,6 @@ class _ManageContract extends State<ManageContract> {
                 isMainView: false,
                 buttonHeaderType: ButtonHeaderType.BACK_HOME,
               ),
-              BlocBuilder<ContractListBloc, ListContractState>(
-                builder: (context, state) {
-                  //
-                  if (state is ListContractStateInitial) {
-                    return Container(
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      child: Center(
-                        child: SizedBox(
-                          width: 120,
-                          child: Image.asset('assets/images/loading.gif'),
-                        ),
-                      ),
-                    );
-                  }
-                  if (state is ListContractStateFailure) {
-                    return Container(
-                      margin: EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10, top: 10),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: DefaultTheme.GREY_BUTTON),
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                            top: 10, bottom: 10, left: 20, right: 20),
-                        child: Text('Không thể tải',
-                            style: TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            )),
-                      ),
-                    );
-                  }
-                  if (state is ListContractStateSuccess) {
-                    print('GO INTO STATE SUCCESS');
-                    _listExecuting.clear();
-                    for (var i = 0; i < state.listContract.length; i++) {
-                      if (state.listContract[i].status.contains('PENDING') ||
-                          state.listContract[i].status.contains('ACTIVE') ||
-                          state.listContract[i].status.contains('APPROVED')) {
-                        _listExecuting.add(ContractListDTO(
-                            contractId: state.listContract[i].contractId,
-                            contractCode: state.listContract[i].contractCode,
-                            daysOfTracking:
-                                state.listContract[i].daysOfTracking,
-                            fullNameDoctor:
-                                state.listContract[i].fullNameDoctor,
-                            dateCreated: state.listContract[i].dateCreated,
-                            dateFinished: state.listContract[i].dateFinished,
-                            dateStarted: state.listContract[i].dateStarted,
-                            status: state.listContract[i].status));
-                      }
-                    }
-                    _listAcitved.clear();
-                    for (var i = 0; i < state.listContract.length; i++) {
-                      if (state.listContract[i].status.contains('FINISHED')) {
-                        _listAcitved.add(ContractListDTO(
-                            contractId: state.listContract[i].contractId,
-                            contractCode: state.listContract[i].contractCode,
-                            daysOfTracking:
-                                state.listContract[i].daysOfTracking,
-                            fullNameDoctor:
-                                state.listContract[i].fullNameDoctor,
-                            dateCreated: state.listContract[i].dateCreated,
-                            dateFinished: state.listContract[i].dateFinished,
-                            dateStarted: state.listContract[i].dateStarted,
-                            status: state.listContract[i].status));
-                      }
-                    }
-                  }
-                  return Container();
-                },
-              ),
               Expanded(
                 child: ListView(
                   children: <Widget>[
@@ -241,273 +168,405 @@ class _ManageContract extends State<ManageContract> {
                     ),
 
                     //
-
-                    Padding(
-                        padding:
-                            EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Hợp đồng chờ xử lý',
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w600),
-                          ),
-                        )),
-                    Padding(
-                        padding:
-                            EdgeInsets.only(left: 20, right: 50, bottom: 10),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Danh sách các hợp đồng đang chờ xử lý',
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontSize: 15, color: DefaultTheme.GREY_TEXT),
-                          ),
-                        )),
-                    /////List here
-                    (_listExecuting.length != 0)
-                        ? Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 250,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              // shrinkWrap: true,
-                              // physics: NeverScrollableScrollPhysics(),
-                              itemCount: _listExecuting.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                //
-                                return Container(
-                                  width: 200,
-                                  height: 250,
-                                  padding: EdgeInsets.only(left: 10),
-                                  margin: EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                      color: DefaultTheme.GREY_VIEW,
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          width: 1,
-                                          color:
-                                              DefaultTheme.GREY_TOP_TAB_BAR)),
-                                  child: Column(
-                                    children: <Widget>[
-                                      //
-                                      Container(
-                                        margin: EdgeInsets.only(top: 30),
-                                        child: Text(
-                                          'Hợp đồng ${_listExecuting[index].contractCode}',
-                                          style: TextStyle(
-                                            //
-                                            fontFamily: 'NewYork',
-                                            foreground: Paint()
-                                              ..shader = _normalHealthColors,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      Row(
-                                        children: [
-                                          Text('Trạng thái:'),
-                                          Text(
-                                            '${_listExecuting[index].status}',
-                                            style: TextStyle(
-                                                color:
-                                                    DefaultTheme.RED_CALENDAR),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text('Bác sĩ:'),
-                                          Container(
-                                            width: 140,
-                                            child: Text(
-                                              '${_listExecuting[index].fullNameDoctor}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text('Tạo ngày:'),
-                                          Text(
-                                              '${_dateValidator.parseToDateView(_listExecuting[index].dateCreated)}'),
-                                        ],
-                                      ),
-
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 20),
-                                        child: Divider(
-                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                          height: 1,
-                                        ),
-                                      ),
-                                      ButtonHDr(
-                                        style: BtnStyle.BUTTON_TRANSPARENT,
-                                        label: 'Chi tiết',
-                                        onTap: () {
-                                          Map<String, dynamic> param = {
-                                            'C_ID': _listExecuting[index]
-                                                .contractId,
-                                          };
-                                          Navigator.pushNamed(context,
-                                              RoutesHDr.CONFIRM_CONTRACT,
-                                              arguments: param);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                    BlocBuilder<ContractListBloc, ListContractState>(
+                      builder: (context, state) {
+                        //
+                        if (state is ListContractStateInitial) {
+                          return Container(
+                            margin: EdgeInsets.only(left: 20, right: 20),
+                            child: Center(
+                              child: SizedBox(
+                                width: 120,
+                                child: Image.asset('assets/images/loading.gif'),
+                              ),
                             ),
-                          )
-                        : Container(),
-                    /////
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 20),
-                    ),
-
-                    /////
-                    ///
-                    ///
-                    ///
-                    ///
-                    ///
-                    ///
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: 30, top: 20, left: 20, right: 20),
-                      child: Divider(
-                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                        height: 2,
-                      ),
-                    ),
-
-                    Padding(
-                        padding:
-                            EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Hợp đồng đã chấm dứt',
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w600),
-                          ),
-                        )),
-                    Padding(
-                        padding:
-                            EdgeInsets.only(left: 20, right: 50, bottom: 10),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Danh sách các hợp đồng...',
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontSize: 15, color: DefaultTheme.GREY_TEXT),
-                          ),
-                        )),
-                    /////List here
-                    (_listAcitved.length != 0)
-                        ? Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 250,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              // shrinkWrap: true,
-                              // physics: NeverScrollableScrollPhysics(),
-                              itemCount: _listAcitved.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                //
-                                return Container(
-                                  width: 200,
-                                  height: 250,
-                                  padding: EdgeInsets.only(left: 10),
-                                  margin: EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                      color: DefaultTheme.GREY_VIEW,
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                          width: 1,
-                                          color:
-                                              DefaultTheme.GREY_TOP_TAB_BAR)),
-                                  child: Column(
-                                    children: <Widget>[
-                                      //
-                                      Container(
-                                        margin: EdgeInsets.only(top: 30),
-                                        child: Text(
-                                          'Hợp đồng ${_listAcitved[index].contractCode}',
-                                          style: TextStyle(
-                                            //
-                                            fontFamily: 'NewYork',
-                                            foreground: Paint()
-                                              ..shader = _normalHealthColors,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      Row(
-                                        children: [
-                                          Text('Trạng thái:'),
-                                          Text(
-                                            '${_listAcitved[index].status}',
-                                            style: TextStyle(
-                                                color:
-                                                    DefaultTheme.RED_CALENDAR),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text('Bác sĩ:'),
-                                          Container(
-                                            width: 140,
-                                            child: Text(
-                                              '${_listAcitved[index].fullNameDoctor}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text('Tạo ngày:'),
-                                          Text(
-                                              '${_dateValidator.parseToDateView(_listAcitved[index].dateCreated)}'),
-                                        ],
-                                      ),
-
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 20),
-                                        child: Divider(
-                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                          height: 1,
-                                        ),
-                                      ),
-                                      ButtonHDr(
-                                        style: BtnStyle.BUTTON_TRANSPARENT,
-                                        label: 'Chi tiết',
-                                        onTap: () {},
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                          );
+                        }
+                        if (state is ListContractStateFailure) {
+                          return Container(
+                            margin: EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10, top: 10),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: DefaultTheme.GREY_BUTTON),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                  top: 10, bottom: 10, left: 20, right: 20),
+                              child: Text('Không thể tải',
+                                  style: TextStyle(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  )),
                             ),
-                          )
-                        : Container(),
-                    /////
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 20),
+                          );
+                        }
+                        if (state is ListContractStateSuccess) {
+                          print('GO INTO STATE SUCCESS');
+
+                          for (var i = 0; i < state.listContract.length; i++) {
+                            if (state.listContract[i].status
+                                    .contains('PENDING') ||
+                                state.listContract[i].status
+                                    .contains('ACTIVE') ||
+                                state.listContract[i].status
+                                    .contains('APPROVED')) {
+                              _listExecuting.add(ContractListDTO(
+                                  contractId: state.listContract[i].contractId,
+                                  contractCode:
+                                      state.listContract[i].contractCode,
+                                  daysOfTracking:
+                                      state.listContract[i].daysOfTracking,
+                                  fullNameDoctor:
+                                      state.listContract[i].fullNameDoctor,
+                                  dateCreated:
+                                      state.listContract[i].dateCreated,
+                                  dateFinished:
+                                      state.listContract[i].dateFinished,
+                                  dateStarted:
+                                      state.listContract[i].dateStarted,
+                                  status: state.listContract[i].status));
+                            }
+                          }
+
+                          for (var i = 0; i < state.listContract.length; i++) {
+                            if (state.listContract[i].status
+                                .contains('FINISHED')) {
+                              _listAcitved.add(ContractListDTO(
+                                  contractId: state.listContract[i].contractId,
+                                  contractCode:
+                                      state.listContract[i].contractCode,
+                                  daysOfTracking:
+                                      state.listContract[i].daysOfTracking,
+                                  fullNameDoctor:
+                                      state.listContract[i].fullNameDoctor,
+                                  dateCreated:
+                                      state.listContract[i].dateCreated,
+                                  dateFinished:
+                                      state.listContract[i].dateFinished,
+                                  dateStarted:
+                                      state.listContract[i].dateStarted,
+                                  status: state.listContract[i].status));
+                            }
+
+                            return Column(
+                              children: <Widget>[
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 20, right: 20, bottom: 5),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Hợp đồng đang hiện hành',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 20, right: 50, bottom: 10),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Danh sách các hợp đồng đang trong trạng thái chờ xử lý và đang hiện hành',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: DefaultTheme.GREY_TEXT),
+                                      ),
+                                    )),
+
+                                /////List here
+                                (_listExecuting.length != 0)
+                                    ? Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 250,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          // shrinkWrap: true,
+                                          // physics: NeverScrollableScrollPhysics(),
+                                          itemCount: _listExecuting.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            //
+                                            return Container(
+                                              width: 200,
+                                              height: 250,
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                              margin: EdgeInsets.only(left: 10),
+                                              decoration: BoxDecoration(
+                                                  color: DefaultTheme.GREY_VIEW,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: DefaultTheme
+                                                          .GREY_TOP_TAB_BAR)),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  //
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 30),
+                                                    child: Text(
+                                                      'Hợp đồng ${_listExecuting[index].contractCode}',
+                                                      style: TextStyle(
+                                                        //
+                                                        fontFamily: 'NewYork',
+                                                        foreground: Paint()
+                                                          ..shader =
+                                                              _normalHealthColors,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Spacer(),
+                                                  Row(
+                                                    children: [
+                                                      Text('Trạng thái:'),
+                                                      Text(
+                                                        '${_listExecuting[index].status}',
+                                                        style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .RED_CALENDAR),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text('Bác sĩ:'),
+                                                      Container(
+                                                        width: 140,
+                                                        child: Text(
+                                                          '${_listExecuting[index].fullNameDoctor}',
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text('Tạo ngày:'),
+                                                      Text(
+                                                          '${_dateValidator.parseToDateView(_listExecuting[index].dateCreated)}'),
+                                                    ],
+                                                  ),
+
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 20),
+                                                    child: Divider(
+                                                      color: DefaultTheme
+                                                          .GREY_TOP_TAB_BAR,
+                                                      height: 1,
+                                                    ),
+                                                  ),
+                                                  ButtonHDr(
+                                                    style: BtnStyle
+                                                        .BUTTON_TRANSPARENT,
+                                                    label: 'Chi tiết',
+                                                    onTap: () {
+                                                      Map<String, dynamic>
+                                                          param = {
+                                                        'C_ID': _listExecuting[
+                                                                index]
+                                                            .contractId,
+                                                      };
+                                                      Navigator.pushNamed(
+                                                          context,
+                                                          RoutesHDr
+                                                              .DETAIL_CONTRACT_VIEW,
+                                                          arguments: param);
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    : Container(),
+                                /////
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                ),
+
+                                /////
+                                ///
+                                ///
+                                ///
+                                ///
+                                ///
+                                ///
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom: 30, top: 20, left: 20, right: 20),
+                                  child: Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 2,
+                                  ),
+                                ),
+
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 20, right: 20, bottom: 5),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Hợp đồng đã chấm dứt',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    )),
+                                Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 20, right: 50, bottom: 10),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Danh sách các hợp đồng...',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: DefaultTheme.GREY_TEXT),
+                                      ),
+                                    )),
+                                /////List here
+                                (_listAcitved.length != 0)
+                                    ? Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 250,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          // shrinkWrap: true,
+                                          // physics: NeverScrollableScrollPhysics(),
+                                          itemCount: _listAcitved.length,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            //
+                                            return Container(
+                                              width: 200,
+                                              height: 250,
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                              margin: EdgeInsets.only(left: 10),
+                                              decoration: BoxDecoration(
+                                                  color: DefaultTheme.GREY_VIEW,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: DefaultTheme
+                                                          .GREY_TOP_TAB_BAR)),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  //
+                                                  Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 30),
+                                                    child: Text(
+                                                      'Hợp đồng ${_listAcitved[index].contractCode}',
+                                                      style: TextStyle(
+                                                        //
+                                                        fontFamily: 'NewYork',
+                                                        foreground: Paint()
+                                                          ..shader =
+                                                              _normalHealthColors,
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Spacer(),
+                                                  Row(
+                                                    children: [
+                                                      Text('Trạng thái:'),
+                                                      Text(
+                                                        '${_listAcitved[index].status}',
+                                                        style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .RED_CALENDAR),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text('Bác sĩ:'),
+                                                      Container(
+                                                        width: 140,
+                                                        child: Text(
+                                                          '${_listAcitved[index].fullNameDoctor}',
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text('Tạo ngày:'),
+                                                      Text(
+                                                          '${_dateValidator.parseToDateView(_listAcitved[index].dateCreated)}'),
+                                                    ],
+                                                  ),
+
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 20),
+                                                    child: Divider(
+                                                      color: DefaultTheme
+                                                          .GREY_TOP_TAB_BAR,
+                                                      height: 1,
+                                                    ),
+                                                  ),
+                                                  ButtonHDr(
+                                                    style: BtnStyle
+                                                        .BUTTON_TRANSPARENT,
+                                                    label: 'Chi tiết',
+                                                    onTap: () {
+                                                      Map<String, dynamic>
+                                                          param = {
+                                                        'C_ID': _listExecuting[
+                                                                index]
+                                                            .contractId,
+                                                      };
+                                                      Navigator.pushNamed(
+                                                          context,
+                                                          RoutesHDr
+                                                              .DETAIL_CONTRACT_VIEW,
+                                                          arguments: param);
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    : Container(),
+                                /////
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                ),
+                              ],
+                            );
+                          }
+                        }
+                        return Container();
+                      },
                     ),
                   ],
                 ),

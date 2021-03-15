@@ -11,7 +11,7 @@ class DoctorRepository extends BaseApiClient {
   //constructor
   DoctorRepository({@required this.httpClient}) : assert(httpClient != null);
   //
-  Future<DoctorDTO> getDoctorByDoctorId(String id) async {
+  Future<DoctorDTO> getDoctorByDoctorId(int id) async {
     // final String url = '/users/${id}';
     final String url = '/Doctors/${id}';
     try {

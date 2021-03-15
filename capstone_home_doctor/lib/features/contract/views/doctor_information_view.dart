@@ -55,9 +55,9 @@ class _DoctorInformation extends State<DoctorInformation>
               ),
               Expanded(
                 child: BlocProvider(
-                  create: (context) =>
-                      DoctorInfoBloc(doctorAPI: doctorRepository)
-                        ..add(DoctorInfoEventSetId(id: arguments)),
+                  create: (context) => DoctorInfoBloc(
+                      doctorAPI: doctorRepository)
+                    ..add(DoctorInfoEventSetId(id: int.tryParse(arguments))),
                   child: _getDoctorInfo(),
                 ),
               ),

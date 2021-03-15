@@ -117,8 +117,8 @@ class _DetailContractView extends State<DetailContractView>
             children: <Widget>[
               //
               HeaderWidget(
-                title: 'Trạng thái hợp đồng',
-                isMainView: true,
+                title: 'Chi tiết hợp đồng',
+                isMainView: false,
                 buttonHeaderType: ButtonHeaderType.BACK_HOME,
               ),
               Padding(

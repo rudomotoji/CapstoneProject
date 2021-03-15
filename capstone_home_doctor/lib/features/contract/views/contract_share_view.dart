@@ -18,12 +18,14 @@ import 'package:capstone_home_doctor/models/disease_dto.dart';
 import 'package:capstone_home_doctor/models/medical_share_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+final ContractHelper _contractHelper = ContractHelper();
 
 class ContractShareView extends StatefulWidget {
   @override
@@ -66,6 +68,7 @@ class _ContractShareView extends State<ContractShareView>
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _initialContractHelper();
     _getPatientId();
     _medicalShareBloc = BlocProvider.of(context);
   }
@@ -85,6 +88,10 @@ class _ContractShareView extends State<ContractShareView>
     });
   }
 
+  _initialContractHelper() async {
+    await _contractHelper.updateContractSendStatus(false, '');
+  }
+
   Map<String, bool> values = {
     'foo': true,
     'bar': false,
@@ -96,7 +103,7 @@ class _ContractShareView extends State<ContractShareView>
     String arguments = ModalRoute.of(context).settings.arguments;
     // _idDoctor = int.tryParse(arguments);
     print('ID doctor now: ${arguments.toString()}');
-    _listDisease.clear();
+
     //
     final requestContractProvider =
         Provider.of<RequestContractDTOProvider>(context, listen: false);
@@ -204,9 +211,9 @@ class _ContractShareView extends State<ContractShareView>
                           color: DefaultTheme.GREY_TEXT),
                     ),
                   ),
-                   (medicalInstructionIdsSelected.length != 0)
+                  (medicalInstructionIdsSelected.length != 0)
                       ? Container(
-                          margin: EdgeInsets.only(left: 20),
+                          margin: EdgeInsets.only(left: 20, top: 10, right: 20),
                           width: MediaQuery.of(context).size.width - 40,
                           child: ButtonHDr(
                             style: BtnStyle.BUTTON_BLACK,
@@ -216,13 +223,12 @@ class _ContractShareView extends State<ContractShareView>
                               print('list IDs of disease ${_diseaseIds}');
                               print(
                                   'list medicalInstructionIdsSelected ${medicalInstructionIdsSelected}');
-                               Navigator.of(context).pushNamed(
-                                    RoutesHDr.CONFIRM_CONTRACT_VIEW,
-                                    arguments: {
-                                      'REQUEST_OBJ':
-                                          requestContractProvider.getProvider,
-                                      
-                                    });
+                              Navigator.of(context).pushNamed(
+                                  RoutesHDr.CONTRACT_REASON_VIEW,
+                                  arguments: {
+                                    'REQUEST_OBJ':
+                                        requestContractProvider.getProvider,
+                                  });
                             },
                           ),
                         )
