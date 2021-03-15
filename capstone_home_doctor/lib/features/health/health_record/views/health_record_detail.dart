@@ -208,7 +208,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             MediaQuery.of(context).size.width -
                                                 (155),
                                         child: Text(
-                                          '${_healthRecordDTO.diseases[0]['diseaseName']}', //lấy tên bệnh lý
+                                          (_healthRecordDTO.diseases.length > 0)
+                                              ? '${_healthRecordDTO.diseases[0]['diseaseName']}'
+                                              : '', //lấy tên bệnh lý
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 3,
                                           style: TextStyle(
@@ -264,45 +266,60 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: <Widget>[
-                                            Row(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 20),
-                                                ),
-                                                Container(
-                                                  width: 125,
-                                                  child: Text(
-                                                    'Ghi chú',
-                                                    style: TextStyle(
-                                                      color: DefaultTheme
-                                                          .GREY_TEXT,
-                                                      fontSize: 15,
+                                            (_healthRecordDTO.description !=
+                                                    null)
+                                                ? Row(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 20),
+                                                      ),
+                                                      Container(
+                                                        width: 125,
+                                                        child: Text(
+                                                          'Ghi chú',
+                                                          style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .GREY_TEXT,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10),
+                                                      ),
+                                                      Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width -
+                                                            (155),
+                                                        child: Text(
+                                                          '${_healthRecordDTO.description}',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 3,
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                : Container(
+                                                    // child: Text(
+                                                    //   'Không có ghi chú nào',
+                                                    //   style: TextStyle(
+                                                    //     color: DefaultTheme
+                                                    //         .GREY_TEXT,
+                                                    //     fontSize: 15,
+                                                    //   ),
+                                                    // ),
                                                     ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 10),
-                                                ),
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width -
-                                                      (155),
-                                                  child: Text(
-                                                    '${_healthRecordDTO.description}',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 3,
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 15,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
                                           ],
                                         )
                                       : Container(
