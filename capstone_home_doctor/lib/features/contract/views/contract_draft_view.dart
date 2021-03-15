@@ -1395,6 +1395,10 @@ class _ContractDraftView extends State<ContractDraftView>
                                       labelColor: DefaultTheme.BLUE_TEXT,
                                       onTap: () {
                                         Navigator.of(context).pop();
+                                        Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            RoutesHDr.MANAGE_CONTRACT,
+                                            (Route<dynamic> route) => false);
                                       },
                                     ),
                                   ),
