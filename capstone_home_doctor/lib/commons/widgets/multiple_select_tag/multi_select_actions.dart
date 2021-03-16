@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/models/disease_dto.dart';
 import 'package:flutter/material.dart';
 import 'multi_select_item.dart';
 
@@ -37,6 +38,41 @@ class MultiSelectActions<V> {
       for (var item in allItems) {
         if (item.label.toLowerCase().contains(val.toLowerCase())) {
           filteredItems.add(item);
+        }
+      }
+      return filteredItems;
+    } else {
+      return allItems;
+    }
+  }
+
+  List<MultiSelectItem<V>> updateSearchQueryForInsurance(
+      String val, List<MultiSelectItem<V>> allItems) {
+    if (val != null && val.trim().isNotEmpty) {
+      List<MultiSelectItem<V>> filteredItems = [];
+      for (var item in allItems) {
+        DiseaseDTO dto = item.value as DiseaseDTO;
+
+        if (dto.diseaseId.toLowerCase().contains(val[0].toLowerCase())) {
+          var listDiseases = dto.diseaseId.split('-');
+          if (listDiseases.length > 1) {
+            int num1 = int.parse(listDiseases[0].substring(1));
+            int num2 = int.parse(listDiseases[1].substring(1));
+            if (val.substring(1) != '') {
+              if (num1 <= int.parse(val.substring(1)) &&
+                  int.parse(val.substring(1)) <= num2) {
+                filteredItems.add(item);
+              }
+            } else {
+              if (dto.diseaseId.toLowerCase().contains(val.toLowerCase())) {
+                filteredItems.add(item);
+              }
+            }
+          } else {
+            if (dto.diseaseId.toLowerCase().contains(val.toLowerCase())) {
+              filteredItems.add(item);
+            }
+          }
         }
       }
       return filteredItems;

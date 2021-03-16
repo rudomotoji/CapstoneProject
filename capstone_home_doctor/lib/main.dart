@@ -83,8 +83,8 @@ import 'package:http/http.dart' as http;
 
 final MORNING = 6;
 final NOON = 11;
-final AFTERNOON = 14;
-final NIGHT = 19;
+final AFTERNOON = 16;
+final NIGHT = 21;
 final MINUTES = 00;
 
 //repo for blocs
