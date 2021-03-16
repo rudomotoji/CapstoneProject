@@ -437,13 +437,13 @@ class __MultiSelectBottomSheetFieldViewState<V>
                           Padding(
                             padding: EdgeInsets.only(left: 5),
                           ),
-                          Text(
-                            'Chọn',
-                            style: TextStyle(
-                                color: DefaultTheme.BLUE_REFERENCE,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500),
-                          )
+                          // Text(
+                          //   'Chọn',
+                          //   style: TextStyle(
+                          //       color: DefaultTheme.BLUE_REFERENCE,
+                          //       fontSize: 16,
+                          //       fontWeight: FontWeight.w500),
+                          // )
                         ],
                       ),
                     )
