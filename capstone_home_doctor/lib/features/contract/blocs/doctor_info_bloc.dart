@@ -25,5 +25,18 @@ class DoctorInfoBloc extends Bloc<DoctorInfoEvent, DoctorInfoState> {
         yield DoctorInfoStateFailure();
       }
     }
+    if (event is DoctorInfoEventGetDoctors) {
+      yield DoctorInfoStateLoading();
+      try {
+        final List<DoctorDTO> lists = await doctorAPI.getListDoctor();
+        if (lists.length > 0) {
+          yield DoctorInfoStateSuccess(listDoctors: lists);
+        } else {
+          yield DoctorInfoStateFailure();
+        }
+      } catch (e) {
+        yield DoctorInfoStateFailure();
+      }
+    }
   }
 }

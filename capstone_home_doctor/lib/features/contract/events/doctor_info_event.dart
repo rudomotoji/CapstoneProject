@@ -14,3 +14,11 @@ class DoctorInfoEventSetId extends DoctorInfoEvent {
   // TODO: implement props
   List<Object> get props => [id];
 }
+
+class DoctorInfoEventGetDoctors extends DoctorInfoEvent {
+  const DoctorInfoEventGetDoctors();
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}
