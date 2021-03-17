@@ -362,6 +362,7 @@
 //                           ],
 //                         ),
 //                       ),
+
 // //NEXT CONFIRM CONTRACT
 //                       Padding(
 //                           padding: EdgeInsets.only(
@@ -1986,6 +1987,7 @@
 //       },
 //     );
 //   }
+
 // }
 
 // class ContractViewObj {

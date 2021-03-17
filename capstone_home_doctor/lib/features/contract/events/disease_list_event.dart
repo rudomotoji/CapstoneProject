@@ -15,3 +15,9 @@ class DiseaseListEventSetStatus extends DiseaseListEvent {
   // TODO: implement props
   List<Object> get props => [status];
 }
+
+class DiseaseEventGetHealthList extends DiseaseListEvent {
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}

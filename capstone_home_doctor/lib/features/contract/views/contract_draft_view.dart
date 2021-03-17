@@ -276,12 +276,22 @@ class _ContractDraftView extends State<ContractDraftView>
                       ),
                       Padding(
                         padding: EdgeInsets.only(
-                            left: 20, right: 20, bottom: 20, top: 30),
+                            left: 20, right: 20, bottom: 10, top: 30),
                         child: Text(
                           'Điều 2: Chế độ thăm khám và theo dõi',
                           style: TextStyle(
-                              decoration: TextDecoration.underline,
                               fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        child: Text(
+                          'Bên B sẽ sử dụng HDr system để hỗ trợ khám và tư vấn cho bên A.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
                               fontSize: 16,
                               fontFamily: 'NewYork'),
                         ),
@@ -290,10 +300,273 @@ class _ContractDraftView extends State<ContractDraftView>
                         padding: EdgeInsets.only(
                             left: 20, right: 20, bottom: 20, top: 30),
                         child: Text(
-                          'Điều 3: Trách nhiệm của hai bên',
+                          'Điều 3: Nghĩa vụ và quyền lợi của bên A',
                           style: TextStyle(
-                              decoration: TextDecoration.underline,
                               fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        child: Text(
+                          '1. Quyền lợi của bên A:',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'a) Được khám, chữa bệnh và chăm sóc dưới sự giám sát của bên B.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'b) Đề xuất, khiếu nại hoặc đề nghị thay đổi hoặc chấm dứt hợp đồng.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'c) Bên A có thể chấm dứt hợp đồng bất cứ khi nào.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20, top: 20),
+                        child: Text(
+                          '2. Nghĩa vụ:',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'a) Cung cấp những thông tin cần thiết cho bên B để có thể theo dõi và khám chữa bệnh.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'b) Hoàn thành những nghĩa vụ đã cam kết trong hợp đồng giữa hai bên theo các điều mục 5,6 bên dưới.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'c) Phối hợp theo đúng chỉ định của bên B về việc khám và chữa bệnh.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'd) Chấp hành nội quy, quy chế theo quy định của bộ y tế về việc tổ chức khám chữa bệnh.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20, top: 30),
+                        child: Text(
+                          'Điều 4. Nghĩa vụ và quyền lợi của bên B',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                        child: Text(
+                          '1. Quyền lợi của bên B:',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'a) Yêu cầu bên A cung cấp và chia sẻ các thông tin cần thiết.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'b) Bên B có thể đơn phương chấm dứt hợp đồng khi có bằng chứng việc bên A có những sai phạm trong các điều khoản 5 và 6 cũng như các nghĩa vụ mà bên A phải thực hiện hoặc sai phạm luật của bộ y tế theo nghị định số 87/2011/NĐ-CP ngày 27 tháng 9 năm 2011 cũng như không tuân thủ các quy định được đưa ra trong ứng dụng HDr, gây ảnh hưởng tới việc không thể theo dõi và chăm sóc bệnh nhân.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20, top: 20),
+                        child: Text(
+                          '2. Nghĩa vụ của bên B:',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'a) Xác nhận quá trình theo quy định của Luật khám bệnh, chữa bệnh ngày 23 tháng 11 năm 2009; Nghị định số 87/2011/NĐ-CP ngày 27 tháng 9 năm 2011 của Chính phủ quy định chi tiết và hướng dẫn thi hành một số điều của Luật khám bệnh, chữa bệnh và Thông tư số 41/2011/TT-BYT ngày 14 tháng 11 năm 2011 của Bộ trưởng Bộ Y tế Hướng dẫn cấp chứng chỉ hành nghề đối với người hành nghề và cấp giấy phép hoạt động đối với cơ sở khám bệnh, chữa bệnh.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'b) Đảm bảo thực hiện đầy đủ những điều đã cam kết trong hợp đồng làm việc.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'c) Không được chấm dứt hợp đồng nếu bên A không sai phạm các điều luật đã quy định trong hợp đồng.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          'd) Khi bên B tự động chấm dứt hợp đồng trước thời hạn, phải bồi thường cho bên A theo quy định của pháp luật.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20, top: 30),
+                        child: Text(
+                          'Điều 5. Nghĩa vụ và quyền lợi của bên B',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          '1. Khi có tranh chấp, hai bên thống nhất giải quyết trên nguyên tắc bình đẳng, hợp tác, hòa giải. Trong thời gian tranh chấp, hai Bên vẫn phải bảo đảm điều kiện để khám bệnh, chữa bệnh đầy đủ.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          '2. Trường hợp hai Bên không hòa giải được sẽ báo cáo cơ quan có thẩm quyền giải quyết.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20, top: 30),
+                        child: Text(
+                          'Điều 6. Cam kết chung',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          '1. Hai bên cam kết thực hiện đúng những điều khoản trong hợp đồng, những vấn đề phát sinh khác ngoài hợp đồng, kể cả việc kéo dài hoặc chấm dứt hợp đồng trước thời hạn sẽ được hai bên cùng thảo luận giải quyết, thể hiện bằng việc ký kết một hợp mới, hợp đồng hiện hành sẽ hết hạn kể từ khi hợp đồng mới được ký.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          '2. Hai bên thống nhất việc sử dụng ứng dụng HDr cho việc khám chữa bệnh và tuân thủ các quy định liên quan tới phần mềm để hỗ trợ việc theo dõi bệnh.',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
                               fontSize: 16,
                               fontFamily: 'NewYork'),
                         ),

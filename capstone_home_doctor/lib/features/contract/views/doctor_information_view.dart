@@ -405,8 +405,6 @@ class _DoctorInformation extends State<DoctorInformation>
                       alignment: Alignment.topLeft,
                       child: Text(
                         '${state.dto.details}',
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 15,

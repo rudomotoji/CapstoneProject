@@ -30,4 +30,26 @@ class DiseaseRepository extends BaseApiClient {
       print('ERROR AT GET LIST DISEASE $e');
     }
   }
+
+  //get list disease about heart
+  Future<List<DiseaseHeartDTO>> getHeartDiseases() async {
+    final String url = '/Diseases/GetHeartDiseases';
+    try {
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body) as List;
+        List<DiseaseHeartDTO> list = responseData.map((dto) {
+          return DiseaseHeartDTO(
+            diseaseId: dto['diseaseId'],
+            name: dto['nameDisease'],
+          );
+        }).toList();
+        return list;
+      } else {
+        return List<DiseaseHeartDTO>();
+      }
+    } catch (e) {
+      print('ERROR AT GET LIST DISEASE $e');
+    }
+  }
 }

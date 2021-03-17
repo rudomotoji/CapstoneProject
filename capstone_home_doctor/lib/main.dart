@@ -41,6 +41,7 @@ import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dar
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
 import 'package:capstone_home_doctor/features/login/blocs/account_bloc.dart';
+import 'package:capstone_home_doctor/features/login/blocs/token_device_bloc.dart';
 import 'package:capstone_home_doctor/features/login/events/account_event.dart';
 import 'package:capstone_home_doctor/features/login/repositories/account_repository.dart';
 import 'package:capstone_home_doctor/features/login/states/account_state.dart';
@@ -85,7 +86,7 @@ final MORNING = 6;
 final NOON = 11;
 final AFTERNOON = 14;
 final NIGHT = 19;
-final MINUTES = 00;
+final MINUTES = 30;
 
 //repo for blocs
 HealthRecordRepository _healthRecordRepository =
@@ -283,12 +284,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
         print('TOKEN IN DEVICE $token');
         _token = '$token';
         if (_token != '') {
-          // mobileDeviceHelper.updatelTokenDevice(_token);
-          // mobileDeviceHelper.getTokenDevice().then((value) {
-          //   mobileDevice = value;
-          //   print('VALUE TOKEN DEVICE ${value}');
-          //   print('TOKEN DEVICE IN SHARED_PREFERENCED: ${mobileDevice}');
-          // });
+          mobileDeviceHelper.updatelTokenDevice(_token);
+          mobileDeviceHelper.getTokenDevice().then((value) {
+            mobileDevice = value;
+          });
         }
       });
       //
@@ -380,6 +379,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<MedicalShareBloc>(
             create: (BuildContext context) => MedicalShareBloc(
                 healthRecordRepository: _healthRecordRepository),
+          ),
+          BlocProvider<TokenDeviceBloc>(
+            create: (BuildContext context) =>
+                TokenDeviceBloc(accountRepository: accountRepository),
           ),
         ],
         child: GestureDetector(

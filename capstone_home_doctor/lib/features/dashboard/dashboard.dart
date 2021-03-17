@@ -7,13 +7,17 @@ import 'package:capstone_home_doctor/commons/widgets/artboard_button_widget.dart
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
+import 'package:capstone_home_doctor/features/login/blocs/token_device_bloc.dart';
+import 'package:capstone_home_doctor/features/login/events/token_device_event.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
+import 'package:capstone_home_doctor/models/token_device_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -24,6 +28,7 @@ import 'package:intl/intl.dart';
 
 //
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+final MobileDeviceHelper _mobileDeviceHelper = MobileDeviceHelper();
 
 //
 final Shader _normalHealthColors = LinearGradient(
@@ -53,8 +58,12 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   String _idDoctor = '';
   DateValidator _dateValidator = DateValidator();
   PrescriptionDTO _currentPrescription = PrescriptionDTO();
-  //
+  TokenDeviceBloc _tokenDeviceBloc;
+  // //
   int _patientId = 0;
+  String _tokenDevice = '';
+  int _accountId = 0;
+  TokenDeviceDTO _tokenDeviceDTO = TokenDeviceDTO();
   //
   List<MedicalInstructionDTO> listPrescription = [];
   PrescriptionRepository prescriptionRepository =
@@ -68,12 +77,37 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     super.initState();
     _getPatientId();
     _prescriptionListBloc = BlocProvider.of(context);
+    _tokenDeviceBloc = BlocProvider.of(context);
+    _updateTokenDevice();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.addObserver(this);
     super.dispose();
+  }
+
+  _updateTokenDevice() async {
+    await _mobileDeviceHelper.getTokenDevice().then((value) {
+      //
+      setState(() {
+        _tokenDevice = value;
+      });
+    });
+    await _authenticateHelper.getAccountId().then((value) {
+      print('ACCOUNT ID ${value}');
+      setState(() {
+        _accountId = value;
+      });
+    });
+    if (_accountId != '' && _tokenDevice != '') {
+      //do update token device here
+      _tokenDeviceDTO =
+          TokenDeviceDTO(accountId: _accountId, tokenDevice: _tokenDevice);
+      if (_tokenDeviceDTO != null) {
+        _tokenDeviceBloc.add(TokenDeviceEventUpdate(dto: _tokenDeviceDTO));
+      }
+    }
   }
 
   _getPatientId() async {
@@ -86,9 +120,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       _prescriptionListBloc
           .add(PrescriptionListEventsetPatientId(patientId: _patientId));
     }
-    await _authenticateHelper.getAccountId().then((value) {
-      print('ACCOUNT ID ${value}');
-    });
+    // await _authenticateHelper.getAccountId().then((value) {
+    //   print('ACCOUNT ID ${value}');
+    // });
   }
 
   @override
