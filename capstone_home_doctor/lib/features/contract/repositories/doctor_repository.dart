@@ -12,13 +12,30 @@ class DoctorRepository extends BaseApiClient {
   DoctorRepository({@required this.httpClient}) : assert(httpClient != null);
   //
   Future<DoctorDTO> getDoctorByDoctorId(int id) async {
-    // final String url = '/users/${id}';
     final String url = '/Doctors/${id}';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
         DoctorDTO data = DoctorDTO.fromJson(jsonDecode(response.body));
         return data;
+      }
+      return null;
+    } catch (e) {
+      print('ERROR AT GET DOCTOR BY DOCTOR_ID API $e');
+    }
+  }
+
+  Future<List<DoctorDTO>> getListDoctor() async {
+    final String url = '/Doctors';
+    try {
+      final request = await getApi(url, null);
+      if (request.statusCode == 200) {
+        List<DoctorDTO> lists = [];
+        var response = jsonDecode(request.body);
+        response.map((dto) {
+          lists.add(DoctorDTO.fromJson(dto));
+        });
+        return lists;
       }
       return null;
     } catch (e) {

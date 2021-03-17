@@ -19,7 +19,8 @@ class DoctorInfoStateSuccess extends DoctorInfoState {
   // final DoctorDTO result;
 
   final DoctorDTO dto;
-  const DoctorInfoStateSuccess({@required this.dto});
+  final List<DoctorDTO> listDoctors;
+  const DoctorInfoStateSuccess({this.dto, this.listDoctors});
 
   @override
   // TODO: implement props

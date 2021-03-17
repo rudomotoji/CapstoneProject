@@ -442,7 +442,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                     description: _note,
                                   );
                                   await _insertHealthRecord(healthRecordDTO);
-                                  widget.refresh();
+                                  // widget.refresh();
                                   Navigator.pop(context);
                                 }
                               })),

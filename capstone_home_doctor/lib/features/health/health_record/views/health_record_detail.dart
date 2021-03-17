@@ -383,7 +383,10 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     style: BtnStyle.BUTTON_GREY,
                                     label: 'Thêm y lệnh',
                                     onTap: () {
-                                      //
+                                      setState(() {
+                                        titleCompare = '';
+                                        _imgFile = null;
+                                      });
                                       _showCreateMedInsForm();
                                     },
                                   ),
@@ -605,42 +608,39 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: <
-                                                                      Widget>[
-                                                                    //
-                                                                    Container(
-                                                                      width: 80,
-                                                                      child:
-                                                                          Text(
-                                                                        'Ghi chú:',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                DefaultTheme.GREY_TEXT),
-                                                                      ),
-                                                                    ),
-                                                                    Container(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width -
-                                                                          200,
-                                                                      child:
-                                                                          Text(
-                                                                        '${listMedicalIns[index].description}',
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        maxLines:
-                                                                            2,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                                (listMedicalIns[index]
+                                                                            .description !=
+                                                                        null)
+                                                                    ? Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: <
+                                                                            Widget>[
+                                                                          //
+                                                                          Container(
+                                                                            width:
+                                                                                80,
+                                                                            child:
+                                                                                Text(
+                                                                              'Ghi chú:',
+                                                                              style: TextStyle(color: DefaultTheme.GREY_TEXT),
+                                                                            ),
+                                                                          ),
+                                                                          Container(
+                                                                            width:
+                                                                                MediaQuery.of(context).size.width - 200,
+                                                                            child:
+                                                                                Text(
+                                                                              '${listMedicalIns[index].description}',
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 2,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    : Container(),
 
                                                                 Spacer(),
                                                                 Container(
@@ -1252,37 +1252,43 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                           }
                                           if (state
                                               is MedInsScanTextStateSuccess) {
-                                            titleCompare = state.data.title;
-                                            var percentCompare = _selectedHRType
-                                                .toLowerCase()
-                                                .similarityTo(
-                                                    titleCompare.toLowerCase());
-                                            if (percentCompare > 0.7) {
-                                              _dianoseController.text =
-                                                  state.data.symptom;
-                                              return Container();
-                                            } else {
-                                              if (_selectedHRType == "") {
-                                                return Container(
-                                                    height: 35,
-                                                    child: Text(
-                                                        'Bạn chưa chọn loại phiếu',
-                                                        style: TextStyle(
-                                                          color: DefaultTheme
-                                                              .RED_TEXT,
-                                                          fontSize: 20,
-                                                        )));
+                                            if (state.data.title != null) {
+                                              titleCompare = state.data.title;
+                                              var percentCompare =
+                                                  _selectedHRType
+                                                      .toLowerCase()
+                                                      .similarityTo(titleCompare
+                                                          .toLowerCase());
+                                              if (percentCompare > 0.7) {
+                                                _dianoseController.text =
+                                                    state.data.symptom;
+                                                return Container();
                                               } else {
-                                                return Container(
-                                                    height: 35,
-                                                    child: Text(
-                                                        'Bạn có chắc đây là $_selectedHRType',
-                                                        style: TextStyle(
-                                                          color: DefaultTheme
-                                                              .RED_TEXT,
-                                                          fontSize: 20,
-                                                        )));
+                                                if (_selectedHRType == "") {
+                                                  return Container(
+                                                      height: 35,
+                                                      child: Text(
+                                                          'Bạn chưa chọn loại phiếu',
+                                                          style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .RED_TEXT,
+                                                            fontSize: 20,
+                                                          )));
+                                                } else {
+                                                  return Container(
+                                                      height: 35,
+                                                      child: Text(
+                                                          'Bạn có chắc đây là $_selectedHRType',
+                                                          style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .RED_TEXT,
+                                                            fontSize: 20,
+                                                          )));
+                                                }
                                               }
+                                            } else {
+                                              Container(
+                                                  height: 35, child: Text(''));
                                             }
                                           }
                                         })

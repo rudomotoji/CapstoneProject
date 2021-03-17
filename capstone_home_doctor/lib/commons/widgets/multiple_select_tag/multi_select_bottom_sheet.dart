@@ -238,10 +238,19 @@ class _MultiSelectBottomSheetState<V> extends State<MultiSelectBottomSheet<V>> {
                                   ),
                                 ),
                                 onChanged: (val) {
-                                  setState(() {
-                                    _items = widget.updateSearchQuery(
-                                        val, widget.items);
-                                  });
+                                  if (widget.listType ==
+                                      MultiSelectListType.CHIP) {
+                                    setState(() {
+                                      _items =
+                                          widget.updateSearchQueryForInsurance(
+                                              val, widget.items);
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _items = widget.updateSearchQuery(
+                                          val, widget.items);
+                                    });
+                                  }
                                 },
                               ),
                             ),

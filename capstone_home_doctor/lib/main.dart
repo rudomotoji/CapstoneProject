@@ -84,9 +84,9 @@ import 'package:http/http.dart' as http;
 
 final MORNING = 6;
 final NOON = 11;
-final AFTERNOON = 14;
-final NIGHT = 19;
-final MINUTES = 30;
+final AFTERNOON = 16;
+final NIGHT = 21;
+final MINUTES = 00;
 
 //repo for blocs
 HealthRecordRepository _healthRecordRepository =
@@ -148,28 +148,36 @@ void checkNotifiMedical() async {
   if (hour == MORNING && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('morning').then((value) {
       for (var schedule in value) {
-        body += schedule.medicationName + ', ';
+        if (!body.contains(schedule.medicationName)) {
+          body += schedule.medicationName + ', ';
+        }
       }
     });
   }
   if (hour == NOON && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('noon').then((value) {
       for (var schedule in value) {
-        body += schedule.medicationName + ', ';
+        if (!body.contains(schedule.medicationName)) {
+          body += schedule.medicationName + ', ';
+        }
       }
     });
   }
   if (hour == AFTERNOON && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('afterNoon').then((value) {
       for (var schedule in value) {
-        body += schedule.medicationName + ', ';
+        if (!body.contains(schedule.medicationName)) {
+          body += schedule.medicationName + ', ';
+        }
       }
     });
   }
   if (hour == NIGHT && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('night').then((value) {
       for (var schedule in value) {
-        body += schedule.medicationName + ', ';
+        if (!body.contains(schedule.medicationName)) {
+          body += schedule.medicationName + ', ';
+        }
       }
     });
   }
