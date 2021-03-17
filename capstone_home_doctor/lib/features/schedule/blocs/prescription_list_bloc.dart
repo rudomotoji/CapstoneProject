@@ -20,7 +20,11 @@ class PrescriptionListBloc
       try {
         final List<MedicalInstructionDTO> list =
             await prescriptionRepository.getListPrecription(event.patientId);
-        yield PrescriptionListStateSuccess(listPrescription: list);
+        if (list.length > 0) {
+          yield PrescriptionListStateSuccess(listPrescription: list);
+        } else {
+          yield PrescriptionListStateFailure();
+        }
       } catch (e) {
         yield PrescriptionListStateFailure();
       }

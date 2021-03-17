@@ -434,10 +434,12 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           );
         }
         if (state is PrescriptionListStateFailure) {
-          return Container(
-              width: MediaQuery.of(context).size.width,
-              child: Center(
-                  child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+          // return Container(
+          //     width: MediaQuery.of(context).size.width,
+          //     child: Center(
+          //         child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+          getLocalStorage();
+          return _sizeBoxCard();
         }
         if (state is PrescriptionListStateSuccess) {
           listPrescription = state.listPrescription;
@@ -454,43 +456,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           } else {
             getLocalStorage();
           }
-          return SizedBox(
-            height: 280,
-            width: MediaQuery.of(context).size.width,
-            child: PageView.builder(
-                itemCount: 2,
-                controller: PageController(viewportFraction: 0.9),
-                onPageChanged: (int index) => setState(() => _index = index),
-                itemBuilder: (_, i) {
-                  return Transform.scale(
-                    scale: i == _index ? 1 : 0.9,
-                    alignment: Alignment.centerLeft,
-                    child: Card(
-                      elevation: 0,
-                      shadowColor: DefaultTheme.GREY_TEXT,
-                      color: DefaultTheme.GREY_VIEW,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: (i == 0)
-                          ? Container(
-                              child: (listSchedule == null)
-                                  ? Center(
-                                      child:
-                                          Text('Hiện chưa có lịch dùng thuốc'),
-                                    )
-                                  : _medicalScheduleNotNull(),
-                            )
-                          : Container(
-                              child: (listSchedule == null)
-                                  ? Center(
-                                      child: Text('Hiện chưa có lịch tái khám'),
-                                    )
-                                  : _appointmentNotNull(),
-                            ),
-                    ),
-                  );
-                }),
-          );
+          return _sizeBoxCard();
         }
         return Container(
           width: MediaQuery.of(context).size.width,
@@ -1071,6 +1037,45 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _sizeBoxCard() {
+    return SizedBox(
+      height: 280,
+      width: MediaQuery.of(context).size.width,
+      child: PageView.builder(
+          itemCount: 2,
+          controller: PageController(viewportFraction: 0.9),
+          onPageChanged: (int index) => setState(() => _index = index),
+          itemBuilder: (_, i) {
+            return Transform.scale(
+              scale: i == _index ? 1 : 0.9,
+              alignment: Alignment.centerLeft,
+              child: Card(
+                elevation: 0,
+                shadowColor: DefaultTheme.GREY_TEXT,
+                color: DefaultTheme.GREY_VIEW,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                child: (i == 0)
+                    ? Container(
+                        child: (listSchedule == null)
+                            ? Center(
+                                child: Text('Hiện chưa có lịch dùng thuốc'),
+                              )
+                            : _medicalScheduleNotNull(),
+                      )
+                    : Container(
+                        child: (listSchedule == null)
+                            ? Center(
+                                child: Text('Hiện chưa có lịch tái khám'),
+                              )
+                            : _appointmentNotNull(),
+                      ),
+              ),
+            );
+          }),
     );
   }
 

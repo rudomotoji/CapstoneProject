@@ -1,4 +1,5 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
@@ -800,8 +801,12 @@ class _DetailContractView extends State<DetailContractView>
                                 ),
                                 child: ButtonHDr(
                                   style: BtnStyle.BUTTON_GREY,
-                                  label: 'Về trang chủ',
-                                  onTap: () {},
+                                  label: 'Các y lệnh đã chia sẻ',
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                        RoutesHDr.MEDICAL_SHARE,
+                                        arguments: _contractId);
+                                  },
                                 ),
                               ),
                             ],

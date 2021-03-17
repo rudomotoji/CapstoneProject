@@ -99,16 +99,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
               'Các phiếu y lệnh được chia sẻ giúp bác sĩ chẩn đoán tốt hơn',
           imageAsset: 'assets/images/ic-medical-instruction.png',
           onTap: () async {
-            //
-            // Navigator.of(context).pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
             Navigator.of(context).pushNamed(RoutesHDr.MEDICAL_SHARE);
-            //MOVE TO CREATE HR AND CALL BACK REFRESH LIST
-            // Navigator.push(
-            //     context,
-            //     new MaterialPageRoute(
-            //         builder: (context) =>
-            //             new CreateHealthRecord(refreshListHR)));
-            // Navigator.of(context).pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
           },
         ),
 
@@ -240,14 +231,14 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                                   fontWeight: FontWeight.w500),
                                             )
                                           : Text(
-                                              'Hồ sơ ${state.listHealthRecord[index].diseases}',
+                                              'Hồ sơ ${state.listHealthRecord[index].place}',
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w500),
                                             ),
                                       Text(
-                                        'Nơi khám: ${state.listHealthRecord[index].place}',
+                                        'Bệnh lý: ${state.listHealthRecord[index].diseases}',
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(

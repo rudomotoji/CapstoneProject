@@ -23,15 +23,16 @@ class ContractRepository extends BaseApiClient {
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body) as List;
         List<ContractListDTO> list = responseData.map((dto) {
-          return ContractListDTO(
-              contractId: dto['contractId'],
-              contractCode: dto['contractCode'],
-              fullNameDoctor: dto['fullNameDoctor'],
-              daysOfTracking: dto['daysOfTracking'],
-              status: dto['status'],
-              dateCreated: dto['dateCreated'],
-              dateStarted: dto['dateStarted'],
-              dateFinished: dto['dateFinished']);
+          // return ContractListDTO(
+          //     contractId: dto['contractId'],
+          //     contractCode: dto['contractCode'],
+          //     fullNameDoctor: dto['fullNameDoctor'],
+          //     daysOfTracking: dto['daysOfTracking'],
+          //     status: dto['status'],
+          //     dateCreated: dto['dateCreated'],
+          //     dateStarted: dto['dateStarted'],
+          //     dateFinished: dto['dateFinished']);
+          return ContractListDTO.fromJson(dto);
         }).toList();
         return list;
         // List<ContractListDTO> list =

@@ -1,9 +1,12 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
-import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/events/contract_list_event.dart';
 import 'package:capstone_home_doctor/features/contract/events/doctor_info_event.dart';
+import 'package:capstone_home_doctor/features/contract/states/contract_list_state.dart';
 import 'package:capstone_home_doctor/features/contract/states/doctor_info_state.dart';
-import 'package:capstone_home_doctor/models/doctor_dto.dart';
+import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,49 +18,25 @@ class MedicalShare extends StatefulWidget {
 }
 
 class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
-  List<DoctorDTO> listDoctors = [
-    DoctorDTO(
-        doctorId: 1,
-        accountId: 2,
-        username: "huynl",
-        fullName: "Nguyễn Lê Huy",
-        workLocation: "BV quận 9",
-        experience: null,
-        specialization: "Tim mạch",
-        address: "Quận 9 , tp HCM",
-        details:
-            "30 năm kinh nghiệm trong việc khám chữa bệnh tim mạch. Top 10 bác sĩ giỏi của cả nước. ",
-        phone: "987654321",
-        email: "huynl@gmail.com",
-        dateOfBirth: "0001-01-01T00:00:00"),
-    DoctorDTO(
-        doctorId: 2,
-        accountId: 2,
-        username: "huynl",
-        fullName: "Nguyễn nhan",
-        workLocation: "BV quận 9",
-        experience: null,
-        specialization: "Tim mạch",
-        address: "Quận 9 , tp HCM",
-        details:
-            "30 năm kinh nghiệm trong việc khám chữa bệnh tim mạch. Top 10 bác sĩ giỏi của cả nước. ",
-        phone: "987654321",
-        email: "huynl@gmail.com",
-        dateOfBirth: "0001-01-01T00:00:00"),
-  ];
-  DoctorDTO dropdownValue;
-  DoctorInfoBloc _doctorInfoBloc;
+  final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+
+  int _contractId;
+  int _patientId = 0;
+  List<ContractListDTO> _listContracts = List<ContractListDTO>();
+  ContractListDTO dropdownValue;
+  ContractListBloc _contractListBloc;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _doctorInfoBloc = BlocProvider.of(context);
-    _doctorInfoBloc.add(DoctorInfoEventGetDoctors());
+    _contractListBloc = BlocProvider.of(context);
+    _getPatientId();
   }
 
   @override
   Widget build(BuildContext context) {
+    _contractId = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -65,63 +44,57 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             HeaderWidget(
-              title: 'Chia sẻ bệnh án',
+              title: 'Chia sẻ thêm y lệnh',
               isMainView: false,
-              buttonHeaderType: ButtonHeaderType.NONE,
+              buttonHeaderType: ButtonHeaderType.BACK_HOME,
             ),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _pullRefresh,
-                child: ListView(
-                  children: [
-                    BlocBuilder<DoctorInfoBloc, DoctorInfoState>(
-                      builder: (context, state) {
-                        if (state is DoctorInfoStateLoading) {
-                          return Container(
-                            margin: EdgeInsets.only(left: 20, right: 20),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: DefaultTheme.GREY_BUTTON),
-                            child: Center(
-                              child: SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: Image.asset('assets/images/loading.gif'),
-                              ),
-                            ),
-                          );
-                        }
-                        if (state is DoctorInfoStateFailure) {
-                          return Container(
-                            margin: EdgeInsets.only(
-                                left: 20, right: 20, bottom: 10, top: 10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: DefaultTheme.GREY_BUTTON),
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  top: 10, bottom: 10, left: 20, right: 20),
-                              child: Text(
-                                  'Không tìm thấy bác sĩ bạn có thế chia sẻ',
-                                  style: TextStyle(
-                                    color: DefaultTheme.GREY_TEXT,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  )),
-                            ),
-                          );
-                        }
-                        if (state is DoctorInfoStateSuccess) {
-                          setState(() {
-                            listDoctors = state.listDoctors;
-                          });
-                        }
-                        return Container();
-                      },
-                    ),
-                    _selectDoctor()
-                  ],
-                ),
+                child: (_contractId == null)
+                    ? ListView(
+                        children: [
+                          BlocBuilder<ContractListBloc, ListContractState>(
+                            builder: (context, state) {
+                              if (state is ListContractStateLoading) {
+                                return Container(
+                                  margin: EdgeInsets.only(left: 20, right: 20),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: DefaultTheme.GREY_BUTTON),
+                                  child: Center(
+                                    child: SizedBox(
+                                      width: 30,
+                                      height: 30,
+                                      child: Image.asset(
+                                          'assets/images/loading.gif'),
+                                    ),
+                                  ),
+                                );
+                              }
+                              if (state is ListContractStateFailure) {
+                                print('---ListContractStateFailure---');
+                              }
+                              if (state is ListContractStateSuccess) {
+                                _listContracts = [];
+                                for (var contract in state.listContract) {
+                                  if (contract.status == 'ACTIVE') {
+                                    _listContracts.add(contract);
+                                  }
+                                }
+                                return _selectContract();
+                              }
+                              return Container();
+                            },
+                          ),
+                          _listShare(),
+                        ],
+                      )
+                    : ListView(
+                        children: [
+                          _listShare(),
+                        ],
+                      ),
               ),
             ),
           ],
@@ -130,7 +103,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
     );
   }
 
-  Widget _selectDoctor() {
+  Widget _selectContract() {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Container(
@@ -139,13 +112,13 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
         decoration: BoxDecoration(
             color: DefaultTheme.GREY_VIEW,
             borderRadius: BorderRadius.circular(6)),
-        child: DropdownButton<DoctorDTO>(
+        child: DropdownButton<ContractListDTO>(
           value: dropdownValue,
-          items: listDoctors.map((DoctorDTO value) {
-            return new DropdownMenuItem<DoctorDTO>(
+          items: _listContracts.map((ContractListDTO value) {
+            return new DropdownMenuItem<ContractListDTO>(
               value: value,
               child: new Text(
-                value.fullName,
+                value.contractCode,
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
             );
@@ -155,7 +128,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
           hint: Container(
             width: MediaQuery.of(context).size.width - 84,
             child: Text(
-              'Chọn bác sĩ muốn chia sẻ (*):',
+              'Chọn hợp đồng để chia sẻ:',
               style: TextStyle(fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -175,7 +148,21 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
     );
   }
 
+  Widget _listShare() {
+    return Container();
+  }
+
   Future<void> _pullRefresh() async {
-    _doctorInfoBloc.add(DoctorInfoEventGetDoctors());
+    // _doctorInfoBloc.add(DoctorInfoEventGetDoctors());
+  }
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) async {
+      setState(() {
+        _patientId = value;
+        if (_patientId != 0 && _contractId == null) {
+          _contractListBloc.add(ListContractEventSetPatientId(id: _patientId));
+        }
+      });
+    });
   }
 }
