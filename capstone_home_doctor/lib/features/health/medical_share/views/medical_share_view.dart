@@ -9,12 +9,14 @@ import 'package:capstone_home_doctor/features/contract/states/contract_list_stat
 import 'package:capstone_home_doctor/features/contract/states/medical_share_state.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/events/medical_Share_event.dart';
+import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/states/medical_share_state.dart';
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
 import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 
 class MedicalShare extends StatefulWidget {
   @override
@@ -35,6 +37,9 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   MedicalShareBloc _medicalShareBloc;
   MedicalShareInsBloc _medicalShareInsBloc;
 
+  MedicalShareInsRepository _medicalShareInsRepository =
+      MedicalShareInsRepository(httpClient: http.Client());
+
   @override
   void initState() {
     // TODO: implement initState
@@ -42,7 +47,14 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
     _contractListBloc = BlocProvider.of(context);
     _medicalShareBloc = BlocProvider.of(context);
     _medicalShareInsBloc = BlocProvider.of(context);
+
     _getPatientId();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -466,22 +478,23 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                   }
                   if (state is MedicalShareInsStateSuccess) {
                     print('---MedicalShareInsStateSuccess---');
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                   }
-                  return Container(
-                    width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.only(bottom: 30),
-                    child: ButtonHDr(
-                      style: BtnStyle.BUTTON_BLACK,
-                      label: 'Chia sẻ',
-                      onTap: () {
-                        _medicalShareInsBloc.add(MedicalShareInsEventSend(
-                            contractID: dropdownValue.contractId,
-                            listMediIns: medicalInstructionIdsSelected));
-                      },
-                    ),
-                  );
+                  return Text('');
                 },
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.only(bottom: 30),
+                child: ButtonHDr(
+                  style: BtnStyle.BUTTON_BLACK,
+                  label: 'Chia sẻ',
+                  onTap: () {
+                    _medicalShareInsBloc.add(MedicalShareInsEventSend(
+                        contractID: dropdownValue.contractId,
+                        listMediIns: medicalInstructionIdsSelected));
+                  },
+                ),
               ),
             ],
           ),

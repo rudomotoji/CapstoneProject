@@ -7,8 +7,7 @@ class MedicalShareInsBloc
     extends Bloc<MedicalShareInsEvent, MedicalShareInsState> {
   final MedicalShareInsRepository medicalShareInsRepository;
   MedicalShareInsBloc({this.medicalShareInsRepository})
-      : assert(medicalShareInsRepository != null),
-        super(MedicalShareInsStateInitial());
+      : super(MedicalShareInsStateInitial());
 
   @override
   Stream<MedicalShareInsState> mapEventToState(
