@@ -108,5 +108,26 @@ class HealthRecordRepository extends BaseApiClient {
       print('ERROR AT getListMedicalShare: ${e}');
     }
   }
+
+  //lấy danh sách medical instruction để share
+  Future<List<MedInsByDiseaseDTO>> getAllMedicalToShare(
+      int patientID, int contractID) async {
+    final String url =
+        '/MedicalInstructions/GetMedicalInstructionToShare?patientId=${patientID}&contractId=${contractID}';
+    try {
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body) as List;
+        List<MedInsByDiseaseDTO> list = responseData.map((dto) {
+          return MedInsByDiseaseDTO.fromJson(dto);
+        }).toList();
+        return list;
+      } else {
+        return List<MedInsByDiseaseDTO>();
+      }
+    } catch (e) {
+      print('ERROR AT GET LIST HEALTH RECORD ${e.toString()}');
+    }
+  }
 //
 }
