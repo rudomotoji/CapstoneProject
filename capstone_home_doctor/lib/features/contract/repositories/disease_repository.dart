@@ -11,7 +11,7 @@ class DiseaseRepository extends BaseApiClient {
 
   //get list disease
   Future<List<DiseaseDTO>> getListDisease() async {
-    final String url = '/Diseases';
+    final String url = '/Diseases/GetDiseases';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {

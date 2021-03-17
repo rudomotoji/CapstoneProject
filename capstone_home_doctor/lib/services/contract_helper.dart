@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ContractHelper {
+  //FOR SENT REQUEST CONTRACT
   Future<void> initialContractSendRequest() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('CONTRACT_REQUEST', false);
@@ -66,5 +67,50 @@ class ContractHelper {
       initialDoctorId();
     }
     return prefs.getInt('DOCTOR_ID');
+  }
+
+  //FOR CONTRACT CHECKING
+  Future<void> initialContractCheckingRequest() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('CONTRACT_CHECKING', false);
+    prefs.setString('MESSAGE_CHECKING_CONTRACT', '');
+  }
+
+  Future<void> updateContractCheckingStatus(bool isSent, String msg) async {
+    //
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('CONTRACT_CHECKING') ||
+        prefs.getBool('CONTRACT_CHECKING') == null) {
+      //
+      initialContractCheckingRequest();
+    }
+    if (!prefs.containsKey('MESSAGE_CHECKING_CONTRACT') ||
+        prefs.getString('MESSAGE_CHECKING_CONTRACT') == null) {
+      //
+      initialContractCheckingRequest();
+    }
+    prefs.setBool('CONTRACT_CHECKING', isSent);
+    prefs.setString('MESSAGE_CHECKING_CONTRACT', msg);
+  }
+
+  Future<String> getMsgCheckingContract() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('MESSAGE_CHECKING_CONTRACT') ||
+        prefs.getString('MESSAGE_CHECKING_CONTRACT') == null) {
+      //
+      initialContractCheckingRequest();
+    }
+    return prefs.getString('MESSAGE_CHECKING_CONTRACT');
+  }
+
+  Future<bool> isAcceptable() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('CONTRACT_CHECKING') ||
+        prefs.getBool('CONTRACT_CHECKING') == null) {
+      //
+      initialContractCheckingRequest();
+    }
+
+    return prefs.getBool('CONTRACT_CHECKING');
   }
 }

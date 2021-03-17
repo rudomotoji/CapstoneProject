@@ -120,4 +120,45 @@ class ContractRepository extends BaseApiClient {
       print('ERROR AT UPDATE STATUS CONTRACT API: ${e}');
     }
   }
+
+  //check contract to create
+  Future<bool> checkContractToCreate(int doctorId, int patientId) async {
+    final url =
+        '/Contracts/CheckContractToCreate?doctorId=${doctorId}&patientId=${patientId}';
+    try {
+      //
+      final request = await getApi(url, null);
+      if (request.statusCode == 204) {
+        _contractHelper.updateContractCheckingStatus(true, 'Thành công');
+        return true;
+      } else if (request.statusCode == 200) {
+        // //
+        // _contractHelper.updateContractCheckingStatus(
+        //     false, 'Bạn đã có hợp đồng với bác sĩ này');
+        // return false;
+        final response = request.body;
+        if (response.contains('PENDING')) {
+          _contractHelper.updateContractCheckingStatus(
+              false, 'Bạn đang có hợp đồng chờ bác sĩ này xét duyệt.');
+        } else if (response.contains('APPROVED')) {
+          _contractHelper.updateContractCheckingStatus(
+              false, 'Bác sĩ đã xác nhận hợp đồng và chờ bạn chấp thuận.');
+        } else if (response == 'ACTIVE') {
+          _contractHelper.updateContractCheckingStatus(
+              false, 'Bạn đang có hợp đồng đang hiện  hành với bác sĩ.');
+        } else {
+          //
+          _contractHelper.updateContractCheckingStatus(
+              false, 'Kiểm tra lại kết nối mạng.');
+        }
+      } else {
+        //
+        _contractHelper.updateContractCheckingStatus(
+            false, 'Kiểm tra lại kết nối mạng');
+        return false;
+      }
+    } catch (e) {
+      print('ERROR AT CHECK CONTRACT TO CREATE ${e}');
+    }
+  }
 }

@@ -1,16 +1,27 @@
+import 'dart:ui';
+
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_checking_bloc.dart';
+
 import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/events/contract_checking_event.dart';
 import 'package:capstone_home_doctor/features/contract/events/doctor_info_event.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
 import 'package:capstone_home_doctor/features/contract/states/doctor_info_state.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
 DoctorRepository doctorRepository = DoctorRepository(httpClient: http.Client());
+final ContractHelper _contractHelper = ContractHelper();
+final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
 class DoctorInformation extends StatefulWidget {
   @override
@@ -23,7 +34,28 @@ class DoctorInformation extends StatefulWidget {
 class _DoctorInformation extends State<DoctorInformation>
     with WidgetsBindingObserver {
   //
+  ContractRepository requestContractRepository =
+      ContractRepository(httpClient: http.Client());
+  CheckingContractBloc _checkingContractBloc;
+  //
   int _idDoctor = 0;
+  int _patientId = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getPatientId();
+    _checkingContractBloc = BlocProvider.of(context);
+  }
+
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) {
+      setState(() {
+        _patientId = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,9 +101,14 @@ class _DoctorInformation extends State<DoctorInformation>
                   style: BtnStyle.BUTTON_BLACK,
                   label: 'Yêu cầu hợp đồng',
                   onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
-                        arguments: arguments);
+                    _checkContractAvailable();
+
+                    ///
+                    ///
+                    ///
+                    // Navigator.of(context).pop();
+                    // Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
+                    //     arguments: arguments);
                   },
                 ),
               )
@@ -120,6 +157,7 @@ class _DoctorInformation extends State<DoctorInformation>
       if (state is DoctorInfoStateSuccess) {
         if (state.dto == null) {
           return Container(
+            width: MediaQuery.of(context).size.width,
             margin: EdgeInsets.only(left: 20, right: 20),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6),
@@ -430,6 +468,148 @@ class _DoctorInformation extends State<DoctorInformation>
           child: Text('Không tìm thấy bác sĩ'),
         ),
       );
+    });
+  }
+
+  //
+  _checkContractAvailable() {
+    setState(() {
+      //
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    width: 250,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.7),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 130,
+                          // height: 100,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                        // Spacer(),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Đang gửi yêu cầu',
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.GREY_TEXT,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
+      if (_patientId != 0 && _idDoctor != 0) {
+        //
+        _checkingContractBloc.add(CheckingtContractEventSend(
+            doctorId: _idDoctor, patientId: _patientId));
+
+        Future.delayed(const Duration(seconds: 3), () {
+          //
+          _contractHelper.isAcceptable().then((value) {
+            //
+            if (value == true) {
+              Navigator.of(context).pop();
+              Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
+                  arguments: _idDoctor);
+            } else {
+              //
+              String msg = '';
+              _contractHelper.getMsgCheckingContract().then((value) async {
+                msg = value;
+              });
+              Navigator.of(context).pop();
+              return showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                          child: Container(
+                            padding:
+                                EdgeInsets.only(left: 10, top: 10, right: 10),
+                            width: 250,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: DefaultTheme.WHITE.withOpacity(0.7),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.only(bottom: 10, top: 10),
+                                  child: Text(
+                                    'Gửi yêu cầu thất bại',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.none,
+                                      color: DefaultTheme.BLACK,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      '$msg',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        decoration: TextDecoration.none,
+                                        color: DefaultTheme.GREY_TEXT,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                Divider(
+                                  height: 1,
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                ),
+                                ButtonHDr(
+                                  height: 40,
+                                  style: BtnStyle.BUTTON_TRANSPARENT,
+                                  label: 'OK',
+                                  labelColor: DefaultTheme.BLUE_TEXT,
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  });
+            }
+          });
+        });
+      }
     });
   }
 }

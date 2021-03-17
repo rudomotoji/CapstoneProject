@@ -1175,7 +1175,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   getLocalStorage() async {
     List<PrescriptionDTO> data = await _sqfLiteHelper.getMedicationsRespone();
-    print('list data: ${data.length}');
+    // print('list data: ${data.length}');
     List<MedicationSchedules> lists = [];
     for (var itemPrescription in data) {
       DateTime dateFinished =

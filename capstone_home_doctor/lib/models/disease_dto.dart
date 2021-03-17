@@ -30,7 +30,7 @@ class DiseaseDTO {
     number = json['number'];
     start = json['start'];
     end = json['end'];
-    name = json['name'];
+    name = json['nameDisease'];
     contracts = json['contracts'];
     healthRecords = json['healthRecords'];
   }
@@ -42,7 +42,7 @@ class DiseaseDTO {
     data['number'] = this.number;
     data['start'] = this.start;
     data['end'] = this.end;
-    data['name'] = this.name;
+    data['nameDisease'] = this.name;
     data['contracts'] = this.contracts;
     data['healthRecords'] = this.healthRecords;
     return data;

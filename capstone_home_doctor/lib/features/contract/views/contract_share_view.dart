@@ -351,6 +351,7 @@ class _ContractShareView extends State<ContractShareView>
                     medicalInstructions1.clear();
                     medicalInstructions2.clear();
                     medicalInstructionIdsSelected.clear();
+                    //
                     String _idDisease = '';
                     _diseaseIds.clear();
                     _listDiseaseSelected = values;
@@ -390,6 +391,7 @@ class _ContractShareView extends State<ContractShareView>
                       medicalInstructions2.clear();
                       medicalInstructionIdsSelected.clear();
                       _listDiseaseSelected.remove(value);
+                      //
                       _diseaseIds.remove(value.toString().split(':')[0]);
                       print(
                           'DISEASE LIST SELECT WHEN REMOVE NOW: ${_listDiseaseSelected.toString()}');
@@ -1232,6 +1234,7 @@ class _ContractShareView extends State<ContractShareView>
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 //
+                                                Spacer(),
                                                 SizedBox(
                                                   width: 50,
                                                   height: 50,
@@ -1258,6 +1261,38 @@ class _ContractShareView extends State<ContractShareView>
                                                       textAlign:
                                                           TextAlign.center,
                                                     ),
+                                                  ),
+                                                ),
+                                                Spacer(),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 30),
+                                                  child: InkWell(
+                                                    child: Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      height: 50,
+                                                      child: Center(
+                                                        child: Text(
+                                                          'Gợi ý: Tạo hồ sơ sức khoẻ và thêm các phiếu y lệnh',
+                                                          style: TextStyle(
+                                                              color: DefaultTheme
+                                                                  .BLUE_REFERENCE,
+                                                              fontSize: 16,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .underline),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      //
+                                                      // Navigator.of(context)
+                                                      //     .pushNamed(RoutesHDr
+                                                      //         .CREATE_HEALTH_RECORD);
+                                                    },
                                                   ),
                                                 ),
                                               ],
@@ -1331,20 +1366,26 @@ class _ContractShareView extends State<ContractShareView>
                                                                               20),
                                                                 ),
                                                                 //
-                                                                Text(
-                                                                  'Hồ sơ ${i.healthRecordPlace}',
-                                                                  style: TextStyle(
-                                                                      color: DefaultTheme
-                                                                          .BLACK,
-                                                                      fontSize:
-                                                                          16,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500),
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  maxLines: 3,
+                                                                Container(
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width -
+                                                                      80,
+                                                                  child: Text(
+                                                                    'Hồ sơ ${i.healthRecordPlace}',
+                                                                    style: TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLACK,
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w500),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 3,
+                                                                  ),
                                                                 ),
                                                               ],
                                                             ),
@@ -1442,8 +1483,8 @@ class _ContractShareView extends State<ContractShareView>
                                                                                 ClipRRect(
                                                                                   borderRadius: BorderRadius.circular(6),
                                                                                   child: Container(
-                                                                                    width: 20,
-                                                                                    height: 20,
+                                                                                    width: 25,
+                                                                                    height: 25,
                                                                                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
                                                                                     child: Checkbox(
                                                                                       checkColor: DefaultTheme.BLUE_REFERENCE,

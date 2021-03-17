@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/features/chat/chat.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_checking_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
@@ -33,6 +34,7 @@ import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_with_type_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
+import 'package:capstone_home_doctor/features/health/health_record/views/create_health_record.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/health_record_detail.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/views/medical_share_view.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/view/heart/heart.dart';
@@ -392,6 +394,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
             create: (BuildContext context) =>
                 TokenDeviceBloc(accountRepository: accountRepository),
           ),
+          BlocProvider<CheckingContractBloc>(
+            create: (BuildContext context) =>
+                CheckingContractBloc(requestContractAPI: _contractRepository),
+          ),
         ],
         child: GestureDetector(
           onTap: () {
@@ -432,7 +438,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
                     PatientInformation(),
                 RoutesHDr.CONTRACT_REASON_VIEW: (context) =>
                     ReasonContractView(),
-                //RoutesHDr.CREATE_HEALTH_RECORD: (context) => CreateHealthRecord(),
+                RoutesHDr.CREATE_HEALTH_RECORD: (context) =>
+                    CreateHealthRecord(_doNothing()),
                 RoutesHDr.HEALTH_RECORD_DETAIL: (context) =>
                     HealthRecordDetail(),
                 RoutesHDr.HEART: (context) => Heart(),
@@ -464,6 +471,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
             // ),
           ),
         ));
+  }
+
+  _doNothing() {
+    //
   }
 }
 
