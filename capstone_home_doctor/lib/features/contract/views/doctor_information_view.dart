@@ -529,7 +529,7 @@ class _DoctorInformation extends State<DoctorInformation>
             if (value == true) {
               Navigator.of(context).pop();
               Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
-                  arguments: _idDoctor);
+                  arguments: _idDoctor.toString());
             } else {
               //
               String msg = '';

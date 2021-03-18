@@ -56,6 +56,7 @@ class _DetailContractView extends State<DetailContractView>
     _contractIdNowBloc = BlocProvider.of(context);
     _contractFullBloc = BlocProvider.of(context);
     _contractUpdateBloc = BlocProvider.of(context);
+    _refreshData();
   }
 
   // _getContractId() async {
@@ -108,6 +109,7 @@ class _DetailContractView extends State<DetailContractView>
     setState(() {
       _contractId = arguments['C_ID'];
     });
+    print('contract id ${_contractId}');
     return Scaffold(
       // resizeToAvoidBottomPadding: false,
       // backgroundColor: DefaultTheme.WHITE,
@@ -352,7 +354,6 @@ class _DetailContractView extends State<DetailContractView>
                                   ),
                                   Container(
                                     width: 100,
-                                    height: 20,
                                     child: Text(
                                       'Địa chỉ',
                                       style: TextStyle(fontSize: 16),
@@ -362,7 +363,6 @@ class _DetailContractView extends State<DetailContractView>
                                     width: MediaQuery.of(context).size.width -
                                         100 -
                                         40,
-                                    height: 20,
                                     child: Text(
                                       '${_contractFullDTO.addressPatient}',
                                       style: TextStyle(fontSize: 16),
@@ -373,9 +373,94 @@ class _DetailContractView extends State<DetailContractView>
                                   ),
                                 ],
                               ),
+
                               Padding(
-                                padding: EdgeInsets.only(bottom: 5),
+                                padding: EdgeInsets.only(bottom: 40),
                               ),
+                              //
+                              (_contractFullDTO.nameLicense != null &&
+                                      _contractFullDTO.daysOfTracking != null)
+                                  ? Column(
+                                      children: <Widget>[
+                                        //
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              left: 20, bottom: 20),
+                                          child: Text(
+                                            'Giá hợp đồng',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                            ),
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Số ngày theo dõi',
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.daysOfTracking}',
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 5),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                            ),
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Thành tiền',
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense}',
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 20),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  : Container(),
                               Padding(
                                 padding: EdgeInsets.only(bottom: 40),
                               ),

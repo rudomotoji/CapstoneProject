@@ -310,6 +310,37 @@ class _ManageContract extends State<ManageContract> {
                                         itemCount: _listExecuting.length,
                                         itemBuilder:
                                             (BuildContext context, int index) {
+                                          String statusTemp = '';
+                                          Color statusColor =
+                                              DefaultTheme.BLACK_BUTTON;
+                                          if (_listExecuting[index]
+                                              .status
+                                              .contains('PENDING')) {
+                                            statusTemp = 'Chờ xét duyệt';
+                                            statusColor =
+                                                DefaultTheme.ORANGE_TEXT;
+                                          }
+                                          if (_listExecuting[index]
+                                              .status
+                                              .contains('ACTIVE')) {
+                                            statusTemp = 'Đang hiện hành';
+                                            statusColor =
+                                                DefaultTheme.GRADIENT_5;
+                                          }
+                                          if (_listExecuting[index]
+                                              .status
+                                              .contains('APPROVE')) {
+                                            statusTemp = 'Chờ kí nhận';
+                                            statusColor =
+                                                DefaultTheme.BLUE_TEXT;
+                                          }
+                                          if (_listExecuting[index]
+                                              .status
+                                              .contains('FINISHED')) {
+                                            statusTemp = 'Đã hoàn tất';
+                                            statusColor =
+                                                DefaultTheme.BLUE_REFERENCE;
+                                          }
                                           //
                                           return Container(
                                             width: 200,
@@ -344,18 +375,18 @@ class _ManageContract extends State<ManageContract> {
                                                     ),
                                                   ),
                                                 ),
-                                                Spacer(),
                                                 Row(
                                                   children: [
                                                     Text('Trạng thái:'),
                                                     Text(
-                                                      '${_listExecuting[index].status}',
+                                                      '${statusTemp}',
                                                       style: TextStyle(
-                                                          color: DefaultTheme
-                                                              .RED_CALENDAR),
+                                                          color: statusColor),
                                                     ),
                                                   ],
                                                 ),
+                                                Spacer(),
+
                                                 Row(
                                                   children: [
                                                     Text('Bác sĩ:'),
@@ -472,6 +503,37 @@ class _ManageContract extends State<ManageContract> {
                                         itemBuilder:
                                             (BuildContext context, int index) {
                                           //
+                                          String statusTemp = '';
+                                          Color statusColor =
+                                              DefaultTheme.BLACK_BUTTON;
+                                          if (_listAcitved[index]
+                                              .status
+                                              .contains('PENDING')) {
+                                            statusTemp = 'Chờ xét duyệt';
+                                            statusColor =
+                                                DefaultTheme.ORANGE_TEXT;
+                                          }
+                                          if (_listAcitved[index]
+                                              .status
+                                              .contains('ACTIVE')) {
+                                            statusTemp = 'Đang hiện hành';
+                                            statusColor =
+                                                DefaultTheme.GRADIENT_5;
+                                          }
+                                          if (_listAcitved[index]
+                                              .status
+                                              .contains('APPROVE')) {
+                                            statusTemp = 'Chờ kí nhận';
+                                            statusColor =
+                                                DefaultTheme.BLUE_TEXT;
+                                          }
+                                          if (_listAcitved[index]
+                                              .status
+                                              .contains('FINISHED')) {
+                                            statusTemp = 'Đã hoàn tất';
+                                            statusColor =
+                                                DefaultTheme.BLUE_REFERENCE;
+                                          }
                                           return Container(
                                             width: 200,
                                             height: 250,
@@ -505,18 +567,17 @@ class _ManageContract extends State<ManageContract> {
                                                     ),
                                                   ),
                                                 ),
-                                                Spacer(),
                                                 Row(
                                                   children: [
                                                     Text('Trạng thái:'),
                                                     Text(
-                                                      '${_listAcitved[index].status}',
+                                                      '${statusTemp}',
                                                       style: TextStyle(
-                                                          color: DefaultTheme
-                                                              .RED_CALENDAR),
+                                                          color: statusColor),
                                                     ),
                                                   ],
                                                 ),
+                                                Spacer(),
                                                 Row(
                                                   children: [
                                                     Text('Bác sĩ:'),

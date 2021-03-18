@@ -131,6 +131,7 @@ flutter:
     - assets/images/ic-medical-instruction.png
     - assets/images/ic-map.png
     - assets/images/ic-note.png
+    - assets/images/ic-add-more-mi.png
 
   
   #   - images/a_dot_burr.jpeg
