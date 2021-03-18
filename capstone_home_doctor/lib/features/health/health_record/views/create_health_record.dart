@@ -257,12 +257,12 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                   listType: MultiSelectListType.CHIP,
                                   searchable: true,
                                   buttonText: Text(
-                                    "Bệnh lý tim mạch(*)",
+                                    "Chọn mã bệnh(*)",
                                     style: TextStyle(
                                         color: Colors.black, fontSize: 16),
                                   ),
                                   title: Text(
-                                    "Chọn các bệnh lý",
+                                    "Chọn mã bệnh",
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 20),
@@ -306,7 +306,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                         child: Padding(
                           padding: EdgeInsets.only(top: 5, left: 10, right: 20),
                           child: Text(
-                            'Chọn chính xác bệnh lý tim mạch giúp bác sĩ xem xét sự khả quan trong vấn đề xét duyệt.',
+                            'Chọn mã bệnh chính xác được ghi trên hồ sơ bệnh án của bạn',
                             style: TextStyle(
                                 color: DefaultTheme.GREY_TEXT,
                                 fontSize: 15,

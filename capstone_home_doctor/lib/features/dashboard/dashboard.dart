@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/convert_utils.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/artboard_button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
@@ -99,7 +100,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       });
     });
     await _authenticateHelper.getAccountId().then((value) {
-      print('ACCOUNT ID ${value}');
       setState(() {
         _accountId = value;
       });
@@ -1148,17 +1148,20 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     List<MedicationSchedules> lists = [];
 
     for (var schedule in listPrescription) {
-      DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
-          .parse(schedule.medicationsRespone.dateFinished);
-      if (tempDate2.millisecondsSinceEpoch >=
-          curentDateNow.millisecondsSinceEpoch) {
-        String responseID = await _sqfLiteHelper
-            .insertMedicalResponse(schedule.medicationsRespone);
+      if (schedule.medicationsRespone.dateFinished != null) {
+        DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
+            .parse(schedule.medicationsRespone.dateFinished);
+        if (tempDate2.millisecondsSinceEpoch >=
+                curentDateNow.millisecondsSinceEpoch &&
+            schedule.medicationsRespone.status.contains('ACTIVE')) {
+          String responseID = await _sqfLiteHelper
+              .insertMedicalResponse(schedule.medicationsRespone);
 
-        for (var item in schedule.medicationsRespone.medicationSchedules) {
-          lists.add(item);
-          item.medicalResponseID = responseID;
-          await _sqfLiteHelper.insertMedicalSchedule(item);
+          for (var item in schedule.medicationsRespone.medicationSchedules) {
+            lists.add(item);
+            item.medicalResponseID = responseID;
+            await _sqfLiteHelper.insertMedicalSchedule(item);
+          }
         }
       }
     }

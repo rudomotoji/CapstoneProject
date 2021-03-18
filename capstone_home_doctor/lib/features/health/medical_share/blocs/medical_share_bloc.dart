@@ -1,13 +1,15 @@
 import 'package:capstone_home_doctor/features/health/medical_share/events/medical_Share_event.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/states/medical_share_state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MedicalShareInsBloc
     extends Bloc<MedicalShareInsEvent, MedicalShareInsState> {
   final MedicalShareInsRepository medicalShareInsRepository;
-  MedicalShareInsBloc({this.medicalShareInsRepository})
-      : super(MedicalShareInsStateInitial());
+  MedicalShareInsBloc({@required this.medicalShareInsRepository})
+      : assert(medicalShareInsRepository != null),
+        super(MedicalShareInsStateInitial());
 
   @override
   Stream<MedicalShareInsState> mapEventToState(
