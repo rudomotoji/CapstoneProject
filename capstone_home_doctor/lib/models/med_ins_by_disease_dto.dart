@@ -32,7 +32,7 @@ class MedicalInstructionTypes {
   MedicalInstructionTypes({this.miTypeName, this.medicalInstructions});
 
   MedicalInstructionTypes.fromJson(Map<String, dynamic> json) {
-    miTypeName = json['miTypeName'];
+    miTypeName = json['miType'];
     if (json['medicalInstructions'] != null) {
       medicalInstructions = new List<MedicalInstructions>();
       json['medicalInstructions'].forEach((v) {
@@ -43,7 +43,7 @@ class MedicalInstructionTypes {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['miTypeName'] = this.miTypeName;
+    data['miType'] = this.miTypeName;
     if (this.medicalInstructions != null) {
       data['medicalInstructions'] =
           this.medicalInstructions.map((v) => v.toJson()).toList();

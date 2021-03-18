@@ -5,6 +5,7 @@ import 'package:capstone_home_doctor/models/contract_detail_dto.dart';
 import 'package:capstone_home_doctor/models/contract_full_dto.dart';
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
 import 'package:capstone_home_doctor/models/contract_update_dto.dart';
+import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:flutter/material.dart';

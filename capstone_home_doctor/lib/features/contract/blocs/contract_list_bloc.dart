@@ -3,6 +3,7 @@ import 'package:capstone_home_doctor/features/contract/repositories/contract_rep
 import 'package:capstone_home_doctor/features/contract/states/contract_list_state.dart';
 
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
+import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

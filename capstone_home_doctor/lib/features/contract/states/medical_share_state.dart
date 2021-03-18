@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/models/medical_share_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,7 +19,10 @@ class MedicalShareStateFailure extends MedicalShareState {}
 
 class MedicalShareStateSuccess extends MedicalShareState {
   final List<MedicalShareDTO> listMedicalShare;
-  const MedicalShareStateSuccess({@required this.listMedicalShare});
+  final List<MedInsByDiseaseDTO> listMedicalInsShare;
+
+  const MedicalShareStateSuccess(
+      {this.listMedicalShare, this.listMedicalInsShare});
 
   @override
   // TODO: implement props
