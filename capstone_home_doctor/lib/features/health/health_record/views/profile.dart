@@ -94,7 +94,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
           padding: EdgeInsets.only(top: 15),
         ),
         ButtonArtBoard(
-          title: 'Chia sẻ bệnh án',
+          title: 'Chia sẻ y lệnh',
           description:
               'Các phiếu y lệnh được chia sẻ giúp bác sĩ chẩn đoán tốt hơn',
           imageAsset: 'assets/images/ic-medical-instruction.png',

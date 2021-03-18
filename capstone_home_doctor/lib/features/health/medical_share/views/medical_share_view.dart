@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
@@ -41,6 +43,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
       MedicalShareInsRepository(httpClient: http.Client());
 
   List<MedInsByDiseaseDTO> listMedicalInsShare;
+  //
+  bool sendStatus = false;
 
   @override
   void initState() {
@@ -100,6 +104,27 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                               }
                               if (state is ListContractStateFailure) {
                                 print('---ListContractStateFailure---');
+                                return Container(
+                                  margin: EdgeInsets.only(
+                                      left: 20, right: 20, bottom: 10, top: 10),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: DefaultTheme.GREY_BUTTON),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 10,
+                                        bottom: 10,
+                                        left: 20,
+                                        right: 20),
+                                    child:
+                                        Text('Không thể lấy danh sách hợp đồng',
+                                            style: TextStyle(
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            )),
+                                  ),
+                                );
                               }
                               if (state is ListContractStateSuccess) {
                                 _listContracts = [];
@@ -181,6 +206,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
           onChanged: (res) async {
             setState(() {
               dropdownValue = res;
+              listMedicalInsShare = [];
+              medicalInstructionIdsSelected = [];
             });
             await _medicalShareBloc.add(
                 MedicalShareEventGetMediIns(patientID: 2, contractID: 4043));
@@ -188,6 +215,79 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  _popupDialog() {
+    setState(() {
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    padding: EdgeInsets.only(left: 10, top: 10, right: 10),
+                    width: 250,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.7),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        // Container(
+                        //   padding: EdgeInsets.only(bottom: 10, top: 10),
+                        //   child: Text(
+                        //     'Chia sẻ thành công',
+                        //     style: TextStyle(
+                        //       decoration: TextDecoration.none,
+                        //       color: DefaultTheme.BLACK,
+                        //       fontWeight: FontWeight.w600,
+                        //       fontSize: 18,
+                        //     ),
+                        //   ),
+                        // ),
+                        Container(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Bạn đã chia sẻ thành công',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                color: DefaultTheme.GREY_TEXT,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Spacer(),
+                        Divider(
+                          height: 1,
+                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                        ),
+                        ButtonHDr(
+                          height: 40,
+                          style: BtnStyle.BUTTON_TRANSPARENT,
+                          label: 'OK',
+                          labelColor: DefaultTheme.BLUE_TEXT,
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
+    });
   }
 
   Widget _listShare() {
@@ -496,6 +596,12 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                         if (state is MedicalShareInsStateSuccess) {
                           print('---MedicalShareInsStateSuccess---');
                           // Navigator.pop(context);
+                          setState(() {
+                            dropdownValue = null;
+                            listMedicalInsShare = [];
+                            medicalInstructionIdsSelected = [];
+                          });
+                          // _popupDialog();
                         }
                         return Text('');
                       },
@@ -522,11 +628,17 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
         : Container();
   }
 
-  Future<void> _pullRefresh() async {}
+  Future<void> _pullRefresh() async {
+    _getPatientId();
+  }
+
   _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) async {
       setState(() {
         _patientId = value;
+        dropdownValue = null;
+        medicalInstructionIdsSelected = [];
+        medicalInstructionIdsSelected = [];
         if (_patientId != 0 && _contractId == null) {
           _contractListBloc.add(ListContractEventSetPatientId(id: _patientId));
         }

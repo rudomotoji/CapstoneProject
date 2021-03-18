@@ -468,14 +468,6 @@ class _HomeDoctorState extends State<HomeDoctor> {
               },
               home: _startScreen,
             ),
-            // child: RepositoryProvider.value(
-            //   value: accountRepository,
-            //   child: BlocProvider(
-            //     create: (_) => AccountBloc(accountRepository: accountRepository)
-            //       ..add(AccountEventStartScreen()),
-            //     child: StartingHDr(),
-            //   ),
-            // ),
           ),
         ));
   }
@@ -484,66 +476,3 @@ class _HomeDoctorState extends State<HomeDoctor> {
     //
   }
 }
-
-// class StartingHDr extends StatefulWidget {
-//   @override
-//   State<StatefulWidget> createState() {
-//     return _StartingHDr();
-//   }
-// }
-
-// class _StartingHDr extends State<StartingHDr> with WidgetsBindingObserver {
-//   final _navigatorKey = GlobalKey<NavigatorState>();
-//   NavigatorState get _navigator => _navigatorKey.currentState;
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       // theme: ThemeData(fontFamily: 'SFPro'),
-//       initialRoute: RoutesHDr.INITIAL_ROUTE,
-//       routes: {
-//         RoutesHDr.LOG_IN: (context) => Login(),
-//         RoutesHDr.REGISTER: (context) => Register(),
-//         // RoutesHDr.CONFIRM_LOG_IN: (context) => ConfirmLogin(),
-//         RoutesHDr.MAIN_HOME: (context) => MainHome(),
-//         RoutesHDr.CONFIRM_CONTRACT: (context) => RequestContract(),
-//         RoutesHDr.INTRO_CONNECT_PERIPHERAL: (context) => IntroConnectDevice(),
-//         RoutesHDr.CONNECT_PERIPHERAL: (context) => ConnectPeripheral(),
-//         RoutesHDr.CHAT: (context) => ChatScreen(),
-//         RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
-//         RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
-//         RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),
-//         RoutesHDr.SCHEDULE: (context) => ScheduleView(),
-//         RoutesHDr.HISTORY_PRESCRIPTION: (context) => MedicineHistory(),
-//         RoutesHDr.PATIENT_INFORMATION: (context) => PatientInformation(),
-//         //RoutesHDr.CREATE_HEALTH_RECORD: (context) => CreateHealthRecord(),
-//         RoutesHDr.HEALTH_RECORD_DETAIL: (context) => HealthRecordDetail(),
-//         RoutesHDr.HEART: (context) => Heart(),
-//         RoutesHDr.MEDICINE_NOTI_VIEW: (context) => ScheduleMedNotiView(),
-//         RoutesHDr.OXY_CHART_VIEW: (context) => OxyChartView(),
-//         RoutesHDr.MEDICAL_SHARE: (context) => MedicalShare(),
-//       },
-//       navigatorKey: _navigatorKey,
-//       builder: (context, child) {
-//         //
-//         return BlocListener(
-//           listener: (context, state) {
-//             if (state is AccountStateUnauthenticate) {
-//               _navigator.pushAndRemoveUntil<void>(
-//                 Login.route(),
-//                 (route) => false,
-//               );
-//             }
-//             if (state is AccountStateAuthenticated) {
-//               _navigator.pushAndRemoveUntil<void>(
-//                 Login.route(),
-//                 (route) => false,
-//               );
-//             }
-//           },
-//           child: child,
-//         );
-//       },
-//     );
-//   }
-// }

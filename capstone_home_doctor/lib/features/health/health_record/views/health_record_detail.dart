@@ -193,7 +193,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       Container(
                                         width: 125,
                                         child: Text(
-                                          'Bệnh lý tim mạch',
+                                          'Bệnh lý ',
                                           style: TextStyle(
                                             color: DefaultTheme.GREY_TEXT,
                                             fontSize: 15,
