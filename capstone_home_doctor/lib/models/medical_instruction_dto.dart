@@ -145,8 +145,8 @@ class MedicalInstructionDTO {
     placeHealthRecord = json['placeHealthRecord'];
     dateStarted = json['dateStarted'];
     dateFinished = json['dateFinished'];
-    medicationsRespone = json['medicationsRespone'] != null
-        ? new PrescriptionDTO.fromJson(json['medicationsRespone'])
+    medicationsRespone = json['prescriptionRespone'] != null
+        ? new PrescriptionDTO.fromJson(json['prescriptionRespone'])
         : null;
   }
 

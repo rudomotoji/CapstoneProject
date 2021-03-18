@@ -58,17 +58,20 @@ class PrescriptionDTO {
   String dateFinished;
   List<MedicationSchedules> medicationSchedules;
   String medicalResponseID;
+  String status;
 
   PrescriptionDTO({
     this.dateStarted,
     this.dateFinished,
     this.medicationSchedules,
     this.medicalResponseID,
+    this.status,
   });
 
   PrescriptionDTO.fromJson(Map<String, dynamic> json) {
     dateStarted = json['dateStarted'];
     dateFinished = json['dateFinished'];
+    status = json['status'];
     if (json['medicationSchedules'] != null) {
       medicationSchedules = new List<MedicationSchedules>();
       json['medicationSchedules'].forEach((v) {

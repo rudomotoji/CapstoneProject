@@ -15,7 +15,6 @@ import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.da
 import 'package:capstone_home_doctor/features/contract/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
-import 'package:capstone_home_doctor/features/contract/views/confirm_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/contract_detail_status_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/contract_draft_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/contract_share_view.dart';

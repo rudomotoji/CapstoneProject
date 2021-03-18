@@ -260,7 +260,14 @@ class _ScheduleView extends State<ScheduleView>
               .compareTo(a.medicationsRespone.dateFinished));
         }
         if (listPrescription.isNotEmpty) {
-          _currentPrescription = listPrescription[0];
+          List<MedicalInstructionDTO> listPrescriptions = [];
+          for (var element in listPrescription) {
+            if (element.medicationsRespone.status.contains('ACTIVE')) {
+              listPrescriptions.add(element);
+            }
+          }
+          if (listPrescriptions.length > 0)
+            _currentPrescription = listPrescriptions[0];
         }
         return (state.listPrescription == null ||
                 state.listPrescription.isEmpty)

@@ -209,7 +209,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                 (155),
                                         child: Text(
                                           (_healthRecordDTO.diseases.length > 0)
-                                              ? '${_healthRecordDTO.diseases[0]['diseaseName']}'
+                                              ? '${getDisease(_healthRecordDTO.diseases)}'
                                               : '', //lấy tên bệnh lý
                                           overflow: TextOverflow.ellipsis,
                                           maxLines: 3,
@@ -1474,6 +1474,18 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         _medInsTypeListBloc.add(MedInsTypeEventGetList(status: 'active'));
       }
     });
+  }
+
+  String getDisease(List<dynamic> listDisease) {
+    String str = '';
+    for (var i = 0; i < listDisease.length; i++) {
+      if (i == (listDisease.length - 1)) {
+        str += listDisease[i]['diseaseName'];
+      } else {
+        str += listDisease[i]['diseaseName'] + '\n';
+      }
+    }
+    return str;
   }
 
   // String getMedInsTypeName(String id) {

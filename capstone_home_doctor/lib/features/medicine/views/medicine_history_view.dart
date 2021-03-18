@@ -232,6 +232,27 @@ class _MedicineHistory extends State<MedicineHistory>
                                                                     .w400),
                                                       ),
                                                     ),
+                                                    Container(
+                                                      height: 15,
+                                                      child: Text(
+                                                        'Trạng thái: ${_checkStatus(listPrescription[index].medicationsRespone.status)}',
+                                                        style: TextStyle(
+                                                            color: listPrescription[
+                                                                        index]
+                                                                    .medicationsRespone
+                                                                    .status
+                                                                    .contains(
+                                                                        'ACTIVE')
+                                                                ? DefaultTheme
+                                                                    .SUCCESS_STATUS
+                                                                : DefaultTheme
+                                                                    .RED_TEXT,
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ),
+                                                    ),
                                                     Spacer(),
                                                     Divider(
                                                       height: 1,
@@ -281,5 +302,18 @@ class _MedicineHistory extends State<MedicineHistory>
 
   _showDetailPrescription(String healthRecordId) {
     //
+  }
+
+  String _checkStatus(String status) {
+    switch (status) {
+      case 'ACTIVE':
+        return 'Đang sử dụng';
+      case 'FINISH':
+        return 'Đã hoàn thành';
+      case 'CANCEL':
+        return 'Đã dừng sử dụng';
+      default:
+        break;
+    }
   }
 }

@@ -238,7 +238,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                                   fontWeight: FontWeight.w500),
                                             ),
                                       Text(
-                                        'Bệnh lý: ${state.listHealthRecord[index].diseases}',
+                                        'Bệnh lý: ${getDisease(state.listHealthRecord[index].diseases)}',
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
@@ -416,5 +416,17 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
       _healthRecordListBloc
           .add(HRListEventSetPersonalHRId(personalHealthRecordId: _patientId));
     }
+  }
+
+  String getDisease(List<dynamic> listDisease) {
+    String str = '';
+    for (var i = 0; i < listDisease.length; i++) {
+      if (i == (listDisease.length - 1)) {
+        str += listDisease[i]['diseaseName'];
+      } else {
+        str += listDisease[i]['diseaseName'] + '\n';
+      }
+    }
+    return str;
   }
 }
