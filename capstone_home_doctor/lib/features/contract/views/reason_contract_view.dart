@@ -20,7 +20,8 @@ class ReasonContractView extends StatefulWidget {
 class _ReasonContractView extends State<ReasonContractView>
     with WidgetsBindingObserver {
   TextEditingController _noteController = TextEditingController();
-  String _startDate = DateTime.now().toString().split(' ')[0];
+  String _startDate =
+      DateTime.now().add(Duration(days: 5)).toString().split(' ')[0];
   String _note = '';
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class _ReasonContractView extends State<ReasonContractView>
                           padding:
                               EdgeInsets.only(left: 20, right: 20, bottom: 10),
                           child: Text(
-                            '1. Hệ thống hỗ trợ lưu trữ hồ sơ bệnh án của bệnh nhân để phục vụ cho việc khám chữa bệnh trong tương lai.',
+                            '1. Hệ thống hỗ trợ lưu trữ hồ sơ bệnh án của bệnh nhân chỉ để phục vụ cho việc khám chữa bệnh.',
                             style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontSize: 15,
@@ -78,7 +79,7 @@ class _ReasonContractView extends State<ReasonContractView>
                           padding:
                               EdgeInsets.only(left: 20, right: 20, bottom: 10),
                           child: Text(
-                            '2. Hệ thống đảm bảo theo dõi các chỉ số sức khỏe, sinh hiệu của bệnh nhân để bác sĩ đưa ra các y lệnh cần thiết trong quá trình khám chữa bệnh.',
+                            '2. Hệ thống đảm bảo theo dõi các chỉ số sức khỏe, sinh hiệu của bệnh nhân để bác sĩ đưa ra các y lệnh cần thiết trong quá trình khám chữa bệnh và những thông tin này sẽ được đảm bảo tính riêng tư trong suốt thời hạn hợp đồng.',
                             style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontSize: 15,
@@ -89,7 +90,7 @@ class _ReasonContractView extends State<ReasonContractView>
                           padding:
                               EdgeInsets.only(left: 20, right: 20, bottom: 10),
                           child: Text(
-                            '3. Hệ thống đưa ra các cảnh báo nguy hiểm khi có các chỉ số sinh hiệu bất thường đến bệnh nhân và bác sĩ.',
+                            '3. Hệ thống đưa ra các cảnh báo nguy hiểm khi có các chỉ số sinh hiệu bất thường đến bệnh nhân và bác sĩ. Bác sĩ sẽ có trách nhiệm đánh giá các chỉ số này',
                             style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontSize: 15,
@@ -100,7 +101,7 @@ class _ReasonContractView extends State<ReasonContractView>
                           padding:
                               EdgeInsets.only(left: 20, right: 20, bottom: 10),
                           child: Text(
-                            '4. Hệ thống đưa ra các nhắc nhở về lịch uống thuốc, lịch đo sinh hiệu hằng ngày.',
+                            '4. Hệ thống đưa ra các nhắc nhở về lịch uống thuốc, lịch đo sinh hiệu hằng ngày căn cứ trên y lệnh của bác sĩ.',
                             style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontSize: 15,
@@ -111,7 +112,7 @@ class _ReasonContractView extends State<ReasonContractView>
                           padding:
                               EdgeInsets.only(left: 20, right: 20, bottom: 10),
                           child: Text(
-                            '5. Hệ thống hỗ trợ việc giao tiếp với bác sĩ thông qua hệ thống nhắn tin và gọi điện trực tuyến.',
+                            '5. Hệ thống đảm bảo việc giao tiếp giữa bệnh nhân và bác sĩ dựa trên nhắn tin hay gọi điện trực tuyến. Nhật kí trao đổi sẽ được ghi lại để làm bằng chứng cho những bất cập sau này.',
                             style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontSize: 15,
@@ -122,24 +123,24 @@ class _ReasonContractView extends State<ReasonContractView>
                           padding:
                               EdgeInsets.only(left: 20, right: 20, bottom: 10),
                           child: Text(
-                            '6. Bác sĩ đảm bảo một cuộc hẹn thăm khám với bệnh nhân vào mỗi tuần.',
+                            '6. Bác sĩ đảm bảo lịch hẹn thăm khám, kiểm tra và cập nhật đơn thuốc với bệnh nhân căn cứ trên hợp đồng đã kí.',
                             style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontSize: 15,
                             ),
                           ),
                         ),
-                        Container(
-                          padding:
-                              EdgeInsets.only(left: 20, right: 20, bottom: 10),
-                          child: Text(
-                            '7. Bác sĩ đảm bảo kiểm tra và cập nhật đơn thuốc vào mỗi tuần.',
-                            style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
+                        // Container(
+                        //   padding:
+                        //       EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        //   child: Text(
+                        //     '7. Bác sĩ đảm bảo kiểm tra và cập nhật đơn thuốc vào mỗi tuần.',
+                        //     style: TextStyle(
+                        //       fontStyle: FontStyle.italic,
+                        //       fontSize: 15,
+                        //     ),
+                        //   ),
+                        // ),
                         Container(
                           padding: EdgeInsets.only(
                               left: 20, right: 20, top: 30, bottom: 10),
@@ -164,7 +165,7 @@ class _ReasonContractView extends State<ReasonContractView>
                           padding:
                               EdgeInsets.only(left: 20, right: 20, bottom: 10),
                           child: Text(
-                            '2. Bệnh nhân đảm bảo việc chia sẽ các y lệnh cần thiết mà bác sĩ yêu cầu trong suốt quá trình.',
+                            '2. Bệnh nhân cần có trách nhiệm thực hiện các yêu cầu cần thiết và chia sẻ các y lệnh mà bác sĩ yêu cầu trong suốt quá trình khám chữa bệnh.',
                             style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontSize: 15,
@@ -175,7 +176,7 @@ class _ReasonContractView extends State<ReasonContractView>
                           padding:
                               EdgeInsets.only(left: 20, right: 20, bottom: 10),
                           child: Text(
-                            '3. Bệnh nhân đảm bảo việc thực hiện đủ và đúng các y lệnh mà bác sĩ đưa ra trong suốt quá trình.',
+                            '3. Bệnh nhân đảm bảo việc thực hiện đầy đủ các y lệnh mà bác sĩ đưa ra trong suốt quá trình.',
                             style: TextStyle(
                               fontStyle: FontStyle.italic,
                               fontSize: 15,
@@ -231,11 +232,21 @@ class _ReasonContractView extends State<ReasonContractView>
                   Padding(
                     padding: EdgeInsets.only(bottom: 5, left: 20, right: 20),
                     child: Text(
-                      'Ngày bắt đầu',
+                      'Ngày bắt đầu hợp đồng mong muốn',
                       style: TextStyle(
                           color: DefaultTheme.BLACK_BUTTON,
                           fontWeight: FontWeight.w500,
                           fontSize: 16),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 5, left: 20, right: 20),
+                    child: Text(
+                      'Ngày bắt đầu hợp đồng nên cách ngày gửi yêu cầu 5 ngày.',
+                      style: TextStyle(
+                          color: DefaultTheme.BLACK_BUTTON,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 15),
                     ),
                   ),
                   Container(
@@ -404,7 +415,8 @@ class _ReasonContractView extends State<ReasonContractView>
                     Expanded(
                       child: CupertinoDatePicker(
                           mode: CupertinoDatePickerMode.date,
-                          minimumDate: DateTime.now(),
+                          initialDateTime:
+                              DateTime.now().add(Duration(days: 5)),
                           onDateTimeChanged: (dateTime) {
                             setState(() {
                               _startDate = dateTime.toString().split(' ')[0];

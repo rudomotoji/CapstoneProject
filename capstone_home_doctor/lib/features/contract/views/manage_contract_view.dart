@@ -59,6 +59,7 @@ class _ManageContract extends State<ManageContract> {
   ContractListBloc _contractListBloc;
   //
   int _patientId = 0;
+  int _contractId = 0;
 
   @override
   void initState() {
@@ -173,12 +174,12 @@ class _ManageContract extends State<ManageContract> {
                     BlocBuilder<ContractListBloc, ListContractState>(
                       builder: (context, state) {
                         //
-                        if (state is ListContractStateInitial) {
+                        if (state is ListContractStateLoading) {
                           return Container(
                             margin: EdgeInsets.only(left: 20, right: 20),
                             child: Center(
                               child: SizedBox(
-                                width: 120,
+                                width: 200,
                                 child: Image.asset('assets/images/loading.gif'),
                               ),
                             ),
@@ -277,7 +278,7 @@ class _ManageContract extends State<ManageContract> {
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      'Hợp đồng đang hiện hành',
+                                      'Hợp đồng đang diễn ra',
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                           fontSize: 20,
@@ -325,7 +326,7 @@ class _ManageContract extends State<ManageContract> {
                                               .contains('ACTIVE')) {
                                             statusTemp = 'Đang hiện hành';
                                             statusColor =
-                                                DefaultTheme.GRADIENT_5;
+                                                DefaultTheme.SUCCESS_STATUS;
                                           }
                                           if (_listExecuting[index]
                                               .status
@@ -341,6 +342,7 @@ class _ManageContract extends State<ManageContract> {
                                             statusColor =
                                                 DefaultTheme.BLUE_REFERENCE;
                                           }
+
                                           //
                                           return Container(
                                             width: 200,
@@ -423,11 +425,16 @@ class _ManageContract extends State<ManageContract> {
                                                       .BUTTON_TRANSPARENT,
                                                   label: 'Chi tiết',
                                                   onTap: () {
+                                                    setState(() {
+                                                      _contractId = 0;
+                                                      _contractId =
+                                                          _listExecuting[index]
+                                                              .contractId;
+                                                    });
+
                                                     Map<String, dynamic> param =
                                                         {
-                                                      'C_ID':
-                                                          _listExecuting[index]
-                                                              .contractId,
+                                                      'C_ID': _contractId,
                                                     };
                                                     Navigator.pushNamed(
                                                         context,

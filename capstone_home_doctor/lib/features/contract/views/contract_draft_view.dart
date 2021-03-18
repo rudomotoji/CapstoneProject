@@ -50,7 +50,7 @@ class _ContractDraftView extends State<ContractDraftView>
       ContractRepository(httpClient: http.Client());
   RequestContractBloc _requestContractBloc;
   DoctorDTO doctorDTO = DoctorDTO();
-  bool _isAccept = false;
+  // bool _isAccept = false;
   bool _isAccept2 = false;
 
   @override
@@ -66,11 +66,11 @@ class _ContractDraftView extends State<ContractDraftView>
     super.dispose();
   }
 
-  _updateAcceptState() {
-    setState(() {
-      _isAccept = !_isAccept;
-    });
-  }
+  // _updateAcceptState() {
+  //   setState(() {
+  //     _isAccept = !_isAccept;
+  //   });
+  // }
 
   _updateAcceptState2() {
     setState(() {
@@ -574,42 +574,43 @@ class _ContractDraftView extends State<ContractDraftView>
                     ],
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      InkWell(
-                        onTap: () => _updateAcceptState(),
-                        borderRadius: BorderRadius.circular(40),
-                        child: _isAccept
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: Image.asset('assets/images/ic-dot.png'),
-                              )
-                            : SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: Image.asset(
-                                    'assets/images/ic-dot-unselect.png'),
-                              ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10),
-                      ),
-                      Text(
-                        'Tôi đồng ý với tất cả các điều khoản.',
-                        style: TextStyle(
-                          color: DefaultTheme.GREY_TEXT,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // Container(
+                //   padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.start,
+                //     crossAxisAlignment: CrossAxisAlignment.center,
+                //     children: [
+                //       InkWell(
+                //         onTap: () => _updateAcceptState(),
+                //         borderRadius: BorderRadius.circular(40),
+                //         child: _isAccept
+                //             ? SizedBox(
+                //                 width: 20,
+                //                 height: 20,
+                //                 child: Image.asset('assets/images/ic-dot.png'),
+                //               )
+                //             : SizedBox(
+                //                 width: 20,
+                //                 height: 20,
+                //                 child: Image.asset(
+                //                     'assets/images/ic-dot-unselect.png'),
+                //               ),
+                //       ),
+                //       Padding(
+                //         padding: EdgeInsets.only(left: 10),
+                //       ),
+                //       Text(
+                //         'Tôi đồng ý với tất cả các điều khoản.',
+                //         style: TextStyle(
+                //           color: DefaultTheme.GREY_TEXT,
+                //           fontWeight: FontWeight.w600,
+                //           fontSize: 15,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+
                 Container(
                   padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
                   child: Row(
@@ -636,12 +637,13 @@ class _ContractDraftView extends State<ContractDraftView>
                         padding: EdgeInsets.only(left: 10),
                       ),
                       Container(
+                        padding: EdgeInsets.only(left: 20, right: 20),
                         width: MediaQuery.of(context).size.width - 70,
                         child: Text(
                           'Tôi xác nhận tất cả các thông tin chia sẻ là sự thật và hoàn toàn chịu trách nhiệm trước pháp luật.',
                           style: TextStyle(
-                            color: DefaultTheme.GREY_TEXT,
-                            fontWeight: FontWeight.w600,
+                            color: DefaultTheme.BLACK,
+                            fontWeight: FontWeight.w500,
                             fontSize: 15,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -651,6 +653,22 @@ class _ContractDraftView extends State<ContractDraftView>
                     ],
                   ),
                 ),
+                Container(
+                    padding: EdgeInsets.only(left: 30, right: 30),
+                    width: MediaQuery.of(context).size.width - 70,
+                    child: Center(
+                      child: Text(
+                        'Hợp đồng này hiện là bản nháp trước khi có sự kí kết của 2 bên.',
+                        style: TextStyle(
+                          color: DefaultTheme.RED_CALENDAR,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                        ),
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                      ),
+                    )),
                 //
               ]),
             ),
@@ -717,7 +735,7 @@ class _ContractDraftView extends State<ContractDraftView>
                     ),
                   ),
                   //
-                  (_isAccept == false || _isAccept2 == false)
+                  (_isAccept2 == false)
                       ? Container(
                           margin: EdgeInsets.only(left: 20, right: 20, top: 10),
                           height: 50,
@@ -739,7 +757,7 @@ class _ContractDraftView extends State<ContractDraftView>
                               label: 'Gửi yêu cầu',
                               style: BtnStyle.BUTTON_BLACK,
                               onTap: () {
-                                if (_isAccept) {
+                                if (_isAccept2) {
                                   if (_requestContract.doctorId != 0 ||
                                       _requestContract.doctorId != null) {
                                     if (_requestContract.patientId != null ||
@@ -1641,8 +1659,8 @@ class _ContractDraftView extends State<ContractDraftView>
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        'Yêu cầu của bạn đã được gửi đến bác sĩ, giá trị của hợp đồng sẽ được bác sĩ đưa ra và sẽ được thông báo đến bạn trong thời gian sớm nhất (chậm nhất là 3 ngày kể từ ngày gửi yêu cầu).',
-                                        textAlign: TextAlign.left,
+                                        'Yêu cầu của bạn đã được gửi đến bác sĩ, giá trị của hợp đồng sẽ được hệ thống tính toán và đưa ra thông báo đến bạn trong thời gian sớm nhất (chậm nhất là 3 ngày kể từ ngày gửi yêu cầu).',
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
                                           decoration: TextDecoration.none,
                                           color: DefaultTheme.BLACK,
