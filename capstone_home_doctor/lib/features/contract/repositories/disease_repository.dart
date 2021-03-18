@@ -29,21 +29,21 @@ class DiseaseRepository extends BaseApiClient {
   }
 
   //get list disease about heart
-  Future<List<DiseaseHeartDTO>> getHeartDiseases() async {
+  Future<List<DiseaseDTO>> getHeartDiseases() async {
     final String url = '/Diseases/GetHeartDiseases';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body) as List;
-        List<DiseaseHeartDTO> list = responseData.map((dto) {
-          return DiseaseHeartDTO(
+        List<DiseaseDTO> list = responseData.map((dto) {
+          return DiseaseDTO(
             diseaseId: dto['diseaseId'],
             name: dto['nameDisease'],
           );
         }).toList();
         return list;
       } else {
-        return List<DiseaseHeartDTO>();
+        return List<DiseaseDTO>();
       }
     } catch (e) {
       print('ERROR AT GET LIST DISEASE $e');

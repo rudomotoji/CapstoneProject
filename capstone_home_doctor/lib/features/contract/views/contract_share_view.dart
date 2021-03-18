@@ -51,8 +51,8 @@ class _ContractShareView extends State<ContractShareView>
   int _medInsTypeId = 0;
 
   //FOR DISEASE
-  List<DiseaseHeartDTO> _listDisease = [];
-  List<DiseaseHeartDTO> _listDiseaseSelected = [];
+  List<DiseaseDTO> _listDisease = [];
+  List<DiseaseDTO> _listDiseaseSelected = [];
   List<String> _diseaseIds = [];
 
   //FOR MEDICAL SHARE
@@ -329,8 +329,8 @@ class _ContractShareView extends State<ContractShareView>
               _listDisease = state2.listDisease;
             }
             final _itemsView = _listDisease
-                .map((disease) => MultiSelectItem<DiseaseHeartDTO>(
-                    disease, disease.toString()))
+                .map((disease) =>
+                    MultiSelectItem<DiseaseDTO>(disease, disease.toString()))
                 .toList();
             return Container(
               margin: EdgeInsets.only(left: 20, right: 20),
