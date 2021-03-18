@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
@@ -37,12 +38,16 @@ class _ScheduleView extends State<ScheduleView>
   PrescriptionListBloc _prescriptionListBloc;
   //
   int _patientId = 0;
+  DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
+      .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
 
   //use for calendar
   Map<DateTime, List> _events;
   List _selectedEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
+  AppointmentDTO _appointmentDTO = AppointmentDTO(
+      date: '2021-04-01', time: '12:30', place: 'nha khoa hoa hao');
 
   @override
   void initState() {
@@ -53,10 +58,30 @@ class _ScheduleView extends State<ScheduleView>
 
     final _selectedDay = DateTime.now();
 
-    _events = {
-      // _selectedDay.subtract(Duration(days: 2)): ['Event A6', 'Event B6'],
-      _selectedDay: [AppointmentDTO(date: 'asd', time: 'zxc', place: '123')],
-    };
+    DateTime dateAppointment =
+        new DateFormat("yyyy-MM-dd").parse(_appointmentDTO.date);
+
+    if (dateAppointment.microsecondsSinceEpoch ==
+        curentDateNow.microsecondsSinceEpoch) {
+      _events = {
+        _selectedDay: [_appointmentDTO],
+      };
+    } else {
+      if (dateAppointment.microsecondsSinceEpoch >
+          curentDateNow.microsecondsSinceEpoch) {
+        _events = {
+          _selectedDay.subtract(Duration(
+              milliseconds: curentDateNow.millisecondsSinceEpoch -
+                  dateAppointment.millisecondsSinceEpoch)): [_appointmentDTO],
+        };
+      } else {
+        _events = {
+          _selectedDay.subtract(Duration(
+              milliseconds: dateAppointment.millisecondsSinceEpoch -
+                  curentDateNow.millisecondsSinceEpoch)): [_appointmentDTO],
+        };
+      }
+    }
 
     _selectedEvents = _events[_selectedDay] ?? [];
     _calendarController = CalendarController();
@@ -222,7 +247,8 @@ class _ScheduleView extends State<ScheduleView>
                 margin:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 child: ListTile(
-                  title: Text(event.date.toString()),
+                  title: Text(
+                      'Bạn có lịch tái khám vào lúc ${event.time.toString()} \nTại ${event.place.toString()}'),
                   onTap: () => print('${event.date} tapped!'),
                 ),
               ))
