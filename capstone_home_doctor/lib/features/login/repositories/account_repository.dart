@@ -31,17 +31,26 @@ class AccountRepository extends BaseApiClient {
 
   //
   Future<bool> sendTokenDevice(TokenDeviceDTO dto) async {
-    final url = '/FireBases';
-    try {
-      final request = await postApi(url, null, dto.toJson());
-      print('request body send device ${request.body}');
-      if (request.statusCode == 201) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      print('ERROR AT SEND TOKEN DEVICE ${e}');
-    }
+    // final url = '/FireBases';
+    // try {
+    //   final request = await postApi(url, null, dto.toJson());
+    //   print('request body send device ${request.body}');
+    //   if (request.statusCode == 201) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } catch (e) {
+    //   print('ERROR AT SEND TOKEN DEVICE ${e}');
+    // }
+
+    var uri = Uri.parse('http://45.76.186.233:8000/api/v1/FireBases');
+    var request = new http.MultipartRequest('POST', uri);
+    request.fields['accountId'] = '${dto.accountId}';
+    request.fields['token'] = '${dto.tokenDevice}';
+    final response = await request.send();
+    print('send token device ${response.statusCode}');
+    if (response.statusCode == 201) return true;
+    return false;
   }
 }

@@ -153,7 +153,6 @@ class MedicalInstructionRepository extends BaseApiClient {
   Future<MedicalInstructionDTO> getMedicalInstructionById(
       int medicalInstructionId) async {
     final String url = '/MedicalInstructions/${medicalInstructionId}';
-
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
