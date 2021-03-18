@@ -538,11 +538,45 @@ class _ContractDraftView extends State<ContractDraftView>
                               fontFamily: 'NewYork'),
                         ),
                       ),
+                      //
                       Padding(
                         padding: EdgeInsets.only(
                             left: 20, right: 20, bottom: 20, top: 30),
                         child: Text(
-                          'Điều 6. Cam kết chung',
+                          'Điều 6. Tiền dịch vụ và phương thức thanh toán',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          '- Phí tiền dịch vụ: Được cập nhật sau khi bác sĩ phê duyệt',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                        child: Text(
+                          '- Phương thức thanh toán: Chuyển khoản trực tiếp vào tài khoản của HDr (Tên TK: Home Doctor Vietnam, Số TK: 123456789, Ngân hàng TP Bank)',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 20, right: 20, bottom: 20, top: 30),
+                        child: Text(
+                          'Điều 7. Cam kết chung',
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 16,
@@ -571,6 +605,8 @@ class _ContractDraftView extends State<ContractDraftView>
                               fontFamily: 'NewYork'),
                         ),
                       ),
+
+                      //
                     ],
                   ),
                 ),
