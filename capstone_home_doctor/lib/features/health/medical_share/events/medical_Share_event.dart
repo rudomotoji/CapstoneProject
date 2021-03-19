@@ -14,3 +14,11 @@ class MedicalShareInsEventSend extends MedicalShareInsEvent {
   // TODO: implement props
   List<Object> get props => [contractID, listMediIns];
 }
+
+class MedicalShareInsEventInitial extends MedicalShareInsEvent {
+  const MedicalShareInsEventInitial();
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}

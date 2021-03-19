@@ -97,12 +97,13 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                   }
                   if (state is MedicalShareInsStateSuccess) {
                     print('---MedicalShareInsStateSuccess---');
-                    // Navigator.pop(context);
-                    setState(() {
-                      dropdownValue = null;
-                      listMedicalInsShare = [];
-                      medicalInstructionIdsSelected = [];
-                    });
+                    // setState(() {
+                    dropdownValue = null;
+                    listMedicalInsShare = [];
+                    medicalInstructionIdsSelected = [];
+                    // });
+                    _medicalShareInsBloc.add(MedicalShareInsEventInitial());
+                    Navigator.pop(context);
                     // _popupDialog();
                   }
                   return RefreshIndicator(

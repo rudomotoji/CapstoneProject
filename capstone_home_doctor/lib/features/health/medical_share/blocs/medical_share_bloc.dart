@@ -27,6 +27,8 @@ class MedicalShareInsBloc
       } catch (e) {
         yield MedicalShareInsStateFailure();
       }
+    } else if (event is MedicalShareInsEventInitial) {
+      yield MedicalShareInsStateInitial();
     }
   }
 }

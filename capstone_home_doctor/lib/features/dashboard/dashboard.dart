@@ -1095,18 +1095,20 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     borderRadius: BorderRadius.circular(10)),
                 child: (i == 0)
                     ? Container(
-                        child: (listSchedule == null)
-                            ? Center(
-                                child: Text('Hiện chưa có lịch dùng thuốc'),
-                              )
-                            : _medicalScheduleNotNull(),
+                        child:
+                            (listSchedule == null || listSchedule.length <= 0)
+                                ? Center(
+                                    child: Text('Hiện chưa có lịch dùng thuốc'),
+                                  )
+                                : _medicalScheduleNotNull(),
                       )
                     : Container(
-                        child: (listSchedule == null)
-                            ? Center(
-                                child: Text('Hiện chưa có lịch tái khám'),
-                              )
-                            : _appointmentNotNull(),
+                        child:
+                            (listSchedule == null || listSchedule.length <= 0)
+                                ? Center(
+                                    child: Text('Hiện chưa có lịch tái khám'),
+                                  )
+                                : _appointmentNotNull(),
                       ),
               ),
             );
