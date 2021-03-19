@@ -74,6 +74,9 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
     'Bệnh viện Đa khoa Khu vực Thủ Đức'
   ];
 
+  String _valueTypeIns;
+  List<String> _listType = ['Bệnh tim', 'Các bệnh khác'];
+
   //
   //SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   DateValidator _dateValidator = DateValidator();
@@ -84,6 +87,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
   List<DiseaseDTO> _listDisease = [];
   List<DiseaseDTO> _listDiseaseSelected = [];
   List<String> _diseaseIds = [];
+  DiseaseListBloc _diseaseListBloc;
 
   HealthRecordDTO healthRecordDTO;
   @override
@@ -92,6 +96,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
     super.initState();
     _getPatientId();
     _healthRecordCreateBloc = BlocProvider.of(context);
+    _diseaseListBloc = BlocProvider.of(context);
   }
 
   _getPatientId() async {
@@ -105,6 +110,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _diseaseListBloc.add(DiseaseEventSetInitial());
     super.dispose();
   }
 
@@ -138,168 +144,8 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                       Padding(
                         padding: EdgeInsets.only(top: 5),
                       ),
-                      // Padding(
-                      //   padding: EdgeInsets.only(bottom: 5, left: 10),
-                      //   child: Text(
-                      //     'Bệnh lý tim mạch',
-                      //     textAlign: TextAlign.start,
-                      //     style: TextStyle(
-                      //         color: DefaultTheme.BLACK_BUTTON,
-                      //         fontWeight: FontWeight.w500,
-                      //         fontSize: 16),
-                      //   ),
-                      // ),
-                      // TextFieldHDr(
-                      //   controller: _diseaseController,
-                      //   style: TFStyle.BORDERED,
-                      //   keyboardAction: TextInputAction.next,
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.only(left: 10, right: 20),
-                      //   child: Text(
-                      //     'Nhập tên bệnh lý đã/ đang theo dõi',
-                      //     textAlign: TextAlign.start,
-                      //     style: TextStyle(
-                      //         color: DefaultTheme.GREY_TEXT,
-                      //         fontWeight: FontWeight.w400,
-                      //         fontSize: 12),
-                      //   ),
-                      // ),
-                      //
-                      //
-                      //
-                      BlocProvider(
-                          create: (context2) => DiseaseListBloc(
-                              diseaseRepository: diseaseRepository)
-                            ..add(DiseaseListEventSetStatus(status: 'ACTIVE')),
-                          child: BlocBuilder<DiseaseListBloc, DiseaseListState>(
-                            builder: (context2, state2) {
-                              if (state2 is DiseaseListStateLoading) {
-                                return Container(
-                                  margin: EdgeInsets.only(left: 20, right: 20),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: DefaultTheme.GREY_BUTTON),
-                                  child: Center(
-                                    child: SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: Image.asset(
-                                          'assets/images/loading.gif'),
-                                    ),
-                                  ),
-                                );
-                              }
-                              if (state2 is DiseaseListStateFailure) {
-                                return Container(
-                                  margin: EdgeInsets.only(
-                                      left: 20, right: 20, bottom: 10, top: 10),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: DefaultTheme.GREY_BUTTON),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                        left: 20,
-                                        right: 20),
-                                    child: Text('Không thể tải',
-                                        style: TextStyle(
-                                          color: DefaultTheme.GREY_TEXT,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        )),
-                                  ),
-                                );
-                              }
-                              if (state2 is DiseaseListStateSuccess) {
-                                if (state2.listDisease == null) {
-                                  return Container(
-                                    margin: EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        bottom: 10,
-                                        top: 10),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: DefaultTheme.GREY_BUTTON),
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 10,
-                                          bottom: 10,
-                                          left: 20,
-                                          right: 20),
-                                      child: Text('Không thể tải',
-                                          style: TextStyle(
-                                            color: DefaultTheme.GREY_TEXT,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                          )),
-                                    ),
-                                  );
-                                }
-                                _listDisease = state2.listDisease;
-                              }
-                              final _itemsView = _listDisease
-                                  .map((disease) => MultiSelectItem<DiseaseDTO>(
-                                      disease, disease.toString()))
-                                  .toList();
-                              return Container(
-                                padding: EdgeInsets.only(
-                                    top: 10, bottom: 10, left: 20, right: 20),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: DefaultTheme.GREY_VIEW),
-                                child: MultiSelectBottomSheetField(
-                                  initialChildSize: 0.3,
-                                  selectedItemsTextStyle:
-                                      TextStyle(color: DefaultTheme.WHITE),
-                                  listType: MultiSelectListType.CHIP,
-                                  searchable: true,
-                                  buttonText: Text(
-                                    "Chọn mã bệnh(*)",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 16),
-                                  ),
-                                  title: Text(
-                                    "Chọn mã bệnh",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 20),
-                                  ),
-                                  items: _itemsView,
-                                  onConfirm: (values) {
-                                    String _idDisease = '';
-                                    _diseaseIds.clear();
-                                    setState(() {
-                                      _listDiseaseSelected = values;
-                                      for (var i = 0; i < values.length; i++) {
-                                        _idDisease =
-                                            values[i].toString().split(':')[0];
-                                        _diseaseIds.add(_idDisease);
-                                      }
-                                    });
-                                    //  print('VALUES: ${values.toString()}');
-
-                                    print('LIST ID DISEASE NOW ${_diseaseIds}');
-                                    print(
-                                        'LIST DISEASE SELECTED WHEN CHOOSE NOW ${_listDiseaseSelected}');
-                                  },
-                                  chipDisplay: MultiSelectChipDisplay(
-                                    onTap: (value) {
-                                      setState(() {
-                                        _listDiseaseSelected.remove(value);
-                                        _diseaseIds.remove(
-                                            value.toString().split(':')[0]);
-                                        print(
-                                            'DISEASE LIST SELECT WHEN REMOVE NOW: ${_listDiseaseSelected.toString()}');
-                                      });
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          )),
+                      _selectTypeIns(),
+                      _checkSelectIns(),
                       //
                       Align(
                         alignment: Alignment.centerLeft,
@@ -315,9 +161,6 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                         ),
                       ),
 
-                      //
-                      //
-                      //
                       Padding(
                         padding: EdgeInsets.only(top: 10, bottom: 20),
                         child: Divider(
@@ -328,24 +171,20 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                       Padding(
                         padding: EdgeInsets.only(bottom: 5, left: 10),
                         child: Text(
-                          'Nơi khám',
+                          'Nơi khám (*)',
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                              color: DefaultTheme.BLACK_BUTTON,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16),
+                            color: DefaultTheme.BLACK_BUTTON,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
-                      // TextFieldHDr(
-                      //   controller: _placeController,
-                      //   style: TFStyle.BORDERED,
-                      //   keyboardAction: TextInputAction.next,
-                      // ),
                       AutoCompleteTextField(
                         controller: _placeController,
                         clearOnSubmit: false,
                         suggestions: suggestions,
-                        textInputAction: TextInputAction.next,
+                        textInputAction: TextInputAction.done,
                         decoration: InputDecoration(
                           counter: Offstage(),
                           // labelText: _label,
@@ -419,6 +258,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                         alignment: Alignment.topLeft,
                         height: 150,
                         child: TextFieldHDr(
+                            keyboardAction: TextInputAction.done,
                             placeHolder: 'Mô tả thêm các vấn đề khác',
                             style: TFStyle.TEXT_AREA,
                             onChange: (text) {
@@ -453,6 +293,166 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
     );
   }
 
+  _selectBoxIns() {
+    final _itemsView = _listDisease
+        .map((disease) =>
+            MultiSelectItem<DiseaseDTO>(disease, disease.toString()))
+        .toList();
+    return Container(
+      padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: DefaultTheme.GREY_VIEW),
+      child: MultiSelectBottomSheetField(
+        initialChildSize: 0.3,
+        selectedItemsTextStyle: TextStyle(color: DefaultTheme.WHITE),
+        listType: MultiSelectListType.CHIP,
+        searchable: true,
+        buttonText: Text(
+          "Chọn mã bệnh(*)",
+          style: TextStyle(color: Colors.black, fontSize: 16),
+        ),
+        title: Text(
+          "Chọn mã bệnh",
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+        ),
+        items: _itemsView,
+        onConfirm: (values) {
+          String _idDisease = '';
+          _diseaseIds.clear();
+          setState(() {
+            _listDiseaseSelected = values;
+            for (var i = 0; i < values.length; i++) {
+              _idDisease = values[i].toString().split(':')[0];
+              _diseaseIds.add(_idDisease);
+            }
+          });
+          //  print('VALUES: ${values.toString()}');
+
+          print('LIST ID DISEASE NOW ${_diseaseIds}');
+          print(
+              'LIST DISEASE SELECTED WHEN CHOOSE NOW ${_listDiseaseSelected}');
+        },
+        chipDisplay: MultiSelectChipDisplay(
+          onTap: (value) {
+            setState(() {
+              _listDiseaseSelected.remove(value);
+              _diseaseIds.remove(value.toString().split(':')[0]);
+              print(
+                  'DISEASE LIST SELECT WHEN REMOVE NOW: ${_listDiseaseSelected.toString()}');
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _checkSelectIns() {
+    return BlocBuilder<DiseaseListBloc, DiseaseListState>(
+      builder: (context, state) {
+        if (state is DiseaseListStateLoading) {
+          return Container(
+            margin: EdgeInsets.only(left: 20, right: 20),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6),
+                color: DefaultTheme.GREY_BUTTON),
+            child: Center(
+              child: SizedBox(
+                width: 30,
+                height: 30,
+                child: Image.asset('assets/images/loading.gif'),
+              ),
+            ),
+          );
+        }
+        if (state is DiseaseListStateFailure) {
+          return Container(
+            margin: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: DefaultTheme.GREY_BUTTON),
+            child: Padding(
+              padding:
+                  EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+              child: Text('Không có dữ liệu',
+                  style: TextStyle(
+                    color: DefaultTheme.GREY_TEXT,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  )),
+            ),
+          );
+        }
+        if (state is DiseaseListStateSuccess) {
+          if (state.listDisease.length > 0) {
+            _listDisease = state.listDisease;
+          }
+          return _selectBoxIns();
+        }
+        if (state is DiseaseHeartListStateSuccess) {
+          if (state.listDisease.length > 0) {
+            _listDisease = state.listDisease;
+          }
+          return _selectBoxIns();
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _selectTypeIns() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: Container(
+        padding: EdgeInsets.only(left: 20),
+        margin: EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: DefaultTheme.GREY_VIEW),
+        child: DropdownButton<String>(
+          value: _valueTypeIns,
+          items: _listType.map((String value) {
+            return new DropdownMenuItem<String>(
+              value: value,
+              child: new Text(
+                value,
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+            );
+          }).toList(),
+          dropdownColor: DefaultTheme.GREY_VIEW,
+          elevation: 1,
+          hint: Container(
+            width: MediaQuery.of(context).size.width - 84,
+            child: Text(
+              'Chọn loại bệnh để chia sẻ (*):',
+              style: TextStyle(fontWeight: FontWeight.w600),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+          underline: Container(
+            width: 0,
+          ),
+          isExpanded: false,
+          onChanged: (res) async {
+            if (_listType[0].contains(res)) {
+              _diseaseListBloc.add(DiseaseEventGetHealthList());
+            } else {
+              _diseaseListBloc.add(DiseaseListEventSetStatus());
+            }
+            setState(
+              () {
+                _valueTypeIns = res;
+                _listDiseaseSelected = [];
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   _insertHealthRecord(HealthRecordDTO dto) async {
     if (dto == null) {
       return Dialog(
@@ -468,176 +468,108 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
     }
     await _healthRecordCreateBloc.add(HRCreateEventSend(dto: dto));
     return BlocBuilder<HealthRecordCreateBloc, HRCreateState>(
-        builder: (context, state) {
-      //
-      if (state is HRCreateStateLoading) {
-        showDialog(
-            //
-            context: context,
-            builder: (BuildContext context) {
-              return Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: DefaultTheme.WHITE.withOpacity(0.8)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: Image.asset('assets/images/loading.gif'),
-                          ),
-                          Text(
-                            'Đang tạo...',
-                            style: TextStyle(
-                                color: DefaultTheme.GREY_TEXT,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                decoration: TextDecoration.none),
-                          ),
-                        ],
+      builder: (context, state) {
+        //
+        if (state is HRCreateStateLoading) {
+          showDialog(
+              //
+              context: context,
+              builder: (BuildContext context) {
+                return Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                      child: Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: DefaultTheme.WHITE.withOpacity(0.8)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/images/loading.gif'),
+                            ),
+                            Text(
+                              'Đang tạo...',
+                              style: TextStyle(
+                                  color: DefaultTheme.GREY_TEXT,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  decoration: TextDecoration.none),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            });
-      }
-      if (state is HRCreateStateFailure) {
-        Navigator.of(context).pop();
-        showDialog(
-            //
-            context: context,
-            builder: (BuildContext context) {
-              return Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: DefaultTheme.WHITE.withOpacity(0.8)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: Image.asset('assets/images/ic-failed.png'),
-                          ),
-                          Text(
-                            'Lỗi tạo hồ sơ',
-                            style: TextStyle(
-                                color: DefaultTheme.GREY_TEXT,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                decoration: TextDecoration.none),
-                          ),
-                        ],
+                );
+              });
+        }
+        if (state is HRCreateStateFailure) {
+          Navigator.of(context).pop();
+          showDialog(
+              //
+              context: context,
+              builder: (BuildContext context) {
+                return Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                      child: Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: DefaultTheme.WHITE.withOpacity(0.8)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/images/ic-failed.png'),
+                            ),
+                            Text(
+                              'Lỗi tạo hồ sơ',
+                              style: TextStyle(
+                                  color: DefaultTheme.GREY_TEXT,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  decoration: TextDecoration.none),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            });
-      }
-      if (state is HRCreateStateSuccess) {
-        widget.refresh();
-        Navigator.pop(context);
-      }
-      //FOR FAILED TO OTHER STATE
+                );
+              });
+        }
+        if (state is HRCreateStateSuccess) {
+          widget.refresh();
+          Navigator.pop(context);
+        }
+        //FOR FAILED TO OTHER STATE
 
-      return Dialog(
-        child: Container(
-          width: 200,
-          height: 200,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: DefaultTheme.WHITE),
-          child: Text('Không thể tạo hồ sơ'),
-        ),
-      );
-      ;
-    });
-/////////////////////////
-/////
-    // //this is for sucessful Insert
-    // Timer timer = Timer(Duration(milliseconds: 10000), () {
-    //   Navigator.of(context, rootNavigator: true).pop();
-    // });
-    // showDialog(
-    //     //
-    //     context: context,
-    //     builder: (BuildContext context) {
-    //       return Center(
-    //         child: ClipRRect(
-    //           borderRadius: BorderRadius.all(Radius.circular(5)),
-    //           child: BackdropFilter(
-    //             filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-    //             child: Container(
-    //               width: 200,
-    //               height: 200,
-    //               decoration: BoxDecoration(
-    //                   borderRadius: BorderRadius.circular(10),
-    //                   color: DefaultTheme.WHITE.withOpacity(0.8)),
-    //               child: Column(
-    //                 mainAxisAlignment: MainAxisAlignment.center,
-    //                 crossAxisAlignment: CrossAxisAlignment.center,
-    //                 children: [
-    //                   SizedBox(
-    //                     width: 100,
-    //                     height: 100,
-    //                     child: Image.asset('assets/images/loading.gif'),
-    //                   ),
-    //                   Text(
-    //                     'Đang tạo...',
-    //                     style: TextStyle(
-    //                         color: DefaultTheme.GREY_TEXT,
-    //                         fontSize: 15,
-    //                         fontWeight: FontWeight.w400,
-    //                         decoration: TextDecoration.none),
-    //                   ),
-    //                 ],
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //       );
-    //     }).then((value) {
-    //   print('OK');
-    //   // dispose the timer in case something else has triggered the dismiss.
-    //   widget.refresh();
-    //   Navigator.pop(context);
-    //   timer?.cancel();
-    //   timer = null;
-    // });
-
-    //
+        return Dialog(
+          child: Container(
+            width: 200,
+            height: 200,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: DefaultTheme.WHITE),
+            child: Text('Không thể tạo hồ sơ'),
+          ),
+        );
+      },
+    );
   }
-
-  // _insertHealthRecord() {
-  //   healthRecordDTO = HealthRecordDTO(
-  //     healthRecordId: '${uuid.v1()}',
-  //     dateCreated: '${DateTime.now()}',
-  //     personalHealthRecordId: '1',
-  //     contractId: null,
-  //     doctorName: _doctorNameController.text,
-  //     description: _note,
-  //     disease: _diseaseController.text,
-  //     place: _placeController.text,
-  //   );
-  //   _sqfLiteHelper.insertHealthRecord(healthRecordDTO);
-  // }
 }

@@ -6,17 +6,18 @@ abstract class DiseaseListEvent extends Equatable {
 }
 
 class DiseaseListEventSetStatus extends DiseaseListEvent {
-  final String status;
-
-  const DiseaseListEventSetStatus({@required this.status})
-      : assert(status != null);
-
   @override
   // TODO: implement props
-  List<Object> get props => [status];
+  List<Object> get props => [];
 }
 
 class DiseaseEventGetHealthList extends DiseaseListEvent {
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}
+
+class DiseaseEventSetInitial extends DiseaseListEvent {
   @override
   // TODO: implement props
   List<Object> get props => [];

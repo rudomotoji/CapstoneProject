@@ -31,5 +31,8 @@ class DiseaseListBloc extends Bloc<DiseaseListEvent, DiseaseListState> {
         yield DiseaseListStateFailure();
       }
     }
+    if (event is DiseaseEventSetInitial) {
+      yield DiseaseListStateInitial();
+    }
   }
 }

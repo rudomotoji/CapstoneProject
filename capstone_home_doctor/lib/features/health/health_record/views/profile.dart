@@ -174,7 +174,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
           //       width: MediaQuery.of(context).size.width,
           //       child: Center(child: Text('Không thể tải danh sách hồ sơ')));
           // }
-          print('STATE LIST HR IN VIEW ${state.listHealthRecord}');
+          print('STATE LIST HR IN VIEW ${state.listHealthRecord.length}');
           return (state.listHealthRecord.length == 0)
               ? Container(
                   width: MediaQuery.of(context).size.width,
