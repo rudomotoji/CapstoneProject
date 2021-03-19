@@ -1,16 +1,53 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:capstone_home_doctor/commons/constants/theme.dart';
 
-class HeartDay extends StatefulWidget {
+class HeartChart extends StatefulWidget {
   @override
-  _HeartDayState createState() => _HeartDayState();
+  _HeartChartState createState() => _HeartChartState();
 }
 
-class _HeartDayState extends State<HeartDay> {
+class _HeartChartState extends State<HeartChart> {
   final int defaultSpace = 50;
+
   @override
   Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      initialIndex: 0,
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              HeaderWidget(
+                title: 'Nhịp tim',
+                isMainView: false,
+                buttonHeaderType: ButtonHeaderType.BACK_HOME,
+              ),
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: _pullRefresh,
+                  child: ListView(
+                    children: <Widget>[
+                      __heartChart(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget __heartChart() {
     return Container(
       margin: EdgeInsets.only(left: 23, right: 22),
       child: Column(
@@ -165,18 +202,22 @@ class _HeartDayState extends State<HeartDay> {
           Align(
             alignment: Alignment.topLeft,
             child: Container(
-              margin: EdgeInsets.only(left: 3, top: 10, bottom: 7),
-              child: Text(
-                "Hiển thị thêm dữ liệu đo về tim",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: DefaultTheme.ORANGE_TEXT,
-                  fontFamily: "",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15,
-                ),
-              ),
-            ),
+                margin: EdgeInsets.only(left: 3, top: 10, bottom: 7),
+                child: InkWell(
+                  child: Text(
+                    "Hiển thị thêm dữ liệu đo về tim",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: DefaultTheme.ORANGE_TEXT,
+                      fontFamily: "",
+                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, RoutesHDr.VITALSIGN_HISTORY);
+                  },
+                )),
           ),
         ],
       ),
@@ -283,4 +324,6 @@ class _HeartDayState extends State<HeartDay> {
       ),
     ];
   }
+
+  Future<void> _pullRefresh() async {}
 }

@@ -40,7 +40,8 @@ import 'package:capstone_home_doctor/features/health/health_record/views/health_
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/views/medical_share_view.dart';
-import 'package:capstone_home_doctor/features/health/vitalsigns/view/heart/heart.dart';
+import 'package:capstone_home_doctor/features/health/vitalsigns/views/heart_chart.dart';
+import 'package:capstone_home_doctor/features/health/vitalsigns/views/history_vital_sign.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/views/oxy_chart_view.dart';
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
@@ -457,7 +458,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                     CreateHealthRecord(_doNothing()),
                 RoutesHDr.HEALTH_RECORD_DETAIL: (context) =>
                     HealthRecordDetail(),
-                RoutesHDr.HEART: (context) => Heart(),
+                RoutesHDr.HEART: (context) => HeartChart(),
                 RoutesHDr.MEDICINE_NOTI_VIEW: (context) =>
                     ScheduleMedNotiView(),
                 RoutesHDr.OXY_CHART_VIEW: (context) => OxyChartView(),
@@ -470,9 +471,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.CONTRACT_SHARE_VIEW: (context) => ContractShareView(),
 
                 RoutesHDr.CONTRACT_DRAFT_VIEW: (context) => ContractDraftView(),
-
                 RoutesHDr.MEDICAL_HISTORY_DETAIL: (context) =>
                     MedicalHistoryDetailView(),
+                RoutesHDr.VITALSIGN_HISTORY: (context) => HistoryVitalSign(),
               },
               home: _startScreen,
             ),
