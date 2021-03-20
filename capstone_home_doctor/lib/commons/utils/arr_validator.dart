@@ -13,4 +13,15 @@ class ArrayValidator {
     }
     return _component;
   }
+
+  String parsePhoneToView(String phone) {
+    if (!phone.contains('.')) {
+      return phone;
+    }
+    String result = '';
+    for (String component in phone.split('.')) {
+      result += component + ' ';
+    }
+    return result.trim();
+  }
 }

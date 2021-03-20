@@ -77,3 +77,55 @@ class DiseaseDTO {
 
 //   String get getDiseaseId => diseaseId;
 // }
+
+class DiseaseContractDTO {
+  String diseaseLevelTwoId;
+  String diseaseLeverTwoName;
+  List<DiseaseLeverThrees> diseaseLeverThrees;
+
+  DiseaseContractDTO(
+      {this.diseaseLevelTwoId,
+      this.diseaseLeverTwoName,
+      this.diseaseLeverThrees});
+
+  DiseaseContractDTO.fromJson(Map<String, dynamic> json) {
+    diseaseLevelTwoId = json['diseaseLevelTwoId'];
+    diseaseLeverTwoName = json['diseaseLeverTwoName'];
+    if (json['diseaseLeverThrees'] != null) {
+      diseaseLeverThrees = new List<DiseaseLeverThrees>();
+      json['diseaseLeverThrees'].forEach((v) {
+        diseaseLeverThrees.add(new DiseaseLeverThrees.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['diseaseLevelTwoId'] = this.diseaseLevelTwoId;
+    data['diseaseLeverTwoName'] = this.diseaseLeverTwoName;
+    if (this.diseaseLeverThrees != null) {
+      data['diseaseLeverThrees'] =
+          this.diseaseLeverThrees.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class DiseaseLeverThrees {
+  String diseaseLevelThreeId;
+  String diseaseLeverThreeName;
+
+  DiseaseLeverThrees({this.diseaseLevelThreeId, this.diseaseLeverThreeName});
+
+  DiseaseLeverThrees.fromJson(Map<String, dynamic> json) {
+    diseaseLevelThreeId = json['diseaseLevelThreeId'];
+    diseaseLeverThreeName = json['diseaseLeverThreeName'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['diseaseLevelThreeId'] = this.diseaseLevelThreeId;
+    data['diseaseLeverThreeName'] = this.diseaseLeverThreeName;
+    return data;
+  }
+}

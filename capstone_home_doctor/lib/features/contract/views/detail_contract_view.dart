@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/convert_utils.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
@@ -10,7 +11,6 @@ import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_blo
 import 'package:capstone_home_doctor/features/contract/blocs/contract_update_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/events/contract_full_event.dart';
-import 'package:capstone_home_doctor/features/contract/events/contract_id_now_event.dart';
 import 'package:capstone_home_doctor/features/contract/events/contract_update_event.dart';
 import 'package:capstone_home_doctor/features/contract/events/doctor_info_event.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
@@ -34,6 +34,7 @@ import 'package:http/http.dart' as http;
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final ContractHelper _contractHelper = ContractHelper();
 final DateValidator _dateValidator = DateValidator();
+final ConvertUtils _convertUtils = ConvertUtils();
 
 final Shader _normalHealthColors = LinearGradient(
   colors: <Color>[
@@ -132,10 +133,10 @@ class _DetailContractView extends State<DetailContractView>
     //
 
     //
-    setState(() {
-      _contractId = 0;
-      _contractId = arguments['C_ID'];
-    });
+
+    _contractId = 0;
+    _contractId = arguments['C_ID'];
+
     _refreshData();
     print('contract id ${_contractId}');
     return Scaffold(
@@ -543,11 +544,39 @@ class _DetailContractView extends State<DetailContractView>
                                                               .BLUE_TEXT),
                                                     ),
                                                   ),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 20),
-                                                  ),
                                                 ],
+                                              ),
+// //
+//                                               Padding(
+//                                                 padding:
+//                                                     EdgeInsets.only(bottom: 5),
+//                                               ),
+//                                               Row(
+//                                                 children: [
+//                                                   //
+//                                                   Padding(
+//                                                     padding: EdgeInsets.only(
+//                                                         left: 20),
+//                                                   ),
+//                                                   Container(
+//                                                     width:
+//                                                         MediaQuery.of(context)
+//                                                                 .size
+//                                                                 .width -
+//                                                             40,
+//                                                     child: Text(
+//                                                       '${_convertUtils.num2Word2((_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense).toString())}',
+//                                                       style: TextStyle(
+//                                                           fontSize: 16,
+//                                                           color: DefaultTheme
+//                                                               .BLUE_TEXT),
+//                                                     ),
+//                                                   ),
+//                                                 ],
+//                                               ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 20),
                                               ),
                                             ],
                                           )
@@ -1279,7 +1308,7 @@ class _DetailContractView extends State<DetailContractView>
                                                     EdgeInsets.only(bottom: 20),
                                               ),
                                               Text(
-                                                'Hôm nay ngày ${_dateValidator.parseToDateView2(_currentDate)}.\nChúng tôi gồm có:',
+                                                'Hôm nay ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateStarted)}.\nChúng tôi gồm có:',
                                                 style: TextStyle(
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
@@ -1345,7 +1374,7 @@ class _DetailContractView extends State<DetailContractView>
                                           padding: EdgeInsets.only(
                                               left: 20, right: 20, bottom: 20),
                                           child: Text(
-                                            'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(_currentDate)}',
+                                            'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateStarted)}',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 16,

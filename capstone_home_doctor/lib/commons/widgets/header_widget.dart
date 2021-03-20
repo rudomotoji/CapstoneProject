@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
+
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
 import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
@@ -11,11 +13,12 @@ import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
-import 'package:provider/provider.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+final ArrayValidator _arrayValidator = ArrayValidator();
 
 enum ButtonHeaderType {
   NONE,
@@ -239,7 +242,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                   decoration: BoxDecoration(
                     borderRadius:
                         BorderRadius.vertical(top: Radius.circular(15)),
-                    color: DefaultTheme.GREY_VIEW,
+                    color: DefaultTheme.WHITE.withOpacity(0.9),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -281,8 +284,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                                               color: DefaultTheme.GREY_BUTTON),
                                           child: Center(
                                             child: SizedBox(
-                                              width: 30,
-                                              height: 30,
+                                              width: 60,
+                                              height: 60,
                                               child: Image.asset(
                                                   'assets/images/loading.gif'),
                                             ),
@@ -375,7 +378,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                                                       .width -
                                                   150,
                                               child: Text(
-                                                '${state.dto.phoneNumber}',
+                                                '${_arrayValidator.parsePhoneToView(state.dto.phoneNumber)}',
                                                 style: TextStyle(
                                                   color: DefaultTheme.GREY_TEXT,
                                                 ),
@@ -418,14 +421,18 @@ class _HeaderWidget extends State<HeaderWidget> {
                       ),
                       //
                       Divider(
-                        color: DefaultTheme.GREY_TEXT,
+                        color: DefaultTheme.GREY_TOP_TAB_BAR,
                         height: 0.1,
                       ),
                       ButtonHDr(
                         style: BtnStyle.BUTTON_IN_LIST,
-                        labelColor: DefaultTheme.BLUE_TEXT,
+                        labelColor: DefaultTheme.BLACK,
+                        height: 70,
                         label: 'Thông tin tài khoản',
-                        isLabelLeft: true,
+                        image: Image.asset(
+                            'assets/images/ic-information-list.png'),
+                        imgHeight: 25,
+                        isLabelLeft: false,
                         onTap: () {
                           Navigator.of(context).pop();
                           Navigator.of(context)
@@ -433,25 +440,32 @@ class _HeaderWidget extends State<HeaderWidget> {
                         },
                       ),
                       Divider(
-                        color: DefaultTheme.GREY_TEXT,
+                        color: DefaultTheme.GREY_TOP_TAB_BAR,
                         height: 0.1,
                       ),
                       ButtonHDr(
                         style: BtnStyle.BUTTON_IN_LIST,
-                        labelColor: DefaultTheme.BLUE_TEXT,
+                        labelColor: DefaultTheme.BLACK,
+                        height: 70,
+                        isLabelLeft: false,
                         label: 'Thiết bị đeo',
-                        isLabelLeft: true,
+                        image: Image.asset('assets/images/ic-device-list.png'),
+                        imgHeight: 25,
                         onTap: () {},
                       ),
                       Divider(
-                        color: DefaultTheme.GREY_TEXT,
+                        color: DefaultTheme.GREY_TOP_TAB_BAR,
                         height: 0.1,
                       ),
                       ButtonHDr(
                         style: BtnStyle.BUTTON_IN_LIST,
-                        labelColor: DefaultTheme.BLUE_TEXT,
+                        labelColor: DefaultTheme.BLACK,
+                        height: 70,
                         label: 'Hợp đồng',
-                        isLabelLeft: true,
+                        image:
+                            Image.asset('assets/images/ic-contract-list.png'),
+                        imgHeight: 25,
+                        isLabelLeft: false,
                         onTap: () {
                           Navigator.of(context).pop();
                           Navigator.pushNamed(
@@ -459,7 +473,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                         },
                       ),
                       Divider(
-                        color: DefaultTheme.GREY_TEXT,
+                        color: DefaultTheme.GREY_TOP_TAB_BAR,
                         height: 0.1,
                       ),
                       // ButtonHDr(
@@ -480,32 +494,34 @@ class _HeaderWidget extends State<HeaderWidget> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
+                            // Divider(
+                            //   color: DefaultTheme.GREY_TOP_TAB_BAR,
+                            //   height: 0.1,
+                            // ),
+                            // ButtonHDr(
+                            //   style: BtnStyle.BUTTON_IN_LIST,
+                            //   labelColor: DefaultTheme.BLACK_BUTTON,
+                            //   height: 70,
+                            //   label: 'Đóng cửa sổ',
+                            //   onTap: () {
+                            //     Navigator.of(context).pop();
+                            //   },
+                            // ),
                             Divider(
-                              color: DefaultTheme.GREY_TEXT,
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
                               height: 0.1,
                             ),
                             ButtonHDr(
                               style: BtnStyle.BUTTON_IN_LIST,
-                              labelColor: DefaultTheme.RED_TEXT,
-                              label: 'Đóng cửa sổ',
-                              onTap: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            Divider(
-                              color: DefaultTheme.GREY_TEXT,
-                              height: 0.1,
-                            ),
-                            ButtonHDr(
-                              style: BtnStyle.BUTTON_IN_LIST,
-                              labelColor: DefaultTheme.RED_TEXT,
+                              labelColor: DefaultTheme.RED_CALENDAR,
+                              height: 70,
                               label: 'Đăng xuất',
                               onTap: () {
                                 _signOut();
                               },
                             ),
                             Divider(
-                              color: DefaultTheme.GREY_TEXT,
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
                               height: 0.1,
                             ),
                             Padding(

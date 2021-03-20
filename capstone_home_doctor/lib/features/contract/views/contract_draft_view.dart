@@ -267,7 +267,7 @@ class _ContractDraftView extends State<ContractDraftView>
                         padding:
                             EdgeInsets.only(left: 20, right: 20, bottom: 20),
                         child: Text(
-                          'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(_currentDate)}',
+                          'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(dateStart)}',
                           style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 16,
@@ -690,8 +690,12 @@ class _ContractDraftView extends State<ContractDraftView>
                   ),
                 ),
                 Container(
-                    padding: EdgeInsets.only(left: 30, right: 30),
+                    padding:
+                        EdgeInsets.only(left: 30, right: 30, bottom: 5, top: 5),
+                    margin: EdgeInsets.only(bottom: 30),
                     width: MediaQuery.of(context).size.width - 70,
+                    decoration: BoxDecoration(
+                        color: DefaultTheme.RED_CALENDAR.withOpacity(0.3)),
                     child: Center(
                       child: Text(
                         'Hợp đồng này hiện là bản nháp trước khi có sự kí kết của 2 bên.',
@@ -760,16 +764,7 @@ class _ContractDraftView extends State<ContractDraftView>
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 5),
-                    child: Text(
-                      'Bước 3',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: DefaultTheme.GREY_TEXT),
-                    ),
-                  ),
+
                   //
                   (_isAccept2 == false)
                       ? Container(

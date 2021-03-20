@@ -11,9 +11,11 @@ import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.
 
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_update_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/disease_list_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/disease_repository.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
 import 'package:capstone_home_doctor/features/contract/views/contract_detail_status_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/contract_draft_view.dart';
@@ -110,6 +112,8 @@ DoctorRepository _doctorRepository =
     DoctorRepository(httpClient: http.Client());
 MedicalShareInsRepository _medicalShareInsRepository =
     MedicalShareInsRepository(httpClient: http.Client());
+DiseaseRepository _diseaseRepository =
+    DiseaseRepository(httpClient: http.Client());
 
 //AccountBloc
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
@@ -404,6 +408,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<MedicalShareInsBloc>(
             create: (BuildContext context) => MedicalShareInsBloc(
                 medicalShareInsRepository: _medicalShareInsRepository),
+          ),
+          BlocProvider<DiseaseListBloc>(
+            create: (BuildContext context) =>
+                DiseaseListBloc(diseaseRepository: _diseaseRepository),
           ),
         ],
         child: GestureDetector(

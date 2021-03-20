@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
@@ -22,6 +23,7 @@ import 'package:http/http.dart' as http;
 DoctorRepository doctorRepository = DoctorRepository(httpClient: http.Client());
 final ContractHelper _contractHelper = ContractHelper();
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+final ArrayValidator _arrayValidator = ArrayValidator();
 
 class DoctorInformation extends StatefulWidget {
   @override
@@ -73,7 +75,7 @@ class _DoctorInformation extends State<DoctorInformation>
             colors: [DefaultTheme.GRADIENT_1, DefaultTheme.GRADIENT_2]),
       ),
       child: Scaffold(
-        backgroundColor: DefaultTheme.TRANSPARENT,
+        backgroundColor: DefaultTheme.BLACK.withOpacity(0.3),
         body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -101,14 +103,14 @@ class _DoctorInformation extends State<DoctorInformation>
                   style: BtnStyle.BUTTON_BLACK,
                   label: 'Yêu cầu hợp đồng',
                   onTap: () {
-                    _checkContractAvailable();
+                    //_checkContractAvailable();
 
                     ///
                     ///
                     ///
-                    // Navigator.of(context).pop();
-                    // Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
-                    //     arguments: arguments);
+                    Navigator.of(context).pop();
+                    Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
+                        arguments: arguments);
                   },
                 ),
               )
@@ -402,7 +404,7 @@ class _DoctorInformation extends State<DoctorInformation>
                   Container(
                     width: MediaQuery.of(context).size.width - (80 + 120 + 10),
                     child: Text(
-                      '${state.dto.phone}',
+                      '${_arrayValidator.parsePhoneToView(state.dto.phone)}',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: TextStyle(

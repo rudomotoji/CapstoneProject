@@ -291,7 +291,7 @@ class _ManageContract extends State<ManageContract> {
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      'Danh sách các hợp đồng đang trong trạng thái chờ xử lý và đang hiện hành',
+                                      'Danh sách các hợp đồng đang trong trạng thái yêu cầu, chờ xử lý và hiện hành',
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                           fontSize: 15,
@@ -303,7 +303,7 @@ class _ManageContract extends State<ManageContract> {
                               (_listExecuting.length != 0)
                                   ? Container(
                                       width: MediaQuery.of(context).size.width,
-                                      height: 250,
+                                      height: 320,
                                       child: ListView.builder(
                                         scrollDirection: Axis.horizontal,
                                         // shrinkWrap: true,
@@ -317,37 +317,37 @@ class _ManageContract extends State<ManageContract> {
                                           if (_listExecuting[index]
                                               .status
                                               .contains('PENDING')) {
-                                            statusTemp = 'Chờ xét duyệt';
+                                            statusTemp = 'Yêu cầu';
                                             statusColor =
                                                 DefaultTheme.ORANGE_TEXT;
                                           }
                                           if (_listExecuting[index]
                                               .status
                                               .contains('ACTIVE')) {
-                                            statusTemp = 'Đang hiện hành';
+                                            statusTemp = 'Hiện hành';
                                             statusColor =
                                                 DefaultTheme.SUCCESS_STATUS;
                                           }
                                           if (_listExecuting[index]
                                               .status
                                               .contains('APPROVE')) {
-                                            statusTemp = 'Chờ kí nhận';
+                                            statusTemp = 'Đã duyệt';
                                             statusColor =
-                                                DefaultTheme.BLUE_TEXT;
+                                                DefaultTheme.GRADIENT_2;
                                           }
                                           if (_listExecuting[index]
                                               .status
                                               .contains('FINISHED')) {
-                                            statusTemp = 'Đã hoàn tất';
+                                            statusTemp = 'Đã kết thúc';
                                             statusColor =
-                                                DefaultTheme.BLUE_REFERENCE;
+                                                DefaultTheme.CHIP_BLUE;
                                           }
 
                                           //
                                           return Container(
-                                            width: 200,
-                                            height: 250,
-                                            padding: EdgeInsets.only(left: 10),
+                                            width: 250,
+                                            height: 320,
+                                            // padding: EdgeInsets.only(left: 10),
                                             margin: EdgeInsets.only(left: 10),
                                             decoration: BoxDecoration(
                                                 color: DefaultTheme.GREY_VIEW,
@@ -358,62 +358,183 @@ class _ManageContract extends State<ManageContract> {
                                                     color: DefaultTheme
                                                         .GREY_TOP_TAB_BAR)),
                                             child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 //
                                                 Container(
-                                                  margin:
-                                                      EdgeInsets.only(top: 30),
-                                                  child: Text(
-                                                    'Hợp đồng ${_listExecuting[index].contractCode}',
-                                                    style: TextStyle(
-                                                      //
-                                                      fontFamily: 'NewYork',
-                                                      foreground: Paint()
-                                                        ..shader =
-                                                            _normalHealthColors,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
+                                                  color: DefaultTheme.YELLOW
+                                                      .withOpacity(0.5),
+                                                  padding: EdgeInsets.only(
+                                                      top: 20,
+                                                      bottom: 10,
+                                                      left: 10),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      // SizedBox(
+                                                      //   width: 20,
+                                                      //   child: Image.asset(
+                                                      //       'assets/images/ic-contract.png'),
+                                                      // ),
+                                                      // Padding(
+                                                      //   padding:
+                                                      //       EdgeInsets.only(
+                                                      //           left: 5),
+                                                      // ),
+                                                      Center(
+                                                        child: Text(
+                                                          'HỢP ĐỒNG',
+                                                          style: TextStyle(
+                                                            //
+
+                                                            color: DefaultTheme
+                                                                .BLACK,
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                Row(
-                                                  children: [
-                                                    Text('Trạng thái:'),
-                                                    Text(
-                                                      '${statusTemp}',
-                                                      style: TextStyle(
-                                                          color: statusColor),
-                                                    ),
-                                                  ],
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 10,
+                                                      top: 9,
+                                                      bottom: 5),
+                                                  child: Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 10,
+                                                        height: 10,
+                                                        child: Image.asset(
+                                                            'assets/images/ic-add-disease.png'),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10),
+                                                      ),
+                                                      Text(
+                                                        'Bệnh lý theo dõi',
+                                                        style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .BLUE_REFERENCE,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                Spacer(),
 
+                                                for (Diseases i
+                                                    in _listExecuting[index]
+                                                        .diseases)
+                                                  Container(
+                                                    width: 250,
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 5,
+                                                        top: 5,
+                                                        left: 10),
+                                                    child: Text(
+                                                      '${i.diseaseId}: ${i.name}',
+                                                      style: TextStyle(
+                                                        //
+                                                        fontFamily: 'NewYork',
+                                                        // foreground: Paint()
+                                                        //   ..shader =
+                                                        //       _normalHealthColors,
+                                                        color:
+                                                            DefaultTheme.BLACK,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                      textAlign: TextAlign.left,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 3,
+                                                    ),
+                                                  ),
+                                                Spacer(),
                                                 Row(
                                                   children: [
-                                                    Text('Bác sĩ:'),
                                                     Container(
-                                                      width: 140,
+                                                      width: 90,
+                                                      padding: EdgeInsets.only(
+                                                          left: 10),
+                                                      child:
+                                                          Text('Trạng thái:'),
+                                                    ),
+                                                    Container(
+                                                      width: 150,
                                                       child: Text(
-                                                        '${_listExecuting[index].fullNameDoctor}',
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                                        '${statusTemp}',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: statusColor),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 5),
+                                                ),
                                                 Row(
                                                   children: [
-                                                    Text('Tạo ngày:'),
-                                                    Text(
-                                                        '${_dateValidator.parseToDateView(_listExecuting[index].dateCreated)}'),
+                                                    Container(
+                                                      width: 90,
+                                                      padding: EdgeInsets.only(
+                                                          left: 10),
+                                                      child: Text('Bác sĩ:'),
+                                                    ),
+                                                    Container(
+                                                      width: 150,
+                                                      child: Text(
+                                                        '${_listExecuting[index].fullNameDoctor}',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
-
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 5),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 90,
+                                                      child: Text('Tạo ngày:'),
+                                                      padding: EdgeInsets.only(
+                                                          left: 10),
+                                                    ),
+                                                    Container(
+                                                      width: 150,
+                                                      child: Text(
+                                                        '${_dateValidator.parseToDateView(_listExecuting[index].dateCreated)}',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                                 Padding(
                                                   padding:
-                                                      EdgeInsets.only(top: 20),
+                                                      EdgeInsets.only(top: 10),
                                                   child: Divider(
                                                     color: DefaultTheme
                                                         .GREY_TOP_TAB_BAR,
@@ -490,7 +611,7 @@ class _ManageContract extends State<ManageContract> {
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      'Danh sách các hợp đồng...',
+                                      'Danh sách các hợp đồng đã hết hạn',
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                           fontSize: 15,
@@ -501,7 +622,7 @@ class _ManageContract extends State<ManageContract> {
                               (_listAcitved.length != 0)
                                   ? Container(
                                       width: MediaQuery.of(context).size.width,
-                                      height: 250,
+                                      height: 320,
                                       child: ListView.builder(
                                         scrollDirection: Axis.horizontal,
                                         // shrinkWrap: true,
@@ -509,42 +630,43 @@ class _ManageContract extends State<ManageContract> {
                                         itemCount: _listAcitved.length,
                                         itemBuilder:
                                             (BuildContext context, int index) {
-                                          //
                                           String statusTemp = '';
                                           Color statusColor =
                                               DefaultTheme.BLACK_BUTTON;
                                           if (_listAcitved[index]
                                               .status
                                               .contains('PENDING')) {
-                                            statusTemp = 'Chờ xét duyệt';
+                                            statusTemp = 'Yêu cầu';
                                             statusColor =
                                                 DefaultTheme.ORANGE_TEXT;
                                           }
                                           if (_listAcitved[index]
                                               .status
                                               .contains('ACTIVE')) {
-                                            statusTemp = 'Đang hiện hành';
+                                            statusTemp = 'Hiện hành';
                                             statusColor =
-                                                DefaultTheme.GRADIENT_5;
+                                                DefaultTheme.SUCCESS_STATUS;
                                           }
                                           if (_listAcitved[index]
                                               .status
                                               .contains('APPROVE')) {
-                                            statusTemp = 'Chờ kí nhận';
+                                            statusTemp = 'Đã duyệt';
                                             statusColor =
-                                                DefaultTheme.BLUE_TEXT;
+                                                DefaultTheme.GRADIENT_2;
                                           }
                                           if (_listAcitved[index]
                                               .status
                                               .contains('FINISHED')) {
-                                            statusTemp = 'Đã hoàn tất';
+                                            statusTemp = 'Đã kết thúc';
                                             statusColor =
-                                                DefaultTheme.BLUE_REFERENCE;
+                                                DefaultTheme.CHIP_BLUE;
                                           }
+
+                                          //
                                           return Container(
-                                            width: 200,
-                                            height: 250,
-                                            padding: EdgeInsets.only(left: 10),
+                                            width: 250,
+                                            height: 320,
+                                            // padding: EdgeInsets.only(left: 10),
                                             margin: EdgeInsets.only(left: 10),
                                             decoration: BoxDecoration(
                                                 color: DefaultTheme.GREY_VIEW,
@@ -555,61 +677,183 @@ class _ManageContract extends State<ManageContract> {
                                                     color: DefaultTheme
                                                         .GREY_TOP_TAB_BAR)),
                                             child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 //
                                                 Container(
-                                                  margin:
-                                                      EdgeInsets.only(top: 30),
-                                                  child: Text(
-                                                    'Hợp đồng ${_listAcitved[index].contractCode}',
-                                                    style: TextStyle(
-                                                      //
-                                                      fontFamily: 'NewYork',
-                                                      foreground: Paint()
-                                                        ..shader =
-                                                            _normalHealthColors,
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
+                                                  color: DefaultTheme.YELLOW
+                                                      .withOpacity(0.5),
+                                                  padding: EdgeInsets.only(
+                                                      top: 20,
+                                                      bottom: 10,
+                                                      left: 10),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      // SizedBox(
+                                                      //   width: 20,
+                                                      //   child: Image.asset(
+                                                      //       'assets/images/ic-contract.png'),
+                                                      // ),
+                                                      // Padding(
+                                                      //   padding:
+                                                      //       EdgeInsets.only(
+                                                      //           left: 5),
+                                                      // ),
+                                                      Center(
+                                                        child: Text(
+                                                          'HỢP ĐỒNG',
+                                                          style: TextStyle(
+                                                            //
+
+                                                            color: DefaultTheme
+                                                                .BLACK,
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                                Row(
-                                                  children: [
-                                                    Text('Trạng thái:'),
-                                                    Text(
-                                                      '${statusTemp}',
-                                                      style: TextStyle(
-                                                          color: statusColor),
-                                                    ),
-                                                  ],
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 10,
+                                                      top: 9,
+                                                      bottom: 5),
+                                                  child: Row(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 10,
+                                                        height: 10,
+                                                        child: Image.asset(
+                                                            'assets/images/ic-add-disease.png'),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10),
+                                                      ),
+                                                      Text(
+                                                        'Bệnh lý theo dõi',
+                                                        style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .BLUE_REFERENCE,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
+
+                                                for (Diseases i
+                                                    in _listAcitved[index]
+                                                        .diseases)
+                                                  Container(
+                                                    width: 250,
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 5,
+                                                        top: 5,
+                                                        left: 10),
+                                                    child: Text(
+                                                      '${i.diseaseId}: ${i.name}',
+                                                      style: TextStyle(
+                                                        //
+                                                        fontFamily: 'NewYork',
+                                                        // foreground: Paint()
+                                                        //   ..shader =
+                                                        //       _normalHealthColors,
+                                                        color:
+                                                            DefaultTheme.BLACK,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                      textAlign: TextAlign.left,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 3,
+                                                    ),
+                                                  ),
                                                 Spacer(),
                                                 Row(
                                                   children: [
-                                                    Text('Bác sĩ:'),
                                                     Container(
-                                                      width: 140,
+                                                      width: 90,
+                                                      padding: EdgeInsets.only(
+                                                          left: 10),
+                                                      child:
+                                                          Text('Trạng thái:'),
+                                                    ),
+                                                    Container(
+                                                      width: 145,
                                                       child: Text(
-                                                        '${_listAcitved[index].fullNameDoctor}',
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
+                                                        '${statusTemp}',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: statusColor),
                                                       ),
                                                     ),
                                                   ],
                                                 ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 5),
+                                                ),
                                                 Row(
                                                   children: [
-                                                    Text('Tạo ngày:'),
-                                                    Text(
-                                                        '${_dateValidator.parseToDateView(_listAcitved[index].dateCreated)}'),
+                                                    Container(
+                                                      width: 90,
+                                                      padding: EdgeInsets.only(
+                                                          left: 10),
+                                                      child: Text('Bác sĩ:'),
+                                                    ),
+                                                    Container(
+                                                      width: 150,
+                                                      child: Text(
+                                                        '${_listAcitved[index].fullNameDoctor}',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
-
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 5),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 90,
+                                                      child: Text('Tạo ngày:'),
+                                                      padding: EdgeInsets.only(
+                                                          left: 10),
+                                                    ),
+                                                    Container(
+                                                      width: 150,
+                                                      child: Text(
+                                                        '${_dateValidator.parseToDateView(_listAcitved[index].dateCreated)}',
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                                 Padding(
                                                   padding:
-                                                      EdgeInsets.only(top: 20),
+                                                      EdgeInsets.only(top: 10),
                                                   child: Divider(
                                                     color: DefaultTheme
                                                         .GREY_TOP_TAB_BAR,
@@ -621,11 +865,16 @@ class _ManageContract extends State<ManageContract> {
                                                       .BUTTON_TRANSPARENT,
                                                   label: 'Chi tiết',
                                                   onTap: () {
+                                                    setState(() {
+                                                      _contractId = 0;
+                                                      _contractId =
+                                                          _listAcitved[index]
+                                                              .contractId;
+                                                    });
+
                                                     Map<String, dynamic> param =
                                                         {
-                                                      'C_ID':
-                                                          _listExecuting[index]
-                                                              .contractId,
+                                                      'C_ID': _contractId,
                                                     };
                                                     Navigator.pushNamed(
                                                         context,
@@ -641,6 +890,7 @@ class _ManageContract extends State<ManageContract> {
                                       ),
                                     )
                                   : Container(),
+                              /////
                               /////
                               Padding(
                                 padding: EdgeInsets.only(bottom: 20),
