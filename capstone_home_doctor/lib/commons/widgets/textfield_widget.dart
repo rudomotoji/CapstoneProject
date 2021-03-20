@@ -47,6 +47,8 @@ class TextFieldHDr extends StatefulWidget {
   final bool isMultipleInRow;
   //auto focus textfield
   final bool autoFocus;
+  //LABEL_TEXTFIELD_WIDTH
+  final double label_text_width;
 
   const TextFieldHDr({
     Key key,
@@ -63,6 +65,7 @@ class TextFieldHDr extends StatefulWidget {
     this.unit,
     this.isMultipleInRow,
     this.autoFocus,
+    this.label_text_width,
   }) : super(key: key);
 
   @override
@@ -138,7 +141,9 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
               Container(
                 color: DefaultTheme.TRANSPARENT,
                 padding: EdgeInsets.only(left: DefaultNumeralUI.PADDING),
-                width: DefaultNumeralUI.LABEL_TEXTFIELD_WIDTH,
+                width: (widget.label_text_width == null)
+                    ? DefaultNumeralUI.LABEL_TEXTFIELD_WIDTH
+                    : widget.label_text_width,
                 height: DefaultNumeralUI.LABEL_TEXTFIELD_HEIGHT,
                 alignment: Alignment.centerLeft,
                 child: Text(

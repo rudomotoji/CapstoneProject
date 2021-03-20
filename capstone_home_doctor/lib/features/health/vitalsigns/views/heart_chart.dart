@@ -1,47 +1,152 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:intl/intl.dart';
 
 class HeartChart extends StatefulWidget {
   @override
   _HeartChartState createState() => _HeartChartState();
 }
 
-class _HeartChartState extends State<HeartChart> {
+class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
   final int defaultSpace = 50;
+  final _vitalsignController = TextEditingController();
+  String _labeltime = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _labeltime = _getTimecurrent(new DateTime.now());
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      initialIndex: 0,
-      child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              HeaderWidget(
-                title: 'Nhịp tim',
-                isMainView: false,
-                buttonHeaderType: ButtonHeaderType.BACK_HOME,
-              ),
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: _pullRefresh,
-                  child: ListView(
-                    children: <Widget>[
-                      __heartChart(),
-                    ],
-                  ),
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            HeaderWidget(
+              title: 'Nhịp tim',
+              isMainView: false,
+              buttonHeaderType: ButtonHeaderType.BACK_HOME,
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _pullRefresh,
+                child: ListView(
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        return showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              child: Container(
+                                height: 280.0,
+                                width: 360.0,
+                                color: Colors.white,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          top: 16, left: 10, bottom: 10),
+                                      child: Text(
+                                        'Thêm dữ liệu',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 20),
+                                      ),
+                                    ),
+                                    Divider(
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                      height: 0.25,
+                                    ),
+                                    TextFieldHDr(
+                                      style: TFStyle.NO_BORDER,
+                                      label: 'BPM',
+                                      placeHolder: 'Nhập tại đây',
+                                      inputType: TFInputType.TF_TEXT,
+                                      // controller: _vitalsignController,
+                                      keyboardAction: TextInputAction.done,
+                                      label_text_width: 100,
+                                    ),
+                                    Divider(
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                      height: 0.25,
+                                    ),
+                                    Container(
+                                      margin:
+                                          EdgeInsets.only(top: 16, left: 10),
+                                      child: Text(
+                                        '$_labeltime',
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 20),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          top: 60, left: 10, right: 10),
+                                      child: ButtonHDr(
+                                        style: BtnStyle.BUTTON_BLACK,
+                                        label: 'Xong',
+                                        onTap: () async {},
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.only(top: 10, bottom: 10),
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.GREY_VIEW,
+                        ),
+                        margin: EdgeInsets.only(top: 14),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "+",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: DefaultTheme.ORANGE_TEXT,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15,
+                              ),
+                            ),
+                            Text(
+                              "Thêm dữ liệu",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: DefaultTheme.ORANGE_TEXT,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15,
+                              ),
+                            ),
+                            SizedBox(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    __heartChart(),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -129,7 +234,7 @@ class _HeartChartState extends State<HeartChart> {
             alignment: Alignment.topLeft,
             child: Container(
               margin: EdgeInsets.only(top: 16),
-              padding: const EdgeInsets.only(right: 8, left: 8),
+              width: MediaQuery.of(context).size.width - 40,
               child: LineChart(
                 sampleData2(),
                 swapAnimationDuration: const Duration(milliseconds: 250),
@@ -241,21 +346,21 @@ class _HeartChartState extends State<HeartChart> {
           getTextStyles: (value) => const TextStyle(
             color: Color(0xff72719b),
             fontWeight: FontWeight.bold,
-            fontSize: 16,
+            fontSize: 10,
           ),
           // rotateAngle: -90,
           getTitles: (value) {
             switch (value.toInt()) {
               case 0:
-                return '0';
-              case 7:
-                return '7';
-              case 14:
-                return '14';
-              case 21:
-                return '21';
-              case 28:
-                return '28';
+                return '00:00';
+              case 6:
+                return '06:00';
+              case 12:
+                return '12:00';
+              case 18:
+                return '18:00';
+              case 24:
+                return '24:00';
             }
             return '';
           },
@@ -265,12 +370,12 @@ class _HeartChartState extends State<HeartChart> {
           getTextStyles: (value) => const TextStyle(
             color: Color(0xff75729e),
             fontWeight: FontWeight.bold,
-            fontSize: 14,
+            fontSize: 10,
           ),
           getTitles: (value) {
             switch (value.toInt()) {
               case 0:
-                return '0';
+                return '';
               case 1:
                 return '50';
               case 2:
@@ -281,7 +386,7 @@ class _HeartChartState extends State<HeartChart> {
             return '';
           },
           margin: 8,
-          reservedSize: 30,
+          reservedSize: 12,
         ),
       ),
       borderData: FlBorderData(
@@ -294,7 +399,7 @@ class _HeartChartState extends State<HeartChart> {
         ),
       ),
       minX: 0,
-      maxX: 30,
+      maxX: 25,
       maxY: 5,
       minY: 0,
       lineBarsData: linesBarData2(),
@@ -326,4 +431,10 @@ class _HeartChartState extends State<HeartChart> {
   }
 
   Future<void> _pullRefresh() async {}
+
+  String _getTimecurrent(DateTime _time) {
+    DateFormat _format = DateFormat('hh:mm a');
+    String _formatted = _format.format(_time);
+    return _formatted;
+  }
 }
