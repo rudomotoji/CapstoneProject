@@ -49,4 +49,26 @@ class DiseaseRepository extends BaseApiClient {
       print('ERROR AT GET LIST DISEASE $e');
     }
   }
+
+  //get list disease lv2 and lv3
+  Future<List<DiseaseContractDTO>> getListDiseaseContract(int patientId) async {
+    final String url =
+        '/Diseases/GetDiseasesToCreateContract?patientId=${patientId}';
+    try {
+      //
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body) as List;
+        List<DiseaseContractDTO> list = responseData.map((dto) {
+          //
+          return DiseaseContractDTO.fromJson(dto);
+        }).toList();
+        return list;
+      } else {
+        return List<DiseaseContractDTO>();
+      }
+    } catch (e) {
+      print('ERROR AT getListDiseaseContract ${e}');
+    }
+  }
 }

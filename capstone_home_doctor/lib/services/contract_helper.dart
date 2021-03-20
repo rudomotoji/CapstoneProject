@@ -113,4 +113,7 @@ class ContractHelper {
 
     return prefs.getBool('CONTRACT_CHECKING');
   }
+
+  //FOR SAVE CONTRACT ID
+
 }

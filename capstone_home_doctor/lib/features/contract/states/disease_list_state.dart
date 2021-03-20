@@ -33,3 +33,12 @@ class DiseaseHeartListStateSuccess extends DiseaseListState {
   // TODO: implement props
   List<Object> get props => [listDisease];
 }
+
+class DiseaseContractStateSuccess extends DiseaseListState {
+  final List<DiseaseContractDTO> listDiseaseContract;
+  const DiseaseContractStateSuccess({@required this.listDiseaseContract});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [listDiseaseContract];
+}

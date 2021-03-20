@@ -341,16 +341,7 @@ class _ReasonContractView extends State<ReasonContractView>
                       ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 5),
-                    child: Text(
-                      'Bước 2',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: DefaultTheme.GREY_TEXT),
-                    ),
-                  ),
+
                   Container(
                     margin: EdgeInsets.only(left: 20, top: 10, right: 20),
                     width: MediaQuery.of(context).size.width - 40,

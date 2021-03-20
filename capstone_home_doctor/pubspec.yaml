@@ -67,6 +67,8 @@ dev_dependencies:
   permission_handler: ^5.0.1+1
   autocomplete_textfield: ^1.7.3
   table_calendar: ^2.3.3
+  expandable_group: ^0.0.7
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -132,6 +134,11 @@ flutter:
     - assets/images/ic-map.png
     - assets/images/ic-note.png
     - assets/images/ic-add-more-mi.png
+    - assets/images/ic-add-disease.png
+    - assets/images/ic-down.png
+    - assets/images/ic-contract-list.png
+    - assets/images/ic-information-list.png
+    - assets/images/ic-device-list.png
 
   
   #   - images/a_dot_burr.jpeg
