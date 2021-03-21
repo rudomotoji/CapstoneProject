@@ -24,4 +24,15 @@ class NotificationListStateSuccess extends NotificationListState {
   List<Object> get props => [listNotification];
 }
 
+//update status noti
 class NotificationListStateFailure extends NotificationListState {}
+
+class NotificationUpdateSuccess extends NotificationListState {
+  final bool isUpdated;
+
+  const NotificationUpdateSuccess({@required this.isUpdated});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [isUpdated];
+}

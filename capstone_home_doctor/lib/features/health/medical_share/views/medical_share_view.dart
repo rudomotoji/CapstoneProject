@@ -694,7 +694,6 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
           _medicalShareHelper.isMedicalShared().then((value) {
             if (value == true) {
               Navigator.of(context).pop();
-              _pullRefresh();
             } else {
               //
               Navigator.of(context).pop();

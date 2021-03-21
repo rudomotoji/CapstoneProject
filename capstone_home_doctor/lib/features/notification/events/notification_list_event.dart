@@ -14,3 +14,13 @@ class NotificationListEventGet extends NotificationListEvent {
   // TODO: implement props
   List<Object> get props => [accountId];
 }
+
+class NotificationUpdateStatusEvent extends NotificationListEvent {
+  final int notiId;
+
+  const NotificationUpdateStatusEvent({@required this.notiId});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [notiId];
+}

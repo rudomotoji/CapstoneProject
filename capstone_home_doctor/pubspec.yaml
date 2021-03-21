@@ -69,6 +69,7 @@ dev_dependencies:
   table_calendar: ^2.3.3
   expandable_group: ^0.0.7
   photo_view: ^0.10.0
+  connectivity: ^2.0.2
 
 
 
@@ -151,6 +152,8 @@ flutter:
     - assets/images/ic-c-finished-u.png
     - assets/images/ic-people.png
     - assets/images/ic-money.png
+    - assets/images/ic-deny.png
+    - assets/images/ic-checked.png
 
 
   

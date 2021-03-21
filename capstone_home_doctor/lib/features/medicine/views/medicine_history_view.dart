@@ -199,12 +199,12 @@ class _MedicineHistory extends State<MedicineHistory>
                                                         ),
                                                         overflow: TextOverflow
                                                             .ellipsis,
-                                                        maxLines: 3,
+                                                        maxLines: 2,
                                                       ),
                                                     ),
                                                     Padding(
                                                       padding: EdgeInsets.only(
-                                                          top: 10),
+                                                          top: 7),
                                                     ),
                                                     Container(
                                                       height: 15,
@@ -276,11 +276,11 @@ class _MedicineHistory extends State<MedicineHistory>
                                                     ButtonHDr(
                                                       style: BtnStyle
                                                           .BUTTON_IN_LIST,
-                                                      label: 'Chi Tiết',
+                                                      label: 'Chi tiết',
                                                       labelColor: DefaultTheme
                                                           .BLACK_BUTTON
                                                           .withOpacity(0.8),
-                                                      height: 40,
+                                                      height: 30,
                                                       onTap: () {
                                                         Navigator.pushNamed(
                                                             context,

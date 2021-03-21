@@ -28,4 +28,21 @@ class NotificationRepository extends BaseApiClient {
       print('ERROR AT GET LIST NOTIFICATION REPOSITORY ${e}');
     }
   }
+
+  //update status notification
+  Future<bool> updateStatusNotification(int notificationId) async {
+    final String url = '/Notifications?notiId=${notificationId}';
+    try {
+      //
+      final request = await putApi(url, null, notificationId);
+      print('update noti status ${request.statusCode}');
+      if (request.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('ERROR AT UPDATE STATUS NOTIFICATION REPOSITORY ${e}');
+    }
+  }
 }

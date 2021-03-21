@@ -208,7 +208,7 @@ class _NotificationState extends State<NotificationPage> {
                                           ],
                                         ),
                                         Positioned(
-                                          top: 10,
+                                          top: 17,
                                           right: 10,
                                           child: Text(
                                             '${_dateValidator.renderLastTimeNoti(i.timeAgo)}',
@@ -218,6 +218,10 @@ class _NotificationState extends State<NotificationPage> {
                                       ],
                                     ),
                                     onTap: () async {
+                                      _notificationListBloc.add(
+                                          NotificationUpdateStatusEvent(
+                                              notiId: i.notificationId));
+                                      _getAccountId();
                                       if (i.notificationType == 1 ||
                                           i.notificationType == 4 ||
                                           i.notificationType == 5 ||
@@ -241,7 +245,9 @@ class _NotificationState extends State<NotificationPage> {
                                       } else if (i.notificationType == 6) {
                                         //Navigate thuốc detail
                                         //
-
+                                        Navigator.pushNamed(context,
+                                            RoutesHDr.MEDICAL_HISTORY_DETAIL,
+                                            arguments: i.medicalInstructionId);
                                       } else if (i.notificationType == 8) {
                                         //Navigate hẹn hẹn detail
                                         //
