@@ -503,7 +503,7 @@ class _DoctorInformation extends State<DoctorInformation>
                         Container(
                           padding: EdgeInsets.only(bottom: 10),
                           child: Text(
-                            'Đang gửi yêu cầu',
+                            'Đang kiểm tra',
                             style: TextStyle(
                               decoration: TextDecoration.none,
                               color: DefaultTheme.GREY_TEXT,

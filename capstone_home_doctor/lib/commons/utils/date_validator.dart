@@ -125,17 +125,23 @@ class DateValidator {
     //
     double value = double.tryParse(timeAgo);
     int minutes = value.toInt();
-    if (minutes < 1440) {
+    if (minutes < 60) {
+      result = '${minutes} phút trước';
+    } else if (minutes < 1440 && minutes >= 60) {
       //
       var time = minutes / 60;
       int r = time.toInt();
 
       result = '${r} tiếng trước';
-    } else if (minutes > 1440) {
+    } else if (minutes > 1440 && minutes <= 10080) {
       //
       var time = minutes / 1440;
       int r = time.toInt();
       result = '${r} ngày trước';
+    } else {
+      var time = minutes / 10080;
+      int r = time.toInt();
+      result = '${r} tuần';
     }
     return result;
   }

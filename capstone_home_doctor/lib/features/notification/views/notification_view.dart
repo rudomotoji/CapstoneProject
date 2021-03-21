@@ -1,4 +1,5 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/badge_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
@@ -7,12 +8,14 @@ import 'package:capstone_home_doctor/features/notification/events/notification_l
 import 'package:capstone_home_doctor/features/notification/states/notification_list_state.dart';
 import 'package:capstone_home_doctor/models/notification_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 //
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final DateValidator _dateValidator = DateValidator();
+final ContractHelper _contractHelper = ContractHelper();
 
 class NotificationPage extends StatefulWidget {
   @override
@@ -113,7 +116,7 @@ class _NotificationState extends State<NotificationPage> {
                                 Container(
                                   width: MediaQuery.of(context).size.width,
                                   margin: EdgeInsets.only(bottom: 5),
-                                  height: 80,
+                                  height: 100,
                                   decoration: BoxDecoration(
                                       color: (i.status == false)
                                           ? DefaultTheme.GREY_VIEW
@@ -178,7 +181,12 @@ class _NotificationState extends State<NotificationPage> {
                                                           .size
                                                           .width -
                                                       70,
-                                                  child: Text('${i.title}'),
+                                                  child: Text(
+                                                    '${i.title}',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500),
+                                                  ),
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.only(
@@ -200,7 +208,7 @@ class _NotificationState extends State<NotificationPage> {
                                           ],
                                         ),
                                         Positioned(
-                                          top: 5,
+                                          top: 10,
                                           right: 10,
                                           child: Text(
                                             '${_dateValidator.renderLastTimeNoti(i.timeAgo)}',
@@ -209,7 +217,7 @@ class _NotificationState extends State<NotificationPage> {
                                         ),
                                       ],
                                     ),
-                                    onTap: () {
+                                    onTap: () async {
                                       if (i.notificationType == 1 ||
                                           i.notificationType == 4 ||
                                           i.notificationType == 5 ||
@@ -217,6 +225,13 @@ class _NotificationState extends State<NotificationPage> {
                                           i.notificationType == 10) {
                                         //Navigate hợp đồng detail
                                         //
+                                        if (i.contractId != null) {
+                                          await _contractHelper
+                                              .updateContractId(i.contractId);
+
+                                          Navigator.of(context).pushNamed(
+                                              RoutesHDr.DETAIL_CONTRACT_VIEW);
+                                        }
                                       } else if (i.notificationType == 2) {
                                         //Navigate Screen overview
                                         //
@@ -238,7 +253,8 @@ class _NotificationState extends State<NotificationPage> {
                                       } else if (i.notificationType == 11) {
                                         //Navigate connect device screen
                                         //
-                                        // Navigator.of(context)
+                                        Navigator.of(context).pushNamed(
+                                            RoutesHDr.INTRO_CONNECT_PERIPHERAL);
                                       }
                                     },
                                   ),

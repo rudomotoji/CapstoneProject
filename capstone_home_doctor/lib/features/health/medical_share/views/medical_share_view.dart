@@ -16,9 +16,12 @@ import 'package:capstone_home_doctor/features/health/medical_share/states/medica
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
 import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/medical_share_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+
+final MedicalShareHelper _medicalShareHelper = MedicalShareHelper();
 
 class MedicalShare extends StatefulWidget {
   @override
@@ -619,7 +622,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                         style: BtnStyle.BUTTON_BLACK,
                         label: 'Chia sẻ',
                         onTap: () {
-                          _checkingShare();
+                          _checkingShare(dropdownValue.contractId,
+                              medicalInstructionIdsSelected);
                           // _medicalShareInsBloc.add(MedicalShareInsEventSend(
                           //     contractID: dropdownValue.contractId,
                           //     listMediIns: medicalInstructionIdsSelected));
@@ -635,8 +639,139 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
         : Container();
   }
 
-  _checkingShare() {
+  _checkingShare(int _contractId, List<int> _listMedIns) {
     //
+    setState(() {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    width: 250,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.7),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 130,
+                          // height: 100,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                        // Spacer(),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Đang chia sẻ',
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.GREY_TEXT,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
+      if (_contractId != 0 && _listMedIns.length > 0) {
+        //
+        _medicalShareInsBloc.add(MedicalShareInsEventSend(
+            contractID: dropdownValue.contractId,
+            listMediIns: medicalInstructionIdsSelected));
+        Future.delayed(const Duration(seconds: 3), () {
+          //
+          _medicalShareHelper.isMedicalShared().then((value) {
+            if (value == true) {
+              Navigator.of(context).pop();
+              _pullRefresh();
+            } else {
+              //
+              Navigator.of(context).pop();
+              return showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                          child: Container(
+                            padding:
+                                EdgeInsets.only(left: 10, top: 10, right: 10),
+                            width: 250,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: DefaultTheme.WHITE.withOpacity(0.7),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.only(bottom: 10, top: 10),
+                                  child: Text(
+                                    'Chia sẻ thất bại',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.none,
+                                      color: DefaultTheme.BLACK,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Đã có vấn đề trong khi chia sẻ các phiếu y lệnh. Xin vui lòng thử lại.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        decoration: TextDecoration.none,
+                                        color: DefaultTheme.GREY_TEXT,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                Divider(
+                                  height: 1,
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                ),
+                                ButtonHDr(
+                                  height: 40,
+                                  style: BtnStyle.BUTTON_TRANSPARENT,
+                                  label: 'OK',
+                                  labelColor: DefaultTheme.BLUE_TEXT,
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  });
+            }
+          });
+        });
+      }
+    });
   }
 
   Future<void> _pullRefresh() async {
