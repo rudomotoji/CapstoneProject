@@ -43,6 +43,7 @@ import 'package:capstone_home_doctor/features/health/medical_share/views/medical
 import 'package:capstone_home_doctor/features/health/vitalsigns/views/heart_chart.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/views/history_vital_sign.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/views/oxy_chart_view.dart';
+import 'package:capstone_home_doctor/features/health/vitalsigns/views/pressure_chart.dart';
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
@@ -488,6 +489,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.MEDICAL_HISTORY_DETAIL: (context) =>
                     MedicalHistoryDetailView(),
                 RoutesHDr.VITALSIGN_HISTORY: (context) => HistoryVitalSign(),
+                RoutesHDr.PRESSURE_CHART_VIEW: (context) => PressureChart(),
               },
               home: _startScreen,
             ),

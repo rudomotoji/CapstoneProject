@@ -24,9 +24,9 @@ class DiseaseListBloc extends Bloc<DiseaseListEvent, DiseaseListState> {
     if (event is DiseaseEventGetHealthList) {
       yield DiseaseListStateLoading();
       try {
-        final List<DiseaseDTO> list =
+        final List<DiseaseContractDTO> list =
             await diseaseRepository.getHeartDiseases();
-        yield DiseaseHeartListStateSuccess(listDisease: list);
+        yield DiseaseHeartListStateSuccess(listDiseaseContract: list);
       } catch (e) {
         yield DiseaseListStateFailure();
       }
