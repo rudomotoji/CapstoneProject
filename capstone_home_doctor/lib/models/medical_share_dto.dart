@@ -103,12 +103,14 @@
 
 class MedicalShareDTO {
   String healthRecordPlace;
+  String dateCreate;
   List<MedicalInstructions> medicalInstructions;
 
   MedicalShareDTO({this.healthRecordPlace, this.medicalInstructions});
 
   MedicalShareDTO.fromJson(Map<String, dynamic> json) {
     healthRecordPlace = json['healthRecordPlace'];
+    dateCreate = json['dateCreate'];
     if (json['medicalInstructions'] != null) {
       medicalInstructions = new List<MedicalInstructions>();
       json['medicalInstructions'].forEach((v) {
@@ -120,6 +122,7 @@ class MedicalShareDTO {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['healthRecordPlace'] = this.healthRecordPlace;
+    data['dateCreate'] = this.dateCreate;
     if (this.medicalInstructions != null) {
       data['medicalInstructions'] =
           this.medicalInstructions.map((v) => v.toJson()).toList();
@@ -131,18 +134,21 @@ class MedicalShareDTO {
 class MedicalInstructions {
   int medicalInstructionId;
   String image;
+  String dateCreate;
   bool isChecked = false;
 
   MedicalInstructions({this.medicalInstructionId, this.image, this.isChecked});
 
   MedicalInstructions.fromJson(Map<String, dynamic> json) {
     medicalInstructionId = json['medicalInstructionId'];
+    dateCreate = json['dateCreate'];
     image = json['image'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['medicalInstructionId'] = this.medicalInstructionId;
+    data['dateCreate'] = this.dateCreate;
     data['image'] = this.image;
     return data;
   }

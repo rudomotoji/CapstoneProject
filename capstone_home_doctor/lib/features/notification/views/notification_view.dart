@@ -58,9 +58,9 @@ class _NotificationState extends State<NotificationPage> {
               isMainView: true,
               buttonHeaderType: ButtonHeaderType.AVATAR,
             ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-            ),
+            // Padding(
+            //   padding: EdgeInsets.only(bottom: 10),
+            // ),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _getAccountId,

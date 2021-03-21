@@ -27,6 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:photo_view/photo_view.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final ContractHelper _contractHelper = ContractHelper();
@@ -78,6 +79,9 @@ class _ContractShareView extends State<ContractShareView>
   List<MedicalInstructions> medicalInstructions3 = [];
   List<int> medicalInstructionIdsSelected = [];
   List<MedicalInstructionTypeDTO> _listMedInsType = [];
+
+  //
+  String nameOther = '';
 
   bool isChecked = false;
   //
@@ -207,14 +211,25 @@ class _ContractShareView extends State<ContractShareView>
                           ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.only(left: 20),
-                  child: (nameOfList.contains('điện tim'))
-                      ? Text('Phiếu điện tim')
-                      : (nameOfList.contains('X-Quang')
-                          ? Text('Phiếu X-Quang')
-                          : Container()),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(left: 20),
+                      child: (nameOfList.contains('điện tim'))
+                          ? Text('Phiếu điện tim')
+                          : (nameOfList.contains('X-Quang')
+                              ? Text('Phiếu X-Quang')
+                              : Container()),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Text('Ngày tạo: ${e.dateCreate}',
+                          style: TextStyle(fontSize: 12)),
+                    ),
+                  ],
                 ),
+
                 Spacer(),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
@@ -323,10 +338,21 @@ class _ContractShareView extends State<ContractShareView>
                           ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.only(left: 20),
-                  child: Text('${nameOfList}'),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Text('${nameOfList}'),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Text('Ngày tạo: ${e.dateCreate}',
+                          style: TextStyle(fontSize: 12)),
+                    ),
+                  ],
                 ),
+
                 Spacer(),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
@@ -1090,36 +1116,60 @@ class _ContractShareView extends State<ContractShareView>
                       width: 150,
                       margin: EdgeInsets.only(left: 20),
                       height: 200,
-                      child: Stack(
-                        children: [
-                          SizedBox(
-                            width: 150,
-                            height: 200,
-                            child: Image.network(
-                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions1[index].image}'),
-                          ),
-                          Container(
-                            width: 150,
-                            height: 200,
-                            color: DefaultTheme.BLACK_BUTTON.withOpacity(0.2),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            child: Container(
+                      child: InkWell(
+                        onTap: () {
+                          print('tap');
+                          _showFullImageDescription(
+                              medicalInstructions1[index].image,
+                              'Phiếu điện tim',
+                              '${medicalInstructions1[index].dateCreate}');
+                        },
+                        child: Stack(
+                          children: [
+                            SizedBox(
                               width: 150,
-                              height: 50,
-                              color: DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
-                              child: Center(
-                                child: Text(
-                                  'Phiếu điện tim',
-                                  style: TextStyle(color: DefaultTheme.WHITE),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                              height: 200,
+                              child: Image.network(
+                                  'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions1[index].image}'),
+                            ),
+                            Container(
+                              width: 150,
+                              height: 200,
+                              color: DefaultTheme.BLACK_BUTTON.withOpacity(0.2),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: 150,
+                                height: 50,
+                                color:
+                                    DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Phiếu điện tim',
+                                        style: TextStyle(
+                                            color: DefaultTheme.WHITE),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        'Ngày tạo${medicalInstructions1[index].dateCreate}',
+                                        style: TextStyle(
+                                            color: DefaultTheme.WHITE,
+                                            fontSize: 12),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -1224,38 +1274,62 @@ class _ContractShareView extends State<ContractShareView>
                       width: 150,
                       height: 200,
                       margin: EdgeInsets.only(left: 20),
-                      child: Stack(
-                        children: [
-                          SizedBox(
-                            width: 150,
-                            height: 200,
-                            child: Image.network(
-                              'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions2[index].image}',
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          Container(
-                            width: 150,
-                            height: 200,
-                            color: DefaultTheme.BLACK_BUTTON.withOpacity(0.2),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            child: Container(
+                      child: InkWell(
+                        onTap: () {
+                          print('tap');
+                          _showFullImageDescription(
+                              medicalInstructions2[index].image,
+                              'Phiếu X-Quang',
+                              '${medicalInstructions2[index].dateCreate}');
+                        },
+                        child: Stack(
+                          children: [
+                            SizedBox(
                               width: 150,
-                              height: 50,
-                              color: DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
-                              child: Center(
-                                child: Text(
-                                  'Phiếu X-Quang',
-                                  style: TextStyle(color: DefaultTheme.WHITE),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                              height: 200,
+                              child: Image.network(
+                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions2[index].image}',
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            Container(
+                              width: 150,
+                              height: 200,
+                              color: DefaultTheme.BLACK_BUTTON.withOpacity(0.2),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: 150,
+                                height: 50,
+                                color:
+                                    DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Phiếu X-Quang',
+                                        style: TextStyle(
+                                            color: DefaultTheme.WHITE),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        'Ngày tạo${medicalInstructions2[index].dateCreate}',
+                                        style: TextStyle(
+                                            color: DefaultTheme.WHITE,
+                                            fontSize: 12),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -1327,38 +1401,62 @@ class _ContractShareView extends State<ContractShareView>
                       width: 150,
                       height: 200,
                       margin: EdgeInsets.only(left: 20),
-                      child: Stack(
-                        children: [
-                          SizedBox(
-                            width: 150,
-                            height: 200,
-                            child: Image.network(
-                              'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions3[index].image}',
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          Container(
-                            width: 150,
-                            height: 200,
-                            color: DefaultTheme.BLACK_BUTTON.withOpacity(0.2),
-                          ),
-                          Positioned(
-                            bottom: 0,
-                            child: Container(
+                      child: InkWell(
+                        onTap: () {
+                          print('tap');
+                          _showFullImageDescription(
+                              medicalInstructions3[index].image,
+                              'Phiếu khác',
+                              '${medicalInstructions3[index].dateCreate}');
+                        },
+                        child: Stack(
+                          children: [
+                            SizedBox(
                               width: 150,
-                              height: 50,
-                              color: DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
-                              child: Center(
-                                child: Text(
-                                  '',
-                                  style: TextStyle(color: DefaultTheme.WHITE),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                              height: 200,
+                              child: Image.network(
+                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions3[index].image}',
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            Container(
+                              width: 150,
+                              height: 200,
+                              color: DefaultTheme.BLACK_BUTTON.withOpacity(0.2),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: 150,
+                                height: 50,
+                                color:
+                                    DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Phiếu khác',
+                                        style: TextStyle(
+                                            color: DefaultTheme.WHITE),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        'Ngày tạo${medicalInstructions3[index].dateCreate}',
+                                        style: TextStyle(
+                                            color: DefaultTheme.WHITE,
+                                            fontSize: 12),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -1367,6 +1465,104 @@ class _ContractShareView extends State<ContractShareView>
             : Container(),
       ],
     );
+  }
+
+  _showFullImageDescription(String img, String miName, String dateCreate) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          //
+          return Material(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: DefaultTheme.BLACK,
+              child: Stack(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  //
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: PhotoView(
+                      customSize: Size(MediaQuery.of(context).size.width,
+                          MediaQuery.of(context).size.height),
+                      imageProvider: NetworkImage(
+                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${img}'),
+                    ),
+                  ),
+                  Positioned(
+                    top: 20,
+                    right: 10,
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: Image.asset('assets/images/ic-close.png'),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      padding: EdgeInsets.only(left: 30, right: 30),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              DefaultTheme.TRANSPARENT,
+                              DefaultTheme.BLACK.withOpacity(0.9),
+                            ]),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          //
+                          Divider(
+                            color: DefaultTheme.WHITE,
+                            height: 1,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Text(
+                            '$miName',
+                            style: TextStyle(
+                                color: DefaultTheme.WHITE,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          Text(
+                            'Ngày tạo $dateCreate',
+                            style: TextStyle(
+                                color: DefaultTheme.WHITE, fontSize: 15),
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 50),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+          //
+        });
   }
 
   _showMedicalShare(String nameOfList) {
@@ -1600,25 +1796,49 @@ class _ContractShareView extends State<ContractShareView>
                                                                   .only(
                                                                       left: 10),
                                                             ),
-                                                            Container(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width -
-                                                                  122,
-                                                              child: Text(
-                                                                'Hồ sơ ${group.healthRecordPlace}',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        13,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 2,
-                                                              ),
+                                                            Column(
+                                                              children: <
+                                                                  Widget>[
+                                                                //
+                                                                Container(
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width -
+                                                                      122,
+                                                                  child: Text(
+                                                                    'Hồ sơ ${group.healthRecordPlace}',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            13,
+                                                                        fontWeight:
+                                                                            FontWeight.w500),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 2,
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width -
+                                                                      122,
+                                                                  child: Text(
+                                                                    'Ngày tạo: ${group.dateCreate}',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          11,
+                                                                    ),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 1,
+                                                                  ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ],
                                                         ),
@@ -2028,6 +2248,8 @@ class _ContractShareView extends State<ContractShareView>
                                       );
                                     }
                                     if (state is MedInsTypeStateSuccess) {
+                                      // nameOther = _selectedHRType;
+
                                       _listMedInsType = state.listMedInsType;
                                       // medicalInstructionIdsSelected.removeWhere(
                                       //     (item) =>
@@ -2075,6 +2297,9 @@ class _ContractShareView extends State<ContractShareView>
                                               _selectedHRType = _.name;
                                               print('${_selectedHRType}');
                                               //
+                                              setState(() {
+                                                nameOther = _selectedHRType;
+                                              });
                                               _medicalShareBloc.add(
                                                   MedicalShareEventGet(
                                                       diseaseIds:
@@ -2278,24 +2503,49 @@ class _ContractShareView extends State<ContractShareView>
                                                                 EdgeInsets.only(
                                                                     left: 10),
                                                           ),
-                                                          Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width -
-                                                                122,
-                                                            child: Text(
-                                                              'Hồ sơ ${group.healthRecordPlace}',
-                                                              style: TextStyle(
-                                                                  fontSize: 13,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 2,
-                                                            ),
+                                                          Column(
+                                                            children: [
+                                                              //
+                                                              Container(
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width -
+                                                                    122,
+                                                                child: Text(
+                                                                  'Hồ sơ ${group.healthRecordPlace}',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          13,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  maxLines: 2,
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width -
+                                                                    122,
+                                                                child: Text(
+                                                                  'Ngày tạo: ${group.dateCreate}',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        11,
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  maxLines: 1,
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
                                                         ],
                                                       ),
@@ -2304,7 +2554,7 @@ class _ContractShareView extends State<ContractShareView>
                                                           group
                                                               .medicalInstructions,
                                                           setModalState,
-                                                          _selectedHRType),
+                                                          nameOther),
                                                     );
                                                   }).toList(),
                                                 ),

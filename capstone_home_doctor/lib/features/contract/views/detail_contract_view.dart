@@ -1045,19 +1045,10 @@ class _DetailContractView extends State<DetailContractView>
                                                 int index) {
                                               return Container(
                                                 height: 200,
-                                                width: 345,
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: DefaultTheme
-                                                            .GREY_TOP_TAB_BAR,
-                                                        width: 0.5),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10)),
+                                                width: 150,
                                                 margin:
                                                     EdgeInsets.only(left: 10),
-                                                child: Row(
-                                                  children: [
+                                                child:
                                                     (x.medicalInstructions[index]
                                                                 .image !=
                                                             null)
@@ -1067,28 +1058,11 @@ class _DetailContractView extends State<DetailContractView>
                                                             child: Image.network(
                                                                 'http://45.76.186.233:8000/api/v1/Images?pathImage=${x.medicalInstructions[index].image}'),
                                                           )
-                                                        : Container(),
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                            '${x.medicalInstructionTypeName}'),
-                                                        Container(
-                                                          width: 190,
-                                                          child: Text(
-                                                              'Chẩn đoán: ${x.medicalInstructions[index].diagnose}'),
-                                                        ),
-                                                        Text(
-                                                            'Mô tả thêm: ${x.medicalInstructions[index].description}'),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
+                                                        : Container(
+                                                            width: 150,
+                                                            height: 200,
+                                                            color: Colors.grey,
+                                                          ),
                                               );
                                             },
                                           ),
