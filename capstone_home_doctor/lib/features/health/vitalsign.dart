@@ -198,7 +198,8 @@ class _VitalSignTabState extends State<VitalSignTab> {
                   label: 'Huyết áp',
                   image: Image.asset('assets/images/ic-blood-pressure.png'),
                   onTap: () {
-                    // startPhoneAuth();
+                    Navigator.of(context)
+                        .pushNamed(RoutesHDr.PRESSURE_CHART_VIEW);
                   },
                 ),
                 ButtonHDr(

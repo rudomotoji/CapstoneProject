@@ -14,6 +14,7 @@ import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_b
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
+import 'package:capstone_home_doctor/models/appointment_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/token_device_dto.dart';
@@ -75,6 +76,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
       .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
   List<MedicationSchedules> listSchedule = [];
+  List<AppointmentDTO> listAppointment = [];
 
   @override
   void initState() {
@@ -1065,10 +1067,16 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           padding: EdgeInsets.only(top: 20),
         ),
         Expanded(
-          flex: 3,
-          child: Text(
-            'Hiện không có lịch tái khám',
-            style: TextStyle(color: DefaultTheme.GREY_TEXT),
+          child: Container(
+            padding: EdgeInsets.all(10),
+            child: ListView(
+              children: [
+                Text('Bạn có 1 lịch khám:'),
+                Text('Hôm nay 21/03/2020'),
+                Text('Vào lúc 10:20 tại bệnh viện VinMedical'),
+                Text('Với bác sĩ Nguyên Lê Huy'),
+              ],
+            ),
           ),
         ),
       ],
@@ -1103,12 +1111,13 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                 : _medicalScheduleNotNull(),
                       )
                     : Container(
-                        child:
-                            (listSchedule == null || listSchedule.length <= 0)
-                                ? Center(
-                                    child: Text('Hiện chưa có lịch tái khám'),
-                                  )
-                                : _appointmentNotNull(),
+                        // child: _appointmentNotNull(),
+                        child: (listAppointment == null ||
+                                listAppointment.length <= 0)
+                            ? Center(
+                                child: Text('Hiện chưa có lịch tái khám'),
+                              )
+                            : _appointmentNotNull(),
                       ),
               ),
             );

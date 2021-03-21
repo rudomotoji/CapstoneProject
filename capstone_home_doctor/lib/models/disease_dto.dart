@@ -117,6 +117,11 @@ class DiseaseLeverThrees {
 
   DiseaseLeverThrees({this.diseaseLevelThreeId, this.diseaseLeverThreeName});
 
+  @override
+  String toString() {
+    return '${diseaseLevelThreeId}: ${diseaseLeverThreeName}';
+  }
+
   DiseaseLeverThrees.fromJson(Map<String, dynamic> json) {
     diseaseLevelThreeId = json['diseaseLevelThreeId'];
     diseaseLeverThreeName = json['diseaseLeverThreeName'];

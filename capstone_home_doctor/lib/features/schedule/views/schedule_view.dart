@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
@@ -9,7 +10,6 @@ import 'package:capstone_home_doctor/features/schedule/repositories/prescription
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
 import 'package:capstone_home_doctor/models/appointment_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
-import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -47,7 +47,7 @@ class _ScheduleView extends State<ScheduleView>
   AnimationController _animationController;
   CalendarController _calendarController;
   AppointmentDTO _appointmentDTO = AppointmentDTO(
-      date: '2021-04-01', time: '12:30', place: 'nha khoa hoa hao');
+      date: '2021-03-21', time: '12:30', place: 'nha khoa hoa hao');
 
   @override
   void initState() {
@@ -214,7 +214,9 @@ class _ScheduleView extends State<ScheduleView>
   // Simple TableCalendar configuration (using Styles)
   Widget _buildTableCalendar() {
     return TableCalendar(
+      // locale: 'vi-VN',
       calendarController: _calendarController,
+      initialCalendarFormat: CalendarFormat.twoWeeks,
       events: _events,
       startingDayOfWeek: StartingDayOfWeek.monday,
       calendarStyle: CalendarStyle(
@@ -240,16 +242,66 @@ class _ScheduleView extends State<ScheduleView>
     return ListView(
       children: _selectedEvents
           .map((event) => Container(
+                padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   border: Border.all(width: 0.8),
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 margin:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                child: ListTile(
-                  title: Text(
-                      'Bạn có lịch tái khám vào lúc ${event.time.toString()} \nTại ${event.place.toString()}'),
-                  onTap: () => print('${event.date} tapped!'),
+                // child: ListTile(
+                // title: Text(
+                //     'Bạn có lịch tái khám vào lúc ${event.time.toString()} \nTại ${event.place.toString()}'),
+                //   onTap: () => print('${event.date} tapped!'),
+                // ),
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            'Bạn có lịch tái khám vào lúc ${event.time.toString()} \nTại ${event.place.toString()}'),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(top: 20),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: DefaultTheme.GREY_VIEW),
+                          child: FlatButton(
+                            color: DefaultTheme.TRANSPARENT,
+                            onPressed: () {},
+                            padding: null,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: Image.asset(
+                                      'assets/images/ic-contract.png'),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                ),
+                                Text(
+                                  'Hủy lịch tái khám',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: DefaultTheme.BLACK,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ))
           .toList(),
@@ -861,6 +913,7 @@ class _ScheduleView extends State<ScheduleView>
   void _onVisibleDaysChanged(
       DateTime first, DateTime last, CalendarFormat format) {
     print('CALLBACK: _onVisibleDaysChanged');
+    print('$first - $last - $format');
   }
 }
 
