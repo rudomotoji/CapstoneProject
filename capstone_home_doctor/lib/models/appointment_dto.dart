@@ -1,28 +1,62 @@
 class AppointmentDTO {
-  String date;
-  String time;
-  String place;
+  String dateExamination;
+  List<AppointmentDetailDTO> appointments;
 
-  AppointmentDTO({this.date, this.time, this.place});
+  AppointmentDTO({this.dateExamination, this.appointments});
 
   AppointmentDTO.fromJson(Map<String, dynamic> json) {
-    date = json['date'];
-    time = json['time'];
-    place = json['place'];
+    dateExamination = json['dateExamination'];
+    if (json['appointments'] != null) {
+      appointments = new List<AppointmentDetailDTO>();
+      json['appointments'].forEach((v) {
+        appointments.add(new AppointmentDetailDTO.fromJson(v));
+      });
+    }
   }
 
-  Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{
-      'date': date,
-      'time': time,
-      'place': place,
-    };
-    return map;
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['dateExamination'] = this.dateExamination;
+    if (this.appointments != null) {
+      data['appointments'] = this.appointments.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class AppointmentDetailDTO {
+  int appointmentId;
+  String status;
+  String note;
+  String dateExamination;
+  String reasonCanceled;
+  String dateCanceled;
+
+  AppointmentDetailDTO(
+      {this.appointmentId,
+      this.status,
+      this.note,
+      this.dateExamination,
+      this.reasonCanceled,
+      this.dateCanceled});
+
+  AppointmentDetailDTO.fromJson(Map<String, dynamic> json) {
+    appointmentId = json['appointmentId'];
+    status = json['status'];
+    note = json['note'];
+    dateExamination = json['dateExamination'];
+    reasonCanceled = json['reasonCanceled'];
+    dateCanceled = json['dateCanceled'];
   }
 
-  AppointmentDTO.fromMap(Map<String, dynamic> map) {
-    date = map['date'];
-    time = map['time'];
-    place = map['place'];
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['appointmentId'] = this.appointmentId;
+    data['status'] = this.status;
+    data['note'] = this.note;
+    data['dateExamination'] = this.dateExamination;
+    data['reasonCanceled'] = this.reasonCanceled;
+    data['dateCanceled'] = this.dateCanceled;
+    return data;
   }
 }
