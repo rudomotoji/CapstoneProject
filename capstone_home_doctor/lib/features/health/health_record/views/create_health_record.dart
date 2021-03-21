@@ -42,14 +42,13 @@ class CreateHealthRecord extends StatefulWidget {
 
 class _CreateHealthRecord extends State<CreateHealthRecord>
     with WidgetsBindingObserver {
-  //
-  //
   int _patientId = 0;
   HealthRecordRepository healthRecordRepository =
       HealthRecordRepository(httpClient: http.Client());
   HealthRecordCreateBloc _healthRecordCreateBloc;
   DiseaseRepository diseaseRepository =
       DiseaseRepository(httpClient: http.Client());
+
   List<String> suggestions = [
     'Bệnh Viện Đại Học Y Dược',
     'Bệnh Viện Chợ Rẫy',
@@ -81,7 +80,6 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
   //SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   DateValidator _dateValidator = DateValidator();
   var _placeController = TextEditingController();
-  //var _doctorNameController = TextEditingController();
   var _diseaseController = TextEditingController();
   String _note = '';
   List<DiseaseDTO> _listDisease = [];
@@ -91,8 +89,10 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
 
   //disease for heart
   List<DiseaseContractDTO> _listDiseaseForHeart = [];
+  List<DiseaseContractDTO> _listDiseaseForHeartForSearch = [];
   List<DiseaseLeverThrees> _listLv3Selected = [];
   List<String> _listLv3IdSelected = [];
+  var _diseaseIDController = TextEditingController();
 
   HealthRecordDTO healthRecordDTO;
   @override
@@ -329,18 +329,15 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
         onConfirm: (values) {
           String _idDisease = '';
           _diseaseIds.clear();
-          setState(() {
-            _listDiseaseSelected = values;
-            for (var i = 0; i < values.length; i++) {
-              _idDisease = values[i].toString().split(':')[0];
-              _diseaseIds.add(_idDisease);
-            }
-          });
-          //  print('VALUES: ${values.toString()}');
-
-          print('LIST ID DISEASE NOW ${_diseaseIds}');
-          print(
-              'LIST DISEASE SELECTED WHEN CHOOSE NOW ${_listDiseaseSelected}');
+          setState(
+            () {
+              _listDiseaseSelected = values;
+              for (var i = 0; i < values.length; i++) {
+                _idDisease = values[i].toString().split(':')[0];
+                _diseaseIds.add(_idDisease);
+              }
+            },
+          );
         },
         chipDisplay: MultiSelectChipDisplay(
           onTap: (value) {
@@ -485,24 +482,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                                   color:
                                                       DefaultTheme.GREY_TEXT)),
                                         ),
-
-                                        // Padding(
-                                        //   padding: EdgeInsets.only(
-                                        //       bottom: 10, top: 10),
-                                        //   child: Container(
-                                        //     width: MediaQuery.of(context)
-                                        //         .size
-                                        //         .width,
-                                        //     height: 35,
-                                        //     decoration: BoxDecoration(
-                                        //       color: DefaultTheme
-                                        //           .GREY_TOP_TAB_BAR,
-                                        //       borderRadius:
-                                        //           BorderRadius.circular(20),
-                                        //     ),
-                                        //     child: Text('Tìm kiếm mã bệnh'),
-                                        //   ),
-                                        // ),
+                                        _searchDiseases(setModalState),
                                         Padding(
                                           padding: EdgeInsets.only(bottom: 20),
                                         ),
@@ -510,13 +490,12 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                           child: ListView(
                                             children: <Widget>[
                                               Column(
-                                                children: _listDiseaseForHeart
+                                                children: (_listDiseaseForHeartForSearch
+                                                                .length >
+                                                            0
+                                                        ? _listDiseaseForHeartForSearch
+                                                        : _listDiseaseForHeart)
                                                     .map((group) {
-                                                  int index =
-                                                      _listDiseaseForHeart
-                                                          .indexOf(group);
-                                                  //
-
                                                   return ExpandableGroup(
                                                     collapsedIcon: SizedBox(
                                                         width: 20,
@@ -577,7 +556,6 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                             ],
                                           ),
                                         ),
-//
                                         Container(
                                           width:
                                               MediaQuery.of(context).size.width,
@@ -610,8 +588,9 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                         width: MediaQuery.of(context).size.width * 0.4,
                         height: 15,
                         decoration: BoxDecoration(
-                            color: DefaultTheme.WHITE.withOpacity(0.8),
-                            borderRadius: BorderRadius.circular(50)),
+                          color: DefaultTheme.WHITE.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
                       ),
                     ),
                   ],
@@ -804,6 +783,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                 _listDiseaseForHeart = [];
                 _listLv3Selected = [];
                 _listLv3IdSelected = [];
+                _listDiseaseForHeartForSearch = [];
               },
             );
           },
@@ -929,6 +909,67 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
           ),
         );
       },
+    );
+  }
+
+  List<DiseaseContractDTO> updateSearchQueryForInsurance(
+      String val, List<DiseaseContractDTO> allItems) {
+    if (val != null && val.trim().isNotEmpty) {
+      List<DiseaseContractDTO> filteredItems = [];
+      for (var item in allItems) {
+        if (item.diseaseLevelTwoId
+            .toLowerCase()
+            .contains(val[0].toLowerCase())) {
+          var listDiseases = item.diseaseLevelTwoId.split('-');
+          if (listDiseases.length > 1) {
+            int num1 = int.parse(listDiseases[0].substring(1));
+            int num2 = int.parse(listDiseases[1].substring(1));
+            if (val.substring(1) != '') {
+              if (num1 <= int.parse(val.substring(1)) &&
+                  int.parse(val.substring(1)) <= num2) {
+                filteredItems.add(item);
+              }
+            } else {
+              if (item.diseaseLevelTwoId
+                  .toLowerCase()
+                  .contains(val.toLowerCase())) {
+                filteredItems.add(item);
+              }
+            }
+          } else {
+            if (item.diseaseLevelTwoId
+                .toLowerCase()
+                .contains(val.toLowerCase())) {
+              filteredItems.add(item);
+            }
+          }
+        }
+      }
+      return filteredItems;
+    } else {
+      return allItems;
+    }
+  }
+
+  Widget _searchDiseases(StateSetter setModalState) {
+    return Container(
+      padding: EdgeInsets.only(left: 10),
+      child: TextField(
+        controller: _diseaseIDController,
+        autofocus: true,
+        decoration: InputDecoration(
+          hintText: "Tìm kiếm mã bệnh....",
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor),
+          ),
+        ),
+        onChanged: (val) {
+          setModalState(() {
+            _listDiseaseForHeartForSearch =
+                updateSearchQueryForInsurance(val, _listDiseaseForHeart);
+          });
+        },
+      ),
     );
   }
 }

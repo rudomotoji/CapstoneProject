@@ -1,4 +1,3 @@
-import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
@@ -47,7 +46,7 @@ class _ScheduleView extends State<ScheduleView>
   AnimationController _animationController;
   CalendarController _calendarController;
   AppointmentDTO _appointmentDTO = AppointmentDTO(
-      date: '2021-03-21', time: '12:30', place: 'nha khoa hoa hao');
+      date: '2021-03-25', time: '12:30', place: 'nha khoa hoa hao');
 
   @override
   void initState() {
@@ -61,14 +60,14 @@ class _ScheduleView extends State<ScheduleView>
     DateTime dateAppointment =
         new DateFormat("yyyy-MM-dd").parse(_appointmentDTO.date);
 
-    if (dateAppointment.microsecondsSinceEpoch ==
-        curentDateNow.microsecondsSinceEpoch) {
+    if (dateAppointment.millisecondsSinceEpoch ==
+        curentDateNow.millisecondsSinceEpoch) {
       _events = {
         _selectedDay: [_appointmentDTO],
       };
     } else {
-      if (dateAppointment.microsecondsSinceEpoch >
-          curentDateNow.microsecondsSinceEpoch) {
+      if (dateAppointment.millisecondsSinceEpoch >
+          curentDateNow.millisecondsSinceEpoch) {
         _events = {
           _selectedDay.subtract(Duration(
               milliseconds: curentDateNow.millisecondsSinceEpoch -
@@ -190,10 +189,7 @@ class _ScheduleView extends State<ScheduleView>
                     Column(
                       mainAxisSize: MainAxisSize.max,
                       children: <Widget>[
-                        // Switch out 2 lines below to play with TableCalendar's settings
-                        //-----------------------
                         _buildTableCalendar(),
-                        // _buildTableCalendarWithBuilders(),
                         const SizedBox(height: 8.0),
                         Expanded(child: _buildEventList()),
                       ],
@@ -263,49 +259,61 @@ class _ScheduleView extends State<ScheduleView>
                             'Bạn có lịch tái khám vào lúc ${event.time.toString()} \nTại ${event.place.toString()}'),
                       ],
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(top: 20),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: DefaultTheme.GREY_VIEW),
-                          child: FlatButton(
-                            color: DefaultTheme.TRANSPARENT,
-                            onPressed: () {},
-                            padding: null,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: Image.asset(
-                                      'assets/images/ic-contract.png'),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 20),
-                                ),
-                                Text(
-                                  'Hủy lịch tái khám',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: DefaultTheme.BLACK,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    _buttonCancel(event),
                   ],
                 ),
               ))
           .toList(),
     );
+  }
+
+  Widget _buttonCancel(AppointmentDTO dto) {
+    DateTime dateAppointment = new DateFormat("yyyy-MM-dd").parse(dto.date);
+    if ((dateAppointment.millisecondsSinceEpoch -
+            curentDateNow.millisecondsSinceEpoch) >
+        (86400000 * 1)) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 20),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: DefaultTheme.GREY_VIEW),
+            child: FlatButton(
+              color: DefaultTheme.TRANSPARENT,
+              onPressed: () {
+                print('CANCEL APPOINTMENT');
+              },
+              padding: null,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: Image.asset('assets/images/ic-contract.png'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 20),
+                  ),
+                  Text(
+                    'Hủy lịch tái khám',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: DefaultTheme.BLACK,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Container();
+    }
   }
 
   _getMedicineSchedule() {
