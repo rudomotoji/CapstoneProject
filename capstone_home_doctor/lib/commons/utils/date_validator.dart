@@ -28,33 +28,114 @@ class DateValidator {
     return result;
   }
 
+  // String parseDateToNotiView(String importedDate) {
+  //   String result = '';
+  //   //imported date
+  //   if (importedDate != '' || importedDate != null) {
+  //     String day, month, year;
+  //     String date = importedDate.split('T')[0];
+  //     day = date.split('-')[2];
+  //     month = date.split('-')[1];
+  //     year = date.split('-')[0];
+  //     String time = importedDate.split('T')[1].split('.')[0];
+  //     String hour = time.split(':')[0];
+  //     String minute = time.split(':')[1];
+
+  //     //date time now
+  //     String now = DateTime.now().toString().split(' ')[0];
+  //     String dayNow = now.split('-')[2];
+  //     String monthNow = now.split('-')[1];
+  //     String yearNow = now.split('-')[0];
+
+  //     //executing
+  //     if (day == dayNow && month == monthNow && year == yearNow) {
+  //       result = 'Hôm nay, ${hour}:${minute}';
+  //     } else if (year == yearNow) {
+  //       result = '${hour}:${minute}, ${day}-${month}';
+  //     } else {
+  //       result = '${hour}:${minute}, ${day}-${month}-${year}';
+  //     }
+  //   }
+  //   return result;
+  // }
+
   String parseDateToNotiView(String importedDate) {
     String result = '';
-    //imported date
-    if (importedDate != '' || importedDate != null) {
-      String day, month, year;
-      String date = importedDate.split('T')[0];
-      day = date.split('-')[2];
-      month = date.split('-')[1];
-      year = date.split('-')[0];
-      String time = importedDate.split('T')[1].split('.')[0];
-      String hour = time.split(':')[0];
-      String minute = time.split(':')[1];
+    String compareYear = importedDate.split('/')[2];
+    String compareMonth = importedDate.split('/')[1];
+    String compareDate = importedDate.split('/')[0].split(', ')[1];
+    String dateInWeek = importedDate.split('/')[0].split(', ')[0];
+    //FOR DATE TIME NOW
+    String now = DateTime.now().toString().split(' ')[0];
+    String dateNow = now.split('-')[2];
+    String monthNow = now.split('-')[1];
+    String yearNow = now.split('-')[0];
 
-      //date time now
-      String now = DateTime.now().toString().split(' ')[0];
-      String dayNow = now.split('-')[2];
-      String monthNow = now.split('-')[1];
-      String yearNow = now.split('-')[0];
+    //FOR YESTERDAY
+    String yesterday =
+        DateTime.now().add(Duration(days: -1)).toString().split(' ')[0];
+    String dateYesterday = now.split('-')[2];
+    String monthYesterday = now.split('-')[1];
+    String yearYesterday = now.split('-')[0];
 
-      //executing
-      if (day == dayNow && month == monthNow && year == yearNow) {
-        result = 'Hôm nay, ${hour}:${minute}';
-      } else if (year == yearNow) {
-        result = '${hour}:${minute}, ${day}-${month}';
-      } else {
-        result = '${hour}:${minute}, ${day}-${month}-${year}';
+    if (compareYear == yearNow &&
+        compareMonth == monthNow &&
+        compareDate == dateNow) {
+      result = 'Hôm nay';
+    } else if (compareYear == yearYesterday &&
+        compareMonth == monthYesterday &&
+        compareDate == dateYesterday) {
+      result = 'Hôm qua';
+    } else {
+      String tempDW = '';
+      if (dateInWeek == 'Monday') {
+        tempDW = 'Thứ hai';
       }
+      if (dateInWeek == 'Tuesday') {
+        tempDW = 'Thứ ba';
+      }
+      if (dateInWeek == 'Wednesday') {
+        tempDW = 'Thứ tư';
+      }
+      if (dateInWeek == 'Thursday') {
+        tempDW = 'Thứ năm';
+      }
+      if (dateInWeek == 'Friday') {
+        tempDW = 'Thứ sáu';
+      }
+      if (dateInWeek == 'Saturday') {
+        result = 'Thứ bảy';
+      }
+      if (dateInWeek == 'Sunday') {
+        tempDW = 'Chủ nhật';
+      }
+      result = tempDW +
+          ', ' +
+          compareDate +
+          ' tháng ' +
+          compareMonth +
+          ', năm ' +
+          compareYear;
+    }
+    return result;
+  }
+
+  String renderLastTimeNoti(String timeAgo) {
+    String result = '';
+    //
+    double value = double.tryParse(timeAgo);
+    int minutes = value.toInt();
+    if (minutes < 1440) {
+      //
+      var time = minutes / 60;
+      int r = time.toInt();
+
+      result = '${r} tiếng trước';
+    } else if (minutes > 1440) {
+      //
+      var time = minutes / 1440;
+      int r = time.toInt();
+      result = '${r} ngày trước';
     }
     return result;
   }
