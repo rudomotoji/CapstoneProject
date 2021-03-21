@@ -25,4 +25,6 @@ class DefaultTheme {
   static final Color GRADIENT_5 = Color(0xFFFF448E);
   static final Color SUCCESS_STATUS = Color(0xFF06B271);
   static final Color YELLOW = Color(0xFFE2CB14);
+  static final Color BLUE_LIGHT = Color(0xFF42ECDE);
+  static final Color BLUE_DARK = Color(0xFF0F7CB8);
 }

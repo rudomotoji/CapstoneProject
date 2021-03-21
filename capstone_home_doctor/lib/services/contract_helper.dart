@@ -115,5 +115,27 @@ class ContractHelper {
   }
 
   //FOR SAVE CONTRACT ID
+  Future<void> initialContracId() async {
+    print('nhay vao initial');
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('CONTRACT_ID', 0);
+  }
 
+  Future<void> updateContractId(int id) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('CONTRACT_ID') ||
+        prefs.getInt('CONTRACT_ID') == null) {
+      initialContracId();
+    }
+    prefs.setInt('CONTRACT_ID', id);
+  }
+
+  Future<int> getContractId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('CONTRACT_ID') ||
+        prefs.getInt('CONTRACT_ID') == null) {
+      initialContracId();
+    }
+    return prefs.getInt('CONTRACT_ID');
+  }
 }

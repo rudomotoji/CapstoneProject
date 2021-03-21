@@ -100,13 +100,15 @@ class _ContractShareView extends State<ContractShareView>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Container(
+                  width: MediaQuery.of(context).size.width - 120,
                   child: Text(
                     '${e.diseaseLevelThreeId} - ${e.diseaseLeverThreeName}',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
                     style: TextStyle(
-                        color: DefaultTheme.BLUE_REFERENCE,
-                        fontWeight: FontWeight.w500),
+                      color: DefaultTheme.BLUE_DARK,
+                      // fontWeight: FontWeight.w500),
+                    ),
                   ),
                 ),
                 Spacer(),
@@ -472,7 +474,7 @@ class _ContractShareView extends State<ContractShareView>
                           Text(
                             'Chọn bệnh lý cần theo dõi',
                             style: TextStyle(
-                                color: DefaultTheme.BLUE_REFERENCE,
+                                color: DefaultTheme.BLUE_DARK,
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16),
                           ),
@@ -521,8 +523,8 @@ class _ContractShareView extends State<ContractShareView>
                                 padding: EdgeInsets.only(
                                     left: 20, right: 20, top: 15, bottom: 15),
                                 decoration: BoxDecoration(
-                                    color: DefaultTheme.BLUE_REFERENCE
-                                        .withOpacity(0.4),
+                                    color:
+                                        DefaultTheme.BLUE_DARK.withOpacity(0.3),
                                     borderRadius: BorderRadius.circular(5)),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -533,7 +535,7 @@ class _ContractShareView extends State<ContractShareView>
                                       child: Text(
                                         '${_listLv3Selected[index].diseaseLevelThreeId} - ${_listLv3Selected[index].diseaseLeverThreeName}',
                                         style: TextStyle(
-                                            color: DefaultTheme.BLACK,
+                                            color: DefaultTheme.BLUE_DARK,
                                             fontWeight: FontWeight.w400,
                                             fontSize: 16),
                                       ),
@@ -1997,10 +1999,11 @@ class _ContractShareView extends State<ContractShareView>
                               ),
                               Container(
                                 decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                      width: 1),
-                                ),
+                                    // border: Border.all(
+                                    //     color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    //     width: 1),
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR
+                                        .withOpacity(0.5)),
                                 child: BlocBuilder<MedInsTypeListBloc,
                                     MedInsTypeState>(
                                   builder: (context, state) {
@@ -2093,8 +2096,7 @@ class _ContractShareView extends State<ContractShareView>
                                   },
                                 ),
                               ),
-                              (_medInsTypeId != 0 &&
-                                      _selectedHRType != 'Chọn loại phiếu')
+                              (_medInsTypeId != 0)
                                   ? Expanded(
                                       child: BlocBuilder<MedicalShareBloc,
                                               MedicalShareState>(
@@ -2229,332 +2231,100 @@ class _ContractShareView extends State<ContractShareView>
                                             );
                                           }
                                           //
-                                          print('OK');
+
                                           // print(
                                           //     '${state.listMedicalShare[0].healthRecordPlace}');
-                                          return Padding(
+                                          return Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
                                             padding: EdgeInsets.only(
-                                                left: 20, right: 20, top: 20),
+                                                left: 20, right: 20),
                                             child: ListView(
                                               children: <Widget>[
-                                                Expanded(
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: state
-                                                        .listMedicalShare
-                                                        .map((group) {
-                                                      //
-                                                      int index = state
-                                                          .listMedicalShare
-                                                          .indexOf(group);
-                                                      return ExpandableGroup(
-                                                        collapsedIcon: SizedBox(
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  children: state
+                                                      .listMedicalShare
+                                                      .map((group) {
+                                                    //
+
+                                                    return ExpandableGroup(
+                                                      collapsedIcon: SizedBox(
+                                                          width: 20,
+                                                          height: 20,
+                                                          child: Image.asset(
+                                                              'assets/images/ic-navigator.png')),
+                                                      expandedIcon: SizedBox(
+                                                          width: 20,
+                                                          height: 20,
+                                                          child: Image.asset(
+                                                              'assets/images/ic-down.png')),
+                                                      isExpanded: false,
+                                                      header: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          SizedBox(
                                                             width: 20,
                                                             height: 20,
                                                             child: Image.asset(
-                                                                'assets/images/ic-navigator.png')),
-                                                        expandedIcon: SizedBox(
-                                                            width: 20,
-                                                            height: 20,
-                                                            child: Image.asset(
-                                                                'assets/images/ic-down.png')),
-                                                        isExpanded: false,
-                                                        header: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            SizedBox(
-                                                              width: 20,
-                                                              height: 20,
-                                                              child: Image.asset(
-                                                                  'assets/images/ic-health-record.png'),
+                                                                'assets/images/ic-health-record.png'),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 10),
+                                                          ),
+                                                          Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width -
+                                                                122,
+                                                            child: Text(
+                                                              'Hồ sơ ${group.healthRecordPlace}',
+                                                              style: TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 2,
                                                             ),
-                                                            Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      left: 10),
-                                                            ),
-                                                            Container(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width -
-                                                                  122,
-                                                              child: Text(
-                                                                'Hồ sơ ${group.healthRecordPlace}',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        13,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 2,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        items: _buildMedInsOptional(
-                                                            context,
-                                                            group
-                                                                .medicalInstructions,
-                                                            setModalState,
-                                                            _selectedHRType),
-                                                      );
-                                                    }).toList(),
-
-                                                    // for (MedicalShareDTO i
-                                                    //     in state
-                                                    //         .listMedicalShare)
-                                                    //   Container(
-                                                    //     child: Column(
-                                                    //       mainAxisAlignment:
-                                                    //           MainAxisAlignment
-                                                    //               .start,
-                                                    //       crossAxisAlignment:
-                                                    //           CrossAxisAlignment
-                                                    //               .start,
-                                                    //       children: <Widget>[
-                                                    //         //
-                                                    //         Padding(
-                                                    //           padding: EdgeInsets
-                                                    //               .only(
-                                                    //                   top:
-                                                    //                       20),
-                                                    //         ),
-
-                                                    //         Container(
-                                                    //           width: MediaQuery.of(
-                                                    //                   context)
-                                                    //               .size
-                                                    //               .width,
-                                                    //           child: Row(
-                                                    //             children: <
-                                                    //                 Widget>[
-                                                    //               SizedBox(
-                                                    //                 width: 20,
-                                                    //                 height:
-                                                    //                     20,
-                                                    //                 child: Image
-                                                    //                     .asset(
-                                                    //                         'assets/images/ic-health-record.png'),
-                                                    //               ),
-                                                    //               Padding(
-                                                    //                 padding: EdgeInsets.only(
-                                                    //                     left:
-                                                    //                         10),
-                                                    //               ),
-                                                    //               //
-                                                    //               Container(
-                                                    //                 width: MediaQuery.of(context)
-                                                    //                         .size
-                                                    //                         .width -
-                                                    //                     80,
-                                                    //                 child:
-                                                    //                     Text(
-                                                    //                   'Hồ sơ ${i.healthRecordPlace}',
-                                                    //                   style:
-                                                    //                       TextStyle(
-                                                    //                     color:
-                                                    //                         DefaultTheme.BLACK,
-                                                    //                     fontSize:
-                                                    //                         16,
-                                                    //                     // fontWeight:
-                                                    //                     // FontWeight.w500),
-                                                    //                   ),
-                                                    //                   overflow:
-                                                    //                       TextOverflow.ellipsis,
-                                                    //                   maxLines:
-                                                    //                       3,
-                                                    //                 ),
-                                                    //               ),
-                                                    //             ],
-                                                    //           ),
-                                                    //         ),
-
-                                                    //         Padding(
-                                                    //           padding: EdgeInsets
-                                                    //               .only(
-                                                    //                   bottom:
-                                                    //                       20),
-                                                    //         ),
-                                                    //         (i.medicalInstructions
-                                                    //                     .length !=
-                                                    //                 0)
-                                                    //             ? ListView
-                                                    //                 .builder(
-                                                    //                 physics:
-                                                    //                     NeverScrollableScrollPhysics(),
-                                                    //                 shrinkWrap:
-                                                    //                     true,
-                                                    //                 itemCount: i
-                                                    //                     .medicalInstructions
-                                                    //                     .length,
-                                                    //                 itemBuilder:
-                                                    //                     (BuildContext context,
-                                                    //                         int index) {
-                                                    //                   //
-                                                    //                   bool
-                                                    //                       checkTemp =
-                                                    //                       false;
-                                                    //                   if (medicalInstructionIdsSelected.contains(i
-                                                    //                       .medicalInstructions[index]
-                                                    //                       .medicalInstructionId)) {
-                                                    //                     checkTemp =
-                                                    //                         true;
-                                                    //                   }
-                                                    //                   return Container(
-                                                    //                       // height: 200,
-                                                    //                       margin:
-                                                    //                           EdgeInsets.only(
-                                                    //                         // left:
-                                                    //                         //     20,
-                                                    //                         // right:
-                                                    //                         //     20,
-                                                    //                         bottom: 10,
-                                                    //                       ),
-                                                    //                       padding: EdgeInsets.only(left: 10, right: 10),
-                                                    //                       decoration: BoxDecoration(
-                                                    //                         // color: DefaultTheme
-                                                    //                         //     .WHITE,
-                                                    //                         borderRadius: BorderRadius.circular(5),
-                                                    //                       ),
-                                                    //                       width: MediaQuery.of(context).size.width,
-                                                    //                       child: Column(
-                                                    //                         mainAxisAlignment: MainAxisAlignment.start,
-                                                    //                         children: <Widget>[
-                                                    //                           //
-                                                    //                           Row(
-                                                    //                             children: <Widget>[
-                                                    //                               ClipRRect(
-                                                    //                                 borderRadius: BorderRadius.circular(6),
-                                                    //                                 child: SizedBox(
-                                                    //                                   width: (30 * 1.5),
-                                                    //                                   height: (40 * 1.5),
-                                                    //                                   child: (i.medicalInstructions[index].image != null)
-                                                    //                                       ? Image.network(
-                                                    //                                           'http://45.76.186.233:8000/api/v1/Images?pathImage=${i.medicalInstructions[index].image}',
-                                                    //                                           fit: BoxFit.fill,
-                                                    //                                         )
-                                                    //                                       : Container(
-                                                    //                                           width: (30 * 1.5),
-                                                    //                                           height: (40 * 1.5),
-                                                    //                                           color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                                    //                                         ),
-                                                    //                                 ),
-                                                    //                               ),
-                                                    //                               Container(
-                                                    //                                 padding: EdgeInsets.only(left: 20),
-                                                    //                                 child: Text('${_selectedHRType}'),
-                                                    //                               ),
-                                                    //                               Spacer(),
-                                                    //                               ClipRRect(
-                                                    //                                 borderRadius: BorderRadius.circular(6),
-                                                    //                                 child: Container(
-                                                    //                                   width: 25,
-                                                    //                                   height: 25,
-                                                    //                                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
-                                                    //                                   child: Checkbox(
-                                                    //                                     checkColor: DefaultTheme.BLUE_REFERENCE,
-                                                    //                                     activeColor: DefaultTheme.GREY_VIEW,
-                                                    //                                     hoverColor: DefaultTheme.GREY_VIEW,
-                                                    //                                     value: checkTemp,
-                                                    //                                     onChanged: (_) {
-                                                    //                                       setModalState(() {
-                                                    //                                         //  i.medicalInstructions[index].isChecked = !i.medicalInstructions[index].isChecked;
-                                                    //                                         //
-                                                    //                                         checkTemp = !checkTemp;
-
-                                                    //                                         setState(() {
-                                                    //                                           if (checkTemp == true) {
-                                                    //                                             medicalInstructions3.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
-                                                    //                                             medicalInstructions3.add(i.medicalInstructions[index]);
-                                                    //                                             //
-                                                    //                                             medicalInstructionIdsSelected.removeWhere((item) => item == i.medicalInstructions[index].medicalInstructionId);
-                                                    //                                             medicalInstructionIdsSelected.add(i.medicalInstructions[index].medicalInstructionId);
-                                                    //                                             print('list medical ins selected: ${medicalInstructionIdsSelected}');
-                                                    //                                           } else {
-                                                    //                                             medicalInstructions3.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
-                                                    //                                             //
-                                                    //                                             medicalInstructionIdsSelected.removeWhere((item) => item == i.medicalInstructions[index].medicalInstructionId);
-                                                    //                                           }
-                                                    //                                         });
-                                                    //                                         //
-                                                    //                                       });
-                                                    //                                     },
-                                                    //                                   ),
-                                                    //                                 ),
-                                                    //                               ),
-                                                    //                               //
-                                                    //                             ],
-                                                    //                           ),
-
-                                                    //                           //
-                                                    //                         ],
-                                                    //                       ));
-                                                    //                 },
-                                                    //               )
-                                                    //             : Container(
-                                                    //                 height:
-                                                    //                     100,
-                                                    //                 width: MediaQuery.of(
-                                                    //                         context)
-                                                    //                     .size
-                                                    //                     .width,
-                                                    //                 child: Text(
-                                                    //                     'Không có phiếu y lệnh nào'),
-                                                    //               ),
-                                                    //         // (i.medicalInstructions
-                                                    //         //             .length !=
-                                                    //         //         0)
-                                                    //         //     ? Padding(
-                                                    //         //         padding: EdgeInsets
-                                                    //         //             .only(
-                                                    //         //                 bottom:
-                                                    //         //                     5,
-                                                    //         //                 top:
-                                                    //         //                     5),
-                                                    //         //         child:
-                                                    //         //             Divider(
-                                                    //         //           color: DefaultTheme
-                                                    //         //               .GREY_TOP_TAB_BAR,
-                                                    //         //           height: 1,
-                                                    //         //         ),
-                                                    //         //       )
-                                                    //         // : Container(),
-                                                    //         Padding(
-                                                    //           padding: EdgeInsets
-                                                    //               .only(
-                                                    //                   bottom:
-                                                    //                       10,
-                                                    //                   top: 5),
-                                                    //           child: Divider(
-                                                    //             color: DefaultTheme
-                                                    //                 .GREY_TOP_TAB_BAR,
-                                                    //             height: 1,
-                                                    //           ),
-                                                    //         )
-                                                    //       ],
-                                                    //     ),
-                                                    //   ),
-                                                  ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      items: _buildMedInsOptional(
+                                                          context,
+                                                          group
+                                                              .medicalInstructions,
+                                                          setModalState,
+                                                          _selectedHRType),
+                                                    );
+                                                  }).toList(),
                                                 ),
                                               ],
                                             ),
                                           );
                                         }
-                                        return Container();
+                                        return Container(child: Text('????'));
                                       }),
                                     )
-                                  // )
-                                  : Container(),
+                                  : Container(
+                                      height: 200,
+                                      child: Center(
+                                        child: Text(
+                                            'Chọn loại phiếu > chọn phiếu'),
+                                      )),
+                              // )
+
                               //
-                              (_medInsTypeId != 0 &&
-                                      _selectedHRType != 'Chọn loại phiếu')
+                              (_medInsTypeId != 0)
                                   ? Container(
                                       width: MediaQuery.of(context).size.width,
                                       margin: EdgeInsets.only(

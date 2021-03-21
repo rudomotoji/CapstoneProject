@@ -103,14 +103,14 @@ class _DoctorInformation extends State<DoctorInformation>
                   style: BtnStyle.BUTTON_BLACK,
                   label: 'Yêu cầu hợp đồng',
                   onTap: () {
-                    //_checkContractAvailable();
+                    _checkContractAvailable();
 
                     ///
                     ///
                     ///
-                    Navigator.of(context).pop();
-                    Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
-                        arguments: arguments);
+                    // Navigator.of(context).pop();
+                    // Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
+                    //     arguments: arguments);
                   },
                 ),
               )

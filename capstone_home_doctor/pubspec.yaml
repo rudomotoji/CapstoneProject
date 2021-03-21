@@ -139,6 +139,17 @@ flutter:
     - assets/images/ic-contract-list.png
     - assets/images/ic-information-list.png
     - assets/images/ic-device-list.png
+    - assets/images/ic-c-pending.png
+    - assets/images/ic-c-approved.png
+    - assets/images/ic-c-active.png
+    - assets/images/ic-c-finished.png
+    - assets/images/ic-c-pending-u.png
+    - assets/images/ic-c-approved-u.png
+    - assets/images/ic-c-active-u.png
+    - assets/images/ic-c-finished-u.png
+    - assets/images/ic-people.png
+    - assets/images/ic-money.png
+
 
   
   #   - images/a_dot_burr.jpeg

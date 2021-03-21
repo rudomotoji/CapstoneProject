@@ -69,6 +69,7 @@ import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart'
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
@@ -232,6 +233,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
   final PeripheralHelper peripheralHelper = PeripheralHelper();
   final HealthRecordHelper hrHelper = HealthRecordHelper();
   final MobileDeviceHelper mobileDeviceHelper = MobileDeviceHelper();
+  final ContractHelper contractHelper = ContractHelper();
   //
   final FirebaseMessaging _fcm = FirebaseMessaging();
   String _token = '';
@@ -254,6 +256,18 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('TOKEN_DEVICE')) {
       mobileDeviceHelper.initialTokenDevice();
+    }
+    if (!prefs.containsKey('CONTRACT_REQUEST')) {
+      contractHelper.initialContractSendRequest();
+    }
+    if (!prefs.containsKey('DOCTOR_ID')) {
+      contractHelper.initialDoctorId();
+    }
+    if (!prefs.containsKey('CONTRACT_CHECKING')) {
+      contractHelper.initialContractCheckingRequest();
+    }
+     if (!prefs.containsKey('CONTRACT_ID')) {
+      contractHelper.initialContracId();
     }
   }
 

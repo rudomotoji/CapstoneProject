@@ -15,10 +15,13 @@ import 'package:capstone_home_doctor/features/contract/states/contract_list_stat
 
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:barcode_scan/barcode_scan.dart';
+
+final ContractHelper _contractHelper = ContractHelper();
 
 final Shader _normalHealthColors = LinearGradient(
   colors: <Color>[
@@ -426,7 +429,7 @@ class _ManageContract extends State<ManageContract> {
                                                         'Bệnh lý theo dõi',
                                                         style: TextStyle(
                                                             color: DefaultTheme
-                                                                .BLUE_REFERENCE,
+                                                                .BLUE_DARK,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w500),
@@ -545,23 +548,16 @@ class _ManageContract extends State<ManageContract> {
                                                   style: BtnStyle
                                                       .BUTTON_TRANSPARENT,
                                                   label: 'Chi tiết',
-                                                  onTap: () {
-                                                    setState(() {
-                                                      _contractId = 0;
-                                                      _contractId =
-                                                          _listExecuting[index]
-                                                              .contractId;
-                                                    });
-
-                                                    Map<String, dynamic> param =
-                                                        {
-                                                      'C_ID': _contractId,
-                                                    };
+                                                  onTap: () async {
+                                                    await _contractHelper
+                                                        .updateContractId(
+                                                            _listExecuting[
+                                                                    index]
+                                                                .contractId);
                                                     Navigator.pushNamed(
                                                         context,
                                                         RoutesHDr
-                                                            .DETAIL_CONTRACT_VIEW,
-                                                        arguments: param);
+                                                            .DETAIL_CONTRACT_VIEW);
                                                   },
                                                 ),
                                               ],
@@ -745,7 +741,7 @@ class _ManageContract extends State<ManageContract> {
                                                         'Bệnh lý theo dõi',
                                                         style: TextStyle(
                                                             color: DefaultTheme
-                                                                .BLUE_REFERENCE,
+                                                                .BLUE_DARK,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w500),
@@ -864,23 +860,15 @@ class _ManageContract extends State<ManageContract> {
                                                   style: BtnStyle
                                                       .BUTTON_TRANSPARENT,
                                                   label: 'Chi tiết',
-                                                  onTap: () {
-                                                    setState(() {
-                                                      _contractId = 0;
-                                                      _contractId =
-                                                          _listAcitved[index]
-                                                              .contractId;
-                                                    });
-
-                                                    Map<String, dynamic> param =
-                                                        {
-                                                      'C_ID': _contractId,
-                                                    };
+                                                  onTap: () async {
+                                                    await _contractHelper
+                                                        .updateContractId(
+                                                            _listAcitved[index]
+                                                                .contractId);
                                                     Navigator.pushNamed(
                                                         context,
                                                         RoutesHDr
-                                                            .DETAIL_CONTRACT_VIEW,
-                                                        arguments: param);
+                                                            .DETAIL_CONTRACT_VIEW);
                                                   },
                                                 ),
                                               ],
@@ -906,223 +894,6 @@ class _ManageContract extends State<ManageContract> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  _showContractComponent(ContractListDTO dto) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width - 40,
-      child: Container(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: DefaultTheme.GREY_VIEW,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(bottom: 20),
-              child: Text(
-                'Hợp đồng ${dto.contractCode}',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            Row(
-              children: <Widget>[
-                Container(
-                  width: 80,
-                  child: Text(
-                    'Bác sĩ',
-                    style: TextStyle(
-                      color: DefaultTheme.GREY_TEXT,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
-                    '${dto.fullNameDoctor}',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                    ),
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 5),
-            ),
-            Row(
-              children: <Widget>[
-                Container(
-                  width: 80,
-                  child: Text(
-                    'Thời gian',
-                    style: TextStyle(
-                      color: DefaultTheme.GREY_TEXT,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
-                    '${dto.daysOfTracking} ngày',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                    ),
-                  ),
-                )
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 5),
-            ),
-            //timeline here
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 10),
-                ),
-                //tree here
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 1,
-                      height: 10,
-                      color: DefaultTheme.GREY_TEXT,
-                    ),
-                    SizedBox(
-                      height: 10,
-                      child: Image.asset('assets/images/ic-dot.png'),
-                    ),
-                    Container(
-                      width: 1,
-                      height: 10,
-                      color: DefaultTheme.GREY_TEXT,
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                ),
-                Container(
-                  height: 30,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 60,
-                        child: Text(
-                          'Bắt đầu',
-                          style: TextStyle(
-                            color: DefaultTheme.GREY_TEXT,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10),
-                      ),
-                      Text(
-                        '${_dateValidator.parseToDateView(dto.dateCreated)}',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 10),
-                ),
-                //tree here
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 1,
-                      height: 10,
-                      color: DefaultTheme.GREY_TEXT,
-                    ),
-                    SizedBox(
-                      width: 10,
-                      height: 10,
-                      child: Image.asset('assets/images/ic-dot.png'),
-                    ),
-                    Container(
-                      width: 1,
-                      height: 10,
-                      color: DefaultTheme.WHITE.withOpacity(0.0),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                ),
-                Container(
-                  height: 30,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 60,
-                        child: Text(
-                          'Kết thúc',
-                          style: TextStyle(
-                            color: DefaultTheme.GREY_TEXT,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10),
-                      ),
-                      Text(
-                        '${_dateValidator.parseToDateView(dto.dateFinished)}',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-            ),
-            Divider(
-              color: DefaultTheme.GREY_TEXT,
-              height: 0.1,
-            ),
-            ButtonHDr(
-              label: 'Chi tiết',
-              style: BtnStyle.BUTTON_TRANSPARENT,
-              onTap: () {},
-            ),
-          ],
         ),
       ),
     );

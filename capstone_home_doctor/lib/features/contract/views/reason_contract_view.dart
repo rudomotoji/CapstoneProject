@@ -274,7 +274,7 @@ class _ReasonContractView extends State<ReasonContractView>
                               Image.asset('assets/images/ic-choose-date.png'),
                           width: 30,
                           height: 40,
-                          labelColor: DefaultTheme.BLUE_REFERENCE,
+                          labelColor: DefaultTheme.BLUE_DARK,
                           bgColor: DefaultTheme.TRANSPARENT,
                           onTap: () {
                             _showDatePickerStart();

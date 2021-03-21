@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/commons/utils/convert_utils.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
@@ -34,7 +35,7 @@ import 'package:http/http.dart' as http;
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final ContractHelper _contractHelper = ContractHelper();
 final DateValidator _dateValidator = DateValidator();
-final ConvertUtils _convertUtils = ConvertUtils();
+final ArrayValidator _arrayValidator = ArrayValidator();
 
 final Shader _normalHealthColors = LinearGradient(
   colors: <Color>[
@@ -80,8 +81,8 @@ class _DetailContractView extends State<DetailContractView>
     _getPatientId();
     _contractIdNowBloc = BlocProvider.of(context);
     _contractFullBloc = BlocProvider.of(context);
-    _contractUpdateBloc = BlocProvider.of(context);
     _refreshData();
+    _contractUpdateBloc = BlocProvider.of(context);
   }
 
   _getPatientId() async {
@@ -91,21 +92,6 @@ class _DetailContractView extends State<DetailContractView>
       });
     });
   }
-  //   await _contractHelper.getDoctorId().then((value) {
-  //     _doctorId = value;
-  //   });
-  //   if (_patientId != 0 && _doctorId != 0) {
-  //     _contractIdNowBloc
-  //         .add(ContractIdNowEventSetPIdAndDId(pId: _patientId, dId: _doctorId));
-  //   }
-  // }
-
-  // _refreshPage() async {
-  //   if (_patientId != 0 && _doctorId != 0) {
-  //     _contractIdNowBloc
-  //         .add(ContractIdNowEventSetPIdAndDId(pId: _patientId, dId: _doctorId));
-  //   }
-  // }
 
   @override
   void dispose() {
@@ -114,11 +100,9 @@ class _DetailContractView extends State<DetailContractView>
   }
 
   Future _refreshData() async {
-    setState(() {
-      //   _contractId = 0;
-      //   _contractIdNowBloc
-      //       .add(ContractIdNowEventSetPIdAndDId(pId: _patientId, dId: _doctorId));
-
+    await _contractHelper.getContractId().then((value) {
+      print('value now ${value}');
+      _contractId = value;
       if (_contractId != 0) {
         _contractFullBloc.add(ContractFullEventSetCId(cId: _contractId));
       }
@@ -127,1025 +111,1320 @@ class _DetailContractView extends State<DetailContractView>
 
   @override
   Widget build(BuildContext context) {
-    //idContract
-
-    Map<String, dynamic> arguments = ModalRoute.of(context).settings.arguments;
-    //
-
-    //
-
-    _contractId = 0;
-    _contractId = arguments['C_ID'];
-
-    _refreshData();
-    print('contract id ${_contractId}');
     return Scaffold(
       // resizeToAvoidBottomPadding: false,
-      // backgroundColor: DefaultTheme.WHITE,
+      backgroundColor: DefaultTheme.GREY_VIEW,
       body: SafeArea(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              //
-              HeaderWidget(
-                title: 'Chi tiết hợp đồng',
-                isMainView: false,
-                buttonHeaderType: ButtonHeaderType.BACK_HOME,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
-                child: Divider(
-                  height: 1,
-                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+        child: BlocBuilder<ContractFullBloc, ContractFullState>(
+          builder: (context, state) {
+            //
+            if (state is ContractFullStateLoading) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Image.asset('assets/images/loading.gif'),
                 ),
-              ),
+              );
+            }
+            if (state is ContractFullStateFailure) {
+              return Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                      child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+            }
+            if (state is ContractFullStateSuccess) {
+              _contractFullDTO = state.dto;
+              _stateContract = state.dto.status;
               //
-              BlocBuilder<ContractIdNowBloc, ContractIdNowState>(
-                builder: (context, state) {
-                  if (state is ContractIdNowStateLoading) {
-                    return Center(
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        child: SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Image.asset('assets/images/loading.gif'),
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  //
+                  HeaderWidget(
+                    title: 'Chi tiết hợp đồng',
+                    isMainView: false,
+                    buttonHeaderType: ButtonHeaderType.BACK_HOME,
+                  ),
+                  Divider(
+                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                    height: 1,
+                  ),
+
+                  Stack(
+                    children: [
+                      Positioned(
+                          top: 0,
+                          child: Container(
+                            color: DefaultTheme.WHITE,
+                            width: MediaQuery.of(context).size.width,
+                            padding: EdgeInsets.only(bottom: 5),
+                            height: 60,
+                            child: Column(
+                              children: [
+                                //
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 21,
+                                ),
+                                Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    margin: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width *
+                                          0.2,
+                                      right: MediaQuery.of(context).size.width *
+                                          0.2,
+                                    ),
+                                    height: 1,
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR)
+                              ],
+                            ),
+                          )),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: EdgeInsets.only(bottom: 10, top: 5),
+                        height: 60,
+                        child: Row(
+                          children: <Widget>[
+                            //
+
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.1,
+                              height: 60,
+                            ),
+                            (_stateContract.contains('PENDING'))
+                                ? Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: 60,
+                                    child: Column(
+                                      children: [
+                                        Spacer(),
+                                        SizedBox(
+                                          width: 60,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-c-pending.png'),
+                                        ),
+                                        Spacer(),
+                                        Text('Xét duyệt',
+                                            style: TextStyle(fontSize: 11)),
+                                      ],
+                                    ),
+                                  )
+                                : Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: 60,
+                                    child: Column(
+                                      children: [
+                                        Spacer(),
+                                        SizedBox(
+                                          width: 60,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-c-pending-u.png'),
+                                        ),
+                                        Spacer(),
+                                        Text('Xét duyệt',
+                                            style: TextStyle(fontSize: 11)),
+                                      ],
+                                    ),
+                                  ),
+
+                            (_stateContract.contains('APPROVED'))
+                                ? Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: 60,
+                                    child: Column(
+                                      children: [
+                                        Spacer(),
+                                        SizedBox(
+                                          width: 60,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-c-approved.png'),
+                                        ),
+                                        Spacer(),
+                                        Text('Chấp thuận',
+                                            style: TextStyle(fontSize: 11)),
+                                      ],
+                                    ),
+                                  )
+                                : Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: 60,
+                                    child: Column(
+                                      children: [
+                                        Spacer(),
+                                        SizedBox(
+                                          width: 60,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-c-approved-u.png'),
+                                        ),
+                                        Spacer(),
+                                        Text('Chấp thuận',
+                                            style: TextStyle(fontSize: 11)),
+                                      ],
+                                    ),
+                                  ),
+                            (_stateContract.contains('ACTIVE'))
+                                ? Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: 60,
+                                    child: Column(
+                                      children: [
+                                        Spacer(),
+                                        SizedBox(
+                                          width: 60,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-c-active.png'),
+                                        ),
+                                        Spacer(),
+                                        Text('Hiện hành',
+                                            style: TextStyle(fontSize: 11)),
+                                      ],
+                                    ),
+                                  )
+                                : Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: 60,
+                                    child: Column(
+                                      children: [
+                                        Spacer(),
+                                        SizedBox(
+                                          width: 60,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-c-active-u.png'),
+                                        ),
+                                        Spacer(),
+                                        Text('Hiện hành',
+                                            style: TextStyle(fontSize: 11)),
+                                      ],
+                                    ),
+                                  ),
+                            (_stateContract.contains('FINISHED'))
+                                ? Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: 60,
+                                    child: Column(
+                                      children: [
+                                        Spacer(),
+                                        SizedBox(
+                                          width: 60,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-c-finished.png'),
+                                        ),
+                                        Spacer(),
+                                        Text('Kết thúc',
+                                            style: TextStyle(fontSize: 11)),
+                                      ],
+                                    ),
+                                  )
+                                : Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.2,
+                                    height: 60,
+                                    child: Column(
+                                      children: [
+                                        Spacer(),
+                                        SizedBox(
+                                          width: 60,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-c-finished-u.png'),
+                                        ),
+                                        Spacer(),
+                                        Text('Kết thúc',
+                                            style: TextStyle(fontSize: 11)),
+                                      ],
+                                    ),
+                                  ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.1,
+                              height: 60,
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  }
-                  if (state is ContractIdNowStateFailure) {
-                    return Container(
-                      width: 200,
-                      height: 200,
-                      child: Text('Lỗi'),
-                    );
-                  }
-                  if (state is ContractIdNowStateSuccess) {
-                    _contractId = 0;
-                    setState(() {
-                      _contractId = state.id;
-                    });
+                    ],
+                  ),
+                  Divider(
+                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                    height: 1,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: EdgeInsets.only(top: 5, bottom: 5),
+                    color: DefaultTheme.WHITE,
+                    child: Text(
+                      'Trạng thái hợp đồng mã ${state.dto.contractCode}',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 13, color: DefaultTheme.BLACK_BUTTON),
+                    ),
+                  ),
 
-                    if (_contractId != 0) {
-                      _contractFullBloc
-                          .add(ContractFullEventSetCId(cId: _contractId));
-                    }
-                  }
+                  Divider(
+                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                    height: 1,
+                  ),
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: _refreshData,
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: <Widget>[
+                          //
 
-                  return (_contractId != 0)
-                      ? Expanded(
-                          child:
-                              BlocBuilder<ContractFullBloc, ContractFullState>(
-                            builder: (context, state) {
-                              //
-                              if (state is ContractFullStateLoading) {
-                                return Container(
-                                  width: 200,
-                                  height: 200,
-                                  child: SizedBox(
-                                    width: 100,
-                                    height: 100,
-                                    child: Image.asset(
-                                        'assets/images/loading.gif'),
-                                  ),
-                                );
-                              }
-                              if (state is ContractFullStateFailure) {
-                                return Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Center(
-                                        child: Text(
-                                            'Kiểm tra lại đường truyền kết nối mạng')));
-                              }
-                              if (state is ContractFullStateSuccess) {
-                                _contractFullDTO = state.dto;
-                                _stateContract = state.dto.status;
-                              }
-                              if (_contractId == 0) {
-                                _refreshData();
-                              }
-                              if (_contractFullDTO.contractCode == null) {
-                                _refreshData();
-                              }
-
-                              return RefreshIndicator(
-                                onRefresh: _refreshData,
-                                child: ListView(
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  children: [
-                                    //
-                                    Container(
-                                      width: MediaQuery.of(context).size.width -
-                                          40,
-                                      padding: EdgeInsets.only(left: 20),
-                                      child: Text(
-                                        'Hợp đồng mã ${_contractFullDTO.contractCode}',
-                                        style: TextStyle(
-                                            foreground: Paint()
-                                              ..shader = _normalHealthColors,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            padding:
+                                EdgeInsets.only(top: 30, left: 20, bottom: 10),
+                            child: Text(
+                              'Hợp đồng theo dõi',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: DefaultTheme.BLACK_BUTTON),
+                            ),
+                          ),
+                          //
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            color: DefaultTheme.WHITE,
+                            child: Column(
+                              children: [
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.only(
+                                      top: 10, bottom: 10, left: 20),
+                                  color: DefaultTheme.WHITE,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: Image.asset(
+                                            'assets/images/ic-add-disease.png'),
                                       ),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width -
-                                          40,
-                                      padding: EdgeInsets.only(left: 20),
-                                      child: Text(
-                                        'Ngày tạo ${_dateValidator.parseToDateView2(_contractFullDTO.dateCreated)}',
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      Text(
+                                        'Bệnh lý',
+                                        textAlign: TextAlign.left,
                                         style: TextStyle(
-                                            color: DefaultTheme.GREY_TEXT,
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w500),
+                                            color: DefaultTheme.BLACK_BUTTON),
                                       ),
-                                    ),
-                                    //
-
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 40),
-                                    ),
-                                    Container(
-                                      margin:
-                                          EdgeInsets.only(left: 20, bottom: 20),
-                                      child: Text(
-                                        'Thông tin hai bên',
+                                    ],
+                                  ),
+                                ),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                for (Diseases i in state.dto.diseases)
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10,
+                                        bottom: 10,
+                                        left: 30,
+                                        right: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Text(
+                                        '${i.diseaseId}: ${i.nameDisease}',
                                         style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-
-                                    Row(
-                                      children: [
-                                        //
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                        Container(
-                                          width: 100,
-                                          height: 20,
-                                          child: Text(
-                                            'Bác sĩ',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              100 -
-                                              40,
-                                          height: 20,
-                                          child: Text(
-                                            '${_contractFullDTO.fullNameDoctor}',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 5),
-                                    ),
-                                    Row(
-                                      children: [
-                                        //
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                        Container(
-                                          width: 100,
-                                          child: Text(
-                                            'Nơi làm việc',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              100 -
-                                              40,
-                                          child: Text(
-                                            '${_contractFullDTO.workLocationDoctor}',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 5),
-                                    ),
-                                    Row(
-                                      children: [
-                                        //
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                        Container(
-                                          width: 100,
-                                          height: 20,
-                                          child: Text(
-                                            'Điện thoại',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              100 -
-                                              40,
-                                          height: 20,
-                                          child: Text(
-                                            '${_contractFullDTO.phoneNumberDoctor}',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          bottom: 30,
-                                          top: 10,
-                                          left: 20,
-                                          right: 20),
-                                      child: Divider(
-                                        height: 1,
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        //
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                        Container(
-                                          width: 100,
-                                          height: 20,
-                                          child: Text(
-                                            'Bệnh nhân',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              100 -
-                                              40,
-                                          height: 20,
-                                          child: Text(
-                                            '${_contractFullDTO.fullNamePatient}',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 5),
-                                    ),
-                                    Row(
-                                      children: [
-                                        //
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                        Container(
-                                          width: 100,
-                                          child: Text(
-                                            'Địa chỉ',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              100 -
-                                              40,
-                                          child: Text(
-                                            '${_contractFullDTO.addressPatient}',
-                                            style: TextStyle(fontSize: 16),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                      ],
-                                    ),
-
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 40),
-                                    ),
-                                    //
-                                    (_contractFullDTO.nameLicense != null &&
-                                            _contractFullDTO.daysOfTracking !=
-                                                null)
-                                        ? Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              //
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    left: 20, bottom: 20),
-                                                child: Text(
-                                                  'Thông tin giá tiền',
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  //
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 20),
-                                                  ),
-                                                  Container(
-                                                    width: 150,
-                                                    child: Text(
-                                                      'Số ngày theo dõi',
-                                                      style: TextStyle(
-                                                          fontSize: 16),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width -
-                                                            150 -
-                                                            40,
-                                                    child: Text(
-                                                      '${_contractFullDTO.daysOfTracking} ngày',
-                                                      style: TextStyle(
-                                                          fontSize: 16),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 20),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(bottom: 5),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  //
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 20),
-                                                  ),
-                                                  Container(
-                                                    width: 150,
-                                                    child: Text(
-                                                      'Thành tiền',
-                                                      style: TextStyle(
-                                                          fontSize: 16),
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width -
-                                                            150 -
-                                                            40,
-                                                    child: Text(
-                                                      '${_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense} VND',
-                                                      style: TextStyle(
-                                                          fontSize: 16,
-                                                          color: DefaultTheme
-                                                              .BLUE_TEXT),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-// //
-//                                               Padding(
-//                                                 padding:
-//                                                     EdgeInsets.only(bottom: 5),
-//                                               ),
-//                                               Row(
-//                                                 children: [
-//                                                   //
-//                                                   Padding(
-//                                                     padding: EdgeInsets.only(
-//                                                         left: 20),
-//                                                   ),
-//                                                   Container(
-//                                                     width:
-//                                                         MediaQuery.of(context)
-//                                                                 .size
-//                                                                 .width -
-//                                                             40,
-//                                                     child: Text(
-//                                                       '${_convertUtils.num2Word2((_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense).toString())}',
-//                                                       style: TextStyle(
-//                                                           fontSize: 16,
-//                                                           color: DefaultTheme
-//                                                               .BLUE_TEXT),
-//                                                     ),
-//                                                   ),
-//                                                 ],
-//                                               ),
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 20),
-                                              ),
-                                            ],
-                                          )
-                                        : Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              //
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    left: 20, bottom: 10),
-                                                child: Text(
-                                                  'Thông tin giá tiền',
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.only(
-                                                    left: 20, bottom: 20),
-                                                child: Text(
-                                                  'Được cập nhật sau khi bác sĩ phê duyệt',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 40),
-                                    ),
-                                    Container(
-                                      margin:
-                                          EdgeInsets.only(left: 20, bottom: 20),
-                                      child: Text(
-                                        'Trạng thái hợp đồng',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                    ),
-
-                                    /////////////////
-
-                                    //
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          //
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
-                                            child: (_stateContract
-                                                    .contains('PENDING'))
-                                                ? SizedBox(
-                                                    width: 35,
-                                                    height: 35,
-                                                    child: Image.asset(
-                                                        'assets/images/ic-contract.png'),
-                                                  )
-                                                : Container(),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
-                                            child: (_stateContract
-                                                    .contains('APPROVED'))
-                                                ? SizedBox(
-                                                    width: 35,
-                                                    height: 35,
-                                                    child: Image.asset(
-                                                        'assets/images/ic-contract.png'),
-                                                  )
-                                                : Container(),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
-                                            child: (_stateContract
-                                                    .contains('ACTIVE'))
-                                                ? SizedBox(
-                                                    width: 35,
-                                                    height: 35,
-                                                    child: Image.asset(
-                                                        'assets/images/ic-contract.png'),
-                                                  )
-                                                : Container(),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
-                                            child: (_stateContract
-                                                    .contains('FINISHED'))
-                                                ? SizedBox(
-                                                    width: 35,
-                                                    height: 35,
-                                                    child: Image.asset(
-                                                        'assets/images/ic-contract.png'),
-                                                  )
-                                                : Container(),
-                                          ),
-                                        ]),
+                                            color: DefaultTheme.BLUE_DARK)),
+                                  ),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                              ],
+                            ),
+                          ),
 //
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 20),
-                                    ),
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          height: 50,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    height: 2,
-                                                    color: DefaultTheme
-                                                        .GREY_TOP_TAB_BAR,
-                                                    width:
-                                                        ((MediaQuery.of(context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.25) /
-                                                                2) -
-                                                            10,
-                                                  ),
-                                                  (_stateContract.contains(
-                                                              'PENDING') ||
-                                                          _stateContract
-                                                              .contains(
-                                                                  'APPROVED') ||
-                                                          _stateContract
-                                                              .contains(
-                                                                  'ACTIVE') ||
-                                                          _stateContract
-                                                              .contains(
-                                                                  'FINISHED'))
-                                                      ? SizedBox(
-                                                          width: 20,
-                                                          height: 20,
-                                                          child: Image.asset(
-                                                              'assets/images/ic-dot.png'),
-                                                        )
-                                                      : SizedBox(
-                                                          width: 20,
-                                                          height: 20,
-                                                          child: Image.asset(
-                                                              'assets/images/ic-dot-unselect.png'),
-                                                        ),
-                                                  Container(
-                                                    height: 2,
-                                                    color: DefaultTheme
-                                                        .GREY_TOP_TAB_BAR,
-                                                    width:
-                                                        ((MediaQuery.of(context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.25) /
-                                                                2) -
-                                                            10,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            padding:
+                                EdgeInsets.only(top: 30, left: 20, bottom: 10),
+                            child: Text(
+                              'Thông tin hai bên',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: DefaultTheme.BLACK_BUTTON),
+                            ),
+                          ),
+//
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            color: DefaultTheme.WHITE,
+                            child: Column(
+                              children: [
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.only(
+                                      top: 10, bottom: 10, left: 20),
+                                  color: DefaultTheme.WHITE,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: Image.asset(
+                                            'assets/images/ic-people.png'),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      Text(
+                                        'Bác sĩ',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: DefaultTheme.BLACK_BUTTON),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                //
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 10),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: 100,
+                                            child: Text(
+                                              'Họ và tên:',
+                                            ),
                                           ),
-                                        ),
-
-                                        //
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          height: 50,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    height: 2,
-                                                    color: DefaultTheme
-                                                        .GREY_TOP_TAB_BAR,
-                                                    width:
-                                                        ((MediaQuery.of(context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.25) /
-                                                                2) -
-                                                            10,
-                                                  ),
-                                                  (_stateContract.contains(
-                                                              'APPROVED') ||
-                                                          _stateContract
-                                                              .contains(
-                                                                  'ACTIVE') ||
-                                                          _stateContract
-                                                              .contains(
-                                                                  'FINISHED'))
-                                                      ? SizedBox(
-                                                          width: 20,
-                                                          height: 20,
-                                                          child: Image.asset(
-                                                              'assets/images/ic-dot.png'),
-                                                        )
-                                                      : SizedBox(
-                                                          width: 20,
-                                                          height: 20,
-                                                          child: Image.asset(
-                                                              'assets/images/ic-dot-unselect.png'),
-                                                        ),
-                                                  Container(
-                                                    height: 2,
-                                                    color: DefaultTheme
-                                                        .GREY_TOP_TAB_BAR,
-                                                    width:
-                                                        ((MediaQuery.of(context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.25) /
-                                                                2) -
-                                                            10,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                100 -
+                                                40,
+                                            child: Text(
+                                              '${_contractFullDTO.fullNameDoctor}',
+                                            ),
                                           ),
-                                        ),
-
-                                        //
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          height: 50,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    height: 2,
-                                                    color: DefaultTheme
-                                                        .GREY_TOP_TAB_BAR,
-                                                    width:
-                                                        ((MediaQuery.of(context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.25) /
-                                                                2) -
-                                                            10,
-                                                  ),
-                                                  (_stateContract.contains(
-                                                              'ACTIVE') ||
-                                                          _stateContract
-                                                              .contains(
-                                                                  'FINISHED'))
-                                                      ? SizedBox(
-                                                          width: 20,
-                                                          height: 20,
-                                                          child: Image.asset(
-                                                              'assets/images/ic-dot.png'),
-                                                        )
-                                                      : SizedBox(
-                                                          width: 20,
-                                                          height: 20,
-                                                          child: Image.asset(
-                                                              'assets/images/ic-dot-unselect.png'),
-                                                        ),
-                                                  Container(
-                                                    height: 2,
-                                                    color: DefaultTheme
-                                                        .GREY_TOP_TAB_BAR,
-                                                    width:
-                                                        ((MediaQuery.of(context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.25) /
-                                                                2) -
-                                                            10,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          height: 50,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Container(
-                                                    height: 2,
-                                                    color: DefaultTheme
-                                                        .GREY_TOP_TAB_BAR,
-                                                    width:
-                                                        ((MediaQuery.of(context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.25) /
-                                                                2) -
-                                                            10,
-                                                  ),
-                                                  (_stateContract
-                                                          .contains('FINISHED'))
-                                                      ? SizedBox(
-                                                          width: 20,
-                                                          height: 20,
-                                                          child: Image.asset(
-                                                              'assets/images/ic-dot.png'),
-                                                        )
-                                                      : SizedBox(
-                                                          width: 20,
-                                                          height: 20,
-                                                          child: Image.asset(
-                                                              'assets/images/ic-dot-unselect.png'),
-                                                        ),
-                                                  Container(
-                                                    height: 2,
-                                                    color: DefaultTheme
-                                                        .GREY_TOP_TAB_BAR,
-                                                    width:
-                                                        ((MediaQuery.of(context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.25) /
-                                                                2) -
-                                                            10,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                      ),
+                                      Row(
                                         children: [
                                           //
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
-                                            child: Center(
-                                              child: Text('Yêu cầu'),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
-                                            child: Center(
-                                              child: Text('Đã duyệt'),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
-                                            child: Center(
-                                              child: Text('Hiện hành'),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
-                                            child: Center(
-                                              child: Text('Đã kết thúc'),
-                                            ),
-                                          ),
-                                        ]),
-                                    /////////
-                                    ///
-                                    ///
-                                    ///
 
-                                    (_stateContract.contains('APPROVED'))
-                                        ? Container(
-                                            margin: EdgeInsets.only(
-                                                left: 20, right: 20, top: 30),
+                                          Container(
+                                            width: 100,
+                                            child: Text(
+                                              'Nơi làm việc:',
+                                            ),
+                                          ),
+                                          Container(
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width -
+                                                100 -
                                                 40,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                color: DefaultTheme.ORANGE_TEXT
-                                                    .withOpacity(0.3)),
-                                            child: ButtonHDr(
-                                              label: 'Xác nhận hợp đồng',
-                                              // image: Image.asset(
-                                              //     'assets/images/ic-note.png'),
-                                              style: BtnStyle.BUTTON_IN_LIST,
-                                              imgHeight: 30,
-                                              labelColor:
-                                                  DefaultTheme.ORANGE_TEXT,
-                                              onTap: () {
-                                                //
-                                                ContractUpdateDTO
-                                                    contractUpdateDTO =
-                                                    ContractUpdateDTO(
-                                                  contractId: _contractId,
-                                                  doctorId: 1,
-                                                  patientId: _patientId,
-                                                  status: 'ACTIVE',
-                                                );
-
-                                                _showContractDocument(
-                                                    contractUpdateDTO, true);
-                                              },
-                                            ),
-                                          )
-                                        : Container(
-                                            margin: EdgeInsets.only(
-                                                left: 20, right: 20, top: 30),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                40,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                color: DefaultTheme.GREY_VIEW),
-                                            child: ButtonHDr(
-                                              label: 'Xem bản hợp đồng',
-                                              image: Image.asset(
-                                                  'assets/images/ic-contract.png'),
-                                              style: BtnStyle.BUTTON_IN_LIST,
-                                              imgHeight: 30,
-                                              labelColor: DefaultTheme.BLACK,
-                                              onTap: () {
-                                                //
-                                                ContractUpdateDTO
-                                                    contractUpdateDTO =
-                                                    ContractUpdateDTO(
-                                                  contractId: _contractId,
-                                                  doctorId: 1,
-                                                  patientId: _patientId,
-                                                  status: 'ACTIVE',
-                                                );
-
-                                                _showContractDocument(
-                                                    contractUpdateDTO, false);
-
-                                                // _contractUpdateBloc.add(
-                                                //     ContractUpdateEventUpdate(
-                                                //         dto:
-                                                //             contractUpdateDTO));
-                                                // _refreshData();
-                                              },
+                                            child: Text(
+                                              '${_contractFullDTO.workLocationDoctor}',
                                             ),
                                           ),
-
-                                    ///
-                                    ///
-                                    ///
-                                    ///
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 40),
-                                    ),
-                                    Container(
-                                      margin:
-                                          EdgeInsets.only(left: 20, bottom: 10),
-                                      child: Text(
-                                        'Bệnh lý theo dõi',
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500),
+                                        ],
                                       ),
-                                    ),
-                                    (_contractFullDTO.diseases == null)
-                                        ? Container()
-                                        : ListView.builder(
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                      ),
+                                      Row(
+                                        children: [
+                                          //
+
+                                          Container(
+                                            width: 100,
+                                            child: Text(
+                                              'Điện thoại:',
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                100 -
+                                                40,
+                                            child: Text(
+                                              '${_arrayValidator.parsePhoneToView(_contractFullDTO.phoneNumberDoctor)}',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                      ),
+                                      Row(
+                                        children: [
+                                          //
+
+                                          Container(
+                                            width: 100,
+                                            child: Text(
+                                              'Chuyên khoa:',
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                100 -
+                                                40,
+                                            child: Text(
+                                              '${_contractFullDTO.specialization}',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                      ),
+                                      Row(
+                                        children: [
+                                          //
+
+                                          Container(
+                                            width: 100,
+                                            child: Text(
+                                              'Kinh nghiệm:',
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                100 -
+                                                40,
+                                            child: Text(
+                                              '${_contractFullDTO.experience} năm',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                //
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+//
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            color: DefaultTheme.WHITE,
+                            child: Column(
+                              children: [
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.only(
+                                      top: 10, bottom: 10, left: 20),
+                                  color: DefaultTheme.WHITE,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: Image.asset(
+                                            'assets/images/ic-people.png'),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      Text(
+                                        'Bệnh nhân',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: DefaultTheme.BLACK_BUTTON),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                //
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 10),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: 100,
+                                            child: Text(
+                                              'Họ và tên:',
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                100 -
+                                                40,
+                                            child: Text(
+                                              '${_contractFullDTO.fullNamePatient}',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                      ),
+                                      Row(
+                                        children: [
+                                          //
+
+                                          Container(
+                                            width: 100,
+                                            child: Text(
+                                              'Địa chỉ:',
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                100 -
+                                                40,
+                                            child: Text(
+                                              '${_contractFullDTO.addressPatient}',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                      ),
+                                      Row(
+                                        children: [
+                                          //
+
+                                          Container(
+                                            width: 100,
+                                            child: Text(
+                                              'Điện thoại:',
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                100 -
+                                                40,
+                                            child: Text(
+                                              '${_arrayValidator.parsePhoneToView(_contractFullDTO.phoneNumberPatient)}',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                      ),
+                                      Row(
+                                        children: [
+                                          //
+
+                                          Container(
+                                            width: 100,
+                                            child: Text(
+                                              'Ngày sinh:',
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                100 -
+                                                40,
+                                            child: Text(
+                                              '${_dateValidator.parseToDateView2(_contractFullDTO.dobPatient)}',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                      ),
+                                      Row(
+                                        children: [
+                                          //
+
+                                          Container(
+                                            width: 100,
+                                            child: Text(
+                                              'Giới tính:',
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                100 -
+                                                40,
+                                            child: Text(
+                                              '${_contractFullDTO.genderPatient}',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 7),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                //
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+//
+//
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            padding:
+                                EdgeInsets.only(top: 30, left: 20, bottom: 10),
+                            child: Text(
+                              'Thông tin về hợp đồng',
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: DefaultTheme.BLACK_BUTTON),
+                            ),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            color: DefaultTheme.WHITE,
+                            child: Column(
+                              children: [
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.only(
+                                      top: 10, bottom: 10, left: 20),
+                                  color: DefaultTheme.WHITE,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: Image.asset(
+                                            'assets/images/ic-money.png'),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      Text(
+                                        'Giá tiền',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: DefaultTheme.BLACK_BUTTON),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                //
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  child: (state.dto.priceLicense != 0 &&
+                                          state.dto.daysOfTracking != 0)
+                                      ? Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(bottom: 10),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  width: 100,
+                                                  child: Text(
+                                                    'Ngày theo dõi:',
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      100 -
+                                                      40,
+                                                  child: Text(
+                                                    '${_contractFullDTO.daysOfTracking} ngày',
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(bottom: 7),
+                                            ),
+                                            Row(
+                                              children: [
+                                                //
+
+                                                Container(
+                                                  width: 100,
+                                                  child: Text(
+                                                    'Thành tiền:',
+                                                  ),
+                                                ),
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width -
+                                                      100 -
+                                                      40,
+                                                  child: Text(
+                                                    '${_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense} VNĐ',
+                                                    style: TextStyle(
+                                                        color: DefaultTheme
+                                                            .SUCCESS_STATUS,
+                                                        wordSpacing: 1,
+                                                        letterSpacing: 0.4),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(bottom: 7),
+                                            ),
+                                          ],
+                                        )
+                                      : Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: 50,
+                                          child: Center(
+                                              child: Text(
+                                                  'Được cập nhật sau khi bác sĩ xét duyệt hợp đồng của bạn.')),
+                                        ),
+                                ),
+                                //
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+//
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            color: DefaultTheme.WHITE,
+                            child: Column(
+                              children: [
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.only(
+                                      top: 10, bottom: 10, left: 20),
+                                  color: DefaultTheme.WHITE,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: Image.asset(
+                                            'assets/images/ic-medical-instruction.png'),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      Text(
+                                        'Phiếu y lệnh đã chia sẻ',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: DefaultTheme.BLACK_BUTTON),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                //
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 200,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      for (MedicalInstructionTypes x
+                                          in state.dto.medicalInstructionTypes)
+                                        Container(
+                                          height: 200,
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
                                             shrinkWrap: true,
                                             physics:
                                                 NeverScrollableScrollPhysics(),
-                                            itemCount: _contractFullDTO
-                                                .diseases.length,
+                                            itemCount:
+                                                x.medicalInstructions.length,
                                             itemBuilder: (BuildContext context,
                                                 int index) {
                                               return Container(
-                                                margin: EdgeInsets.only(
-                                                    left: 20,
-                                                    right: 20,
-                                                    bottom: 5),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width -
-                                                    40,
-                                                child: Text(
-                                                  '${_contractFullDTO.diseases[index].diseaseId} - ${_contractFullDTO.diseases[index].nameDisease}',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
+                                                height: 200,
+                                                width: 345,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: DefaultTheme
+                                                            .GREY_TOP_TAB_BAR,
+                                                        width: 0.5),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                margin:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Row(
+                                                  children: [
+                                                    (x.medicalInstructions[index]
+                                                                .image !=
+                                                            null)
+                                                        ? SizedBox(
+                                                            width: 150,
+                                                            height: 200,
+                                                            child: Image.network(
+                                                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${x.medicalInstructions[index].image}'),
+                                                          )
+                                                        : Container(),
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                            '${x.medicalInstructionTypeName}'),
+                                                        Container(
+                                                          width: 190,
+                                                          child: Text(
+                                                              'Chẩn đoán: ${x.medicalInstructions[index].diagnose}'),
+                                                        ),
+                                                        Text(
+                                                            'Mô tả thêm: ${x.medicalInstructions[index].description}'),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
                                               );
                                             },
                                           ),
+                                        )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+//
+//
+
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 40),
+                          ),
+                          //
+                          (_contractFullDTO.nameLicense != null &&
+                                  _contractFullDTO.daysOfTracking != null)
+                              ? Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    //
                                     Container(
-                                      padding: EdgeInsets.only(
-                                        left: 20,
-                                        right: 20,
-                                        top: 50,
-                                        bottom: 30,
+                                      margin:
+                                          EdgeInsets.only(left: 20, bottom: 20),
+                                      child: Text(
+                                        'Thông tin giá tiền',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500),
                                       ),
-                                      child: ButtonHDr(
-                                        style: BtnStyle.BUTTON_GREY,
-                                        label: 'Chia sẻ thêm y lệnh',
-                                        onTap: () {
-                                          Navigator.of(context).pushNamed(
-                                              RoutesHDr.MEDICAL_SHARE,
-                                              arguments: _contractId);
-                                        },
+                                    ),
+                                    Row(
+                                      children: [
+                                        //
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 20),
+                                        ),
+                                        Container(
+                                          width: 150,
+                                          child: Text(
+                                            'Số ngày theo dõi',
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              150 -
+                                              40,
+                                          child: Text(
+                                            '${_contractFullDTO.daysOfTracking} ngày',
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 20),
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5),
+                                    ),
+                                    Row(
+                                      children: [
+                                        //
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 20),
+                                        ),
+                                        Container(
+                                          width: 150,
+                                          child: Text(
+                                            'Thành tiền',
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              150 -
+                                              40,
+                                          child: Text(
+                                            '${_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense} VND',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: DefaultTheme.BLUE_TEXT),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+//
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 20),
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    //
+                                    Container(
+                                      margin:
+                                          EdgeInsets.only(left: 20, bottom: 10),
+                                      child: Text(
+                                        'Thông tin giá tiền',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin:
+                                          EdgeInsets.only(left: 20, bottom: 20),
+                                      child: Text(
+                                        'Được cập nhật sau khi bác sĩ phê duyệt',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400),
                                       ),
                                     ),
                                   ],
                                 ),
-                              );
-                            },
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 40),
                           ),
-                        )
-                      : Container();
-                },
-              ),
-            ]),
+                          Container(
+                            margin: EdgeInsets.only(left: 20, bottom: 20),
+                            child: Text(
+                              'Trạng thái hợp đồng',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+
+                          /////////////////
+
+                          //
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                //
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                  child: (_stateContract.contains('PENDING'))
+                                      ? SizedBox(
+                                          width: 35,
+                                          height: 35,
+                                          child: Image.asset(
+                                              'assets/images/ic-contract.png'),
+                                        )
+                                      : Container(),
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                  child: (_stateContract.contains('APPROVED'))
+                                      ? SizedBox(
+                                          width: 35,
+                                          height: 35,
+                                          child: Image.asset(
+                                              'assets/images/ic-contract.png'),
+                                        )
+                                      : Container(),
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                  child: (_stateContract.contains('ACTIVE'))
+                                      ? SizedBox(
+                                          width: 35,
+                                          height: 35,
+                                          child: Image.asset(
+                                              'assets/images/ic-contract.png'),
+                                        )
+                                      : Container(),
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.25,
+                                  child: (_stateContract.contains('FINISHED'))
+                                      ? SizedBox(
+                                          width: 35,
+                                          height: 35,
+                                          child: Image.asset(
+                                              'assets/images/ic-contract.png'),
+                                        )
+                                      : Container(),
+                                ),
+                              ]),
+//
+
+                          ///
+                          ///
+                          ///
+
+                          (_stateContract.contains('APPROVED'))
+                              ? Container(
+                                  margin: EdgeInsets.only(
+                                      left: 20, right: 20, top: 30),
+                                  width: MediaQuery.of(context).size.width - 40,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: DefaultTheme.ORANGE_TEXT
+                                          .withOpacity(0.3)),
+                                  child: ButtonHDr(
+                                    label: 'Xác nhận hợp đồng',
+                                    // image: Image.asset(
+                                    //     'assets/images/ic-note.png'),
+                                    style: BtnStyle.BUTTON_IN_LIST,
+                                    imgHeight: 30,
+                                    labelColor: DefaultTheme.ORANGE_TEXT,
+                                    onTap: () {
+                                      //
+                                      ContractUpdateDTO contractUpdateDTO =
+                                          ContractUpdateDTO(
+                                        contractId: _contractId,
+                                        doctorId: 1,
+                                        patientId: _patientId,
+                                        status: 'ACTIVE',
+                                      );
+
+                                      _showContractDocument(
+                                          contractUpdateDTO, true);
+                                    },
+                                  ),
+                                )
+                              : Container(
+                                  margin: EdgeInsets.only(
+                                      left: 20, right: 20, top: 30),
+                                  width: MediaQuery.of(context).size.width - 40,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: DefaultTheme.GREY_VIEW),
+                                  child: ButtonHDr(
+                                    label: 'Xem bản hợp đồng',
+                                    image: Image.asset(
+                                        'assets/images/ic-contract.png'),
+                                    style: BtnStyle.BUTTON_IN_LIST,
+                                    imgHeight: 30,
+                                    labelColor: DefaultTheme.BLACK,
+                                    onTap: () {
+                                      //
+                                      ContractUpdateDTO contractUpdateDTO =
+                                          ContractUpdateDTO(
+                                        contractId: _contractId,
+                                        doctorId: 1,
+                                        patientId: _patientId,
+                                        status: 'ACTIVE',
+                                      );
+
+                                      _showContractDocument(
+                                          contractUpdateDTO, false);
+
+                                      // _contractUpdateBloc.add(
+                                      //     ContractUpdateEventUpdate(
+                                      //         dto:
+                                      //             contractUpdateDTO));
+                                      // _refreshData();
+                                    },
+                                  ),
+                                ),
+
+                          ///
+                          ///
+                          ///
+                          ///
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 40),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(left: 20, bottom: 10),
+                            child: Text(
+                              'Bệnh lý theo dõi',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          (_contractFullDTO.diseases == null)
+                              ? Container()
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: _contractFullDTO.diseases.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(
+                                      margin: EdgeInsets.only(
+                                          left: 20, right: 20, bottom: 5),
+                                      width: MediaQuery.of(context).size.width -
+                                          40,
+                                      child: Text(
+                                        '${_contractFullDTO.diseases[index].diseaseId} - ${_contractFullDTO.diseases[index].nameDisease}',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                          // Container(
+                          //   padding: EdgeInsets.only(
+                          //     left: 20,
+                          //     right: 20,
+                          //     top: 50,
+                          //     bottom: 30,
+                          //   ),
+                          //   child: ButtonHDr(
+                          //     style: BtnStyle.BUTTON_GREY,
+                          //     label: 'Chia sẻ thêm y lệnh',
+                          //     onTap: () {
+                          //       Navigator.of(context).pushNamed(
+                          //           RoutesHDr.MEDICAL_SHARE,
+                          //           arguments: _contractId);
+                          //     },
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              );
+            }
+            return Container(
+                width: MediaQuery.of(context).size.width,
+                child: Center(
+                    child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+          },
+        ),
       ),
     );
   }

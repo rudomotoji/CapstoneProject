@@ -477,10 +477,11 @@ class _PatientInformation extends State<PatientInformation>
                             ),
                           ),
                         ),
-                        (state.dto.relatives.length == 0)
+                        (state.dto.relatives == null)
                             ? Container(
                                 width: MediaQuery.of(context).size.width - 40,
                                 height: 100,
+                                margin: EdgeInsets.only(bottom: 30),
                                 decoration: BoxDecoration(
                                     color: DefaultTheme.GREY_VIEW,
                                     borderRadius: BorderRadius.circular(5)),
@@ -493,150 +494,176 @@ class _PatientInformation extends State<PatientInformation>
                                   ),
                                 ),
                               )
-                            : Stack(
-                                children: <Widget>[
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: state.dto.relatives.length,
-                                      itemBuilder: (BuildContext buildContext,
-                                          int index) {
-                                        _relativeName =
-                                            state.dto.relatives[index].fullName;
-                                        return Container(
-                                          height: 90,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            color: DefaultTheme.GREY_VIEW,
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 20),
+                            : (state.dto.relatives.length == 0)
+                                ? Container(
+                                    width:
+                                        MediaQuery.of(context).size.width - 40,
+                                    height: 100,
+                                    margin: EdgeInsets.only(bottom: 30),
+                                    decoration: BoxDecoration(
+                                        color: DefaultTheme.GREY_VIEW,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Center(
+                                      child: Text(
+                                        'Chưa có danh sách người nhà.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: DefaultTheme.GREY_TEXT),
+                                      ),
+                                    ),
+                                  )
+                                : Stack(
+                                    children: <Widget>[
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemCount: state.dto.relatives.length,
+                                          itemBuilder:
+                                              (BuildContext buildContext,
+                                                  int index) {
+                                            _relativeName = state
+                                                .dto.relatives[index].fullName;
+                                            return Container(
+                                              height: 90,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                color: DefaultTheme.GREY_VIEW,
                                               ),
-                                              //
-                                              Row(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Padding(
                                                     padding: EdgeInsets.only(
-                                                        left: 20),
+                                                        top: 20),
                                                   ),
-                                                  Container(
-                                                    width: 120,
-                                                    child: Text(
-                                                      'Họ tên',
-                                                      style: TextStyle(
-                                                        color: DefaultTheme
-                                                            .GREY_TEXT,
-                                                        fontSize: 15,
+                                                  //
+                                                  Row(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 20),
                                                       ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 10),
-                                                  ),
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
+                                                      Container(
+                                                        width: 120,
+                                                        child: Text(
+                                                          'Họ tên',
+                                                          style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .GREY_TEXT,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10),
+                                                      ),
+                                                      Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .width -
                                                             (120 + 80),
-                                                    child: Text(
-                                                      '${state.dto.relatives[index].fullName}',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 3,
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 15,
+                                                        child: Text(
+                                                          '${state.dto.relatives[index].fullName}',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 3,
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(bottom: 10),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 20),
-                                                  ),
-                                                  Container(
-                                                    width: 120,
-                                                    child: Text(
-                                                      'Số điện thoại',
-                                                      style: TextStyle(
-                                                        color: DefaultTheme
-                                                            .GREY_TEXT,
-                                                        fontSize: 15,
-                                                      ),
-                                                    ),
+                                                    ],
                                                   ),
                                                   Padding(
                                                     padding: EdgeInsets.only(
-                                                        left: 10),
+                                                        bottom: 10),
                                                   ),
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
+                                                  Row(
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 20),
+                                                      ),
+                                                      Container(
+                                                        width: 120,
+                                                        child: Text(
+                                                          'Số điện thoại',
+                                                          style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .GREY_TEXT,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10),
+                                                      ),
+                                                      Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .width -
                                                             (120 + 80),
-                                                    child: Text(
-                                                      '${state.dto.relatives[index].phoneNumber}',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 3,
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 15,
+                                                        child: Text(
+                                                          '${state.dto.relatives[index].phoneNumber}',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 3,
+                                                          style: TextStyle(
+                                                            color: Colors.black,
+                                                            fontSize: 15,
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
 
-                                              //
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(bottom: 20),
+                                                  //
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 20),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      Positioned(
+                                        width: 35,
+                                        height: 35,
+                                        top: 0,
+                                        right: 0,
+                                        child: ButtonHDr(
+                                          style: BtnStyle.BUTTON_IMAGE,
+                                          image: Image.asset(
+                                              'assets/images/ic-remove.png'),
+                                          onTap: () {
+                                            _showDeletePopup();
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Positioned(
-                                    width: 35,
-                                    height: 35,
-                                    top: 0,
-                                    right: 0,
-                                    child: ButtonHDr(
-                                      style: BtnStyle.BUTTON_IMAGE,
-                                      image: Image.asset(
-                                          'assets/images/ic-remove.png'),
-                                      onTap: () {
-                                        _showDeletePopup();
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
                       ],
                     ),
                   ),
