@@ -63,7 +63,9 @@ import 'package:capstone_home_doctor/features/peripheral/views/intro_connect_vie
 import 'package:capstone_home_doctor/features/peripheral/views/peripheral_service_view.dart';
 
 import 'package:capstone_home_doctor/features/register/register_view.dart';
+import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
+import 'package:capstone_home_doctor/features/schedule/repositories/appointment_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_medicine_noti_view.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
@@ -118,6 +120,8 @@ MedicalShareInsRepository _medicalShareInsRepository =
     MedicalShareInsRepository(httpClient: http.Client());
 DiseaseRepository _diseaseRepository =
     DiseaseRepository(httpClient: http.Client());
+AppointmentRepository _appointmentRepository =
+    AppointmentRepository(httpClient: http.Client());
 
 //AccountBloc
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
@@ -433,6 +437,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<DiseaseListBloc>(
             create: (BuildContext context) =>
                 DiseaseListBloc(diseaseRepository: _diseaseRepository),
+          ),
+          BlocProvider<AppointmentBloc>(
+            create: (BuildContext context) =>
+                AppointmentBloc(appointmentRepository: _appointmentRepository),
           ),
         ],
         child: GestureDetector(

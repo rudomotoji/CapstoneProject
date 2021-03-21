@@ -14,14 +14,13 @@ class AppointmentStateInitial extends AppointmentState {}
 
 class AppointmentStateLoading extends AppointmentState {}
 
-class AppointmentStateFailure extends AppointmentState {}
-
 class AppointmentStateSuccess extends AppointmentState {
-  final AppointmentDTO appointmentDTO;
-  final List<AppointmentDTO> listAppointments;
-  const AppointmentStateSuccess({this.appointmentDTO, this.listAppointments});
+  final List<AppointmentDTO> listAppointment;
+  const AppointmentStateSuccess({@required this.listAppointment});
 
   @override
   // TODO: implement props
-  List<Object> get props => [appointmentDTO, listAppointments];
+  List<Object> get props => [listAppointment];
 }
+
+class AppointmentStateFailure extends AppointmentState {}

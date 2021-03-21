@@ -3,9 +3,12 @@ import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
+import 'package:capstone_home_doctor/features/schedule/events/appointment_event.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
+import 'package:capstone_home_doctor/features/schedule/states/appointment_state.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
 import 'package:capstone_home_doctor/models/appointment_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
@@ -35,18 +38,18 @@ class _ScheduleView extends State<ScheduleView>
   PrescriptionRepository prescriptionRepository =
       PrescriptionRepository(httpClient: http.Client());
   PrescriptionListBloc _prescriptionListBloc;
+  AppointmentBloc _appointmentBloc;
   //
   int _patientId = 0;
-  DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
-      .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+  DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
+      .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
 
   //use for calendar
-  Map<DateTime, List> _events;
+  Map<DateTime, List> _events = {};
   List _selectedEvents;
   AnimationController _animationController;
   CalendarController _calendarController;
-  AppointmentDTO _appointmentDTO = AppointmentDTO(
-      date: '2021-03-25', time: '12:30', place: 'nha khoa hoa hao');
+  List<AppointmentDTO> _listAppointment = [];
 
   @override
   void initState() {
@@ -54,35 +57,8 @@ class _ScheduleView extends State<ScheduleView>
     super.initState();
     _getPatientId();
     _prescriptionListBloc = BlocProvider.of(context);
+    _appointmentBloc = BlocProvider.of(context);
 
-    final _selectedDay = DateTime.now();
-
-    DateTime dateAppointment =
-        new DateFormat("yyyy-MM-dd").parse(_appointmentDTO.date);
-
-    if (dateAppointment.millisecondsSinceEpoch ==
-        curentDateNow.millisecondsSinceEpoch) {
-      _events = {
-        _selectedDay: [_appointmentDTO],
-      };
-    } else {
-      if (dateAppointment.millisecondsSinceEpoch >
-          curentDateNow.millisecondsSinceEpoch) {
-        _events = {
-          _selectedDay.subtract(Duration(
-              milliseconds: curentDateNow.millisecondsSinceEpoch -
-                  dateAppointment.millisecondsSinceEpoch)): [_appointmentDTO],
-        };
-      } else {
-        _events = {
-          _selectedDay.subtract(Duration(
-              milliseconds: dateAppointment.millisecondsSinceEpoch -
-                  curentDateNow.millisecondsSinceEpoch)): [_appointmentDTO],
-        };
-      }
-    }
-
-    _selectedEvents = _events[_selectedDay] ?? [];
     _calendarController = CalendarController();
 
     _animationController = AnimationController(
@@ -209,66 +185,149 @@ class _ScheduleView extends State<ScheduleView>
 
   // Simple TableCalendar configuration (using Styles)
   Widget _buildTableCalendar() {
-    return TableCalendar(
-      // locale: 'vi-VN',
-      calendarController: _calendarController,
-      initialCalendarFormat: CalendarFormat.twoWeeks,
-      events: _events,
-      startingDayOfWeek: StartingDayOfWeek.monday,
-      calendarStyle: CalendarStyle(
-        selectedColor: DefaultTheme.CHIP_BLUE,
-        todayColor: DefaultTheme.BLUE_REFERENCE,
-        markersColor: DefaultTheme.RED_CALENDAR,
-        outsideDaysVisible: false,
-      ),
-      headerStyle: HeaderStyle(
-        formatButtonTextStyle:
-            TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
-        formatButtonDecoration: BoxDecoration(
-          color: Colors.deepOrange[400],
-          borderRadius: BorderRadius.circular(16.0),
-        ),
-      ),
-      onDaySelected: _onDaySelected,
-      onVisibleDaysChanged: _onVisibleDaysChanged,
+    return BlocBuilder<AppointmentBloc, AppointmentState>(
+      builder: (context, state) {
+        if (state is AppointmentStateLoading) {
+          return Container(
+            width: 200,
+            height: 200,
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: Image.asset('assets/images/loading.gif'),
+            ),
+          );
+        }
+        if (state is AppointmentStateFailure) {
+          return Container(
+              width: MediaQuery.of(context).size.width,
+              child: Center(
+                  child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+        }
+        if (state is AppointmentStateSuccess) {
+          if (state.listAppointment.length <= 0) {
+            return Container(
+                width: MediaQuery.of(context).size.width,
+                child:
+                    Center(child: Text('Hiện tại bạn không có lịch khám nào')));
+          }
+          _getEvent(state.listAppointment);
+          return TableCalendar(
+            calendarController: _calendarController,
+            initialCalendarFormat: CalendarFormat.month,
+            events: _events,
+            startingDayOfWeek: StartingDayOfWeek.monday,
+            calendarStyle: CalendarStyle(
+              selectedColor: DefaultTheme.CHIP_BLUE,
+              todayColor: DefaultTheme.BLUE_REFERENCE,
+              markersColor: DefaultTheme.RED_CALENDAR,
+              outsideDaysVisible: false,
+            ),
+            // headerStyle: HeaderStyle(
+            //   formatButtonTextStyle:
+            //       TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
+            //   formatButtonDecoration: BoxDecoration(
+            //     color: Colors.deepOrange[400],
+            //     borderRadius: BorderRadius.circular(16.0),
+            //   ),
+            // ),
+            headerStyle: HeaderStyle(
+              centerHeaderTitle: true,
+              formatButtonVisible: false,
+            ),
+            onDaySelected: _onDaySelected,
+            onVisibleDaysChanged: _onVisibleDaysChanged,
+          );
+        }
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          child: Center(
+            child: Text('Không thể lấy dữ liệu'),
+          ),
+        );
+      },
     );
+  }
+
+  void _getEvent(List<AppointmentDTO> listAppointment) {
+    final _selectedDay = DateTime.now();
+    _events = {};
+
+    for (var item in listAppointment) {
+      DateTime dateAppointment =
+          new DateFormat("dd/MM/yyyy").parse(item.dateExamination);
+
+      if (dateAppointment.millisecondsSinceEpoch ==
+          curentDateNow.millisecondsSinceEpoch) {
+        _events = {
+          ..._events,
+          _selectedDay: item.appointments,
+        };
+      } else {
+        if (dateAppointment.millisecondsSinceEpoch >
+            curentDateNow.millisecondsSinceEpoch) {
+          _events = {
+            ..._events,
+            _selectedDay.subtract(Duration(
+                milliseconds: curentDateNow.millisecondsSinceEpoch -
+                    dateAppointment.millisecondsSinceEpoch)): item.appointments,
+          };
+        } else {
+          _events = {
+            ..._events,
+            _selectedDay.add(Duration(
+                milliseconds: dateAppointment.millisecondsSinceEpoch -
+                    curentDateNow.millisecondsSinceEpoch)): item.appointments,
+          };
+        }
+      }
+    }
+    _selectedEvents = _events[_selectedDay] ?? [];
   }
 
   Widget _buildEventList() {
-    return ListView(
-      children: _selectedEvents
-          .map((event) => Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 0.8),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                // child: ListTile(
-                // title: Text(
-                //     'Bạn có lịch tái khám vào lúc ${event.time.toString()} \nTại ${event.place.toString()}'),
-                //   onTap: () => print('${event.date} tapped!'),
-                // ),
-                child: Column(
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            'Bạn có lịch tái khám vào lúc ${event.time.toString()} \nTại ${event.place.toString()}'),
-                      ],
+    return _selectedEvents != null
+        ? ListView(
+            children: _selectedEvents
+                .map(
+                  (event) => Container(
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 0.8),
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
-                    _buttonCancel(event),
-                  ],
-                ),
-              ))
-          .toList(),
-    );
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 8.0, vertical: 4.0),
+                    child: Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('Bạn có lịch tái khám:'),
+                          Text('Với Bác sỹ Lê Huy'),
+                          Text('Thời gian: ${event.dateExamination}'),
+                          Text('Ghi chú: ${event.note}'),
+                          (event.status.contains('CANCEL'))
+                              ? Text('Lý do hủy lịch: ${event.reasonCanceled}')
+                              : Container(),
+                          (event.status.contains('CANCEL'))
+                              ? Container()
+                              : _buttonCancel(event),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          )
+        : Container();
   }
 
-  Widget _buttonCancel(AppointmentDTO dto) {
-    DateTime dateAppointment = new DateFormat("yyyy-MM-dd").parse(dto.date);
+  Widget _buttonCancel(AppointmentDetailDTO dto) {
+    DateTime timeEx = new DateFormat("yyyy-MM-dd").parse(dto.dateExamination);
+    DateTime dateAppointment = new DateFormat('dd/MM/yyyy')
+        .parse(DateFormat('dd/MM/yyyy').format(timeEx));
+
     if ((dateAppointment.millisecondsSinceEpoch -
             curentDateNow.millisecondsSinceEpoch) >
         (86400000 * 1)) {
@@ -424,7 +483,7 @@ class _ScheduleView extends State<ScheduleView>
       return Container(
         width: MediaQuery.of(context).size.width,
         child: Center(
-          child: Text('Không thể tải danh sách hồ sơ'),
+          child: Text('Không thể lấy dữ liệu'),
         ),
       );
     });
@@ -910,6 +969,8 @@ class _ScheduleView extends State<ScheduleView>
     });
     _prescriptionListBloc
         .add(PrescriptionListEventsetPatientId(patientId: _patientId));
+    _appointmentBloc
+        .add(AppointmentGetListEvent(patientId: _patientId, date: '2021/03'));
   }
 
   void _onDaySelected(DateTime day, List events, List holidays) {
