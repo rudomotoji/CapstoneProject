@@ -218,7 +218,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
             return new DropdownMenuItem<ContractListDTO>(
               value: value,
               child: new Text(
-                value.contractCode,
+                value.fullNameDoctor,
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
             );
@@ -619,9 +619,10 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                         style: BtnStyle.BUTTON_BLACK,
                         label: 'Chia sẻ',
                         onTap: () {
-                          _medicalShareInsBloc.add(MedicalShareInsEventSend(
-                              contractID: dropdownValue.contractId,
-                              listMediIns: medicalInstructionIdsSelected));
+                          _checkingShare();
+                          // _medicalShareInsBloc.add(MedicalShareInsEventSend(
+                          //     contractID: dropdownValue.contractId,
+                          //     listMediIns: medicalInstructionIdsSelected));
                         },
                       ),
                     ),
@@ -632,6 +633,10 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
             return Container();
           })
         : Container();
+  }
+
+  _checkingShare() {
+    //
   }
 
   Future<void> _pullRefresh() async {

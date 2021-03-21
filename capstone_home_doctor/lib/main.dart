@@ -72,6 +72,7 @@ import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
+import 'package:capstone_home_doctor/services/medical_share_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
@@ -235,6 +236,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
   final HealthRecordHelper hrHelper = HealthRecordHelper();
   final MobileDeviceHelper mobileDeviceHelper = MobileDeviceHelper();
   final ContractHelper contractHelper = ContractHelper();
+  final MedicalShareHelper _medicalShareHelper = MedicalShareHelper();
   //
   final FirebaseMessaging _fcm = FirebaseMessaging();
   String _token = '';
@@ -267,8 +269,11 @@ class _HomeDoctorState extends State<HomeDoctor> {
     if (!prefs.containsKey('CONTRACT_CHECKING')) {
       contractHelper.initialContractCheckingRequest();
     }
-     if (!prefs.containsKey('CONTRACT_ID')) {
+    if (!prefs.containsKey('CONTRACT_ID')) {
       contractHelper.initialContracId();
+    }
+    if (!prefs.containsKey('MED_SHARE_CHECKING')) {
+      _medicalShareHelper.initialMedicalShareChecking();
     }
   }
 
