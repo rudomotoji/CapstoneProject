@@ -22,5 +22,15 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
         yield AppointmentStateFailure();
       }
     }
+    if (event is AppointmentCancelEvent) {
+      yield AppointmentStateLoading();
+      try {
+        final bool res = await appointmentRepository.cancelAppointment(
+            event.appointmentId, event.reasonCancel);
+        yield AppointmentStateSuccess(isCancel: res, listAppointment: []);
+      } catch (e) {
+        yield AppointmentStateFailure();
+      }
+    }
   }
 }
