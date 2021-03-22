@@ -57,6 +57,8 @@ class _ManageContract extends State<ManageContract> {
   List<ContractListDTO> _listApprove = List<ContractListDTO>();
   List<ContractListDTO> _listActive = List<ContractListDTO>();
   List<ContractListDTO> _listFinished = List<ContractListDTO>();
+
+  List<ContractListDTO> _listCancel = List<ContractListDTO>();
   var _idDoctorController = TextEditingController();
   String _idDoctor = '';
   ContractListBloc _contractListBloc;
@@ -271,6 +273,10 @@ class _ManageContract extends State<ManageContract> {
 
                           _listAcitved = state.listContract
                               .where((item) => item.status == 'FINISHED')
+                              .toList();
+
+                          _listCancel = state.listContract
+                              .where((item) => item.status == 'CANCELP')
                               .toList();
 
                           return Column(
@@ -566,7 +572,32 @@ class _ManageContract extends State<ManageContract> {
                                         },
                                       ),
                                     )
-                                  : Container(),
+                                  : Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 100,
+                                      child: Center(
+                                          child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: Image.asset(
+                                                'assets/images/ic-contract-empty.png'),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 10),
+                                          ),
+                                          Text(
+                                            'Không có hợp đồng nào trong danh sách này',
+                                            style: TextStyle(
+                                                color: DefaultTheme.GREY_TEXT),
+                                          ),
+                                        ],
+                                      )),
+                                    ),
                               /////
                               Padding(
                                 padding: EdgeInsets.only(bottom: 20),
@@ -877,12 +908,74 @@ class _ManageContract extends State<ManageContract> {
                                         },
                                       ),
                                     )
-                                  : Container(),
+                                  : Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 100,
+                                      child: Center(
+                                          child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: Image.asset(
+                                                'assets/images/ic-contract-empty.png'),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 10),
+                                          ),
+                                          Text(
+                                            'Không có hợp đồng nào trong danh sách này',
+                                            style: TextStyle(
+                                                color: DefaultTheme.GREY_TEXT),
+                                          ),
+                                        ],
+                                      )),
+                                    ),
                               /////
                               /////
                               Padding(
                                 padding: EdgeInsets.only(bottom: 20),
                               ),
+                              //
+
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    bottom: 30, top: 20, left: 20, right: 20),
+                                child: Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 2,
+                                ),
+                              ),
+
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 20, right: 20, bottom: 5),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Hợp đồng bị huỷ',
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  )),
+                              Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 20, right: 50, bottom: 10),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Danh sách các hợp đồng đã huỷ và không được phê duyệt của bạn',
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: DefaultTheme.GREY_TEXT),
+                                    ),
+                                  )),
                             ],
                           );
                         }

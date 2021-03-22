@@ -40,6 +40,7 @@ import 'package:capstone_home_doctor/features/health/health_record/views/health_
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/views/medical_share_view.dart';
+import 'package:capstone_home_doctor/features/health/vitalsigns/blocs/heart_rate_bloc.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/views/heart_chart.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/views/history_vital_sign.dart';
 import 'package:capstone_home_doctor/features/health/vitalsigns/views/oxy_chart_view.dart';
@@ -122,6 +123,7 @@ DiseaseRepository _diseaseRepository =
     DiseaseRepository(httpClient: http.Client());
 AppointmentRepository _appointmentRepository =
     AppointmentRepository(httpClient: http.Client());
+SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 
 //AccountBloc
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
@@ -441,6 +443,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<AppointmentBloc>(
             create: (BuildContext context) =>
                 AppointmentBloc(appointmentRepository: _appointmentRepository),
+          ),
+          BlocProvider<HeartRateBloc>(
+            create: (BuildContext context) =>
+                HeartRateBloc(sqfLiteHelper: _sqfLiteHelper),
           ),
         ],
         child: GestureDetector(

@@ -75,7 +75,7 @@ class _DoctorInformation extends State<DoctorInformation>
             colors: [DefaultTheme.GRADIENT_1, DefaultTheme.GRADIENT_2]),
       ),
       child: Scaffold(
-        backgroundColor: DefaultTheme.BLACK.withOpacity(0.3),
+        backgroundColor: DefaultTheme.BLACK.withOpacity(0.2),
         body: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -444,7 +444,7 @@ class _DoctorInformation extends State<DoctorInformation>
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        '${state.dto.details}',
+                        '${state.dto.experience} năm',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 15,
@@ -455,7 +455,42 @@ class _DoctorInformation extends State<DoctorInformation>
                 ],
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 20),
+                padding: EdgeInsets.only(bottom: 10),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: 20),
+                    width: 120,
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Thành tích',
+                        style: TextStyle(
+                          color: DefaultTheme.GREY_TEXT,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width - (80 + 120 + 10),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        '${state.dto.details}',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

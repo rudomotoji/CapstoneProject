@@ -154,6 +154,8 @@ flutter:
     - assets/images/ic-money.png
     - assets/images/ic-deny.png
     - assets/images/ic-checked.png
+    - assets/images/ic-mi-band.png
+    - assets/images/ic-unknown-device.png
 
 
   

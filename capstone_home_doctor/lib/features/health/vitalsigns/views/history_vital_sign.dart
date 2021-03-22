@@ -1,8 +1,16 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/features/health/vitalsigns/blocs/heart_rate_bloc.dart';
+import 'package:capstone_home_doctor/features/health/vitalsigns/events/heart_rate_event.dart';
+import 'package:capstone_home_doctor/features/health/vitalsigns/states/heart_rate_state.dart';
+import 'package:capstone_home_doctor/models/heart_rate_dto.dart';
 import 'package:capstone_home_doctor/models/history_vivtal_sign.dart';
+import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 
 class HistoryVitalSign extends StatefulWidget {
   @override
@@ -47,6 +55,24 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
     ]),
   ];
 
+  List<HeartRateDTO> listHeartRate = [];
+
+  HeartRateBloc _heartRateBloc;
+  _getListVitalSign() async {
+    await _sqfLiteHelper.getListHeartRate().then((value) {
+      //
+      print('value heart rate in db ${value}');
+      listHeartRate = value;
+    });
+  }
+
+  @override
+  void initState() {
+    _heartRateBloc = BlocProvider.of(context);
+    _heartRateBloc.add(HeartRateEventGetList());
+    // _getListVitalSign();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +89,36 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
           Expanded(
             child: ListView(
               children: <Widget>[
-                _listHistory(),
+                // _listHistory(),
+                BlocBuilder<HeartRateBloc, HeartRateState>(
+                  builder: (context, state) {
+                    //
+                    if (state is HeartRateStateLoading) {
+                      print('state load');
+                    }
+                    if (state is HeartRateStateFailure) {
+                      print('state fail');
+                    }
+                    if (state is HeartRateStateSuccess) {
+                      print('list heart rate in sql: ${state.listHeartRate}');
+                      listHeartRate = state.listHeartRate;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: listHeartRate.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          //
+                          return Container(
+                              width: MediaQuery.of(context).size.width - 20,
+                              padding: EdgeInsets.only(bottom: 20, top: 20),
+                              child: Column());
+                        },
+                      );
+                    }
+
+                    return Container();
+                  },
+                ),
               ],
             ),
           ),
@@ -73,49 +128,53 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
   }
 
   Widget _listHistory() {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: _lists.length,
-      itemBuilder: (BuildContext context, int index) {
-        return Container(
-          margin: EdgeInsets.only(
-            top: 20,
-            left: 16,
-            right: 16,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Container(
-                  margin: EdgeInsets.only(left: 1, bottom: 5),
-                  child: Text(
-                    "19 tháng 3",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: DefaultTheme.BLACK,
-                      fontFamily: "",
-                      fontWeight: FontWeight.w400,
-                      fontSize: 20,
-                    ),
-                  ),
+    print('list heart rate: ${listHeartRate}');
+    return (listHeartRate != null)
+        ? ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: listHeartRate.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                margin: EdgeInsets.only(
+                  top: 20,
+                  left: 16,
+                  right: 16,
                 ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: _lists[index].data.length,
-                itemBuilder: (BuildContext context, int indexItem) {
-                  return _itemHistory();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // Align(
+                    //   alignment: Alignment.topLeft,
+                    //   child: Container(
+                    //     margin: EdgeInsets.only(left: 1, bottom: 5),
+                    //     child: Text(
+                    //       "19 tháng 3",
+                    //       textAlign: TextAlign.left,
+                    //       style: TextStyle(
+                    //         color: DefaultTheme.BLACK,
+                    //         fontFamily: "",
+                    //         fontWeight: FontWeight.w400,
+                    //         fontSize: 20,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // ListView.builder(
+                    //   shrinkWrap: true,
+                    //   physics: NeverScrollableScrollPhysics(),
+                    //   itemCount: _lists[index].data.length,
+                    //   itemBuilder: (BuildContext context, int indexItem) {
+                    //     return _itemHistory();
+                    //   },
+                    // ),
+                    Text('${listHeartRate[index].value}'),
+                  ],
+                ),
+              );
+            },
+          )
+        : Container();
   }
 
   Widget _itemHistory() {

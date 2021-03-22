@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' as io;
+import 'package:capstone_home_doctor/models/heart_rate_dto.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
@@ -19,6 +20,11 @@ class SQFLiteHelper {
 
   static const String MEDICAL_RESPONSE_TABLE = 'MedicalResponseTbl';
   static const String MEDICAL_SCHEDULE_TABLE = 'MedicalScheduleTbl';
+
+  //vital sign
+  static const String HEART_RATE_TABLE = 'HRTable';
+
+  SQFLiteHelper();
 
   Future<Database> get database async {
     if (null != _database) {
@@ -55,6 +61,8 @@ class SQFLiteHelper {
         medical_response_id TEXT,
         FOREIGN KEY (medical_response_id) REFERENCES $MEDICAL_RESPONSE_TABLE (medical_response_id) ON DELETE NO ACTION ON UPDATE NO ACTION
         )""");
+    await db.execute(
+        "CREATE TABLE ${HEART_RATE_TABLE} (value INTEGER, date TEXT PRIMARY KEY)");
   }
 
   Future close() async {
@@ -218,6 +226,33 @@ class SQFLiteHelper {
     await dbClient.rawDelete(
         'DELETE FROM $MEDICAL_SCHEDULE_TABLE WHERE medical_response_id = ?',
         [id]);
+  }
+
+  //HEART RATE TABLE
+  Future<void> insertHeartRate(HeartRateDTO dto) async {
+    var dbClient = await database;
+    try {
+      await dbClient.insert(HEART_RATE_TABLE, dto.toMapSQL());
+    } catch (e) {
+      print('error at insert heart rate ${e}');
+    }
+  }
+
+  Future<List<HeartRateDTO>> getListHeartRate() async {
+    print('go into sql lite get list hr');
+    var dbClient = await database;
+    try {
+      var maps = await dbClient.rawQuery('SELECT * FROM $HEART_RATE_TABLE');
+      List<HeartRateDTO> listHeartRate = [];
+      if (maps.length > 0) {
+        for (int i = 0; i < maps.length; i++) {
+          listHeartRate.add(HeartRateDTO.fromMapSQL(maps[i]));
+        }
+        return listHeartRate;
+      }
+    } catch (e) {
+      print('error at get list heart rate ${e}');
+    }
   }
 
   // //

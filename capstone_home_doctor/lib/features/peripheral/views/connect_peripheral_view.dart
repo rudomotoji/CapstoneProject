@@ -83,25 +83,18 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                       stream: FlutterBlue.instance.scanResults,
                       initialData: [],
                       builder: (c, snapshot) => Column(
-                        children: snapshot.data
-                            .map(
-                              (result) => ScannedList(
-                                result: result,
-                                onTap: () async {
-                                  //
-                                  result.device.connect();
-                                  // await peripheralHelper
-                                  //     .updatePeripheralChecking(
-                                  //         false, '${result.device.id}');
-                                  Navigator.pushNamed(
-                                      context, RoutesHDr.PERIPHERAL_SERVICE,
-                                      arguments: {
-                                        'PERIPHERAL_CONNECTED': result
-                                      });
-                                },
-                              ),
-                            )
-                            .toList(),
+                        children: snapshot.data.map((result) {
+                          return ScannedList(
+                              result: result,
+                              onTap: () async {
+                                result.device.connect();
+                                Navigator.pushNamed(
+                                    context, RoutesHDr.PERIPHERAL_SERVICE,
+                                    arguments: {
+                                      'PERIPHERAL_CONNECTED': result
+                                    });
+                              });
+                        }).toList(),
                       ),
                     ),
                   ],

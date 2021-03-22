@@ -3,7 +3,9 @@ import 'dart:math';
 
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
+import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/peripheral/blocs/hr_bloc.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repo.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,14 @@ void callbackDispatcher() {
     return Future.value(true);
   });
 }
+
+//
+final Shader _normalHealthColors = LinearGradient(
+  colors: <Color>[
+    DefaultTheme.GRADIENT_1,
+    DefaultTheme.GRADIENT_2,
+  ],
+).createShader(new Rect.fromLTWH(10.0, 1.0, 100.0, 20.0));
 
 // final PeripheralServices _peripheralServices = PeripheralServices();
 // final PeripheralCharacteristics _peripheralCharacteristics = PeripheralCharacteristics();
@@ -145,9 +155,9 @@ class _PeripheralService extends State<PeripheralService>
     await bluetoothCharacteristic.setNotifyValue(true);
     print(
         'bluetoothCharacteristic set notify ${bluetoothCharacteristic.isNotifying}');
-    bluetoothCharacteristic.value.listen((value) {
+    await bluetoothCharacteristic.value.listen((value) {
       if (value.isNotEmpty) {
-        print('${value[0]}');
+        print('${value[1]}');
         tmpHR = value[1];
         hrBloc.hrSink.add(value[1]);
       } else {
@@ -177,82 +187,95 @@ class _PeripheralService extends State<PeripheralService>
     return Scaffold(
       body: SafeArea(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('DEVICE NAME: ${device.name}'),
-            Text('DEVICE ID: ${device.id}'),
-            Divider(
-              height: 0.25,
+            HeaderWidget(
+              title: 'Chi tiết thiết bị',
+              isMainView: false,
+              buttonHeaderType: ButtonHeaderType.BACK_HOME,
             ),
-            StreamBuilder<BluetoothCharacteristic>(
-              stream: characteristicController.stream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return FlatButton(
-                      color: DefaultTheme.BLACK_BUTTON,
-                      onPressed: () => _calHeartRate(snapshot.data),
-                      child: Container(
-                          width: 200,
-                          height: 50,
-                          child: Center(
-                              child: Text(
-                            'Test Heart Rate',
+            Expanded(
+              child: ListView(
+                children: [
+                  //
+                  Row(
+                    children: [
+                      (device.name.contains('Mi'))
+                          ? SizedBox(
+                              width: 150,
+                              height: 150,
+                              child:
+                                  Image.asset('assets/images/ic-mi-band.png'),
+                            )
+                          : SizedBox(
+                              width: 150,
+                              height: 150,
+                              child:
+                                  Image.asset('assets/images/ic-mi-band.png'),
+                            ),
+                      Container(
+                        width: MediaQuery.of(context).size.width - 150,
+                        child: Text('Tên thiết bị: ${device.name}',
                             style: TextStyle(
-                                fontSize: 30, color: DefaultTheme.WHITE),
-                          ))));
-                }
-                return Container();
-              },
-            ),
-            StreamBuilder<int>(
-              stream: hrBloc.hrStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(
-                    'BPM: ${snapshot.data}',
-                    style: TextStyle(fontSize: 30, color: DefaultTheme.BLACK),
-                  );
-                }
-                return Container();
-              },
-            ),
-            // ButtonHDr(
-            //   label: 'test hr',
-            //   style: BtnStyle.BUTTON_BLACK,
-            //   onTap: () {
-            //     _getHeartRate(device);
-            //   },
-            // ),
-            // Text('Heart Rate Value ${valueHR}'),
-            // Expanded(
-            //   child: ListView(
-            //     children: <Widget>[
-            //       ListView.builder(
-            //           itemCount: listService.length,
-            //           shrinkWrap: true,
-            //           physics: NeverScrollableScrollPhysics(),
-            //           itemBuilder: (BuildContext buildContext, int index) {
-            //             return Container(
-            //                 color: DefaultTheme.GREY_VIEW,
-            //                 margin: EdgeInsets.only(bottom: 50),
-            //                 child: Column(
-            //                   children: [
-            //                     // Text('${listService[index].uuid}\n'),
-            //                     // ButtonHDr(
-            //                     //   label: 'test hr',
-            //                     //   style: BtnStyle.BUTTON_BLACK,
-            //                     //   onTap: () {
-            //                     //     _getHeartRate();
-            //                     //   },
-            //                     // ),
+                                fontSize: 16,
+                                foreground: Paint()
+                                  ..shader = _normalHealthColors)),
+                      ),
+                    ],
+                  ),
 
-            //                     // Text(
-            //                     //     '${listService[index].characteristics}\n'),
-            //                   ],
-            //                 ));
-            //           }),
-            //     ],
-            //   ),
-            // ),
+                  Text('DEVICE ID: ${device.id}'),
+                  Text('DEVICE ID: ${device.type}'),
+
+                  Divider(
+                    height: 0.25,
+                  ),
+                  // StreamBuilder<BluetoothCharacteristic>(
+                  //   stream: characteristicController.stream,
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.hasData) {
+                  //       return FlatButton(
+                  //           color: DefaultTheme.BLACK_BUTTON,
+                  //           onPressed: () => _calHeartRate(snapshot.data),
+                  //           child: Container(
+                  //               width: 300,
+                  //               height: 50,
+                  //               child: Center(
+                  //                   child: Text(
+                  //                 'Test Heart Rate',
+                  //                 style: TextStyle(
+                  //                     fontSize: 30, color: DefaultTheme.WHITE),
+                  //               ))));
+                  //     }
+                  //     return Container();
+                  //   },
+                  // ),
+                  // StreamBuilder<int>(
+                  //   stream: hrBloc.hrStream,
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.hasData) {
+                  //       return Text(
+                  //         'Heart rate: ${snapshot.data} BPM',
+                  //         style: TextStyle(
+                  //             fontSize: 30, color: DefaultTheme.BLACK),
+                  //       );
+                  //     }
+                  //     return Container();
+                  //   },
+                  // ),
+                  //
+                  ButtonHDr(
+                    style: BtnStyle.BUTTON_BLACK,
+                    label: 'XONG',
+                    onTap: () {
+                      Navigator.pushNamed(context, RoutesHDr.HEART,
+                          arguments: {'PERIPHERAL_CONNECTED': peripheral});
+                    },
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

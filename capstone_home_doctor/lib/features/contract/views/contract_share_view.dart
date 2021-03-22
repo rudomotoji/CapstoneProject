@@ -1530,19 +1530,23 @@ class _ContractShareView extends State<ContractShareView>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           //
-                          Divider(
-                            color: DefaultTheme.WHITE,
-                            height: 1,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                          ),
+
                           Text(
                             '$miName',
                             style: TextStyle(
                                 color: DefaultTheme.WHITE,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 5),
+                          ),
+                          Divider(
+                            color: DefaultTheme.WHITE,
+                            height: 1,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
                           ),
                           Text(
                             'Ngày tạo $dateCreate',
