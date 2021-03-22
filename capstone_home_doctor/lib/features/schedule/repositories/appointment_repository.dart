@@ -31,4 +31,19 @@ class AppointmentRepository extends BaseApiClient {
       print('ERROR AT GET APPOINTMENT ${e.toString()}');
     }
   }
+
+  Future<bool> cancelAppointment(int appointmentId, String reasonCancel) async {
+    String url =
+        '/Appointments/CancelAppointment?appointmentId=${appointmentId}&reasonCancel=${reasonCancel}';
+    try {
+      final response = await putApi(url, null, null);
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('ERROR AT CANCEL APPOINTMENT ${e.toString()}');
+    }
+  }
 }

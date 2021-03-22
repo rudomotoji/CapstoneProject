@@ -16,3 +16,14 @@ class AppointmentGetListEvent extends AppointmentEvent {
   // TODO: implement props
   List<Object> get props => [patientId];
 }
+
+class AppointmentCancelEvent extends AppointmentEvent {
+  final int appointmentId;
+  final String reasonCancel;
+
+  const AppointmentCancelEvent({this.appointmentId, this.reasonCancel});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [appointmentId, reasonCancel];
+}

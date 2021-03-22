@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
-import 'package:capstone_home_doctor/commons/utils/convert_utils.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/artboard_button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
@@ -10,9 +9,12 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/login/blocs/token_device_bloc.dart';
 import 'package:capstone_home_doctor/features/login/events/token_device_event.dart';
+import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
+import 'package:capstone_home_doctor/features/schedule/events/appointment_event.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
+import 'package:capstone_home_doctor/features/schedule/states/appointment_state.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
 import 'package:capstone_home_doctor/models/appointment_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
@@ -60,29 +62,35 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   String _idDoctor = '';
   DateValidator _dateValidator = DateValidator();
 
-  PrescriptionDTO _currentPrescription = PrescriptionDTO();
-  TokenDeviceBloc _tokenDeviceBloc;
-
   int _patientId = 0;
   String _tokenDevice = '';
   int _accountId = 0;
+
   TokenDeviceDTO _tokenDeviceDTO = TokenDeviceDTO();
+  AppointmentDTO _appointmentDTO;
   //
-  List<MedicalInstructionDTO> listPrescription = [];
   PrescriptionRepository prescriptionRepository =
       PrescriptionRepository(httpClient: http.Client());
+
   PrescriptionListBloc _prescriptionListBloc;
+  AppointmentBloc _appointmentBloc;
+  TokenDeviceBloc _tokenDeviceBloc;
+
   SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
       .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+
   List<MedicationSchedules> listSchedule = [];
   List<AppointmentDTO> listAppointment = [];
+  List<MedicalInstructionDTO> listPrescription = [];
+  List<AppointmentDTO> _listAppointment = [];
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     _getPatientId();
+    _appointmentBloc = BlocProvider.of(context);
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
     _updateTokenDevice();
@@ -123,8 +131,13 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       });
     });
     if (_patientId != 0) {
+      DateTime curentDateNow = new DateTime.now();
+
       _prescriptionListBloc
           .add(PrescriptionListEventsetPatientId(patientId: _patientId));
+      _appointmentBloc.add(AppointmentGetListEvent(
+          patientId: _patientId,
+          date: '${curentDateNow.year}/${curentDateNow.month}'));
     }
     // await _authenticateHelper.getAccountId().then((value) {
     //   print('ACCOUNT ID ${value}');
@@ -133,8 +146,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    // _listPrescription.sort((a, b) => b.startDate.compareTo(a.startDate));
-    // _currentPrescription = _listPrescription[0];
     return SafeArea(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -206,7 +217,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                       maxWidth: MediaQuery.of(context).size.width,
                       child: Padding(
                         padding: EdgeInsets.only(left: 0),
-                        child: _showCalendarOverview(),
+                        child: _sizeBoxCard(),
                       )),
                 ),
                 Padding(
@@ -453,55 +464,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           },
         ),
       ],
-    );
-  }
-
-  _showCalendarOverview() {
-    return BlocBuilder<PrescriptionListBloc, PrescriptionListState>(
-      builder: (context, state) {
-        if (state is PrescriptionListStateLoading) {
-          return Container(
-            width: 200,
-            height: 200,
-            child: SizedBox(
-              width: 100,
-              height: 100,
-              child: Image.asset('assets/images/loading.gif'),
-            ),
-          );
-        }
-        if (state is PrescriptionListStateFailure) {
-          // return Container(
-          //     width: MediaQuery.of(context).size.width,
-          //     child: Center(
-          //         child: Text('Kiểm tra lại đường truyền kết nối mạng')));
-          getLocalStorage();
-          return _sizeBoxCard();
-        }
-        if (state is PrescriptionListStateSuccess) {
-          listPrescription = state.listPrescription;
-
-          if (state.listPrescription != null) {
-            listPrescription.sort((a, b) =>
-                b.medicalInstructionId.compareTo(a.medicalInstructionId));
-            listPrescription.sort((a, b) => b.medicationsRespone.dateFinished
-                .compareTo(a.medicationsRespone.dateFinished));
-          }
-          if (state.listPrescription.length > 0) {
-            // _currentPrescription = listPrescription[0].medicationsRespone;
-            handlingMEdicalResponse();
-          } else {
-            getLocalStorage();
-          }
-          return _sizeBoxCard();
-        }
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          child: Center(
-            child: Text('Không thể tải danh sách hồ sơ'),
-          ),
-        );
-      },
     );
   }
 
@@ -783,20 +745,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                   ),
                 ),
               ),
-              // Spacer(),
-              // (_currentPrescription.medicationSchedules.length == 0)
-              //     ? Container()
-              //     : Container(
-              //         height: 17,
-              //         child: Align(
-              //           alignment: Alignment.bottomRight,
-              //           child: Text(
-              //             'Từ ${_dateValidator.parseToSumaryDateView(_currentPrescription.dateStarted)} - ${_dateValidator.parseToSumaryDateView(_currentPrescription.dateFinished)}',
-              //             style: TextStyle(
-              //                 fontSize: 12, color: DefaultTheme.BLACK),
-              //           ),
-              //         ),
-              //       ),
             ],
           ),
         ),
@@ -1043,6 +991,21 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   }
 
   Widget _appointmentNotNull() {
+    List _listDetail = _appointmentDTO.appointments.map((e) {
+      DateTime timeEx =
+          new DateFormat("yyyy-MM-ddThh:mm").parse(e.dateExamination);
+      var dateAppointment =
+          new DateFormat('dd/MM/yyyy, hh:mm a').format(timeEx);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Bác sỹ Lê Huy'),
+          Text('Thời gian: ${dateAppointment}'),
+          Text('Ghi chú: ${e.note}'),
+          // Container(height: 20),
+        ],
+      );
+    }).toList();
     return Column(
       children: <Widget>[
         Padding(
@@ -1071,10 +1034,24 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
             padding: EdgeInsets.all(10),
             child: ListView(
               children: [
-                Text('Bạn có 1 lịch khám:'),
-                Text('Hôm nay 21/03/2020'),
-                Text('Vào lúc 10:20 tại bệnh viện VinMedical'),
-                Text('Với bác sĩ Nguyên Lê Huy'),
+                Text(
+                  'Bạn có ${_appointmentDTO.appointments.length} lịch khám trong hôm nay:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 17,
+                  ),
+                ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: _appointmentDTO.appointments.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      child: _listDetail[index],
+                      margin: EdgeInsets.only(left: 16, top: 16),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -1088,40 +1065,140 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       height: 280,
       width: MediaQuery.of(context).size.width,
       child: PageView.builder(
-          itemCount: 2,
-          controller: PageController(viewportFraction: 0.9),
-          onPageChanged: (int index) => setState(() => _index = index),
-          itemBuilder: (_, i) {
-            return Transform.scale(
-              scale: i == _index ? 1 : 0.9,
-              alignment: Alignment.centerLeft,
-              child: Card(
-                elevation: 0,
-                shadowColor: DefaultTheme.GREY_TEXT,
-                color: DefaultTheme.GREY_VIEW,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                child: (i == 0)
-                    ? Container(
-                        child:
-                            (listSchedule == null || listSchedule.length <= 0)
-                                ? Center(
-                                    child: Text('Hiện chưa có lịch dùng thuốc'),
-                                  )
-                                : _medicalScheduleNotNull(),
-                      )
-                    : Container(
-                        // child: _appointmentNotNull(),
-                        child: (listAppointment == null ||
-                                listAppointment.length <= 0)
-                            ? Center(
-                                child: Text('Hiện chưa có lịch tái khám'),
-                              )
-                            : _appointmentNotNull(),
-                      ),
-              ),
-            );
-          }),
+        itemCount: 2,
+        controller: PageController(viewportFraction: 0.9),
+        onPageChanged: (int index) => setState(() => _index = index),
+        itemBuilder: (_, i) {
+          return Transform.scale(
+            scale: i == _index ? 1 : 0.9,
+            alignment: Alignment.centerLeft,
+            child: Card(
+              elevation: 0,
+              shadowColor: DefaultTheme.GREY_TEXT,
+              color: DefaultTheme.GREY_VIEW,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              child: (i == 0)
+                  ? BlocBuilder<PrescriptionListBloc, PrescriptionListState>(
+                      builder: (context, contextPrescription) {
+                        if (contextPrescription
+                            is PrescriptionListStateLoading) {
+                          return Container(
+                            width: 200,
+                            height: 200,
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/images/loading.gif'),
+                            ),
+                          );
+                        }
+                        if (contextPrescription
+                            is PrescriptionListStateFailure) {
+                          getLocalStorage();
+                          return _getCalendar();
+                        }
+                        if (contextPrescription
+                            is PrescriptionListStateSuccess) {
+                          listPrescription =
+                              contextPrescription.listPrescription;
+
+                          if (contextPrescription.listPrescription != null) {
+                            listPrescription.sort((a, b) => b
+                                .medicalInstructionId
+                                .compareTo(a.medicalInstructionId));
+                            listPrescription.sort((a, b) => b
+                                .medicationsRespone.dateFinished
+                                .compareTo(a.medicationsRespone.dateFinished));
+                          }
+                          if (contextPrescription.listPrescription.length > 0) {
+                            handlingMEdicalResponse();
+                          } else {
+                            getLocalStorage();
+                          }
+                          return _getCalendar();
+                        }
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Center(
+                            child: Text('Không thể lấy dữ liệu'),
+                          ),
+                        );
+                      },
+                    )
+                  : BlocBuilder<AppointmentBloc, AppointmentState>(
+                      builder: (context, stateAppointment) {
+                        if (stateAppointment is AppointmentStateLoading) {
+                          return Container(
+                            width: 200,
+                            height: 200,
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/images/loading.gif'),
+                            ),
+                          );
+                        }
+                        if (stateAppointment is AppointmentStateFailure) {
+                          return Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Center(
+                                  child: Text(
+                                      'Kiểm tra lại đường truyền kết nối mạng')));
+                        }
+                        if (stateAppointment is AppointmentStateSuccess) {
+                          listAppointment = stateAppointment.listAppointment;
+                          if (stateAppointment.listAppointment.length > 0) {
+                            DateTime curentDateNow =
+                                new DateFormat('dd/MM/yyyy').parse(
+                                    DateFormat('dd/MM/yyyy')
+                                        .format(DateTime.now()));
+                            for (var appointment
+                                in stateAppointment.listAppointment) {
+                              DateTime dateAppointment =
+                                  new DateFormat("dd/MM/yyyy")
+                                      .parse(appointment.dateExamination);
+                              // if (dateAppointment.millisecondsSinceEpoch ==
+                              //     curentDateNow.millisecondsSinceEpoch) {
+                              //   _appointmentDTO = appointment;
+                              // }
+                              _appointmentDTO = appointment;
+                            }
+                          }
+                          return _getAppointment();
+                        }
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Center(
+                            child: Text('Không thể lấy dữ liệu'),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _getCalendar() {
+    return Container(
+      child: (listSchedule == null || listSchedule.length <= 0)
+          ? Center(
+              child: Text('Hiện chưa có lịch dùng thuốc'),
+            )
+          : _medicalScheduleNotNull(),
+    );
+  }
+
+  Widget _getAppointment() {
+    return Container(
+      child: (_appointmentDTO == null)
+          ? Center(
+              child: Text('Hôm nay không có lịch tái khám'),
+            )
+          : _appointmentNotNull(),
     );
   }
 
