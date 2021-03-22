@@ -1,8 +1,11 @@
+import 'dart:ui';
+
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/appointment_event.dart';
@@ -18,7 +21,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
@@ -167,7 +169,7 @@ class _ScheduleView extends State<ScheduleView>
                       children: <Widget>[
                         _buildTableCalendar(),
                         const SizedBox(height: 8.0),
-                        Expanded(child: _buildEventList()),
+                        Expanded(child: _buildEventList(context)),
                       ],
                     ),
                     Container(
@@ -205,13 +207,14 @@ class _ScheduleView extends State<ScheduleView>
                   child: Text('Kiểm tra lại đường truyền kết nối mạng')));
         }
         if (state is AppointmentStateSuccess) {
-          // if (state.listAppointment.length <= 0) {
-          //   return Container(
-          //       width: MediaQuery.of(context).size.width,
-          //       child:
-          //           Center(child: Text('Hiện tại bạn không có lịch khám nào')));
-          // }
-          _getEvent(state.listAppointment);
+          if (state.isCancel != null) {
+            if (state.isCancel) {
+              Navigator.pop(context);
+            }
+          }
+          if (state.listAppointment.length > 0) {
+            _getEvent(state.listAppointment);
+          }
           return _buildCalendar();
         }
         return Container(
@@ -283,7 +286,7 @@ class _ScheduleView extends State<ScheduleView>
     _selectedEvents = _events[_selectedDay] ?? [];
   }
 
-  Widget _buildEventList() {
+  Widget _buildEventList(BuildContext context) {
     return _selectedEvents != null
         ? ListView(
             children: _selectedEvents.map((event) {
@@ -313,7 +316,7 @@ class _ScheduleView extends State<ScheduleView>
                           : Container(),
                       (event.status.contains('CANCEL'))
                           ? Container()
-                          : _buttonCancel(event),
+                          : _buttonCancel(event, context),
                     ],
                   ),
                 ),
@@ -323,7 +326,7 @@ class _ScheduleView extends State<ScheduleView>
         : Container();
   }
 
-  Widget _buttonCancel(AppointmentDetailDTO dto) {
+  Widget _buttonCancel(AppointmentDetailDTO dto, BuildContext contextButton) {
     DateTime timeEx = new DateFormat("yyyy-MM-dd").parse(dto.dateExamination);
     DateTime dateAppointment = new DateFormat('dd/MM/yyyy')
         .parse(DateFormat('dd/MM/yyyy').format(timeEx));
@@ -342,7 +345,7 @@ class _ScheduleView extends State<ScheduleView>
             child: FlatButton(
               color: DefaultTheme.TRANSPARENT,
               onPressed: () {
-                print('CANCEL APPOINTMENT');
+                _popupCancel(dto.appointmentId);
               },
               padding: null,
               child: Row(
@@ -373,6 +376,120 @@ class _ScheduleView extends State<ScheduleView>
     } else {
       return Container();
     }
+  }
+
+  Widget _popupCancel(int appointmentId) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: DefaultTheme.TRANSPARENT,
+      builder: (context) {
+        String reason = "";
+        return StatefulBuilder(
+          builder: (BuildContext context2, StateSetter setModalState) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    height: 600,
+                    color: DefaultTheme.TRANSPARENT,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 20,
+                          color: DefaultTheme.TRANSPARENT,
+                        ),
+                        Container(
+                          height: 580,
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          decoration: BoxDecoration(
+                            color: DefaultTheme.WHITE,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 40, left: 0),
+                                    child: Text(
+                                      'Hủy lịch tái khám',
+                                      style: TextStyle(
+                                        color: DefaultTheme.BLACK,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 10, bottom: 10),
+                                child: Column(
+                                  children: [
+                                    Text(''),
+                                    Container(
+                                      height: 100,
+                                      child: TextFieldHDr(
+                                        placeHolder:
+                                            'Nhập tại đây lý do hủy lịch tái khám....',
+                                        style: TFStyle.TEXT_AREA,
+                                        keyboardAction: TextInputAction.done,
+                                        onChange: (value) {
+                                          reason = value;
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ButtonHDr(
+                                width: MediaQuery.of(context).size.width - 40,
+                                style: BtnStyle.BUTTON_BLACK,
+                                label: 'Gửi',
+                                onTap: () async {
+                                  //
+                                  _appointmentBloc.add(AppointmentCancelEvent(
+                                      appointmentId: appointmentId,
+                                      reasonCancel: reason));
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 25),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: MediaQuery.of(context).size.width * 0.3,
+                    height: 5,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.3),
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: 15,
+                      decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(50)),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   _getMedicineSchedule() {

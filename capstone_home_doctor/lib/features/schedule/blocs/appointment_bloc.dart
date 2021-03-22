@@ -27,7 +27,7 @@ class AppointmentBloc extends Bloc<AppointmentEvent, AppointmentState> {
       try {
         final bool res = await appointmentRepository.cancelAppointment(
             event.appointmentId, event.reasonCancel);
-        yield AppointmentStateSuccess(isCancel: res);
+        yield AppointmentStateSuccess(isCancel: res, listAppointment: []);
       } catch (e) {
         yield AppointmentStateFailure();
       }

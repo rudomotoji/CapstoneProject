@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
 import 'package:capstone_home_doctor/models/appointment_dto.dart';
-import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
-import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
