@@ -722,10 +722,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                       ),
                     );
                   }
-
-                  ////
-
-                  //
                 }
                 return Container(
                   width: MediaQuery.of(context).size.width,
