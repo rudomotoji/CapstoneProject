@@ -20,6 +20,7 @@ import 'package:capstone_home_doctor/services/medical_share_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:photo_view/photo_view.dart';
 
 final MedicalShareHelper _medicalShareHelper = MedicalShareHelper();
 
@@ -64,6 +65,109 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+  }
+
+  //
+  _showFullImageDescription(String img, String miName, String dateCreate) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          //
+          return Material(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: DefaultTheme.BLACK,
+              child: Stack(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  //
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: PhotoView(
+                      customSize: Size(MediaQuery.of(context).size.width,
+                          MediaQuery.of(context).size.height),
+                      imageProvider: NetworkImage(
+                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${img}'),
+                    ),
+                  ),
+                  Positioned(
+                    top: 20,
+                    right: 10,
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: Image.asset('assets/images/ic-close.png'),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      padding: EdgeInsets.only(left: 30, right: 30),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              DefaultTheme.TRANSPARENT,
+                              DefaultTheme.BLACK.withOpacity(0.9),
+                            ]),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          //
+
+                          Text(
+                            '$miName',
+                            style: TextStyle(
+                                color: DefaultTheme.WHITE,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 5),
+                          ),
+                          Divider(
+                            color: DefaultTheme.WHITE,
+                            height: 1,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Text(
+                            'Ngày tạo $dateCreate',
+                            style: TextStyle(
+                                color: DefaultTheme.WHITE, fontSize: 15),
+                          ),
+
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 50),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+          //
+        });
   }
 
   @override
@@ -247,8 +351,10 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
               listMedicalInsShare = [];
               medicalInstructionIdsSelected = [];
             });
-            await _medicalShareBloc.add(
-                MedicalShareEventGetMediIns(patientID: 2, contractID: 4043));
+            if (_patientId != 0 && dropdownValue.contractId != 0) {
+              await _medicalShareBloc.add(MedicalShareEventGetMediIns(
+                  patientID: _patientId, contractID: dropdownValue.contractId));
+            }
           },
         ),
       ),
@@ -502,29 +608,40 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                   //
                                                   Row(
                                                     children: <Widget>[
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(6),
-                                                        child: SizedBox(
-                                                          width: (30 * 1.5),
-                                                          height: (40 * 1.5),
-                                                          child: (itemMedi
-                                                                      .image !=
-                                                                  null)
-                                                              ? Image.network(
-                                                                  'http://45.76.186.233:8000/api/v1/Images?pathImage=${itemMedi.image}',
-                                                                  fit: BoxFit
-                                                                      .fill,
-                                                                )
-                                                              : Container(
-                                                                  width: (30 *
-                                                                      1.5),
-                                                                  height: (40 *
-                                                                      1.5),
-                                                                  color: DefaultTheme
-                                                                      .GREY_TOP_TAB_BAR,
-                                                                ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          _showFullImageDescription(
+                                                              itemMedi.image,
+                                                              element
+                                                                  .medicalInstructionTypes[
+                                                                      indexType]
+                                                                  .miTypeName,
+                                                              '');
+                                                        },
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(6),
+                                                          child: SizedBox(
+                                                            width: (30 * 1.5),
+                                                            height: (40 * 1.5),
+                                                            child: (itemMedi
+                                                                        .image !=
+                                                                    null)
+                                                                ? Image.network(
+                                                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${itemMedi.image}',
+                                                                    fit: BoxFit
+                                                                        .fill,
+                                                                  )
+                                                                : Container(
+                                                                    width: (30 *
+                                                                        1.5),
+                                                                    height: (40 *
+                                                                        1.5),
+                                                                    color: DefaultTheme
+                                                                        .GREY_TOP_TAB_BAR,
+                                                                  ),
+                                                          ),
                                                         ),
                                                       ),
                                                       Container(

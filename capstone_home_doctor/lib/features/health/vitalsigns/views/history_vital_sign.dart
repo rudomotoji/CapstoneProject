@@ -110,8 +110,54 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
                           //
                           return Container(
                               width: MediaQuery.of(context).size.width - 20,
-                              padding: EdgeInsets.only(bottom: 20, top: 20),
-                              child: Column());
+                              padding: EdgeInsets.only(
+                                  bottom: 20, top: 20, left: 20, right: 20),
+                              margin: EdgeInsets.only(bottom: 10),
+                              decoration: BoxDecoration(
+                                color: DefaultTheme.GREY_VIEW,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  //
+                                  Text(
+                                      '${listHeartRate[index].date.split('.')[0]}'),
+                                  Spacer(),
+                                  Column(
+                                    children: [
+                                      Container(
+                                        width: 100,
+                                        child: Align(
+                                          alignment: Alignment.centerRight,
+                                          child: Text(
+                                              '${listHeartRate[index].value}'),
+                                        ),
+                                      ),
+                                      Container(
+                                          width: 100,
+                                          child: (listHeartRate[index].value >
+                                                  90)
+                                              ? Align(
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Text('Cao bất thường'),
+                                                )
+                                              : (listHeartRate[index].value <
+                                                      60)
+                                                  ? Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Text('Thấp'),
+                                                    )
+                                                  : Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Text('Ổn định'),
+                                                    )),
+                                    ],
+                                  ),
+                                ],
+                              ));
                         },
                       );
                     }

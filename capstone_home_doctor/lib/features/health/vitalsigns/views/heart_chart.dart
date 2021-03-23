@@ -35,6 +35,7 @@ class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
   var bpmController = BehaviorSubject<int>();
   BluetoothCharacteristic _bluetoothCharacteristic;
   HeartRateDTO heartRateDTO = HeartRateDTO();
+  String _timeNow = '';
   @override
   void initState() {
     // TODO: implement initState
@@ -45,6 +46,7 @@ class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
       print(
           'DATE TIME NOW INTO HEART RATE: ${DateTime.now()} and VALUE HR is: ${tmpHR}');
       hrBloc.updateHR(tmpHR);
+      _timeNow = DateTime.now().toString();
       heartRateDTO =
           HeartRateDTO(value: tmpHR, date: DateTime.now().toString());
       _sqfLiteHelper.insertHeartRate(heartRateDTO);
@@ -260,6 +262,9 @@ class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
                         return Container();
                       },
                     ),
+                    (_timeNow == '')
+                        ? Text('')
+                        : Text('Được đồng bộ gần nhất lúc ${_timeNow}'),
                     __heartChart(),
                   ],
                 ),
@@ -298,86 +303,86 @@ class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
                   ),
                 ],
               ),
-              Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-                      margin: EdgeInsets.only(right: 19),
-                      child: Text(
-                        "Khoảng nhịp tim",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 137, 137, 137),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-                      width: 95,
-                      height: 41,
-                      margin: EdgeInsets.only(top: 6, right: 19),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              child: Text(
-                                "82",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                  color: DefaultTheme.ORANGE_TEXT,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 35,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Container(
-                              margin: EdgeInsets.only(top: 14),
-                              child: Text(
-                                "BPM",
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 137, 137, 137),
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 2, right: 19),
-                      child: Text(
-                        "Thứ 4, ngày 9, tháng 12, 2020 ",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 137, 137, 137),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ],
+            //   Column(
+            //     crossAxisAlignment: CrossAxisAlignment.end,
+            //     children: [
+            //       Align(
+            //         alignment: Alignment.topRight,
+            //         child: Container(
+            //           margin: EdgeInsets.only(right: 19),
+            //           child: Text(
+            //             "Khoảng nhịp tim",
+            //             textAlign: TextAlign.right,
+            //             style: TextStyle(
+            //               color: Color.fromARGB(255, 137, 137, 137),
+            //               fontWeight: FontWeight.w400,
+            //               fontSize: 20,
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //       Align(
+            //         alignment: Alignment.topRight,
+            //         child: Container(
+            //           width: 95,
+            //           height: 41,
+            //           margin: EdgeInsets.only(top: 6, right: 19),
+            //           child: Row(
+            //             mainAxisAlignment: MainAxisAlignment.end,
+            //             crossAxisAlignment: CrossAxisAlignment.stretch,
+            //             children: [
+            //               Align(
+            //                 alignment: Alignment.topLeft,
+            //                 child: Container(
+            //                   child: Text(
+            //                     "82",
+            //                     textAlign: TextAlign.left,
+            //                     style: TextStyle(
+            //                       color: DefaultTheme.ORANGE_TEXT,
+            //                       fontWeight: FontWeight.w400,
+            //                       fontSize: 35,
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
+            //               Align(
+            //                 alignment: Alignment.topLeft,
+            //                 child: Container(
+            //                   margin: EdgeInsets.only(top: 14),
+            //                   child: Text(
+            //                     "BPM",
+            //                     textAlign: TextAlign.right,
+            //                     style: TextStyle(
+            //                       color: Color.fromARGB(255, 137, 137, 137),
+            //                       fontWeight: FontWeight.w400,
+            //                       fontSize: 20,
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //       Align(
+            //         alignment: Alignment.topRight,
+            //         child: Container(
+            //           margin: EdgeInsets.only(top: 2, right: 19),
+            //           child: Text(
+            //             "Thứ 4, ngày 9, tháng 12, 2020 ",
+            //             textAlign: TextAlign.right,
+            //             style: TextStyle(
+            //               color: Color.fromARGB(255, 137, 137, 137),
+            //               fontWeight: FontWeight.w400,
+            //               fontSize: 12,
+            //             ),
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ],
           ),
           Align(
             alignment: Alignment.topLeft,

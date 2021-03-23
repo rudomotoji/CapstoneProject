@@ -13,7 +13,8 @@ class AppointmentRepository extends BaseApiClient {
   Future<List<AppointmentDTO>> getAppointment(
       int patientId, String date) async {
     String url =
-        '/Appointments/GetAppointmentForMonth?accountId=${patientId}&month=${date}';
+        // '/Appointments/GetAppointmentForMonth?accountId=${patientId}&month=${date}';
+        '/Appointments/GetAppointmentForMonth?accountId=${patientId}';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {

@@ -42,6 +42,7 @@ class _ScheduleView extends State<ScheduleView>
       PrescriptionRepository(httpClient: http.Client());
   PrescriptionListBloc _prescriptionListBloc;
   //
+  int _accountId = 0;
   int _patientId = 0;
   DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
       .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
@@ -1084,10 +1085,16 @@ class _ScheduleView extends State<ScheduleView>
         _patientId = value;
       });
     });
+    await _authenticateHelper.getAccountId().then((value) async {
+      await setState(() {
+        _accountId = value;
+        // _patientId = value;
+      });
+    });
     _prescriptionListBloc
         .add(PrescriptionListEventsetPatientId(patientId: _patientId));
     _appointmentBloc.add(AppointmentGetListEvent(
-        patientId: _patientId,
+        patientId: _accountId,
         date: '${curentDateNow.year}/${curentDateNow.month}'));
   }
 

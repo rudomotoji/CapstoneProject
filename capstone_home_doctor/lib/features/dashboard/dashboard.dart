@@ -130,13 +130,18 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         _patientId = value;
       });
     });
+    await _authenticateHelper.getAccountId().then((value) {
+      setState(() {
+        _accountId = value;
+      });
+    });
     if (_patientId != 0) {
       DateTime curentDateNow = new DateTime.now();
 
       _prescriptionListBloc
           .add(PrescriptionListEventsetPatientId(patientId: _patientId));
       _appointmentBloc.add(AppointmentGetListEvent(
-          patientId: _patientId,
+          patientId: _accountId,
           date: '${curentDateNow.year}/${curentDateNow.month}'));
     }
     // await _authenticateHelper.getAccountId().then((value) {
@@ -1158,11 +1163,11 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                               DateTime dateAppointment =
                                   new DateFormat("dd/MM/yyyy")
                                       .parse(appointment.dateExamination);
-                              // if (dateAppointment.millisecondsSinceEpoch ==
-                              //     curentDateNow.millisecondsSinceEpoch) {
-                              //   _appointmentDTO = appointment;
-                              // }
-                              _appointmentDTO = appointment;
+                              if (dateAppointment.millisecondsSinceEpoch ==
+                                  curentDateNow.millisecondsSinceEpoch) {
+                                _appointmentDTO = appointment;
+                              }
+                              // _appointmentDTO = appointment;
                             }
                           }
                           return _getAppointment();

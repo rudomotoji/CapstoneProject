@@ -1932,7 +1932,11 @@ class _DetailContractView extends State<DetailContractView>
                                               _contractUpdateBloc.add(
                                                   ContractUpdateEventUpdate(
                                                       dto: dto));
-                                              _refreshData();
+                                              Future.delayed(
+                                                  const Duration(seconds: 2),
+                                                  () {
+                                                _refreshData();
+                                              });
                                             },
                                           ),
                                         )
