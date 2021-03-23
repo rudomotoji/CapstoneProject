@@ -58,6 +58,9 @@ import 'package:capstone_home_doctor/features/medicine/views/medical_history_det
 import 'package:capstone_home_doctor/features/medicine/views/medicine_history_view.dart';
 import 'package:capstone_home_doctor/features/notification/blocs/notification_list_bloc.dart';
 import 'package:capstone_home_doctor/features/notification/repositories/notification_repository.dart';
+import 'package:capstone_home_doctor/features/peripheral/blocs/peripheral_bloc.dart';
+import 'package:capstone_home_doctor/features/peripheral/events/peripheral_event.dart';
+import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
 
 import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/peripheral/views/intro_connect_view.dart';
@@ -100,6 +103,15 @@ final AFTERNOON = 16;
 final NIGHT = 21;
 final MINUTES = 00;
 
+//helper
+final AuthenticateHelper authenHelper = AuthenticateHelper();
+final PeripheralHelper peripheralHelper = PeripheralHelper();
+final HealthRecordHelper hrHelper = HealthRecordHelper();
+final MobileDeviceHelper mobileDeviceHelper = MobileDeviceHelper();
+final ContractHelper contractHelper = ContractHelper();
+final MedicalShareHelper _medicalShareHelper = MedicalShareHelper();
+//
+
 //repo for blocs
 HealthRecordRepository _healthRecordRepository =
     HealthRecordRepository(httpClient: http.Client());
@@ -124,6 +136,7 @@ DiseaseRepository _diseaseRepository =
 AppointmentRepository _appointmentRepository =
     AppointmentRepository(httpClient: http.Client());
 SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
+PeripheralRepository _peripheralRepository = PeripheralRepository();
 
 //AccountBloc
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
@@ -221,9 +234,23 @@ void main() async {
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
+
   final cron = Cron()
     ..schedule(Schedule.parse('* * * * * '), () {
       checkNotifiMedical();
+      peripheralHelper.getPeripheralId().then((value) async {
+        print('value get is ${value}');
+        if (value != '') {
+          BlocProvider<PeripheralBloc>(
+            create: (BuildContext context) =>
+                PeripheralBloc(peripheralRepository: _peripheralRepository)
+                  ..add(PeripheralEventConnectBackground(peripheralId: value)),
+          );
+        }
+      });
+
+      print(
+          'Fetch background every 1 minute ${DateTime.now()} and do something here');
     });
   runApp(HomeDoctor());
 }
@@ -236,14 +263,6 @@ class HomeDoctor extends StatefulWidget {
 class _HomeDoctorState extends State<HomeDoctor> {
   //
 
-  //helper
-  final AuthenticateHelper authenHelper = AuthenticateHelper();
-  final PeripheralHelper peripheralHelper = PeripheralHelper();
-  final HealthRecordHelper hrHelper = HealthRecordHelper();
-  final MobileDeviceHelper mobileDeviceHelper = MobileDeviceHelper();
-  final ContractHelper contractHelper = ContractHelper();
-  final MedicalShareHelper _medicalShareHelper = MedicalShareHelper();
-  //
   final FirebaseMessaging _fcm = FirebaseMessaging();
   String _token = '';
   String mobileDevice = '';
@@ -288,7 +307,15 @@ class _HomeDoctorState extends State<HomeDoctor> {
     super.initState();
 
     _initialServiceHelper();
-
+    peripheralHelper.isPeripheralConnected().then((value) {
+      print('peripheral connect state is ${value}');
+    });
+    peripheralHelper.getPeripheralId().then((value) {
+      if (value == '') {
+        value = 'NOTHING';
+      }
+      print('peripheral connect id is ${value}');
+    });
     authenHelper.isAuthenticated().then((value) {
       print('value authen now ${value}');
       setState(() {
@@ -447,6 +474,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<HeartRateBloc>(
             create: (BuildContext context) =>
                 HeartRateBloc(sqfLiteHelper: _sqfLiteHelper),
+          ),
+          BlocProvider<PeripheralBloc>(
+            create: (BuildContext context) =>
+                PeripheralBloc(peripheralRepository: _peripheralRepository),
           ),
         ],
         child: GestureDetector(

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io' as io;
 import 'package:capstone_home_doctor/models/heart_rate_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
@@ -23,6 +24,8 @@ class SQFLiteHelper {
 
   //vital sign
   static const String HEART_RATE_TABLE = 'HRTable';
+  //
+  static const String VITAL_SIGN_TABLE = 'VitalSignTbl';
 
   SQFLiteHelper();
 
@@ -63,6 +66,8 @@ class SQFLiteHelper {
         )""");
     await db.execute(
         "CREATE TABLE ${HEART_RATE_TABLE} (value INTEGER, date TEXT PRIMARY KEY)");
+    await db.execute(
+        "CREATE TABLE ${VITAL_SIGN_TABLE} (id PRIMARYKEY TEXT, patient_id INTEGER, value_type TEXT, value1 INTEGER, value2 INTEGER, date_time TEXT)");
   }
 
   Future close() async {
@@ -239,7 +244,6 @@ class SQFLiteHelper {
   }
 
   Future<List<HeartRateDTO>> getListHeartRate() async {
-    print('go into sql lite get list hr');
     var dbClient = await database;
     try {
       var maps = await dbClient.rawQuery('SELECT * FROM $HEART_RATE_TABLE');
@@ -252,6 +256,39 @@ class SQFLiteHelper {
       }
     } catch (e) {
       print('error at get list heart rate ${e}');
+    }
+  }
+
+  //VITAL_SIGN_TABLE
+  Future<void> insertVitalSign(VitalSignDTO dto) async {
+    var dbClient = await database;
+    try {
+      //
+      await dbClient.insert(VITAL_SIGN_TABLE, dto.toMapSQL());
+      print(
+          'Insert Vital Sign type ${dto.valueType} successful at ${DateTime.now()}');
+    } catch (e) {
+      print('ERROR at Insert Vital Sign ${e}');
+    }
+  }
+
+  Future<List<VitalSignDTO>> getListVitalSign(String value_type) async {
+    var dbClient = await database;
+    try {
+      //
+      var maps = await dbClient.rawQuery(
+          'SELECT * FROM $VITAL_SIGN_TABLE WHERE value_type = ?', [value_type]);
+      List<VitalSignDTO> listVitalSign = [];
+      if (maps.length > 0) {
+        for (int i = 0; i < maps.length; i++) {
+          listVitalSign.add(VitalSignDTO.fromMapSQL(maps[i]));
+        }
+        print(
+            'GET LIST Vital Sign type ${value_type} successful at ${DateTime.now()}');
+        return listVitalSign;
+      }
+    } catch (e) {
+      print('ERROR at get heart rate list ${e}');
     }
   }
 

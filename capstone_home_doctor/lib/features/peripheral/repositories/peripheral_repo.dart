@@ -326,6 +326,7 @@ class ScannedList extends StatelessWidget {
     }
   }
 
+
   _getImageDevice(String keyword) {
     DeviceHDr deviceType;
     if (keyword.contains('Mi Smart Band')) {
@@ -352,6 +353,9 @@ class ScannedList extends StatelessWidget {
         break;
     }
   }
+
+
+
 }
 
 enum DeviceHDr {

@@ -4,9 +4,12 @@ import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/features/peripheral/blocs/peripheral_bloc.dart';
+import 'package:capstone_home_doctor/features/peripheral/events/peripheral_event.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repo.dart';
+import 'package:capstone_home_doctor/features/peripheral/states/peripheral_state.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -21,9 +24,20 @@ class ConnectPeripheral extends StatefulWidget {
 
 class _ConnectPeripheral extends State<ConnectPeripheral>
     with WidgetsBindingObserver {
+  //
+  PeripheralBloc _peripheralBloc;
+  List<ScanResult> listScanned = [];
+
   @override
   void initState() {
     super.initState();
+    _peripheralBloc = BlocProvider.of(context);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -45,8 +59,10 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                   builder: (c, snapshot) {
                     final state = snapshot.data;
                     if (state == BluetoothState.on) {
-                      FlutterBlue.instance
-                          .startScan(timeout: Duration(seconds: 30));
+                      listScanned = [];
+                      _scanBluetoothDevice();
+                      // FlutterBlue.instance
+                      //     .startScan(timeout: Duration(seconds: 10));
                       return _availableBluetooth();
                     }
                     return _notAvailableBluetooth();
@@ -58,7 +74,13 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
     );
   }
 
+  Future _scanBluetoothDevice() async {
+    listScanned = [];
+    await _peripheralBloc.add(PeripheralEventScan());
+  }
+
   Widget _availableBluetooth() {
+    listScanned = [];
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -74,29 +96,108 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                 borderRadius: BorderRadius.circular(15),
                 color: DefaultTheme.GREY_BUTTON),
             child: RefreshIndicator(
-              onRefresh: () => FlutterBlue.instance
-                  .startScan(timeout: Duration(seconds: 10)),
+              onRefresh: _scanBluetoothDevice,
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    StreamBuilder<List<ScanResult>>(
-                      stream: FlutterBlue.instance.scanResults,
-                      initialData: [],
-                      builder: (c, snapshot) => Column(
-                        children: snapshot.data.map((result) {
-                          return ScannedList(
-                              result: result,
-                              onTap: () async {
-                                result.device.connect();
-                                Navigator.pushNamed(
-                                    context, RoutesHDr.PERIPHERAL_SERVICE,
-                                    arguments: {
-                                      'PERIPHERAL_CONNECTED': result
-                                    });
-                              });
-                        }).toList(),
-                      ),
+                    BlocBuilder<PeripheralBloc, PeripheralState>(
+                      builder: (context, state) {
+                        //
+                        if (state is PeripheralStateLoading) {
+                          return Container(
+                            height: MediaQuery.of(context).size.height * 0.45,
+                            width: MediaQuery.of(context).size.width - 40,
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset('assets/images/loading.gif'),
+                            ),
+                          );
+                        }
+                        if (state is PeripheralStateFailure) {
+                          //
+                          return Container(
+                              height: MediaQuery.of(context).size.height * 0.45,
+                              width: MediaQuery.of(context).size.width - 40,
+                              child: Center(
+                                child:
+                                    Text('Không thể quét.\nVui lòng quét lại.'),
+                              ));
+                        }
+                        if (state is PeripheralStateScanSuccess) {
+                          listScanned = [];
+                          for (ScanResult r in state.list) {
+                            if (r.device.name.toUpperCase().contains('MI')) {
+                              listScanned.add(r);
+                              print('device added: ${r.device.name}');
+                            }
+                          }
+
+                          return (listScanned != null)
+                              ? Container(
+                                  padding: EdgeInsets.only(top: 20),
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.45,
+                                  width: MediaQuery.of(context).size.width - 40,
+                                  child: ListView.builder(
+                                    itemCount: listScanned.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return ButtonHDr(
+                                        style: BtnStyle.BUTTON_IN_LIST,
+                                        imgHeight: 50,
+                                        label: listScanned[index].device.name,
+                                        height: 100,
+                                        image: Image.asset(_getImageDevice(
+                                            listScanned[index].device.name)),
+                                        onTap: () async {
+                                          print('TAPPED');
+                                          //connect, update SharePreferenced, navigate
+                                          _peripheralBloc.add(
+                                              PeripheralEventConnectFirstTime(
+                                                  scanResult:
+                                                      listScanned[index]));
+                                          //
+                                          Navigator.of(context).pushNamed(
+                                              RoutesHDr.PERIPHERAL_SERVICE);
+                                        },
+                                      );
+                                      // Container(
+                                      //   width:
+                                      //       MediaQuery.of(context).size.width -
+                                      //           40,
+                                      //   height: 60,
+                                      //   margin: EdgeInsets.only(top: 5),
+                                      //   color: Colors.red,
+                                      //   child: Text(
+                                      //       '${listScanned[index].device.name}'),
+                                      // );
+                                    },
+                                  ),
+                                )
+                              : Container();
+                        }
+                        return Container();
+                      },
                     ),
+                    // StreamBuilder<List<ScanResult>>(
+                    //   stream: FlutterBlue.instance.scanResults,
+                    //   initialData: [],
+                    //   builder: (c, snapshot) => Column(
+                    //     children: snapshot.data.map((result) {
+                    //       return ScannedList(
+                    //           result: result,
+                    //           onTap: () async {
+                    //             result.device.connect();
+                    //             Navigator.pushNamed(
+                    //                 context, RoutesHDr.PERIPHERAL_SERVICE,
+                    //                 arguments: {
+                    //                   'PERIPHERAL_CONNECTED': result
+                    //                 });
+                    //           });
+                    //     }).toList(),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -128,11 +229,11 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
           ),
         ),
         ButtonHDr(
-          style: BtnStyle.BUTTON_BLACK,
+          style: BtnStyle.BUTTON_FULL,
+          image: Image.asset('assets/images/ic-reload.png'),
           label: 'Quét lại',
           onTap: () async {
-            await FlutterBlue.instance
-                .startScan(timeout: Duration(seconds: 10));
+            await _scanBluetoothDevice();
           },
         ),
         Padding(
@@ -201,6 +302,33 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
         )
       ],
     );
+  }
+
+  _getImageDevice(String keyword) {
+    DeviceHDr deviceType;
+    if (keyword.contains('Mi Smart Band')) {
+      deviceType = DeviceHDr.MI_BAND;
+    } else if (keyword.contains('Amazfit')) {
+      deviceType = DeviceHDr.AMAZFIT;
+    } else if (keyword.contains('Galaxy Fit')) {
+      deviceType = DeviceHDr.GALAXY_FE;
+    } else {
+      deviceType = DeviceHDr.UNKNOWN;
+    }
+    switch (deviceType) {
+      case DeviceHDr.MI_BAND:
+        return 'assets/images/img-mi-band.png';
+        break;
+      case DeviceHDr.AMAZFIT:
+        return 'assets/images/img-amazfit.png';
+        break;
+      case DeviceHDr.GALAXY_FE:
+        return 'assets/images/img-galaxy-fit-e.png';
+        break;
+      case DeviceHDr.UNKNOWN:
+        return 'assets/images/img-unknown-device.png';
+        break;
+    }
   }
 }
 

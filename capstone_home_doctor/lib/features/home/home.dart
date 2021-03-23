@@ -92,7 +92,7 @@ class _MainHomeState extends State<MainHome> {
       _accountId = value;
     });
     if (_accountId != 0) {
-      print('accound id in home view to get noti count is ${_accountId}');
+      //print('accound id in home view to get noti count is ${_accountId}');
       _notificationListBloc
           .add(NotificationListEventGet(accountId: _accountId));
     }
@@ -129,11 +129,11 @@ class _MainHomeState extends State<MainHome> {
               if (state is NotificationListStateLoading) {}
               if (state is NotificationListStateFailure) {}
               if (state is NotificationListStateSuccess) {
-                if (state.listNotification == null) {
-                  print('having no list noti');
-                } else {
-                  print('get list noti success');
-                }
+                // if (state.listNotification == null) {
+                //   print('having no list noti');
+                // } else {
+                //   print('get list noti success');
+                // }
                 for (NotificationDTO x in state.listNotification) {
                   for (int z = 0; z < x.notifications.length; z++) {
                     if (x.notifications[z].status == false) {

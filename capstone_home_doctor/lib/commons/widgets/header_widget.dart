@@ -451,7 +451,10 @@ class _HeaderWidget extends State<HeaderWidget> {
                         label: 'Thiết bị đeo',
                         image: Image.asset('assets/images/ic-device-list.png'),
                         imgHeight: 25,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context)
+                              .pushNamed(RoutesHDr.PERIPHERAL_SERVICE);
+                        },
                       ),
                       Divider(
                         color: DefaultTheme.GREY_TOP_TAB_BAR,

@@ -13,4 +13,27 @@ class VitalSignDTO {
       this.value1,
       this.value2,
       this.dateTime});
+
+  //
+  Map<String, dynamic> toMapSQL() {
+    var map = <String, dynamic>{
+      'id': id,
+      'patient_id': patientId,
+      'value_type': valueType,
+      'value1': value1,
+      'value2': value2,
+      'date_time': dateTime,
+    };
+    return map;
+  }
+
+  //
+  VitalSignDTO.fromMapSQL(Map<String, dynamic> map) {
+    id = map['id'];
+    patientId = map['patient_id'];
+    valueType = map['value_type'];
+    value1 = map['value1'];
+    value2 = map['value2'];
+    dateTime = map['date_time'];
+  }
 }
