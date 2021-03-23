@@ -22,3 +22,13 @@ class MedicalShareInsEventInitial extends MedicalShareInsEvent {
   // TODO: implement props
   List<Object> get props => [];
 }
+
+class MedicalShareInsEventGetMedIns extends MedicalShareInsEvent {
+  final int contractID;
+
+  const MedicalShareInsEventGetMedIns({this.contractID});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [contractID];
+}

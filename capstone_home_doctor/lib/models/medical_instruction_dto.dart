@@ -80,7 +80,7 @@ import 'package:image_picker/image_picker.dart';
 
 class MedicalInstructionByTypeDTO {
   String medicalInstructionType;
-  List<MedicalInstructions> medicalInstructions;
+  List<MedicalInstructionsDTO> medicalInstructions;
 
   MedicalInstructionByTypeDTO(
       {this.medicalInstructionType, this.medicalInstructions});
@@ -88,9 +88,9 @@ class MedicalInstructionByTypeDTO {
   MedicalInstructionByTypeDTO.fromJson(Map<String, dynamic> json) {
     medicalInstructionType = json['medicalInstructionType'];
     if (json['medicalInstructions'] != null) {
-      medicalInstructions = new List<MedicalInstructions>();
+      medicalInstructions = new List<MedicalInstructionsDTO>();
       json['medicalInstructions'].forEach((v) {
-        medicalInstructions.add(new MedicalInstructions.fromJson(v));
+        medicalInstructions.add(new MedicalInstructionsDTO.fromJson(v));
       });
     }
   }
@@ -163,22 +163,42 @@ class MedicalInstructionDTO {
   }
 }
 
-class MedicalInstructions {
+class MedicalInstructionsDTO {
+  String status;
   int medicalInstructionId;
+  String diagnose;
+  String description;
   String image;
-  bool check = false;
+  PrescriptionDTO prescriptionRespone;
 
-  MedicalInstructions({this.medicalInstructionId, this.image});
+  MedicalInstructionsDTO(
+      {this.status,
+      this.medicalInstructionId,
+      this.diagnose,
+      this.description,
+      this.image,
+      this.prescriptionRespone});
 
-  MedicalInstructions.fromJson(Map<String, dynamic> json) {
+  MedicalInstructionsDTO.fromJson(Map<String, dynamic> json) {
+    status = json['status'];
     medicalInstructionId = json['medicalInstructionId'];
+    diagnose = json['diagnose'];
+    description = json['description'];
     image = json['image'];
+
+    prescriptionRespone = json['prescriptionRespone'] != null
+        ? new PrescriptionDTO.fromJson(json['prescriptionRespone'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['status'] = this.status;
     data['medicalInstructionId'] = this.medicalInstructionId;
+    data['diagnose'] = this.diagnose;
+    data['description'] = this.description;
     data['image'] = this.image;
+    data['prescriptionRespone'] = this.prescriptionRespone;
     return data;
   }
 }

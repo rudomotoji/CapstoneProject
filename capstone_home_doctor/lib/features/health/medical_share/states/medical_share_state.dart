@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -22,4 +23,13 @@ class MedicalShareInsStateSuccess extends MedicalShareInsState {
   @override
   // TODO: implement props
   List<Object> get props => [isShared];
+}
+
+class MedicalShareInsGetStateSuccess extends MedicalShareInsState {
+  final List<MedicalInstructionByTypeDTO> listMedIns;
+  const MedicalShareInsGetStateSuccess({this.listMedIns});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
 }

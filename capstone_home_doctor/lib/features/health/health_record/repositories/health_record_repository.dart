@@ -30,7 +30,7 @@ class HealthRecordRepository extends BaseApiClient {
         return List<HealthRecordDTO>();
       }
     } catch (e) {
-      print('ERROR AT GET LIST HEALTH RECORD ${e.toString()}');
+      print('ERROR AT getListHealthRecord ${e.toString()}');
     }
   }
 
@@ -107,7 +107,7 @@ class HealthRecordRepository extends BaseApiClient {
         return List<MedInsByDiseaseDTO>();
       }
     } catch (e) {
-      print('ERROR AT GET LIST HEALTH RECORD ${e.toString()}');
+      print('ERROR AT getAllMedicalToShare ${e.toString()}');
     }
   }
 //

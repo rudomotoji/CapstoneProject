@@ -1,6 +1,7 @@
 import 'package:capstone_home_doctor/features/health/medical_share/events/medical_Share_event.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/states/medical_share_state.dart';
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/services/medical_share_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,8 +32,20 @@ class MedicalShareInsBloc
       } catch (e) {
         yield MedicalShareInsStateFailure();
       }
-    } else if (event is MedicalShareInsEventInitial) {
+    }
+    if (event is MedicalShareInsEventInitial) {
       yield MedicalShareInsStateInitial();
+    }
+    if (event is MedicalShareInsEventGetMedIns) {
+      yield MedicalShareInsStateLoading();
+      try {
+        List<MedicalInstructionByTypeDTO> listMedIns =
+            await medicalShareInsRepository
+                .getShareMoreMedIns(event.contractID);
+        yield MedicalShareInsGetStateSuccess(listMedIns: listMedIns);
+      } catch (e) {
+        yield MedicalShareInsStateFailure();
+      }
     }
   }
 }
