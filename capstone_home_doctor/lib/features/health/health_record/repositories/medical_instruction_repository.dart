@@ -32,7 +32,7 @@ class MedicalInstructionRepository extends BaseApiClient {
         return List<MedInsByDiseaseDTO>();
       }
     } catch (e) {
-      print('ERROR AT GET LIST HEALTH RECORD ${e.toString()}');
+      print('ERROR AT getMedInsByDisease ${e.toString()}');
     }
   }
 
@@ -53,7 +53,7 @@ class MedicalInstructionRepository extends BaseApiClient {
         return List<MedicalInstructionDTO>();
       }
     } catch (e) {
-      print('ERROR AT GET LIST HEALTH RECORD ${e.toString()}');
+      print('ERROR AT getListMedicalInstruction ${e.toString()}');
     }
   }
 
@@ -73,7 +73,7 @@ class MedicalInstructionRepository extends BaseApiClient {
         return List<MedicalInstructionTypeDTO>();
       }
     } catch (e) {
-      print('ERROR AT GET LIST HEALTH RECORD ${e.toString()}');
+      print('ERROR AT getMedicalInstructionType ${e.toString()}');
     }
   }
 

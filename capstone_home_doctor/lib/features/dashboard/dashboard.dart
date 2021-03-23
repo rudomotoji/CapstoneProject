@@ -1153,7 +1153,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                         }
                         if (stateAppointment is AppointmentStateSuccess) {
                           listAppointment = stateAppointment.listAppointment;
-                          if (stateAppointment.listAppointment.length > 0) {
+                          if (stateAppointment.listAppointment != null) {
                             DateTime curentDateNow =
                                 new DateFormat('dd/MM/yyyy').parse(
                                     DateFormat('dd/MM/yyyy')

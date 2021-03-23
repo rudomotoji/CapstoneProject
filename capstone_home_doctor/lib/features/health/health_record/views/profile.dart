@@ -265,8 +265,10 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                       image: Image.asset(
                                           'assets/images/ic-more.png'),
                                       onTap: () {
-                                        _showMorePopup(listHealthRecord[index]
-                                            .healthRecordId);
+                                        _showMorePopup(
+                                            listHealthRecord[index]
+                                                .healthRecordId,
+                                            listHealthRecord[index].contractId);
                                       },
                                     ),
                                   ),
@@ -290,7 +292,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     );
   }
 
-  _showMorePopup(int healthRecordId) {
+  _showMorePopup(int healthRecordId, int contractID) {
     showModalBottomSheet(
         isScrollControlled: false,
         context: this.context,
@@ -355,7 +357,8 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                         .setHealthReCordId(healthRecordId);
                                     Navigator.of(context).pop();
                                     Navigator.of(context).pushNamed(
-                                        RoutesHDr.HEALTH_RECORD_DETAIL);
+                                        RoutesHDr.HEALTH_RECORD_DETAIL,
+                                        arguments: contractID);
                                   },
                                 ),
                                 Divider(

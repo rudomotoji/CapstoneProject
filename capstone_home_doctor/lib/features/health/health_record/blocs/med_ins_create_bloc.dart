@@ -25,5 +25,8 @@ class MedInsCreateBloc extends Bloc<MedInsCreateEvent, MedInsCreateState> {
         yield MedInsCreateStateFailure();
       }
     }
+    if (event is MedInsGetTextEventInitial) {
+      yield MedInsCreateStateInitial();
+    }
   }
 }

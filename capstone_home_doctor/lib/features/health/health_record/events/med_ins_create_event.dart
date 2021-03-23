@@ -25,3 +25,9 @@ class MedInsGetTextEventSend extends MedInsCreateEvent {
   // TODO: implement props
   List<Object> get props => [imagePath];
 }
+
+class MedInsGetTextEventInitial extends MedInsCreateEvent {
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}
