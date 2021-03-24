@@ -17,13 +17,15 @@ class AppointmentGetListEvent extends AppointmentEvent {
   List<Object> get props => [patientId];
 }
 
-class AppointmentCancelEvent extends AppointmentEvent {
-  final int appointmentId;
-  final String reasonCancel;
+class AppointmentChangeDateEvent extends AppointmentEvent {
+  final int contractID;
+  final int appointmentID;
+  final String dateAppointment;
 
-  const AppointmentCancelEvent({this.appointmentId, this.reasonCancel});
+  const AppointmentChangeDateEvent(
+      {this.contractID, this.appointmentID, this.dateAppointment});
 
   @override
   // TODO: implement props
-  List<Object> get props => [appointmentId, reasonCancel];
+  List<Object> get props => [contractID, appointmentID, dateAppointment];
 }
