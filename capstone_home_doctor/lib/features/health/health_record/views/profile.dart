@@ -34,6 +34,13 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   DateValidator _dateValidator = DateValidator();
   HealthRecordListBloc _healthRecordListBloc;
   HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
+
+  List<TypeFilter> _listFilter = [
+    TypeFilter(label: 'Hệ thống', value: 0),
+    TypeFilter(label: 'Cũ', value: 1),
+    TypeFilter(label: 'Tất cả', value: 2),
+  ];
+  TypeFilter _valueFilter;
   //
   int _patientId = 0;
   @override
@@ -43,6 +50,9 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     _healthRecordListBloc = BlocProvider.of(context);
     //for local list
     // listHealthRecord = [];
+    setState(() {
+      _valueFilter = _listFilter[2];
+    });
     _getPatientId();
     refreshListHR();
   }
@@ -76,9 +86,6 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
           description: 'Một hồ sơ sức khoẻ bao gồm nhiều y lệnh',
           imageAsset: 'assets/images/ic-health-record.png',
           onTap: () async {
-            //
-            // Navigator.of(context).pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
-
             //MOVE TO CREATE HR AND CALL BACK REFRESH LIST
             Navigator.push(
                 context,
@@ -102,32 +109,82 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
             Navigator.of(context).pushNamed(RoutesHDr.MEDICAL_SHARE);
           },
         ),
-
-        // Padding(
-        //   padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
-        //   child: Align(
-        //     alignment: Alignment.centerLeft,
-        //     child: Text(
-        //       'Hồ sơ đang theo dõi',
-        //       style: TextStyle(
-        //         color: DefaultTheme.BLACK,
-        //         fontSize: 18,
-        //         fontWeight: FontWeight.w500,
-        //       ),
-        //     ),
-        //   ),
-        // ),
         Padding(
           padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
           child: Align(
             alignment: Alignment.centerLeft,
-            child: Text(
-              'Danh sách hồ sơ sức khoẻ',
-              style: TextStyle(
-                color: DefaultTheme.BLACK,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'Danh sách hồ sơ sức khoẻ',
+                  style: TextStyle(
+                    color: DefaultTheme.BLACK,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Padding(padding: EdgeInsets.all(10)),
+                Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 5),
+                      child: Text(
+                        'Loại:',
+                        style: TextStyle(
+                          color: DefaultTheme.BLACK,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 180,
+                      margin: EdgeInsets.only(left: 10),
+                      child: Container(
+                        padding: EdgeInsets.only(left: 20),
+                        margin: EdgeInsets.only(bottom: 10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: DefaultTheme.GREY_VIEW),
+                        child: DropdownButton<TypeFilter>(
+                          value: _valueFilter,
+                          items: _listFilter.map((TypeFilter value) {
+                            return new DropdownMenuItem<TypeFilter>(
+                              value: value,
+                              child: new Text(
+                                value.label,
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                            );
+                          }).toList(),
+                          dropdownColor: DefaultTheme.GREY_VIEW,
+                          elevation: 1,
+                          hint: Container(
+                            width: 130,
+                            child: Text(
+                              'Chọn loại bệnh để chia sẻ (*):',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                          underline: Container(
+                            width: 0,
+                          ),
+                          isExpanded: false,
+                          onChanged: (res) async {
+                            setState(() {
+                              _valueFilter = res;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
@@ -169,11 +226,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                   .sort((a, b) => b.dateCreated.compareTo(a.dateCreated));
             }
           }
-          // if (null == state.listHealthRecord.length) {
-          //   return Container(
-          //       width: MediaQuery.of(context).size.width,
-          //       child: Center(child: Text('Không thể tải danh sách hồ sơ')));
-          // }
+
           return (state.listHealthRecord == null)
               ? Container(
                   width: MediaQuery.of(context).size.width,
@@ -186,101 +239,25 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: state.listHealthRecord.length,
                   itemBuilder: (BuildContext buildContext, int index) {
-                    return Container(
-                      margin: EdgeInsets.only(left: 20, right: 10),
-                      padding: EdgeInsets.only(
-                          left: 0, right: 10, top: 10, bottom: 10),
-                      child: InkWell(
-                        onTap: () {
-                          //
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(left: 20),
-                            ),
-                            SizedBox(
-                              width: 30,
-                              height: 50,
-                              child: Image.asset(
-                                  'assets/images/ic-health-record.png'),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 20),
-                            ),
-                            Expanded(
-                              child: Stack(
-                                children: [
-                                  //
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      //
-                                      (state.listHealthRecord[index].diseases ==
-                                              null)
-                                          ? Text(
-                                              'Hồ sơ',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500),
-                                            )
-                                          : Text(
-                                              'Hồ sơ ${state.listHealthRecord[index].place}',
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                      Text(
-                                        'Bệnh lý: ${getDisease(state.listHealthRecord[index].diseases)}',
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            color: DefaultTheme.BLACK_BUTTON,
-                                            fontSize: 12),
-                                      ),
-                                      Text(
-                                        'Ngày tạo: ${_dateValidator.parseToDateView(state.listHealthRecord[index].dateCreated)}',
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            color: DefaultTheme.GREY_TEXT,
-                                            fontSize: 12),
-                                      ),
-                                    ],
-                                  ),
-                                  Positioned(
-                                    width: 35,
-                                    height: 35,
-                                    top: -10,
-                                    right: 0,
-                                    child: ButtonHDr(
-                                      style: BtnStyle.BUTTON_IMAGE,
-                                      image: Image.asset(
-                                          'assets/images/ic-more.png'),
-                                      onTap: () {
-                                        _showMorePopup(
-                                            listHealthRecord[index]
-                                                .healthRecordId,
-                                            listHealthRecord[index].contractId);
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(right: 10),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
+                    if (_valueFilter != null) {
+                      if (_valueFilter.value == 0) {
+                        if (state.listHealthRecord[index].contractId != null) {
+                          return _itemHealthRecord(
+                              state.listHealthRecord[index]);
+                        }
+                      }
+                      if (_valueFilter.value == 1) {
+                        if (state.listHealthRecord[index].contractId == null) {
+                          return _itemHealthRecord(
+                              state.listHealthRecord[index]);
+                        }
+                      }
+                      if (_valueFilter.value == 2) {
+                        return _itemHealthRecord(state.listHealthRecord[index]);
+                      }
+                    } else {
+                      return _itemHealthRecord(state.listHealthRecord[index]);
+                    }
                   });
           //
         }
@@ -288,6 +265,93 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
             width: MediaQuery.of(context).size.width,
             child: Center(child: Text('Không thể tải danh sách hồ sơ')));
       },
+    );
+  }
+
+  Widget _itemHealthRecord(HealthRecordDTO dto) {
+    return Container(
+      margin: EdgeInsets.only(left: 20, right: 10),
+      padding: EdgeInsets.only(left: 0, right: 10, top: 10, bottom: 10),
+      child: InkWell(
+        onTap: () {
+          //
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(left: 20),
+            ),
+            SizedBox(
+              width: 30,
+              height: 50,
+              child: Image.asset('assets/images/ic-health-record.png'),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 20),
+            ),
+            Expanded(
+              child: Stack(
+                children: [
+                  //
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      //
+                      (dto.diseases == null)
+                          ? Text(
+                              'Hồ sơ',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontWeight: FontWeight.w500),
+                            )
+                          : Text(
+                              'Hồ sơ ${dto.place}',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 16),
+                            ),
+                      Text(
+                        'Bệnh lý: ${getDisease(dto.diseases)}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: DefaultTheme.BLACK_BUTTON, fontSize: 12),
+                      ),
+                      Text(
+                        'Ngày tạo: ${_dateValidator.parseToDateView(dto.dateCreated)}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    width: 35,
+                    height: 35,
+                    top: -10,
+                    right: 0,
+                    child: ButtonHDr(
+                      style: BtnStyle.BUTTON_IMAGE,
+                      image: Image.asset('assets/images/ic-more.png'),
+                      onTap: () {
+                        _showMorePopup(dto.healthRecordId, dto.contractId);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: 10),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -431,4 +495,11 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     }
     return str;
   }
+}
+
+class TypeFilter {
+  String label;
+  int value;
+
+  TypeFilter({this.label, this.value});
 }
