@@ -36,4 +36,15 @@ class VitalSignDTO {
     value2 = map['value2'];
     dateTime = map['date_time'];
   }
+
+  String toValueString() {
+    // TODO: implement toString
+    return '$value1,';
+  }
+
+  String toDateString() {
+    return '${dateTime.split(' ')[1].split(':')[0].toString()},';
+  }
+
+  //:${dateTime.split(' ')[1].split(':')[1].toString()
 }

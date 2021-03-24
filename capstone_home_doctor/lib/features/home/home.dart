@@ -10,15 +10,27 @@ import 'package:capstone_home_doctor/features/notification/blocs/notification_li
 import 'package:capstone_home_doctor/features/notification/events/notification_list_event.dart';
 import 'package:capstone_home_doctor/features/notification/states/notification_list_state.dart';
 import 'package:capstone_home_doctor/features/notification/views/notification_view.dart';
+import 'package:capstone_home_doctor/features/peripheral/blocs/peripheral_bloc.dart';
+import 'package:capstone_home_doctor/features/peripheral/events/peripheral_event.dart';
+import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
+import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
 import 'package:capstone_home_doctor/models/notification_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/peripheral_helper.dart';
+import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:cron/cron.dart';
+import 'package:uuid/uuid.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+final PeripheralHelper _peripheralHelper = PeripheralHelper();
+final VitalSignHelper vitalSignHelper = VitalSignHelper();
 
 class MainHome extends StatefulWidget {
   @override
@@ -26,10 +38,14 @@ class MainHome extends StatefulWidget {
 }
 
 class _MainHomeState extends State<MainHome> {
+  var uuid = Uuid();
   int _currentIndex = 0;
   int _accountId = 0;
   NotificationListBloc _notificationListBloc;
+  PeripheralBloc _peripheralBloc;
+  VitalSignBloc _vitalSignBloc;
   int countNoti = 0;
+  int _patientId = 0;
 
   //for check connection
   String _connectionStatus = 'Unknown';
@@ -41,6 +57,9 @@ class _MainHomeState extends State<MainHome> {
     super.initState();
     _initialServiceHelper();
     _notificationListBloc = BlocProvider.of(context);
+    _peripheralBloc = BlocProvider.of(context);
+    _vitalSignBloc = BlocProvider.of(context);
+    _getPatientId();
     _getAccountId();
     selectNotificationSubject.stream.listen((String payload) async {
       print(payload);
@@ -49,10 +68,90 @@ class _MainHomeState extends State<MainHome> {
       await Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
     });
 
+    //
+    final cron = new Cron()
+      ..schedule(Schedule.parse('* * * * * '), () async {
+        //
+        //connect in background
+
+        print('at ${DateTime.now()} to check connection device');
+        _connectInBackground();
+      });
+
     //check connection
     initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) {
+      _patientId = value;
+    });
+  }
+
+  //insert hr into db
+  _insertHeartRateIntoDb() {
+    vitalSignHelper.getHeartRateValue().then((value) {
+      setState(() {
+        if (value != 0 && _patientId != 0) {
+          VitalSignDTO vitalSignDTO = VitalSignDTO(
+            id: uuid.v1(),
+            patientId: _patientId,
+            valueType: 'HEART_RATE',
+            value1: value,
+            value2: null,
+            dateTime: DateTime.now().toString(),
+          );
+          _vitalSignBloc.add(VitalSignEventInsert(dto: vitalSignDTO));
+        }
+      });
+    });
+  }
+
+  //connect device in bg
+  _connectInBackground() async {
+    await _peripheralHelper.getPeripheralId().then((value) async {
+      if (value != '') {
+        int countDangerous = 0;
+
+        //
+
+        //
+        // _peripheralBloc
+        //     .add(PeripheralEventConnectBackground(peripheralId: value));
+
+        _vitalSignBloc
+            .add(VitalSignEventGetHeartRateFromDevice(peripheralId: value));
+        await vitalSignHelper.getCountingHR().then((value) async {
+          await vitalSignHelper.updateCountingHR(value += 1);
+          print('Its just be ${value} minutes');
+          if (value == 5) {
+            print('IN EVERY 5 MINUTES, INSERT HEART RATE INTO LOCAL DB');
+            await _insertHeartRateIntoDb();
+            await vitalSignHelper.updateCountingHR(0);
+          }
+        });
+        if (countDangerous == 0) {
+          //push noti here
+          //
+          await vitalSignHelper.getHeartRateValue().then((value) {
+            //
+            if (value < 80) {
+              // NotificationPushDTO notiPushDTO = NotificationPushDTO(
+              //     deviceType: 2,
+              //     notificationType: 2,
+              //     recipientAccountId: 2,
+              //     senderAccountId: _accountId);
+              // _notificationListBloc
+              //     .add(NotiPushEvent(notiPushDTO: notiPushDTO));
+              // countDangerous++;
+              // print('dagerous now is {countDangerous}');
+            }
+          });
+        }
+      }
+    });
   }
 
   Future<void> initConnectivity() async {
@@ -126,8 +225,6 @@ class _MainHomeState extends State<MainHome> {
         ? BlocBuilder<NotificationListBloc, NotificationListState>(
             builder: (context, state) {
               countNoti = 0;
-              if (state is NotificationListStateLoading) {}
-              if (state is NotificationListStateFailure) {}
               if (state is NotificationListStateSuccess) {
                 // if (state.listNotification == null) {
                 //   print('having no list noti');

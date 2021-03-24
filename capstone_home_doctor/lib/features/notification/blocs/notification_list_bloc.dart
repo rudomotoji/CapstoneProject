@@ -41,5 +41,20 @@ class NotificationListBloc
         yield NotificationListStateFailure();
       }
     }
+    if (event is NotiPushEvent) {
+      yield NotificationListStateLoading();
+      try {
+        print('go bloc and event update noti');
+        final bool isPushed =
+            await notificationRepository.pushNotification(event.notiPushDTO);
+        if (isPushed) {
+          yield NotiPushStateSuccess(isPushed: isPushed);
+        } else {
+          yield NotificationListStateFailure();
+        }
+      } catch (e) {
+        yield NotificationListStateFailure();
+      }
+    }
   }
 }

@@ -1,5 +1,5 @@
-import 'package:capstone_home_doctor/features/health/vitalsigns/events/heart_rate_event.dart';
-import 'package:capstone_home_doctor/features/health/vitalsigns/states/heart_rate_state.dart';
+import 'package:capstone_home_doctor/features/vital_sign/events/heart_rate_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/states/heart_rate_state.dart';
 import 'package:capstone_home_doctor/models/heart_rate_dto.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';

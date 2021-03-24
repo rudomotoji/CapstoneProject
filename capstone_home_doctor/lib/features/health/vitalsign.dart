@@ -24,11 +24,12 @@ class _VitalSignTabState extends State<VitalSignTab> {
     peripheralHelper.isPeripheralConnected().then((value) {
       setState(() {
         print('Value of peripheral connect: ${value}');
-        if (!value) {
-          _thisView = _ConnectedtDevice();
-        } else {
-          _thisView = _NotConnectDevice();
-        }
+        // if (value) {
+        //   _thisView = _ConnectedtDevice();
+        // } else {
+        //   _thisView = _NotConnectDevice();
+        // }
+        _thisView = _NotConnectDevice();
       });
     });
   }

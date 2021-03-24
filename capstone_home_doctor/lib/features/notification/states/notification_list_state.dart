@@ -24,6 +24,15 @@ class NotificationListStateSuccess extends NotificationListState {
   List<Object> get props => [listNotification];
 }
 
+//push noti success
+class NotiPushStateSuccess extends NotificationListState {
+  final bool isPushed;
+  const NotiPushStateSuccess({@required this.isPushed});
+  @override
+  // TODO: implement props
+  List<Object> get props => [isPushed];
+}
+
 //update status noti
 class NotificationListStateFailure extends NotificationListState {}
 

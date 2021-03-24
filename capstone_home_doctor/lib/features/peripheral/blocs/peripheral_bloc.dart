@@ -74,11 +74,8 @@ class PeripheralBloc extends Bloc<PeripheralEvent, PeripheralState> {
         final bool isConnectBg = await peripheralRepository
             .connectDeviceInBackground(event.peripheralId);
         if (isConnectBg) {
-          print('OK BG CONNECTED');
           yield PeripheralStateConnectSuccess(isConnect: isConnectBg);
-        } else {
-          print('Failed BG CONNECTED');
-        }
+        } else {}
       } catch (e) {
         print('CATCH BG CONNECTED: ${e}');
         yield PeripheralStateFailure();

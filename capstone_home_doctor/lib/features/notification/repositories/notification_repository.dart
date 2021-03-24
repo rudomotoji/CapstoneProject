@@ -45,4 +45,20 @@ class NotificationRepository extends BaseApiClient {
       print('ERROR AT UPDATE STATUS NOTIFICATION REPOSITORY ${e}');
     }
   }
+
+  //push notification
+  Future<bool> pushNotification(NotificationPushDTO notiPushDTO) async {
+    final String url =
+        '/Notifications?deviceType=${notiPushDTO.deviceType}&notificationType=${notiPushDTO.notificationType}&senderAccountId=${notiPushDTO.senderAccountId}&recipientAccountId=${notiPushDTO.recipientAccountId}';
+    try {
+      final request = await postApi(url, null, notiPushDTO.toJson());
+      if (request.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('ERROR AT PUSH NOTIFICATION ${e}');
+    }
+  }
 }

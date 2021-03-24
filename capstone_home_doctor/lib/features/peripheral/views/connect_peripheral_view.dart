@@ -151,6 +151,8 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                                         image: Image.asset(_getImageDevice(
                                             listScanned[index].device.name)),
                                         onTap: () async {
+                                          print(
+                                              'id device when tap: ${listScanned[index].device.name}');
                                           print('TAPPED');
                                           //connect, update SharePreferenced, navigate
                                           _peripheralBloc.add(

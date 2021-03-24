@@ -40,11 +40,12 @@ import 'package:capstone_home_doctor/features/health/health_record/views/health_
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/views/medical_share_view.dart';
-import 'package:capstone_home_doctor/features/health/vitalsigns/blocs/heart_rate_bloc.dart';
-import 'package:capstone_home_doctor/features/health/vitalsigns/views/heart_chart.dart';
-import 'package:capstone_home_doctor/features/health/vitalsigns/views/history_vital_sign.dart';
-import 'package:capstone_home_doctor/features/health/vitalsigns/views/oxy_chart_view.dart';
-import 'package:capstone_home_doctor/features/health/vitalsigns/views/pressure_chart.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/heart_rate_bloc.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
+import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
+import 'package:capstone_home_doctor/features/vital_sign/views/heart_chart.dart';
+import 'package:capstone_home_doctor/features/vital_sign/views/history_vital_sign.dart';
+import 'package:capstone_home_doctor/features/vital_sign/views/pressure_chart.dart';
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
@@ -82,6 +83,7 @@ import 'package:capstone_home_doctor/services/medical_share_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
+import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cron/cron.dart';
@@ -110,6 +112,7 @@ final HealthRecordHelper hrHelper = HealthRecordHelper();
 final MobileDeviceHelper mobileDeviceHelper = MobileDeviceHelper();
 final ContractHelper contractHelper = ContractHelper();
 final MedicalShareHelper _medicalShareHelper = MedicalShareHelper();
+final VitalSignHelper _vitalSignHelper = VitalSignHelper();
 //
 
 //repo for blocs
@@ -137,6 +140,7 @@ AppointmentRepository _appointmentRepository =
     AppointmentRepository(httpClient: http.Client());
 SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 PeripheralRepository _peripheralRepository = PeripheralRepository();
+VitalSignRepository _vitalSignRepository = VitalSignRepository();
 
 //AccountBloc
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
@@ -234,23 +238,11 @@ void main() async {
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
-
   final cron = Cron()
-    ..schedule(Schedule.parse('* * * * * '), () {
+    ..schedule(Schedule.parse('* * * * * '), () async {
       checkNotifiMedical();
-      peripheralHelper.getPeripheralId().then((value) async {
-        print('value get is ${value}');
-        if (value != '') {
-          BlocProvider<PeripheralBloc>(
-            create: (BuildContext context) =>
-                PeripheralBloc(peripheralRepository: _peripheralRepository)
-                  ..add(PeripheralEventConnectBackground(peripheralId: value)),
-          );
-        }
-      });
-
-      print(
-          'Fetch background every 1 minute ${DateTime.now()} and do something here');
+      // print(
+      //     'Fetch background IN MAIN_FUNCTION every 1 minute ${DateTime.now()} and do something here');
     });
   runApp(HomeDoctor());
 }
@@ -299,6 +291,12 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('MED_SHARE_CHECKING')) {
       _medicalShareHelper.initialMedicalShareChecking();
+    }
+    if (!prefs.containsKey('HEART_RATE_VALUE')) {
+      _vitalSignHelper.initialHeartRateValue();
+    }
+    if (!prefs.containsKey('HEART_RATE_COUNTING_TIME')) {
+      _vitalSignHelper.initalCountingHR();
     }
   }
 
@@ -479,6 +477,11 @@ class _HomeDoctorState extends State<HomeDoctor> {
             create: (BuildContext context) =>
                 PeripheralBloc(peripheralRepository: _peripheralRepository),
           ),
+          BlocProvider<VitalSignBloc>(
+            create: (BuildContext context) => VitalSignBloc(
+                vitalSignRepository: _vitalSignRepository,
+                sqfLiteHelper: _sqfLiteHelper),
+          ),
         ],
         child: GestureDetector(
           onTap: () {
@@ -526,7 +529,6 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.HEART: (context) => HeartChart(),
                 RoutesHDr.MEDICINE_NOTI_VIEW: (context) =>
                     ScheduleMedNotiView(),
-                RoutesHDr.OXY_CHART_VIEW: (context) => OxyChartView(),
                 RoutesHDr.MEDICAL_SHARE: (context) => MedicalShare(),
                 RoutesHDr.CONTRACT_DETAIL_STATUS: (context) =>
                     ContractStatusDetail(),

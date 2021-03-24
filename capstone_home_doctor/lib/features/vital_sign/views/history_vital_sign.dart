@@ -1,10 +1,14 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
-import 'package:capstone_home_doctor/features/health/vitalsigns/blocs/heart_rate_bloc.dart';
-import 'package:capstone_home_doctor/features/health/vitalsigns/events/heart_rate_event.dart';
-import 'package:capstone_home_doctor/features/health/vitalsigns/states/heart_rate_state.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/heart_rate_bloc.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
+import 'package:capstone_home_doctor/features/vital_sign/events/heart_rate_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/states/heart_rate_state.dart';
+import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/heart_rate_dto.dart';
 import 'package:capstone_home_doctor/models/history_vivtal_sign.dart';
+import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -55,22 +59,19 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
     ]),
   ];
 
-  List<HeartRateDTO> listHeartRate = [];
+  List<VitalSignDTO> listHeartRate = [];
 
-  HeartRateBloc _heartRateBloc;
-  _getListVitalSign() async {
-    await _sqfLiteHelper.getListHeartRate().then((value) {
-      //
-      print('value heart rate in db ${value}');
-      listHeartRate = value;
-    });
-  }
+  String vital_type = 'HEART_RATE';
+  // HeartRateBloc _heartRateBloc;
+  VitalSignBloc _vitalSignBloc;
 
   @override
   void initState() {
-    _heartRateBloc = BlocProvider.of(context);
-    _heartRateBloc.add(HeartRateEventGetList());
+    // _heartRateBloc = BlocProvider.of(context);
+    // _heartRateBloc.add(HeartRateEventGetList());
     // _getListVitalSign();
+    _vitalSignBloc = BlocProvider.of(context);
+    _vitalSignBloc.add(VitalSignEventGetList(type: vital_type));
   }
 
   @override
@@ -90,18 +91,18 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
             child: ListView(
               children: <Widget>[
                 // _listHistory(),
-                BlocBuilder<HeartRateBloc, HeartRateState>(
+                BlocBuilder<VitalSignBloc, VitalSignState>(
                   builder: (context, state) {
                     //
-                    if (state is HeartRateStateLoading) {
+                    if (state is VitalSignStateLoading) {
                       print('state load');
                     }
-                    if (state is HeartRateStateFailure) {
+                    if (state is VitalSignStateFailure) {
                       print('state fail');
                     }
-                    if (state is HeartRateStateSuccess) {
-                      print('list heart rate in sql: ${state.listHeartRate}');
-                      listHeartRate = state.listHeartRate;
+                    if (state is VitalSignStateGetListSuccess) {
+                      print('list heart rate in sql: ${state.list}');
+                      listHeartRate = state.list;
                       return ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
@@ -121,7 +122,7 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
                                 children: [
                                   //
                                   Text(
-                                      '${listHeartRate[index].date.split('.')[0]}'),
+                                      '${listHeartRate[index].dateTime.split('.')[0]}'),
                                   Spacer(),
                                   Column(
                                     children: [
@@ -130,19 +131,19 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
                                         child: Align(
                                           alignment: Alignment.centerRight,
                                           child: Text(
-                                              '${listHeartRate[index].value}'),
+                                              '${listHeartRate[index].value1}'),
                                         ),
                                       ),
                                       Container(
                                           width: 100,
-                                          child: (listHeartRate[index].value >
+                                          child: (listHeartRate[index].value1 >
                                                   90)
                                               ? Align(
                                                   alignment:
                                                       Alignment.centerRight,
                                                   child: Text('Cao bất thường'),
                                                 )
-                                              : (listHeartRate[index].value <
+                                              : (listHeartRate[index].value1 <
                                                       60)
                                                   ? Align(
                                                       alignment:
@@ -214,7 +215,7 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
                     //     return _itemHistory();
                     //   },
                     // ),
-                    Text('${listHeartRate[index].value}'),
+                    Text('${listHeartRate[index].value1}'),
                   ],
                 ),
               );

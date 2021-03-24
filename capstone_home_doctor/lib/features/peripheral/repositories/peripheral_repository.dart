@@ -73,25 +73,23 @@ class PeripheralRepository {
     print('Scanning to connect in background');
     FlutterBlue.instance.scanResults.listen((results) async {
       for (ScanResult r in results) {
+        if (check == true) {
+          break;
+        }
         if (r.device.id.toString() == peripheralId) {
           await connectDevice1stTime(r);
+          stopScanning();
           print('Re-connect peripheral device successful');
           check = true;
+          return check;
         } else {
           await _peripheralHelper.updatePeripheralChecking(false, peripheralId);
-          print('LOST CONNECT PERIPHERAL DEVICE');
           check = false;
         }
       }
     });
     return check;
   }
-
-  //discover services in device
-
-  //get battery
-
-  //read heart rate
 
   //...
 

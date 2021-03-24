@@ -72,8 +72,23 @@ class _PeripheralService extends State<PeripheralService>
                   //
                   BlocBuilder<PeripheralBloc, PeripheralState>(
                     builder: (context, state) {
-                      if (state is PeripheralStateLoading) {}
-                      if (state is PeripheralStateFailure) {}
+                      if (state is PeripheralStateLoading) {
+                        //
+                        return Container(
+                          height: MediaQuery.of(context).size.height * 0.45,
+                          width: MediaQuery.of(context).size.width - 40,
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: Image.asset('assets/images/loading.gif'),
+                          ),
+                        );
+                      }
+                      if (state is PeripheralStateFailure) {
+                        return Container(
+                          child: Text('Chưa có thiết bị kết nối'),
+                        );
+                      }
                       if (state is PeripheralStateFindByIdSuccess) {
                         if (state.device != null) {
                           print('state device name is ${state.device}');

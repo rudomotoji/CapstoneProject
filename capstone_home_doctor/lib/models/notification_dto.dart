@@ -106,3 +106,32 @@ class Notifications {
     return data;
   }
 }
+
+class NotificationPushDTO {
+  int deviceType;
+  int notificationType;
+  int senderAccountId;
+  int recipientAccountId;
+
+  NotificationPushDTO(
+      {this.deviceType,
+      this.notificationType,
+      this.senderAccountId,
+      this.recipientAccountId});
+
+  NotificationPushDTO.fromJson(Map<String, dynamic> json) {
+    deviceType = json['deviceType'];
+    notificationType = json['notificationType'];
+    senderAccountId = json['senderAccountId'];
+    recipientAccountId = json['recipientAccountId'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['deviceType'] = this.deviceType;
+    data['notificationType'] = this.notificationType;
+    data['senderAccountId'] = this.senderAccountId;
+    data['recipientAccountId'] = this.recipientAccountId;
+    return data;
+  }
+}

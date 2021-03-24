@@ -59,6 +59,7 @@ dev_dependencies:
   workmanager: ^0.2.3
   cron: ^0.2.4
   fl_chart: ^0.12.3
+  flutter_echarts: ^1.5.0
   custom_radio_grouped_button: ^1.0.6+1
   jwt_decoder: ^1.0.4
   string_similarity: ^1.1.0

@@ -23,6 +23,7 @@ import 'package:capstone_home_doctor/models/token_device_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
+import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -33,6 +34,7 @@ import 'package:intl/intl.dart';
 //
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final MobileDeviceHelper _mobileDeviceHelper = MobileDeviceHelper();
+final VitalSignHelper vitalSignHelper = VitalSignHelper();
 
 //
 final Shader _normalHealthColors = LinearGradient(
@@ -66,6 +68,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   String _tokenDevice = '';
   int _accountId = 0;
 
+  int _heartRateValue = 0;
+
   TokenDeviceDTO _tokenDeviceDTO = TokenDeviceDTO();
   AppointmentDTO _appointmentDTO;
   //
@@ -94,12 +98,21 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
     _updateTokenDevice();
+    _getHeartRateValue();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.addObserver(this);
     super.dispose();
+  }
+
+  _getHeartRateValue() {
+    vitalSignHelper.getHeartRateValue().then((value) {
+      setState(() {
+        _heartRateValue = value;
+      });
+    });
   }
 
   _updateTokenDevice() async {
@@ -275,6 +288,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
+                _showLastMeasure(),
                 //_showLastMeasurement(),
               ],
             ),
@@ -284,107 +298,18 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     ));
   }
 
-  rowMonitor() {
+  _showLastMeasure() {
     return Container(
-      margin: EdgeInsets.only(top: 8),
-      padding: EdgeInsets.all(10),
+      width: MediaQuery.of(context).size.width,
+      height: 60,
       decoration: BoxDecoration(
-        color: DefaultTheme.GREY_VIEW,
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            height: 20,
-            margin: EdgeInsets.only(left: 9, top: 6, right: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: DefaultTheme.GREY_TEXT,
-                    ),
-                    child: Container(),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(left: 13, top: 1),
-                    child: Text(
-                      "Huyết áp",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: DefaultTheme.GREY_TEXT,
-                        fontFamily: "",
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                ),
-                Spacer(),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(top: 1),
-                    child: Text(
-                      "12:30",
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: DefaultTheme.GREY_TEXT,
-                        fontFamily: "",
-                        fontWeight: FontWeight.w400,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: Container(
-              margin: EdgeInsets.only(left: 42, top: 1),
-              child: Text(
-                "120/81 mmHg",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: DefaultTheme.GREY_TEXT,
-                  fontFamily: "",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 22,
-                ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: Container(
-              margin: EdgeInsets.only(left: 42),
-              child: Text(
-                "Chi tiết",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: DefaultTheme.GREY_TEXT,
-                  fontFamily: "",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+          color: DefaultTheme.GREY_VIEW,
+          borderRadius: BorderRadius.circular(12)),
+      child: (_getHeartRateValue != 0) ? Text('${_heartRateValue}') : Text(''),
     );
   }
 
+  //
   rowMedicalSchedule(String nameMedical, String time, String timeLoop) {
     return Container(
       child: Row(
