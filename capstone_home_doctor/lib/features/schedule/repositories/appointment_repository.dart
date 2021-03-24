@@ -31,9 +31,10 @@ class AppointmentRepository extends BaseApiClient {
     }
   }
 
-  Future<bool> cancelAppointment(int appointmentId, String reasonCancel) async {
+  Future<bool> changeDateAppointment(
+      int contractID, String date, int appointmentID) async {
     String url =
-        '/Appointments/CancelAppointment?appointmentId=${appointmentId}&reasonCancel=${reasonCancel}';
+        '/Appointments/UpdateAppointment?appointmentId=${appointmentID}&dateExamination=${date}&status=PENDING&contractId=${contractID}';
     try {
       final response = await putApi(url, null, null);
       if (response.statusCode == 204) {
@@ -45,4 +46,19 @@ class AppointmentRepository extends BaseApiClient {
       print('ERROR AT CANCEL APPOINTMENT ${e.toString()}');
     }
   }
+
+  // Future<bool> cancelAppointment(int appointmentId, String reasonCancel) async {
+  //   String url =
+  //       '/Appointments/CancelAppointment?appointmentId=${appointmentId}&reasonCancel=${reasonCancel}';
+  //   try {
+  //     final response = await putApi(url, null, null);
+  //     if (response.statusCode == 204) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     print('ERROR AT CANCEL APPOINTMENT ${e.toString()}');
+  //   }
+  // }
 }

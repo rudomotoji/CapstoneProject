@@ -5,7 +5,6 @@ import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
-import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/appointment_event.dart';
@@ -15,12 +14,15 @@ import 'package:capstone_home_doctor/features/schedule/states/appointment_state.
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
 import 'package:capstone_home_doctor/models/appointment_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
+import 'package:capstone_home_doctor/services/appointment_helper.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
@@ -46,6 +48,9 @@ class _ScheduleView extends State<ScheduleView>
   int _patientId = 0;
   DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
       .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
+  var datechoice;
+  var timechoice;
+  final AppointmentHelper _appointmentHelper = AppointmentHelper();
 
   //use for calendar
   Map<DateTime, List> _events = {};
@@ -170,7 +175,10 @@ class _ScheduleView extends State<ScheduleView>
                       children: <Widget>[
                         _buildTableCalendar(),
                         const SizedBox(height: 8.0),
-                        Expanded(child: _buildEventList(context)),
+                        Expanded(
+                            child: _buildEventList(
+                          context,
+                        )),
                       ],
                     ),
                     Container(
@@ -208,11 +216,11 @@ class _ScheduleView extends State<ScheduleView>
                   child: Text('Kiểm tra lại đường truyền kết nối mạng')));
         }
         if (state is AppointmentStateSuccess) {
-          if (state.isCancel != null) {
-            if (state.isCancel) {
-              Navigator.pop(context);
-            }
-          }
+          // if (state.isCancel != null) {
+          //   if (state.isCancel) {
+          //     Navigator.pop(context);
+          //   }
+          // }
           if (state.listAppointment.length > 0) {
             _getEvent(state.listAppointment);
           }
@@ -309,7 +317,7 @@ class _ScheduleView extends State<ScheduleView>
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text('Bạn có lịch tái khám:'),
-                      Text('Với Bác sỹ Lê Huy'),
+                      Text('Bác sĩ: ${event.fullNameDoctor}'),
                       Text('Thời gian: ${dateAppointment}'),
                       Text('Ghi chú: ${event.note}'),
                       (event.status.contains('CANCEL'))
@@ -317,7 +325,7 @@ class _ScheduleView extends State<ScheduleView>
                           : Container(),
                       (event.status.contains('CANCEL'))
                           ? Container()
-                          : _buttonCancel(event, context),
+                          : _buttonChangeDate(event, context),
                     ],
                   ),
                 ),
@@ -327,13 +335,14 @@ class _ScheduleView extends State<ScheduleView>
         : Container();
   }
 
-  Widget _buttonCancel(AppointmentDetailDTO dto, BuildContext contextButton) {
+  Widget _buttonChangeDate(
+      AppointmentDetailDTO dto, BuildContext contextButton) {
     DateTime timeEx = new DateFormat("yyyy-MM-dd").parse(dto.dateExamination);
     DateTime dateAppointment = new DateFormat('dd/MM/yyyy')
         .parse(DateFormat('dd/MM/yyyy').format(timeEx));
 
     if ((dateAppointment.millisecondsSinceEpoch -
-            curentDateNow.millisecondsSinceEpoch) >
+            curentDateNow.millisecondsSinceEpoch) <=
         (86400000 * 1)) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -346,7 +355,7 @@ class _ScheduleView extends State<ScheduleView>
             child: FlatButton(
               color: DefaultTheme.TRANSPARENT,
               onPressed: () {
-                _popupCancel(dto.appointmentId);
+                _popupChangeDate(dto.appointmentId, dto.contractId);
               },
               padding: null,
               child: Row(
@@ -361,7 +370,7 @@ class _ScheduleView extends State<ScheduleView>
                     padding: EdgeInsets.only(left: 20),
                   ),
                   Text(
-                    'Hủy lịch tái khám',
+                    'Đổi ngày',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 14,
@@ -379,13 +388,12 @@ class _ScheduleView extends State<ScheduleView>
     }
   }
 
-  Widget _popupCancel(int appointmentId) {
+  Widget _popupChangeDate(int appointmentId, int contractID) {
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       backgroundColor: DefaultTheme.TRANSPARENT,
       builder: (context) {
-        String reason = "";
         return StatefulBuilder(
           builder: (BuildContext context2, StateSetter setModalState) {
             return BackdropFilter(
@@ -420,7 +428,7 @@ class _ScheduleView extends State<ScheduleView>
                                   Padding(
                                     padding: EdgeInsets.only(top: 40, left: 0),
                                     child: Text(
-                                      'Hủy lịch tái khám',
+                                      'Đổi lịch tái khám',
                                       style: TextStyle(
                                         color: DefaultTheme.BLACK,
                                         fontSize: 18,
@@ -433,18 +441,85 @@ class _ScheduleView extends State<ScheduleView>
                                 padding: EdgeInsets.only(top: 10, bottom: 10),
                                 child: Column(
                                   children: [
-                                    Text(''),
-                                    Container(
-                                      height: 100,
-                                      child: TextFieldHDr(
-                                        placeHolder:
-                                            'Nhập tại đây lý do hủy lịch tái khám....',
-                                        style: TFStyle.TEXT_AREA,
-                                        keyboardAction: TextInputAction.done,
-                                        onChange: (value) {
-                                          reason = value;
-                                        },
-                                      ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Ngày tái khám:',
+                                          style: TextStyle(
+                                            color: DefaultTheme.BLACK,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        FlatButton(
+                                          child: Text(
+                                            datechoice == null
+                                                ? 'Chọn ngày tái khám'
+                                                : DateFormat('dd/MM/yyyy')
+                                                    .format(DateTime.parse(
+                                                        datechoice)),
+                                            style: TextStyle(
+                                              color: DefaultTheme.BLACK,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            DateTime newDateTime =
+                                                await showRoundedDatePicker(
+                                                    context: context,
+                                                    initialDate: DateTime.now(),
+                                                    firstDate: DateTime(
+                                                        DateTime.now().year -
+                                                            1),
+                                                    lastDate: DateTime(
+                                                        DateTime.now().year +
+                                                            1),
+                                                    borderRadius: 16,
+                                                    theme: ThemeData.dark());
+                                            if (newDateTime != null) {
+                                              setModalState(() {
+                                                datechoice =
+                                                    newDateTime.toString();
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Giờ tái khám:',
+                                          style: TextStyle(
+                                            color: DefaultTheme.BLACK,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        FlatButton(
+                                          child: Text(
+                                            timechoice == null
+                                                ? 'Chọn giờ tái khám'
+                                                : timechoice,
+                                            style: TextStyle(
+                                              color: DefaultTheme.BLACK,
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                          onPressed: () async {
+                                            final timePicked =
+                                                await showRoundedTimePicker(
+                                              context: context,
+                                              initialTime: TimeOfDay.now(),
+                                              theme: ThemeData.dark(),
+                                            );
+                                            if (timePicked != null) {
+                                              setModalState(() {
+                                                timechoice =
+                                                    '${timePicked.hour}:${timePicked.minute}';
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -454,11 +529,93 @@ class _ScheduleView extends State<ScheduleView>
                                 style: BtnStyle.BUTTON_BLACK,
                                 label: 'Gửi',
                                 onTap: () async {
-                                  //
-                                  _appointmentBloc.add(AppointmentCancelEvent(
-                                      appointmentId: appointmentId,
-                                      reasonCancel: reason));
-                                  Navigator.pop(context);
+                                  setState(() {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Center(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5)),
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 25, sigmaY: 25),
+                                              child: Container(
+                                                width: 300,
+                                                height: 300,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: DefaultTheme.WHITE
+                                                        .withOpacity(0.8)),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 200,
+                                                      height: 200,
+                                                      child: Image.asset(
+                                                          'assets/images/loading.gif'),
+                                                    ),
+                                                    Text(
+                                                      'Đang gửi yêu cầu...',
+                                                      style: TextStyle(
+                                                          color: DefaultTheme
+                                                              .GREY_TEXT,
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .none),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  });
+                                  if (datechoice == null ||
+                                      timechoice == null) {
+                                    Future.delayed(Duration(seconds: 2), () {
+                                      Navigator.of(context).pop();
+                                      _showDialogFailed();
+                                    });
+                                  } else {
+                                    String dateAppointment =
+                                        DateFormat('yyyy-mm-dd').format(
+                                                DateTime.parse(datechoice)) +
+                                            'T${timechoice}:00';
+                                    _appointmentBloc.add(
+                                        AppointmentChangeDateEvent(
+                                            appointmentID: appointmentId,
+                                            contractID: contractID,
+                                            dateAppointment: dateAppointment));
+                                    Future.delayed(
+                                      const Duration(seconds: 3),
+                                      () {
+                                        _appointmentHelper
+                                            .getAppointmentChangeDate()
+                                            .then(
+                                          (value) {
+                                            Navigator.of(context).pop();
+                                            if (value) {
+                                              _showDialogSuccess();
+                                            } else {
+                                              _showDialogFailed();
+                                            }
+                                          },
+                                        );
+                                      },
+                                    );
+                                  }
                                 },
                               ),
                               Padding(
@@ -491,6 +648,98 @@ class _ScheduleView extends State<ScheduleView>
         );
       },
     );
+  }
+
+  _showDialogSuccess() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: DefaultTheme.WHITE.withOpacity(0.8)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: Image.asset('assets/images/ic-checked.png'),
+                    ),
+                    Text(
+                      'Gửi yêu cầu thành công',
+                      style: TextStyle(
+                          color: DefaultTheme.GREY_TEXT,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.none),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      _getPatientId();
+    });
+  }
+
+  _showDialogFailed() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: DefaultTheme.WHITE.withOpacity(0.8)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: Image.asset('assets/images/ic-failed.png'),
+                    ),
+                    Text(
+                      'Không thể gửi yêu cầu',
+                      style: TextStyle(
+                          color: DefaultTheme.GREY_TEXT,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.none),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.of(context).pop();
+    });
   }
 
   _getMedicineSchedule() {

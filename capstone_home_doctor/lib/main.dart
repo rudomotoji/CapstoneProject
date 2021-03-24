@@ -76,6 +76,7 @@ import 'package:capstone_home_doctor/features/schedule/views/schedule_medicine_n
 import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
+import 'package:capstone_home_doctor/services/appointment_helper.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
@@ -113,6 +114,7 @@ final MobileDeviceHelper mobileDeviceHelper = MobileDeviceHelper();
 final ContractHelper contractHelper = ContractHelper();
 final MedicalShareHelper _medicalShareHelper = MedicalShareHelper();
 final VitalSignHelper _vitalSignHelper = VitalSignHelper();
+final AppointmentHelper _appointmentHelper = AppointmentHelper();
 //
 
 //repo for blocs
@@ -300,6 +302,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('HEART_RATE_COUNTING_TIME')) {
       _vitalSignHelper.initalCountingHR();
+    }
+    if (!prefs.containsKey('APPOINTMENT_CHANGE_DATE')) {
+      _appointmentHelper.initialAppointmentChangeDate();
     }
   }
 

@@ -1341,7 +1341,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Bác sỹ Lê Huy'),
+          Text('Bác sĩ: ${e.fullNameDoctor}'),
           Text('Thời gian: ${dateAppointment}'),
           Text('Ghi chú: ${e.note}'),
           // Container(height: 20),
