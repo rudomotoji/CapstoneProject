@@ -16,10 +16,14 @@ import 'package:capstone_home_doctor/features/schedule/events/prescription_list_
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/appointment_state.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
+import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/appointment_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/token_device_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
@@ -79,6 +83,10 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   PrescriptionListBloc _prescriptionListBloc;
   AppointmentBloc _appointmentBloc;
   TokenDeviceBloc _tokenDeviceBloc;
+  VitalSignBloc _vitalSignBloc;
+  //
+  String vitalType = 'HEART_RATE';
+  VitalSignDTO lastMeasurement = VitalSignDTO();
 
   SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
@@ -97,8 +105,10 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     _appointmentBloc = BlocProvider.of(context);
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
+    _vitalSignBloc = BlocProvider.of(context);
+    _vitalSignBloc.add(VitalSignEventGetList(type: vitalType));
     _updateTokenDevice();
-    _getHeartRateValue();
+    // _getHeartRateValue();
   }
 
   @override
@@ -107,13 +117,13 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  _getHeartRateValue() {
-    vitalSignHelper.getHeartRateValue().then((value) {
-      setState(() {
-        _heartRateValue = value;
-      });
-    });
-  }
+  // _getHeartRateValue() {
+  //   vitalSignHelper.getHeartRateValue().then((value) {
+  //     setState(() {
+  //       _heartRateValue = value;
+  //     });
+  //   });
+  // }
 
   _updateTokenDevice() async {
     await _mobileDeviceHelper.getTokenDevice().then((value) {
@@ -180,10 +190,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
             padding: EdgeInsets.only(left: 20, bottom: 10),
             child: Text(
               '${_dateValidator.getDateTimeView()}',
-              style: TextStyle(
-                  color: DefaultTheme.GREY_TEXT,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 15),
+              style: TextStyle(color: DefaultTheme.GREY_TEXT, fontSize: 15),
             ),
           ),
         ),
@@ -275,8 +282,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                 ),
                 _showStatusOverview(),
                 //
-                _showSuggestionDashboard(),
-
                 Padding(
                   padding: EdgeInsets.only(top: 20),
                   child: Text(
@@ -288,8 +293,21 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     ),
                   ),
                 ),
-                _showLastMeasure(),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                ),
+                _showLastHeartRateMeasure(),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                ),
+                _showLastBloodPressureMeasure(),
+                //
+                _showSuggestionDashboard(),
+
                 //_showLastMeasurement(),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 50),
+                ),
               ],
             ),
           ),
@@ -298,15 +316,409 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     ));
   }
 
-  _showLastMeasure() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 60,
-      decoration: BoxDecoration(
-          color: DefaultTheme.GREY_VIEW,
-          borderRadius: BorderRadius.circular(12)),
-      child: (_getHeartRateValue != 0) ? Text('${_heartRateValue}') : Text(''),
-    );
+  _showLastHeartRateMeasure() {
+    return BlocBuilder<VitalSignBloc, VitalSignState>(
+        builder: (context, state) {
+      if (state is VitalSignStateLoading) {
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          height: 80,
+          child: SizedBox(
+            width: 80,
+            height: 80,
+            child: Image.asset('assets/images/loading.gif'),
+          ),
+        );
+      }
+      if (state is VitalSignStateFailure) {
+        return Container(
+            width: MediaQuery.of(context).size.width,
+            height: 80,
+            child: Center(
+              child: Text('Không thể tải'),
+            ));
+      }
+      if (state is VitalSignStateGetListSuccess) {
+        lastMeasurement = state.list.last;
+      }
+      return (null != lastMeasurement)
+          ? Container(
+              height: 90,
+              width: MediaQuery.of(context).size.width,
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 80,
+                    child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          Navigator.of(context).pushNamed(RoutesHDr.HEART);
+                        },
+                        focusColor: DefaultTheme.TRANSPARENT,
+                        hoverColor: DefaultTheme.TRANSPARENT,
+                        highlightColor: DefaultTheme.TRANSPARENT,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          height: 80,
+                          decoration: BoxDecoration(
+                              color: DefaultTheme.GREY_VIEW,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              //
+
+                              SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: Image.asset(
+                                    'assets/images/ic-heart-rate.png'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 20),
+                              ),
+                              Container(
+                                height: 30,
+                                margin: EdgeInsets.only(bottom: 5),
+                                alignment: Alignment.bottomLeft,
+                                child: Text(
+                                  '${lastMeasurement.value1}',
+                                  style: TextStyle(
+                                    color: DefaultTheme.ORANGE_TEXT,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 30,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 5),
+                              ),
+                              Container(
+                                height: 30,
+                                margin: EdgeInsets.only(bottom: 5),
+                                alignment: Alignment.bottomCenter,
+                                child: Text(
+                                  'BPM',
+                                  style: TextStyle(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                              Spacer(),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  //
+                                  (lastMeasurement.dateTime != null)
+                                      ? Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Container(
+                                            child: Text(
+                                              '${lastMeasurement.dateTime.split(' ')[1].split('.')[0].split(':')[0]}:${lastMeasurement.dateTime.split(' ')[1].split('.')[0].split(':')[1]}',
+                                              textAlign: TextAlign.right,
+                                            ),
+                                          ))
+                                      : Container(),
+                                  (lastMeasurement.value1 == null)
+                                      ? Container()
+                                      : (lastMeasurement.value1 < 55)
+                                          ? Text('Thấp',
+                                              textAlign: TextAlign.right,
+                                              style: TextStyle(
+                                                  color:
+                                                      DefaultTheme.RED_CALENDAR,
+                                                  fontWeight: FontWeight.w500))
+                                          : (lastMeasurement.value1 >= 55 &&
+                                                  lastMeasurement.value1 < 120)
+                                              ? Text('Bình thường',
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                      color: DefaultTheme
+                                                          .SUCCESS_STATUS,
+                                                      fontWeight:
+                                                          FontWeight.w500))
+                                              : (lastMeasurement.value1 >= 120)
+                                                  ? Text('Cao',
+                                                      textAlign:
+                                                          TextAlign.right,
+                                                      style: TextStyle(
+                                                          color: DefaultTheme
+                                                              .CHIP_BLUE,
+                                                          fontWeight:
+                                                              FontWeight.w500))
+                                                  : (lastMeasurement.value1 >
+                                                          150)
+                                                      ? Text('Cao bất thường',
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  DefaultTheme
+                                                                      .RED_TEXT,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500))
+                                                      : Container()
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Image.asset(
+                                    'assets/images/ic-navigator.png'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                            ],
+                          ),
+                        )),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 20,
+                    child: Container(
+                      width: 80,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: DefaultTheme.ORANGE_TEXT),
+                      child: Center(
+                        child: Text('Nhịp tim',
+                            style: TextStyle(color: DefaultTheme.WHITE)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container();
+    });
+  }
+
+  _showLastBloodPressureMeasure() {
+    return BlocBuilder<VitalSignBloc, VitalSignState>(
+        builder: (context, state) {
+      if (state is VitalSignStateLoading) {
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          height: 80,
+          child: SizedBox(
+            width: 80,
+            height: 80,
+            child: Image.asset('assets/images/loading.gif'),
+          ),
+        );
+      }
+      if (state is VitalSignStateFailure) {
+        return Container(
+            width: MediaQuery.of(context).size.width,
+            height: 80,
+            child: Center(
+              child: Text('Không thể tải'),
+            ));
+      }
+      if (state is VitalSignStateGetListSuccess) {
+        lastMeasurement = state.list.last;
+      }
+      return (null != lastMeasurement)
+          ? Container(
+              height: 90,
+              width: MediaQuery.of(context).size.width,
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 80,
+                    child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          Navigator.of(context).pushNamed(RoutesHDr.HEART);
+                        },
+                        focusColor: DefaultTheme.TRANSPARENT,
+                        hoverColor: DefaultTheme.TRANSPARENT,
+                        highlightColor: DefaultTheme.TRANSPARENT,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          height: 80,
+                          decoration: BoxDecoration(
+                              color: DefaultTheme.GREY_VIEW,
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              //
+
+                              SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: Image.asset(
+                                    'assets/images/ic-blood-pressure.png'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 20),
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  //
+                                  Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      '110',
+                                      style: TextStyle(
+                                        color: DefaultTheme.RED_CALENDAR,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 25,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Tâm thu',
+                                      style: TextStyle(
+                                        color: DefaultTheme.GREY_TEXT,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  //
+                                  Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      '83',
+                                      style: TextStyle(
+                                        color: DefaultTheme.RED_CALENDAR,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 25,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Tâm trương',
+                                      style: TextStyle(
+                                        color: DefaultTheme.GREY_TEXT,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              //
+                              Spacer(),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  //
+                                  (lastMeasurement.dateTime != null)
+                                      ? Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Container(
+                                            child: Text(
+                                              '${lastMeasurement.dateTime.split(' ')[1].split('.')[0].split(':')[0]}:${lastMeasurement.dateTime.split(' ')[1].split('.')[0].split(':')[1]}',
+                                              textAlign: TextAlign.right,
+                                            ),
+                                          ))
+                                      : Container(),
+                                  (lastMeasurement.value1 == null)
+                                      ? Container()
+                                      : (lastMeasurement.value1 < 55)
+                                          ? Text('Thấp',
+                                              textAlign: TextAlign.right,
+                                              style: TextStyle(
+                                                  color:
+                                                      DefaultTheme.RED_CALENDAR,
+                                                  fontWeight: FontWeight.w500))
+                                          : (lastMeasurement.value1 >= 55 &&
+                                                  lastMeasurement.value1 < 120)
+                                              ? Text('Bình thường',
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                      color: DefaultTheme
+                                                          .SUCCESS_STATUS,
+                                                      fontWeight:
+                                                          FontWeight.w500))
+                                              : (lastMeasurement.value1 >= 120)
+                                                  ? Text('Cao',
+                                                      textAlign:
+                                                          TextAlign.right,
+                                                      style: TextStyle(
+                                                          color: DefaultTheme
+                                                              .CHIP_BLUE,
+                                                          fontWeight:
+                                                              FontWeight.w500))
+                                                  : (lastMeasurement.value1 >
+                                                          150)
+                                                      ? Text('Cao bất thường',
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  DefaultTheme
+                                                                      .RED_TEXT,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500))
+                                                      : Container()
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                              SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: Image.asset(
+                                    'assets/images/ic-navigator.png'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                            ],
+                          ),
+                        )),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 20,
+                    child: Container(
+                      width: 80,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: DefaultTheme.RED_CALENDAR),
+                      child: Center(
+                        child: Text('Huyết áp',
+                            style: TextStyle(color: DefaultTheme.WHITE)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container();
+    });
   }
 
   //

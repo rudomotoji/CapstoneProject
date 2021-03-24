@@ -101,7 +101,6 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
                       print('state fail');
                     }
                     if (state is VitalSignStateGetListSuccess) {
-                      print('list heart rate in sql: ${state.list}');
                       listHeartRate = state.list;
                       return ListView.builder(
                         shrinkWrap: true,

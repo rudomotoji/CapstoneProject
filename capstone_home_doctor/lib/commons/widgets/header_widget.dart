@@ -9,6 +9,7 @@ import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dar
 import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
+import 'package:capstone_home_doctor/models/patient_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
@@ -59,6 +60,8 @@ class _HeaderWidget extends State<HeaderWidget> {
   //patient Id
   int _patientId = 0;
   SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
+  PatientBloc _patientBloc;
+  PatientDTO _patientDTO = PatientDTO();
 
   @override
   _HeaderWidget(
@@ -72,6 +75,7 @@ class _HeaderWidget extends State<HeaderWidget> {
     // TODO: implement initState
     super.initState();
     _getPatientId();
+    _patientBloc = BlocProvider.of(context);
   }
 
   @override
@@ -168,27 +172,102 @@ class _HeaderWidget extends State<HeaderWidget> {
                 ],
               ),
             )),
+          if (_buttonHeaderType == ButtonHeaderType.AVATAR) (Spacer()),
           if (_buttonHeaderType == ButtonHeaderType.AVATAR)
-            (Expanded(
-              flex: 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(padding: EdgeInsets.only(left: 20)),
-                  InkWell(
-                    splashColor: DefaultTheme.TRANSPARENT,
-                    highlightColor: DefaultTheme.TRANSPARENT,
-                    onTap: _onButtonShowModelSheet,
-                    child: CircleAvatar(
-                      radius: 16,
-                      child: ClipOval(
-                        child: Image.asset('assets/images/avatar-default.jpg'),
-                      ),
+            (BlocBuilder<PatientBloc, PatientState>(
+                builder: (context2, state2) {
+              if (state2 is PatientStateLoading) {
+                return Container(
+                  margin: EdgeInsets.only(left: 20, right: 20),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(6),
+                      color: DefaultTheme.GREY_BUTTON),
+                  child: Center(
+                    child: SizedBox(
+                      width: 60,
+                      height: 60,
+                      child: Image.asset('assets/images/loading.gif'),
                     ),
                   ),
-                ],
-              ),
-            )),
+                );
+              }
+              if (state2 is PatientStateFailure) {
+                return Container(
+                  width: 120,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: DefaultTheme.GREY_BUTTON),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: 10, bottom: 10, left: 20, right: 20),
+                    child: Text('Không thể tải thông tin cá nhân',
+                        style: TextStyle(
+                          color: DefaultTheme.GREY_TEXT,
+                          fontSize: 12,
+                        )),
+                  ),
+                );
+              }
+              if (state2 is PatientStateSuccess) {
+                _patientDTO = state2.dto;
+                if (state2.dto == null) {
+                  return Container(
+                    width: 120,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: DefaultTheme.GREY_BUTTON),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: 10, bottom: 10, left: 20, right: 20),
+                      child: Text('Không thể tải thông tin cá nhân',
+                          style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontSize: 12,
+                          )),
+                    ),
+                  );
+                }
+              }
+              return Container(
+                padding: EdgeInsets.only(bottom: 5, top: 5, left: 15, right: 5),
+                decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(0, 1), // changes position of shadow
+                      ),
+                    ],
+                    color: DefaultTheme.WHITE,
+                    // border: Border.all(
+                    //     color: DefaultTheme.GREY_TOP_TAB_BAR, width: 0.5),
+                    borderRadius: BorderRadius.circular(50)),
+                child: InkWell(
+                  splashColor: DefaultTheme.TRANSPARENT,
+                  highlightColor: DefaultTheme.TRANSPARENT,
+                  onTap: _onButtonShowModelSheet,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text('${_patientDTO.fullName.split(' ').last}',
+                            style: TextStyle(fontWeight: FontWeight.w500)),
+                      ),
+                      Padding(padding: EdgeInsets.only(left: 10)),
+                      CircleAvatar(
+                        radius: 16,
+                        child: ClipOval(
+                          child:
+                              Image.asset('assets/images/avatar-default.jpg'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }))
         ],
       ),
     );
@@ -198,6 +277,9 @@ class _HeaderWidget extends State<HeaderWidget> {
     await _authenticateHelper.getPatientId().then((value) {
       setState(() {
         _patientId = value;
+        if (_patientId != 0) {
+          _patientBloc.add(PatientEventSetId(id: _patientId));
+        }
       });
     });
   }

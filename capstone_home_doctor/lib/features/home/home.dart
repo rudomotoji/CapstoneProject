@@ -61,6 +61,7 @@ class _MainHomeState extends State<MainHome> {
     _vitalSignBloc = BlocProvider.of(context);
     _getPatientId();
     _getAccountId();
+    _connectFirstOpenApp();
     selectNotificationSubject.stream.listen((String payload) async {
       print(payload);
       var navigate = jsonDecode(payload);
@@ -82,6 +83,15 @@ class _MainHomeState extends State<MainHome> {
     initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  _connectFirstOpenApp() async {
+    await _peripheralHelper.getPeripheralId().then((value) async {
+      if (value != '') {
+        _peripheralBloc
+            .add(PeripheralEventConnectBackground(peripheralId: value));
+      }
+    });
   }
 
   _getPatientId() async {
