@@ -23,4 +23,28 @@ class HealthRecordHelper {
     }
     return prefs.getInt('HEALTH_RECORD_ID');
   }
+
+  //create health record
+  Future<void> initialHRRsponse() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('HEALTH_RECORD_RESPONSE', false);
+  }
+
+  Future<void> setHRResponse(bool response) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('HEALTH_RECORD_RESPONSE') ||
+        prefs.getBool('HEALTH_RECORD_RESPONSE') == null) {
+      initialHRRsponse();
+    }
+    prefs.setBool('HEALTH_RECORD_RESPONSE', response);
+  }
+
+  Future<bool> getHRResponse() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('HEALTH_RECORD_RESPONSE') ||
+        prefs.getBool('HEALTH_RECORD_RESPONSE') == null) {
+      initialHRRsponse();
+    }
+    return prefs.getBool('HEALTH_RECORD_RESPONSE');
+  }
 }

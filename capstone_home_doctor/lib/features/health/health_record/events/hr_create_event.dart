@@ -15,3 +15,9 @@ class HRCreateEventSend extends HRCreateEvent {
   // TODO: implement props
   List<Object> get props => [dto];
 }
+
+class HRCreateEventInitial extends HRCreateEvent {
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}

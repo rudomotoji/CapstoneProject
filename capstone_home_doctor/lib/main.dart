@@ -282,6 +282,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     if (!prefs.containsKey('HEALTH_RECORD_ID')) {
       hrHelper.initialHRId();
     }
+    if (!prefs.containsKey('HEALTH_RECORD_RESPONSE')) {
+      hrHelper.initialHRRsponse();
+    }
     if (!prefs.containsKey('TOKEN_DEVICE')) {
       mobileDeviceHelper.initialTokenDevice();
     }

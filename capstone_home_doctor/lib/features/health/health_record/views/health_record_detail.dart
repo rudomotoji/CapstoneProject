@@ -38,6 +38,7 @@ import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:string_similarity/string_similarity.dart';
+import 'package:photo_view/photo_view.dart';
 
 List<MedicalInstructionTypeDTO> _listMedInsType = [];
 //   MedicalInstructionTypeDTO(id: 1, typeName: 'Phiếu khám bệnh'),
@@ -162,7 +163,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               ),
               Expanded(
                 child: ListView(
-                  // shrinkWrap: true,
+                  shrinkWrap: true,
                   // physics: NeverScrollableScrollPhysics(),
                   children: [
                     BlocBuilder<HealthRecordDetailBloc,
@@ -875,9 +876,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             .medicalInstructions[index]
                                             .medicalInstructionId);
                                   } else {
-                                    // _showFullImageDescription(
-                                    //     x.medicalInstructions[index],
-                                    //     x.medicalInstructionTypeName);
+                                    _showFullImageDescription(
+                                        medicalInsShared
+                                            .medicalInstructions[index].image,
+                                        '',
+                                        '');
                                   }
                                 },
                                 child: Stack(
@@ -930,6 +933,108 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
   Future<void> _pullRefresh() async {
     getHRId();
+  }
+
+  _showFullImageDescription(String img, String miName, String dateCreate) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          //
+          return Material(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: DefaultTheme.BLACK,
+              child: Stack(
+                // mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  //
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: PhotoView(
+                      customSize: Size(MediaQuery.of(context).size.width,
+                          MediaQuery.of(context).size.height),
+                      imageProvider: NetworkImage(
+                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${img}'),
+                    ),
+                  ),
+                  Positioned(
+                    top: 20,
+                    right: 10,
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: Image.asset('assets/images/ic-close.png'),
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      padding: EdgeInsets.only(left: 30, right: 30),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              DefaultTheme.TRANSPARENT,
+                              DefaultTheme.BLACK.withOpacity(0.9),
+                            ]),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          //
+
+                          Text(
+                            '$miName',
+                            style: TextStyle(
+                                color: DefaultTheme.WHITE,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 5),
+                          ),
+                          Divider(
+                            color: DefaultTheme.WHITE,
+                            height: 1,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          // Text(
+                          //   'Ngày tạo $dateCreate',
+                          //   style: TextStyle(
+                          //       color: DefaultTheme.WHITE, fontSize: 15),
+                          // ),
+
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 50),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+          //
+        });
   }
 
   _showMorePopup() {
