@@ -184,7 +184,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
       backgroundColor: DefaultTheme.WHITE,
       title: TabBar(
           labelStyle: TextStyle(
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
               foreground: Paint()..shader = _normalHealthColors),
           indicatorPadding: EdgeInsets.only(left: 20),
@@ -195,7 +195,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
           tabs: [
             Tab(
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.5,
+                // width: MediaQuery.of(context).size.width * 0.5,
                 height: 25,
                 child: Align(
                   alignment: Alignment.center,
@@ -207,7 +207,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
             ),
             Tab(
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.5,
+                // width: MediaQuery.of(context).size.width * 0.5,
                 height: 25,
                 child: Align(
                   alignment: Alignment.centerLeft,
@@ -552,33 +552,54 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                           left: 10, top: 15, bottom: 10),
                                       child: Row(
                                         children: [
-                                          Container(
-                                            width: 70,
-                                            height: 70,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              border: Border.all(
-                                                color: DefaultTheme
-                                                    .GREY_TOP_TAB_BAR,
-                                                width: 0.5,
+                                          InkWell(
+                                            onTap: () {
+                                              if (listMedicalIns[index]
+                                                      .medicationsRespone !=
+                                                  null) {
+                                                Navigator.pushNamed(
+                                                    context,
+                                                    RoutesHDr
+                                                        .MEDICAL_HISTORY_DETAIL,
+                                                    arguments: listMedicalIns[
+                                                            index]
+                                                        .medicalInstructionId);
+                                              } else {
+                                                _showFullImageDescription(
+                                                    listMedicalIns[index]
+                                                        ?.image,
+                                                    '',
+                                                    '');
+                                              }
+                                            },
+                                            child: Container(
+                                              width: 70,
+                                              height: 70,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                border: Border.all(
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR,
+                                                  width: 0.5,
+                                                ),
                                               ),
-                                            ),
-                                            child: (listMedicalIns[index]
-                                                        ?.image ==
-                                                    null)
-                                                ? Container()
-                                                : ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    child: SizedBox(
-                                                      width: 70,
-                                                      height: 70,
-                                                      child: Image.network(
-                                                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMedicalIns[index]?.image}'),
+                                              child: (listMedicalIns[index]
+                                                          ?.image ==
+                                                      null)
+                                                  ? Container()
+                                                  : ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      child: SizedBox(
+                                                        width: 70,
+                                                        height: 70,
+                                                        child: Image.network(
+                                                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMedicalIns[index]?.image}'),
+                                                      ),
                                                     ),
-                                                  ),
+                                            ),
                                           ),
                                           Padding(
                                             padding: EdgeInsets.only(
@@ -1270,13 +1291,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   color: DefaultTheme.GREY_LIGHT,
                                 ),
                               ),
-                              // TextFieldHDr(
-                              //   controller: _dianoseController,
-                              //   style: TFStyle.NO_BORDER,
-                              //   label: 'Chẩn đoán*',
-                              //   placeHolder: 'Nhập tên bệnh lý',
-                              //   keyboardAction: TextInputAction.done,
-                              // ),
                               Padding(
                                 padding: EdgeInsets.only(top: 10, bottom: 10),
                                 child: Column(

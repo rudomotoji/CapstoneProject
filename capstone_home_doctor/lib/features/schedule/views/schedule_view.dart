@@ -586,7 +586,8 @@ class _ScheduleView extends State<ScheduleView>
                                       timechoice == null) {
                                     Future.delayed(Duration(seconds: 2), () {
                                       Navigator.of(context).pop();
-                                      _showDialogFailed();
+                                      _showDialogFailed(
+                                          'Vui lòng chọn đủ ngày và giờ khám');
                                     });
                                   } else {
                                     String dateAppointment =
@@ -609,7 +610,8 @@ class _ScheduleView extends State<ScheduleView>
                                             if (value) {
                                               _showDialogSuccess();
                                             } else {
-                                              _showDialogFailed();
+                                              _showDialogFailed(
+                                                  'Không thể gửi yêu cầu');
                                             }
                                           },
                                         );
@@ -697,7 +699,7 @@ class _ScheduleView extends State<ScheduleView>
     });
   }
 
-  _showDialogFailed() {
+  _showDialogFailed(String title) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -722,7 +724,7 @@ class _ScheduleView extends State<ScheduleView>
                       child: Image.asset('assets/images/ic-failed.png'),
                     ),
                     Text(
-                      'Không thể gửi yêu cầu',
+                      '$title',
                       style: TextStyle(
                           color: DefaultTheme.GREY_TEXT,
                           fontSize: 15,
