@@ -1648,11 +1648,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     _medInsCreateBloc.add(
                                         MedInsCreateEventSend(dto: medInsDTO));
                                   }
-                                  print(
-                                      'HR ID when prepare submit is ${_healthRecordDTO.healthRecordId}');
-                                  print('${_imgString.length}');
-                                  print(
-                                      'INDEX SELECTED IS ALSO ID TYPE ${indexSelectMedIns.toString()}');
+                                  // print(
+                                  //     'HR ID when prepare submit is ${_healthRecordDTO.healthRecordId}');
+                                  // print('${_imgString.length}');
+                                  // print(
+                                  //     'INDEX SELECTED IS ALSO ID TYPE ${indexSelectMedIns.toString()}');
 
                                   // _insertMedicalInstruction(medInsDTO);
                                   // refreshListMedicalIns();

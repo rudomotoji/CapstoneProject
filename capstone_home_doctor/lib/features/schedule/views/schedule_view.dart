@@ -222,6 +222,7 @@ class _ScheduleView extends State<ScheduleView>
           //   }
           // }
           if (state.listAppointment.length > 0) {
+            _events = {};
             _getEvent(state.listAppointment);
           }
           return _buildCalendar();
@@ -599,7 +600,7 @@ class _ScheduleView extends State<ScheduleView>
                                     });
                                   } else {
                                     String dateAppointment =
-                                        DateFormat('yyyy-mm-dd').format(
+                                        DateFormat('yyyy-MM-dd').format(
                                                 DateTime.parse(datechoice)) +
                                             'T${timechoice}:00';
                                     _appointmentBloc.add(
@@ -791,71 +792,71 @@ class _ScheduleView extends State<ScheduleView>
           if (listPrescriptions.length > 0)
             _currentPrescription = listPrescriptions[0];
         }
-        return (state.listPrescription == null ||
-                state.listPrescription.isEmpty)
-            ? Container(
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                  child: Text('Hiện chưa có lịch dùng thuốc'),
-                ),
-              )
-            : ListView(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: 20),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width - 40,
-                    decoration: BoxDecoration(
-                        color: DefaultTheme.GREY_BUTTON,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: ButtonHDr(
-                      style: BtnStyle.BUTTON_IN_LIST,
-                      label: 'Lịch sử các đơn thuốc',
-                      image: Image.asset('assets/images/ic-medicine.png'),
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(RoutesHDr.HISTORY_PRESCRIPTION);
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        EdgeInsets.only(top: 30, left: 0, right: 0, bottom: 20),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Đơn thuốc hiện hành',
-                        style: TextStyle(
-                          color: DefaultTheme.BLACK,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
+        return RefreshIndicator(
+          onRefresh: _getPatientId,
+          child:
+              (state.listPrescription == null || state.listPrescription.isEmpty)
+                  ? Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(
+                        child: Text('Hiện chưa có lịch dùng thuốc'),
                       ),
+                    )
+                  : ListView(
+                      padding: EdgeInsets.only(left: 20, right: 20),
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(top: 20),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width - 40,
+                          decoration: BoxDecoration(
+                              color: DefaultTheme.GREY_BUTTON,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: ButtonHDr(
+                            style: BtnStyle.BUTTON_IN_LIST,
+                            label: 'Lịch sử các đơn thuốc',
+                            image: Image.asset('assets/images/ic-medicine.png'),
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed(RoutesHDr.HISTORY_PRESCRIPTION);
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 30, left: 0, right: 0, bottom: 20),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Đơn thuốc hiện hành',
+                              style: TextStyle(
+                                color: DefaultTheme.BLACK,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: listPrescriptions.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                margin: EdgeInsets.only(top: 10),
+                                child: _itemSchedule(listPrescriptions[index]),
+                              );
+                            }),
+
+                        // _itemSchedule(_currentPrescription),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20),
+                        ),
+                      ],
                     ),
-                  ),
-
-                  ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: listPrescriptions.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          margin: EdgeInsets.only(top: 10),
-                          child: _itemSchedule(listPrescriptions[index]),
-                        );
-                      }),
-
-                  // _itemSchedule(_currentPrescription),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                  ),
-                ],
-              );
-
-        //
-
+        );
       }
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -1338,7 +1339,7 @@ class _ScheduleView extends State<ScheduleView>
     );
   }
 
-  _getPatientId() async {
+  Future<void> _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) async {
       await setState(() {
         _patientId = value;
