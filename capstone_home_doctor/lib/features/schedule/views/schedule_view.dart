@@ -342,8 +342,9 @@ class _ScheduleView extends State<ScheduleView>
         .parse(DateFormat('dd/MM/yyyy').format(timeEx));
 
     if ((dateAppointment.millisecondsSinceEpoch -
-            curentDateNow.millisecondsSinceEpoch) <=
-        (86400000 * 1)) {
+                curentDateNow.millisecondsSinceEpoch) ==
+            (86400000 * 1) &&
+        dto.status.contains('ACTIVE')) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -513,8 +514,15 @@ class _ScheduleView extends State<ScheduleView>
                                             );
                                             if (timePicked != null) {
                                               setModalState(() {
-                                                timechoice =
-                                                    '${timePicked.hour}:${timePicked.minute}';
+                                                var hour = timePicked.hour < 10
+                                                    ? '0${timePicked.hour}'
+                                                    : '${timePicked.hour}';
+                                                var minutes = timePicked
+                                                            .minute <
+                                                        10
+                                                    ? '0${timePicked.minute}'
+                                                    : '${timePicked.minute}';
+                                                timechoice = '$hour:$minutes';
                                               });
                                             }
                                           },

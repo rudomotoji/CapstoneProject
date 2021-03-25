@@ -43,7 +43,7 @@ class AppointmentRepository extends BaseApiClient {
         return false;
       }
     } catch (e) {
-      print('ERROR AT CANCEL APPOINTMENT ${e.toString()}');
+      print('ERROR AT CHANGE APPOINTMENT ${e.toString()}');
     }
   }
 
