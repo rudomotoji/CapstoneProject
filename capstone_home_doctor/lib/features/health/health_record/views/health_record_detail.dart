@@ -1656,7 +1656,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
                                   // _insertMedicalInstruction(medInsDTO);
                                   // refreshListMedicalIns();
-                                  Navigator.pop(context);
+                                  Future.delayed(Duration(seconds: 3), () {
+                                    _getPatientId();
+                                    getHRId();
+                                    Navigator.pop(context);
+                                  });
                                 },
                               ),
                               Padding(
