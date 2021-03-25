@@ -268,12 +268,14 @@ class SQFLiteHelper {
     }
   }
 
-  Future<List<VitalSignDTO>> getListVitalSign(String value_type) async {
+  Future<List<VitalSignDTO>> getListVitalSign(
+      String value_type, int patient_id) async {
     var dbClient = await database;
     try {
       //
       var maps = await dbClient.rawQuery(
-          'SELECT * FROM $VITAL_SIGN_TABLE WHERE value_type = ?', [value_type]);
+          'SELECT * FROM $VITAL_SIGN_TABLE WHERE value_type = ? AND patient_id = ?',
+          [value_type, patient_id]);
       List<VitalSignDTO> listVitalSign = [];
       if (maps.length > 0) {
         for (int i = 0; i < maps.length; i++) {
@@ -285,6 +287,17 @@ class SQFLiteHelper {
       }
     } catch (e) {
       print('ERROR at get heart rate list ${e}');
+    }
+  }
+
+  Future<void> deleteRecordsVitalSign(String valueType, int patientId) async {
+    var dbClient = await database;
+    try {
+      await dbClient.rawQuery(
+          'DELETE FROM $VITAL_SIGN_TABLE WHERE value_type = ? AND patient_id = ?',
+          [valueType, patientId]);
+    } catch (e) {
+      print('ERROR at delete heart rate by patientId ${e}');
     }
   }
 

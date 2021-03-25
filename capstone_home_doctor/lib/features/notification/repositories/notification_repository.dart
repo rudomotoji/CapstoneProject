@@ -61,4 +61,20 @@ class NotificationRepository extends BaseApiClient {
       print('ERROR AT PUSH NOTIFICATION ${e}');
     }
   }
+
+  //change personal health record status
+  Future<bool> changePersonalStatus(int patientId, String status) async {
+    final String url =
+        '/PersonalHealthReocrds/UpdatePersonalStatus?patientId=${patientId}&status=${status}';
+    try {
+      final request = await putApi(url, null, null);
+      if (request.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('ERROR AT changePersonalStatus ${e}');
+    }
+  }
 }

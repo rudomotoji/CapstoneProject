@@ -43,8 +43,11 @@ class VitalSignDTO {
   }
 
   String toDateString() {
-    return '${dateTime.split(' ')[1].split(':')[0].toString()},';
+    return '${dateTime.split(' ')[1].split(':')[0].toString()}';
   }
 
+  String toTimeMinString() {
+    return '${dateTime.split(' ')[1].split(':')[1].toString()},';
+  }
   //:${dateTime.split(' ')[1].split(':')[1].toString()
 }

@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
+import 'package:capstone_home_doctor/models/vital_sign_schedule.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:http/http.dart' as http;
+import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
 
 class VitalSignRepository {
   final flutterBlue = FlutterBlue.instance;
@@ -77,4 +83,29 @@ class VitalSignRepository {
   //   });
   //   return heartRateValue;
   // }
+
+}
+
+class VitalSignServerRepository extends BaseApiClient {
+  final http.Client httpClient;
+  //constructor
+  VitalSignServerRepository({@required this.httpClient})
+      : assert(httpClient != null);
+
+  //get vital sign schedule
+  Future<VitalSignScheduleDTO> getVitalSignSchedule() async {
+    String url = '';
+    try {
+      //
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        VitalSignScheduleDTO data =
+            VitalSignScheduleDTO.fromJson(jsonDecode(response.body));
+        return data;
+      }
+      return VitalSignScheduleDTO();
+    } catch (e) {
+      print('Error at get vital sign schedule ${e}');
+    }
+  }
 }

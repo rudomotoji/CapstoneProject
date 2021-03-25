@@ -36,3 +36,5 @@ class VitalSignStateGetListSuccess extends VitalSignState {
   // TODO: implement props
   List<Object> get props => [list];
 }
+
+class VitalSignDeleteSuccess extends VitalSignState {}

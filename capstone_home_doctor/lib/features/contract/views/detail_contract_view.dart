@@ -28,6 +28,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:photo_view/photo_view.dart';
+import 'package:intl/intl.dart';
 
 //
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
@@ -380,7 +381,7 @@ class _DetailContractView extends State<DetailContractView>
                     color: DefaultTheme.GREY_TOP_TAB_BAR,
                     height: 1,
                   ),
-                  (_stateContract.contains('APPROVED'))
+                  (_stateContract.contains('ACTIVE'))
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -402,9 +403,130 @@ class _DetailContractView extends State<DetailContractView>
                                       patientId: _patientId,
                                       status: 'ACTIVE',
                                     );
-
-                                    _showContractDocument(
-                                        contractUpdateDTO, true);
+                                    return showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Center(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15)),
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 25, sigmaY: 25),
+                                              child: Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 10,
+                                                    top: 10,
+                                                    right: 10),
+                                                width: 250,
+                                                height: 180,
+                                                decoration: BoxDecoration(
+                                                  color: DefaultTheme.WHITE
+                                                      .withOpacity(0.7),
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 5, top: 0),
+                                                      child: Text(
+                                                        'Lưu ý',
+                                                        style: TextStyle(
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .none,
+                                                          color: DefaultTheme
+                                                              .BLACK,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 20, right: 20),
+                                                      child: Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          'Bạn vui lòng đọc kĩ nội dung hợp đồng tiếp theo bởi vì hợp đồng sẽ có hiệu lực kể từ khi bạn xác nhận và mọi thông tin trong hợp đồng sẽ thực hiện đúng qui định của pháp luật.',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .none,
+                                                            color: DefaultTheme
+                                                                .GREY_TEXT,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Divider(
+                                                      height: 1,
+                                                      color: DefaultTheme
+                                                          .GREY_TOP_TAB_BAR,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FlatButton(
+                                                          height: 40,
+                                                          minWidth:
+                                                              250 / 2 - 10.5,
+                                                          child: Text('Đóng',
+                                                              style: TextStyle(
+                                                                  color: DefaultTheme
+                                                                      .BLUE_TEXT)),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        Container(
+                                                          height: 40,
+                                                          width: 0.5,
+                                                          color: DefaultTheme
+                                                              .GREY_TOP_TAB_BAR,
+                                                        ),
+                                                        FlatButton(
+                                                          height: 40,
+                                                          minWidth:
+                                                              250 / 2 - 10.5,
+                                                          child: Text(
+                                                              'Tiếp tục',
+                                                              style: TextStyle(
+                                                                  color: DefaultTheme
+                                                                      .BLUE_TEXT)),
+                                                          onPressed: () {
+                                                            //
+                                                            _showContractDocument(
+                                                                contractUpdateDTO,
+                                                                true);
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
                                   }
                                 },
                                 child: Row(
@@ -1006,8 +1128,10 @@ class _DetailContractView extends State<DetailContractView>
                                                       100 -
                                                       40,
                                                   child: Text(
-                                                    '${_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense} VNĐ',
+                                                    '${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)}',
                                                     style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
                                                         color: DefaultTheme
                                                             .SUCCESS_STATUS,
                                                         wordSpacing: 1,

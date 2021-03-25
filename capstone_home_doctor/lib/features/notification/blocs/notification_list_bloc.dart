@@ -56,5 +56,19 @@ class NotificationListBloc
         yield NotificationListStateFailure();
       }
     }
+    if (event is NotiChangePeopleStatusEvent) {
+      yield NotificationListStateLoading();
+      try {
+        //
+        final bool isChanged = await notificationRepository
+            .changePersonalStatus(event.patientId, event.status);
+        if (isChanged) {
+          print('changed successful status people');
+          yield NotiChangePeopleStatus(isChanged: isChanged);
+        }
+      } catch (e) {
+        yield NotificationListStateFailure();
+      }
+    }
   }
 }

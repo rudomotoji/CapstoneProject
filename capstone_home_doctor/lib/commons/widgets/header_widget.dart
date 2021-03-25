@@ -252,7 +252,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                     children: [
                       Align(
                         alignment: Alignment.centerRight,
-                        child: Text('${_patientDTO.fullName.split(' ').last}',
+                        child: Text(
+                            '${_patientDTO.fullName.split(' ')[1]} ${_patientDTO.fullName.split(' ').last}',
                             style: TextStyle(fontWeight: FontWeight.w500)),
                       ),
                       Padding(padding: EdgeInsets.only(left: 10)),

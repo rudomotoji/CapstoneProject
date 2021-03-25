@@ -35,3 +35,15 @@ class NotiPushEvent extends NotificationListEvent {
   // TODO: implement props
   List<Object> get props => [notiPushDTO];
 }
+
+class NotiChangePeopleStatusEvent extends NotificationListEvent {
+  final int patientId;
+  final String status;
+
+  const NotiChangePeopleStatusEvent(
+      {@required this.patientId, @required this.status});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [patientId, status];
+}

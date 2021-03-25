@@ -643,40 +643,147 @@ class _ContractShareView extends State<ContractShareView>
                       ),
                     ),
                   ),
-                  // Container(
-                  //   margin: EdgeInsets.only(top: 5),
-                  //   child: Text(
-                  //     'Bước 1',
-                  //     style: TextStyle(
-                  //         fontSize: 16,
-                  //         fontWeight: FontWeight.w400,
-                  //         color: DefaultTheme.GREY_TEXT),
-                  //   ),
-                  // ),
-                  (medicalInstructions1.length != 0 &&
-                          medicalInstructions2.length != 0)
-                      ? Container(
-                          margin: EdgeInsets.only(left: 20, top: 10, right: 20),
-                          width: MediaQuery.of(context).size.width - 40,
-                          child: ButtonHDr(
-                            style: BtnStyle.BUTTON_BLACK,
-                            label: 'Tiếp theo',
-                            onTap: () {
-                              print('NOW WE HAVE');
-                              print(
-                                  'list IDs of disease ${_listLv3IdSelected}');
-                              print(
-                                  'list medicalInstructionIdsSelected ${medicalInstructionIdsSelected}');
-                              Navigator.of(context).pushNamed(
-                                  RoutesHDr.CONTRACT_REASON_VIEW,
-                                  arguments: {
-                                    'REQUEST_OBJ':
-                                        requestContractProvider.getProvider,
-                                  });
+
+                  // (medicalInstructions1.length != 0 &&
+                  //         medicalInstructions2.length != 0)
+                  Container(
+                    margin: EdgeInsets.only(left: 20, top: 10, right: 20),
+                    width: MediaQuery.of(context).size.width - 40,
+                    child: ButtonHDr(
+                      style: BtnStyle.BUTTON_BLACK,
+                      label: 'Tiếp theo',
+                      onTap: () {
+                        if (medicalInstructions1.length == 0 ||
+                            medicalInstructions2.length == 0) {
+                          return showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Center(
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(15)),
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                        sigmaX: 25, sigmaY: 25),
+                                    child: Container(
+                                      padding: EdgeInsets.only(
+                                          left: 10, top: 10, right: 10),
+                                      width: 250,
+                                      height: 150,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            DefaultTheme.WHITE.withOpacity(0.7),
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Container(
+                                            padding: EdgeInsets.only(
+                                                bottom: 5, top: 10),
+                                            child: Text(
+                                              'Lưu ý',
+                                              style: TextStyle(
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.BLACK,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.only(
+                                                left: 20, right: 20),
+                                            child: Align(
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Yêu cầu của bạn có thể bị bác sĩ từ chối nếu chia sẻ không đủ các phiếu y lệnh cần thiết.',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  decoration:
+                                                      TextDecoration.none,
+                                                  color: DefaultTheme.GREY_TEXT,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Spacer(),
+                                          Divider(
+                                            height: 1,
+                                            color:
+                                                DefaultTheme.GREY_TOP_TAB_BAR,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              FlatButton(
+                                                height: 40,
+                                                minWidth: 250 / 2 - 10.5,
+                                                child: Text('Đóng',
+                                                    style: TextStyle(
+                                                        color: DefaultTheme
+                                                            .BLUE_TEXT)),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              Container(
+                                                height: 40,
+                                                width: 0.5,
+                                                color: DefaultTheme
+                                                    .GREY_TOP_TAB_BAR,
+                                              ),
+                                              FlatButton(
+                                                height: 40,
+                                                minWidth: 250 / 2 - 10.5,
+                                                child: Text('Tiếp tục',
+                                                    style: TextStyle(
+                                                        color: DefaultTheme
+                                                            .BLUE_TEXT)),
+                                                onPressed: () {
+                                                  //
+                                                  Navigator.of(context).pushNamed(
+                                                      RoutesHDr
+                                                          .CONTRACT_REASON_VIEW,
+                                                      arguments: {
+                                                        'REQUEST_OBJ':
+                                                            requestContractProvider
+                                                                .getProvider,
+                                                      });
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
-                          ),
-                        )
-                      : Container(),
+                          );
+                        }
+                        if (medicalInstructions1.length != 0 &&
+                            medicalInstructions2.length != 0) {
+                          Navigator.of(context).pushNamed(
+                              RoutesHDr.CONTRACT_REASON_VIEW,
+                              arguments: {
+                                'REQUEST_OBJ':
+                                    requestContractProvider.getProvider,
+                              });
+                        }
+                        print('NOW WE HAVE');
+                        print('list IDs of disease ${_listLv3IdSelected}');
+                        print(
+                            'list medicalInstructionIdsSelected ${medicalInstructionIdsSelected}');
+                      },
+                    ),
+                  )
                 ],
               ),
             ),
@@ -1122,7 +1229,8 @@ class _ContractShareView extends State<ContractShareView>
                           _showFullImageDescription(
                               medicalInstructions1[index].image,
                               'Phiếu điện tim',
-                              '${medicalInstructions1[index].dateCreate}');
+                              '${medicalInstructions1[index].dateCreate}',
+                              '${medicalInstructions1[index].diagnose}');
                         },
                         child: Stack(
                           children: [
@@ -1280,7 +1388,8 @@ class _ContractShareView extends State<ContractShareView>
                           _showFullImageDescription(
                               medicalInstructions2[index].image,
                               'Phiếu X-Quang',
-                              '${medicalInstructions2[index].dateCreate}');
+                              '${medicalInstructions2[index].dateCreate}',
+                              '${medicalInstructions2[index].diagnose}');
                         },
                         child: Stack(
                           children: [
@@ -1407,7 +1516,8 @@ class _ContractShareView extends State<ContractShareView>
                           _showFullImageDescription(
                               medicalInstructions3[index].image,
                               'Phiếu khác',
-                              '${medicalInstructions3[index].dateCreate}');
+                              '${medicalInstructions3[index].dateCreate}',
+                              '${medicalInstructions3[index].diagnose}');
                         },
                         child: Stack(
                           children: [
@@ -1467,7 +1577,8 @@ class _ContractShareView extends State<ContractShareView>
     );
   }
 
-  _showFullImageDescription(String img, String miName, String dateCreate) {
+  _showFullImageDescription(
+      String img, String miName, String dateCreate, String dianose) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -1547,6 +1658,11 @@ class _ContractShareView extends State<ContractShareView>
                           ),
                           Padding(
                             padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Text(
+                            'Chuẩn đoán $dianose',
+                            style: TextStyle(
+                                color: DefaultTheme.WHITE, fontSize: 15),
                           ),
                           Text(
                             'Ngày tạo $dateCreate',

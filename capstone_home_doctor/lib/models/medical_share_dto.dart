@@ -135,6 +135,7 @@ class MedicalInstructions {
   int medicalInstructionId;
   String image;
   String dateCreate;
+  String diagnose;
   bool isChecked = false;
 
   MedicalInstructions({this.medicalInstructionId, this.image, this.isChecked});
@@ -142,6 +143,7 @@ class MedicalInstructions {
   MedicalInstructions.fromJson(Map<String, dynamic> json) {
     medicalInstructionId = json['medicalInstructionId'];
     dateCreate = json['dateCreate'];
+    diagnose = json['diagnose'];
     image = json['image'];
   }
 
@@ -149,6 +151,7 @@ class MedicalInstructions {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['medicalInstructionId'] = this.medicalInstructionId;
     data['dateCreate'] = this.dateCreate;
+    data['diagnose'] = this.diagnose;
     data['image'] = this.image;
     return data;
   }

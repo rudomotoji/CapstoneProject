@@ -45,4 +45,26 @@ class VitalSignHelper {
     }
     return prefs.getInt('HEART_RATE_COUNTING_TIME');
   }
+
+  //COUNTDOWN DANGEROUS
+  Future<void> initialCountDownDangerous() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('COUNT_DOWN_DANGEROUS', 0);
+  }
+
+  Future<void> updateCountDownDangerous(int value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('COUNT_DOWN_DANGEROUS')) {
+      initialCountDownDangerous();
+    }
+    prefs.setInt('COUNT_DOWN_DANGEROUS', value);
+  }
+
+  Future<int> getCountDownDangerous() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('COUNT_DOWN_DANGEROUS')) {
+      initialCountDownDangerous();
+    }
+    return prefs.getInt('COUNT_DOWN_DANGEROUS');
+  }
 }

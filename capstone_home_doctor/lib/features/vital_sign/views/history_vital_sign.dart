@@ -9,12 +9,15 @@ import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state
 import 'package:capstone_home_doctor/models/heart_rate_dto.dart';
 import 'package:capstone_home_doctor/models/history_vivtal_sign.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
+//
+final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
 class HistoryVitalSign extends StatefulWidget {
   @override
@@ -64,14 +67,24 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
   String vital_type = 'HEART_RATE';
   // HeartRateBloc _heartRateBloc;
   VitalSignBloc _vitalSignBloc;
+  int _patientId = 0;
 
   @override
   void initState() {
-    // _heartRateBloc = BlocProvider.of(context);
-    // _heartRateBloc.add(HeartRateEventGetList());
-    // _getListVitalSign();
     _vitalSignBloc = BlocProvider.of(context);
-    _vitalSignBloc.add(VitalSignEventGetList(type: vital_type));
+    _getPatientId();
+  }
+
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) {
+      setState(() {
+        _patientId = value;
+      });
+      if (_patientId != 0) {
+        _vitalSignBloc.add(
+            VitalSignEventGetList(type: vital_type, patientId: _patientId));
+      }
+    });
   }
 
   @override
@@ -171,139 +184,5 @@ class _HistoryVitalSignState extends State<HistoryVitalSign> {
         ],
       ),
     ));
-  }
-
-  Widget _listHistory() {
-    print('list heart rate: ${listHeartRate}');
-    return (listHeartRate != null)
-        ? ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: listHeartRate.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                margin: EdgeInsets.only(
-                  top: 20,
-                  left: 16,
-                  right: 16,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // Align(
-                    //   alignment: Alignment.topLeft,
-                    //   child: Container(
-                    //     margin: EdgeInsets.only(left: 1, bottom: 5),
-                    //     child: Text(
-                    //       "19 tháng 3",
-                    //       textAlign: TextAlign.left,
-                    //       style: TextStyle(
-                    //         color: DefaultTheme.BLACK,
-                    //         fontFamily: "",
-                    //         fontWeight: FontWeight.w400,
-                    //         fontSize: 20,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    // ListView.builder(
-                    //   shrinkWrap: true,
-                    //   physics: NeverScrollableScrollPhysics(),
-                    //   itemCount: _lists[index].data.length,
-                    //   itemBuilder: (BuildContext context, int indexItem) {
-                    //     return _itemHistory();
-                    //   },
-                    // ),
-                    Text('${listHeartRate[index].value1}'),
-                  ],
-                ),
-              );
-            },
-          )
-        : Container();
-  }
-
-  Widget _itemHistory() {
-    return Container(
-      margin: EdgeInsets.only(top: 5),
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        color: DefaultTheme.GREY_VIEW,
-      ),
-      width: MediaQuery.of(context).size.width - 40,
-      child: Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              margin: EdgeInsets.only(top: 11),
-              child: Text(
-                "12:00",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  color: DefaultTheme.BLACK,
-                  fontFamily: "",
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-            Spacer(),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 20),
-                          child: Text(
-                            "92",
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              color: DefaultTheme.BLACK,
-                              fontFamily: "",
-                              fontWeight: FontWeight.w400,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "BPM",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: DefaultTheme.BLACK,
-                            fontFamily: "",
-                            fontWeight: FontWeight.w400,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 2),
-                      child: Text(
-                        "Cao bất thường",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          color: DefaultTheme.RED_TEXT,
-                          fontFamily: "",
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

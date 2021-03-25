@@ -145,19 +145,34 @@ class _MainHomeState extends State<MainHome> {
         if (countDangerous == 0) {
           //push noti here
           //
-          await vitalSignHelper.getHeartRateValue().then((value) {
+          await vitalSignHelper.getHeartRateValue().then((value) async {
             //
-            if (value < 80) {
-              // NotificationPushDTO notiPushDTO = NotificationPushDTO(
-              //     deviceType: 2,
-              //     notificationType: 2,
-              //     recipientAccountId: 2,
-              //     senderAccountId: _accountId);
-              // _notificationListBloc
-              //     .add(NotiPushEvent(notiPushDTO: notiPushDTO));
-              // countDangerous++;
-              // print('dagerous now is {countDangerous}');
-            }
+            // if (value < 100) {
+            //   await vitalSignHelper
+            //       .getCountDownDangerous()
+            //       .then((countDown) async {
+            //     await vitalSignHelper.updateCountDownDangerous(countDown += 1);
+            //     print('COUNT DOWN DANGEROUS IS ${countDown}');
+            //     if (countDown == 2) {
+            //       NotificationPushDTO notiPushDTO = NotificationPushDTO(
+            //           deviceType: 2,
+            //           notificationType: 2,
+            //           recipientAccountId: 2,
+            //           senderAccountId: _accountId);
+            //       _notificationListBloc
+            //           .add(NotiPushEvent(notiPushDTO: notiPushDTO));
+            //       countDangerous++;
+            //       print('dagerous now is {countDangerous}');
+            //       //
+            //       _notificationListBloc.add(NotiChangePeopleStatusEvent(
+            //           patientId: _patientId, status: 'DANGER'));
+            //       await vitalSignHelper.updateCountDownDangerous(0);
+            //     }
+            //     if (countDown > 2) {
+            //       await vitalSignHelper.updateCountDownDangerous(0);
+            //     }
+            //   });
+            // }
           });
         }
       }

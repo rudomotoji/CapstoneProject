@@ -106,7 +106,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
     _vitalSignBloc = BlocProvider.of(context);
-    _vitalSignBloc.add(VitalSignEventGetList(type: vitalType));
+
     _updateTokenDevice();
     // _getHeartRateValue();
   }
@@ -137,8 +137,11 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         _accountId = value;
       });
     });
+
     if (_accountId != '' && _tokenDevice != '') {
       //do update token device here
+      _vitalSignBloc
+          .add(VitalSignEventGetList(type: vitalType, patientId: _patientId));
       _tokenDeviceDTO =
           TokenDeviceDTO(accountId: _accountId, tokenDevice: _tokenDevice);
       if (_tokenDeviceDTO != null) {
@@ -339,7 +342,11 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
             ));
       }
       if (state is VitalSignStateGetListSuccess) {
-        lastMeasurement = state.list.last;
+        if (state.list != null || state.list != []) {
+          lastMeasurement = state.list.last;
+        } else {
+          return Container();
+        }
       }
       return (null != lastMeasurement)
           ? Container(
@@ -526,7 +533,11 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
             ));
       }
       if (state is VitalSignStateGetListSuccess) {
-        lastMeasurement = state.list.last;
+        if (state.list != null || state.list != []) {
+          lastMeasurement = state.list.last;
+        } else {
+          return Container();
+        }
       }
       return (null != lastMeasurement)
           ? Container(
@@ -803,6 +814,17 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           imageAsset: 'assets/images/ic-contract.png',
           onTap: () async {
             _chooseStepContract();
+          },
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 10),
+        ),
+        ButtonArtBoard(
+          title: 'Kết nối thiết bị',
+          description: 'Dữ liệu được đồng bộ qua thiết bị đeo',
+          imageAsset: 'assets/images/ic-connect-p.png',
+          onTap: () {
+            Navigator.pushNamed(context, RoutesHDr.INTRO_CONNECT_PERIPHERAL);
           },
         ),
       ],

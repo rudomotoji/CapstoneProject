@@ -30,4 +30,5 @@ class RoutesHDr {
   static const String MEDICAL_HISTORY_DETAIL = '/MedicalHistoryDetail';
   static const String VITALSIGN_HISTORY = '/VitalSignHistory';
   static const String PRESSURE_CHART_VIEW = '/PressureChartView';
+  static const String VITAL_SIGN_SCHEDULE_VIEW = '/VitalSignScheduleView';
 }

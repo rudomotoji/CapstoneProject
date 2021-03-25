@@ -12,6 +12,7 @@ import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/heart_rate_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,8 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
 class HeartChart extends StatefulWidget {
   @override
@@ -37,17 +40,33 @@ class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
   String listValueMap = '';
   String listDateMap = '';
   List<VitalSignDTO> listValue = [];
+  List<VitalSignDTO> listSortedValue = [];
+  List<VitalSignDTO> listSortedDateTime = [];
+  int _patientId = 0;
+
+  int minVitalSignValue = 0;
+  int maxVitalSignValue = 0;
+  int everageVitalSignValue = 0;
+  int _lastValueVitalSign = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _getPatientId();
     _vitalSignBloc = BlocProvider.of(context);
-    _refresh();
   }
 
-  Future _refresh() {
-    _vitalSignBloc.add(VitalSignEventGetList(type: vital_type));
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) {
+      setState(() {
+        _patientId = value;
+      });
+      if (_patientId != 0) {
+        _vitalSignBloc.add(
+            VitalSignEventGetList(type: vital_type, patientId: _patientId));
+      }
+    });
   }
 
   @override
@@ -66,6 +85,9 @@ class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
             Expanded(
               child: ListView(
                 children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 20),
+                  ),
                   BlocBuilder<VitalSignBloc, VitalSignState>(
                       builder: (context, state) {
                     //
@@ -91,36 +113,61 @@ class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
                     if (state is VitalSignStateGetListSuccess) {
                       listValueMap = '';
                       listDateMap = '';
-
-                      listValue = state.list;
-
-                      //state.list[0].toTimeString();
-                      for (VitalSignDTO x in state.list) {
-                        listValueMap += x.toValueString();
-                        // listDateMap += x.toDateString();
-                        String minHour = listValue.first.dateTime
-                            .split(' ')[1]
-                            .split(':')[0]
-                            .toString();
-                        int min = int.tryParse(minHour);
-                        String maxHour = listValue.last.dateTime
-                            .split(' ')[1]
-                            .split(':')[0]
-                            .toString();
-                        int max = int.tryParse(maxHour);
-                        int space = max - min;
+                      listSortedDateTime = state.list;
+                      listSortedValue = state.list;
+                      if (null != listSortedValue) {
+                        listSortedValue
+                            .sort((a, b) => a.value1.compareTo(b.value1));
+                        minVitalSignValue = listSortedValue.first.value1;
+                        maxVitalSignValue = listSortedValue.last.value1;
+                        everageVitalSignValue =
+                            ((minVitalSignValue + maxVitalSignValue) / 2)
+                                .toInt();
+                      }
+                      if (null != listSortedDateTime) {
+                        listSortedDateTime
+                            .sort((a, b) => a.dateTime.compareTo(b.dateTime));
+                      }
+                      for (VitalSignDTO x in listSortedDateTime) {
                         listDateMap = '';
-                        for (int i = min; i <= max; i++) {
+                        listValueMap += x.toValueString();
+
+                        int minTime = int.tryParse(
+                            listSortedDateTime.first.toDateString());
+                        int maxTime = int.tryParse(
+                            listSortedDateTime.last.toDateString());
+                        _lastValueVitalSign = listSortedDateTime.last.value1;
+                        for (int i = minTime; i <= maxTime; i++) {
                           listDateMap += i.toString() + ',';
                         }
-                        // listDateMap = minHour + ',' + maxHour;
                       }
+                      print('$listValueMap');
                     }
                     return Column(
                       children: <Widget>[
                         Container(
-                          child: Echarts(
-                            option: '''
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              //
+                              Text('Nhịp tim gần đây'),
+                              Text('${_lastValueVitalSign} BPM'),
+                              Text(
+                                  '${listSortedDateTime.last.dateTime.split(' ')[1].split('.')[0]}'),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          color: DefaultTheme.WHITE,
+                          height: 430,
+                          child: Column(
+                            children: [
+                              Container(
+                                child: Echarts(
+                                  option: '''
     {
     
       color: ['#FF784B'],
@@ -134,10 +181,12 @@ class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
                             color: '#303030',
                           },
                         },
+        name: 'GIỜ',
         type: 'category',
         data: [${listDateMap}]
       },
       yAxis: {
+         name: 'BPM',
         type: 'value',
         
                      
@@ -158,9 +207,142 @@ class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
       },]
     }
   ''',
+                                ),
+                                width: MediaQuery.of(context).size.width,
+                                padding: EdgeInsets.only(right: 10),
+                                height: 400,
+                              ),
+                              Text('Biểu đồ nhịp tim trong ngày'.toUpperCase(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: DefaultTheme.ORANGE_TEXT,
+                                  )),
+                            ],
                           ),
-                          width: MediaQuery.of(context).size.width,
-                          height: 500,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 30),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Spacer(),
+                            Container(
+                              width: 100,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: DefaultTheme.WHITE),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Thấp nhất',
+                                    style: TextStyle(
+                                        color: DefaultTheme.ORANGE_TEXT),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 5),
+                                  ),
+                                  Text(
+                                    '$minVitalSignValue',
+                                    style: TextStyle(
+                                      color: DefaultTheme.BLACK_BUTTON,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Text(
+                                    'BPM',
+                                    style: TextStyle(
+                                      color: DefaultTheme.GREY_TEXT,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            Container(
+                              width: 100,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: DefaultTheme.WHITE),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Trung bình',
+                                    style: TextStyle(
+                                        color: DefaultTheme.ORANGE_TEXT),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 5),
+                                  ),
+                                  Text(
+                                    '$everageVitalSignValue',
+                                    style: TextStyle(
+                                      color: DefaultTheme.BLACK_BUTTON,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Text(
+                                    'BPM',
+                                    style: TextStyle(
+                                      color: DefaultTheme.GREY_TEXT,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            Container(
+                              width: 100,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: DefaultTheme.WHITE),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Cao nhất',
+                                    style: TextStyle(
+                                        color: DefaultTheme.ORANGE_TEXT),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 5),
+                                  ),
+                                  Text(
+                                    '$maxVitalSignValue',
+                                    style: TextStyle(
+                                      color: DefaultTheme.BLACK_BUTTON,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Text(
+                                    'BPM',
+                                    style: TextStyle(
+                                      color: DefaultTheme.GREY_TEXT,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Spacer(),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20),
                         ),
                         Container(
                           width: MediaQuery.of(context).size.width - 40,
@@ -173,6 +355,9 @@ class _HeartChartState extends State<HeartChart> with WidgetsBindingObserver {
                                   context, RoutesHDr.VITALSIGN_HISTORY);
                             },
                           ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20),
                         ),
                       ],
                     );

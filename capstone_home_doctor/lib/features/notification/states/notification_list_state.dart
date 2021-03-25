@@ -45,3 +45,12 @@ class NotificationUpdateSuccess extends NotificationListState {
   // TODO: implement props
   List<Object> get props => [isUpdated];
 }
+
+class NotiChangePeopleStatus extends NotificationListState {
+  final bool isChanged;
+
+  const NotiChangePeopleStatus({@required this.isChanged});
+  @override
+  // TODO: implement props
+  List<Object> get props => [isChanged];
+}

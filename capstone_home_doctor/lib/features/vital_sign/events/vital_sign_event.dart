@@ -24,9 +24,22 @@ class VitalSignEventInsert extends VitalSignEvent {
 
 class VitalSignEventGetList extends VitalSignEvent {
   final String type;
-  const VitalSignEventGetList({@required this.type});
+  final int patientId;
+  const VitalSignEventGetList({@required this.type, @required this.patientId});
 
   @override
   // TODO: implement props
-  List<Object> get props => [type];
+  List<Object> get props => [type, patientId];
+}
+
+class VitalSignEventDelete extends VitalSignEvent {
+  final String valueType;
+  final int patientId;
+
+  const VitalSignEventDelete(
+      {@required this.valueType, @required this.patientId});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [valueType, patientId];
 }

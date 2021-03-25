@@ -74,6 +74,7 @@ import 'package:capstone_home_doctor/features/schedule/repositories/appointment_
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_medicine_noti_view.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
+import 'package:capstone_home_doctor/features/vital_sign/views/vital_sign_schedule_view.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/appointment_helper.dart';
@@ -305,6 +306,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('APPOINTMENT_CHANGE_DATE')) {
       _appointmentHelper.initialAppointmentChangeDate();
+    }
+    if (!prefs.containsKey('COUNT_DOWN_DANGEROUS')) {
+      _vitalSignHelper.initialCountDownDangerous();
     }
   }
 
@@ -550,6 +554,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
                     MedicalHistoryDetailView(),
                 RoutesHDr.VITALSIGN_HISTORY: (context) => HistoryVitalSign(),
                 RoutesHDr.PRESSURE_CHART_VIEW: (context) => PressureChart(),
+                RoutesHDr.VITAL_SIGN_SCHEDULE_VIEW: (context) =>
+                    VitalSignScheduleView(),
               },
               home: _startScreen,
             ),

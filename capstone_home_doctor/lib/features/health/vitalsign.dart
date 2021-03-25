@@ -130,38 +130,13 @@ class _VitalSignTabState extends State<VitalSignTab> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 10),
-          child: Align(
-              alignment: Alignment.centerLeft,
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'Gợi ý',
-                    style: TextStyle(
-                      color: DefaultTheme.BLACK,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Spacer(),
-                  Text(
-                    'Hiện tại chưa có thiết bị kết nối',
-                    style: TextStyle(
-                      color: DefaultTheme.GREY_TEXT,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                ],
-              )),
-        ),
         ButtonArtBoard(
-          title: 'Kết nối thiết bị',
-          description: 'Dữ liệu được đồng bộ qua thiết bị đeo',
-          imageAsset: 'assets/images/ic-connect-p.png',
+          title: 'Lịch sinh hiệu',
+          description:
+              'Quy trình đo sinh hiệu sẽ được bác sĩ lên lịch để theo dõi tốt hơn',
+          imageAsset: 'assets/images/ic-health-selected.png',
           onTap: () {
-            Navigator.pushNamed(context, RoutesHDr.INTRO_CONNECT_PERIPHERAL);
+            Navigator.pushNamed(context, RoutesHDr.VITAL_SIGN_SCHEDULE_VIEW);
           },
         ),
         Padding(

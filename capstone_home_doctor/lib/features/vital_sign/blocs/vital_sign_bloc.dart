@@ -39,7 +39,7 @@ class VitalSignBloc extends Bloc<VitalSignEvent, VitalSignState> {
       yield VitalSignStateLoading();
       try {
         final List<VitalSignDTO> list =
-            await sqfLiteHelper.getListVitalSign(event.type);
+            await sqfLiteHelper.getListVitalSign(event.type, event.patientId);
         yield VitalSignStateGetListSuccess(list: list);
       } catch (e) {
         yield VitalSignStateFailure();
