@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/features/dashboard/dashboard.dart';
 import 'package:capstone_home_doctor/features/health/health.dart';
 import 'package:capstone_home_doctor/features/message/message.dart';

@@ -222,6 +222,7 @@ class _ScheduleView extends State<ScheduleView>
           //   }
           // }
           if (state.listAppointment.length > 0) {
+            _events = {};
             _getEvent(state.listAppointment);
           }
           return _buildCalendar();
@@ -342,8 +343,9 @@ class _ScheduleView extends State<ScheduleView>
         .parse(DateFormat('dd/MM/yyyy').format(timeEx));
 
     if ((dateAppointment.millisecondsSinceEpoch -
-            curentDateNow.millisecondsSinceEpoch) <=
-        (86400000 * 1)) {
+                curentDateNow.millisecondsSinceEpoch) ==
+            (86400000 * 1) &&
+        dto.status.contains('ACTIVE')) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -513,8 +515,15 @@ class _ScheduleView extends State<ScheduleView>
                                             );
                                             if (timePicked != null) {
                                               setModalState(() {
-                                                timechoice =
-                                                    '${timePicked.hour}:${timePicked.minute}';
+                                                var hour = timePicked.hour < 10
+                                                    ? '0${timePicked.hour}'
+                                                    : '${timePicked.hour}';
+                                                var minutes = timePicked
+                                                            .minute <
+                                                        10
+                                                    ? '0${timePicked.minute}'
+                                                    : '${timePicked.minute}';
+                                                timechoice = '$hour:$minutes';
                                               });
                                             }
                                           },
@@ -586,11 +595,12 @@ class _ScheduleView extends State<ScheduleView>
                                       timechoice == null) {
                                     Future.delayed(Duration(seconds: 2), () {
                                       Navigator.of(context).pop();
-                                      _showDialogFailed();
+                                      _showDialogFailed(
+                                          'Vui lòng chọn đủ ngày và giờ khám');
                                     });
                                   } else {
                                     String dateAppointment =
-                                        DateFormat('yyyy-mm-dd').format(
+                                        DateFormat('yyyy-MM-dd').format(
                                                 DateTime.parse(datechoice)) +
                                             'T${timechoice}:00';
                                     _appointmentBloc.add(
@@ -609,7 +619,8 @@ class _ScheduleView extends State<ScheduleView>
                                             if (value) {
                                               _showDialogSuccess();
                                             } else {
-                                              _showDialogFailed();
+                                              _showDialogFailed(
+                                                  'Không thể gửi yêu cầu');
                                             }
                                           },
                                         );
@@ -697,7 +708,7 @@ class _ScheduleView extends State<ScheduleView>
     });
   }
 
-  _showDialogFailed() {
+  _showDialogFailed(String title) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -722,7 +733,7 @@ class _ScheduleView extends State<ScheduleView>
                       child: Image.asset('assets/images/ic-failed.png'),
                     ),
                     Text(
-                      'Không thể gửi yêu cầu',
+                      '$title',
                       style: TextStyle(
                           color: DefaultTheme.GREY_TEXT,
                           fontSize: 15,
@@ -781,71 +792,71 @@ class _ScheduleView extends State<ScheduleView>
           if (listPrescriptions.length > 0)
             _currentPrescription = listPrescriptions[0];
         }
-        return (state.listPrescription == null ||
-                state.listPrescription.isEmpty)
-            ? Container(
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                  child: Text('Hiện chưa có lịch dùng thuốc'),
-                ),
-              )
-            : ListView(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: 20),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width - 40,
-                    decoration: BoxDecoration(
-                        color: DefaultTheme.GREY_BUTTON,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: ButtonHDr(
-                      style: BtnStyle.BUTTON_IN_LIST,
-                      label: 'Lịch sử các đơn thuốc',
-                      image: Image.asset('assets/images/ic-medicine.png'),
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(RoutesHDr.HISTORY_PRESCRIPTION);
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        EdgeInsets.only(top: 30, left: 0, right: 0, bottom: 20),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Đơn thuốc hiện hành',
-                        style: TextStyle(
-                          color: DefaultTheme.BLACK,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
+        return RefreshIndicator(
+          onRefresh: _getPatientId,
+          child:
+              (state.listPrescription == null || state.listPrescription.isEmpty)
+                  ? Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Center(
+                        child: Text('Hiện chưa có lịch dùng thuốc'),
                       ),
+                    )
+                  : ListView(
+                      padding: EdgeInsets.only(left: 20, right: 20),
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(top: 20),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width - 40,
+                          decoration: BoxDecoration(
+                              color: DefaultTheme.GREY_BUTTON,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: ButtonHDr(
+                            style: BtnStyle.BUTTON_IN_LIST,
+                            label: 'Lịch sử các đơn thuốc',
+                            image: Image.asset('assets/images/ic-medicine.png'),
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed(RoutesHDr.HISTORY_PRESCRIPTION);
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 30, left: 0, right: 0, bottom: 20),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Đơn thuốc hiện hành',
+                              style: TextStyle(
+                                color: DefaultTheme.BLACK,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: listPrescriptions.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                margin: EdgeInsets.only(top: 10),
+                                child: _itemSchedule(listPrescriptions[index]),
+                              );
+                            }),
+
+                        // _itemSchedule(_currentPrescription),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20),
+                        ),
+                      ],
                     ),
-                  ),
-
-                  ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: listPrescriptions.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          margin: EdgeInsets.only(top: 10),
-                          child: _itemSchedule(listPrescriptions[index]),
-                        );
-                      }),
-
-                  // _itemSchedule(_currentPrescription),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                  ),
-                ],
-              );
-
-        //
-
+        );
       }
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -1328,7 +1339,7 @@ class _ScheduleView extends State<ScheduleView>
     );
   }
 
-  _getPatientId() async {
+  Future<void> _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) async {
       await setState(() {
         _patientId = value;
