@@ -33,6 +33,7 @@ import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
+import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -104,6 +105,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   MedInsScanTextBloc _medicalScanText;
   List<MedicalInstructionDTO> listMedicalIns = [];
   List<MedicalInstructionByTypeDTO> listMedicalInsShared = [];
+  final MedicalInstructionHelper _medicalInstructionHelper =
+      MedicalInstructionHelper();
   HealthRecordDTO _healthRecordDTO = HealthRecordDTO(
       contractId: 0,
       dateCreated: '',
@@ -1647,8 +1650,200 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       dateFinished: _startDate,
                                       imageFile: _imgFile,
                                     );
+
+                                    setState(() {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Center(
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                              child: BackdropFilter(
+                                                filter: ImageFilter.blur(
+                                                    sigmaX: 25, sigmaY: 25),
+                                                child: Container(
+                                                  width: 300,
+                                                  height: 300,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      color: DefaultTheme.WHITE
+                                                          .withOpacity(0.8)),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 200,
+                                                        height: 200,
+                                                        child: Image.asset(
+                                                            'assets/images/loading.gif'),
+                                                      ),
+                                                      Text(
+                                                        'Đang tạo...',
+                                                        style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .GREY_TEXT,
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .none),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    });
                                     _medInsCreateBloc.add(
                                         MedInsCreateEventSend(dto: medInsDTO));
+                                    Navigator.of(context).pop();
+
+                                    Future.delayed(Duration(seconds: 3), () {
+                                      _medicalInstructionHelper
+                                          .getMedicalInsCreate()
+                                          .then((value) {
+                                        if (value) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return Center(
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(5)),
+                                                  child: BackdropFilter(
+                                                    filter: ImageFilter.blur(
+                                                        sigmaX: 25, sigmaY: 25),
+                                                    child: Container(
+                                                      width: 200,
+                                                      height: 200,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          color: DefaultTheme
+                                                              .WHITE
+                                                              .withOpacity(
+                                                                  0.8)),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 100,
+                                                            height: 100,
+                                                            child: Image.asset(
+                                                                'assets/images/ic-checked.png'),
+                                                          ),
+                                                          Text(
+                                                            'Tạo thành công',
+                                                            style: TextStyle(
+                                                                color: DefaultTheme
+                                                                    .GREY_TEXT,
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .none),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                          Future.delayed(
+                                              const Duration(seconds: 2), () {
+                                            _getPatientId();
+                                            getHRId();
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          });
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return Center(
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(5)),
+                                                  child: BackdropFilter(
+                                                    filter: ImageFilter.blur(
+                                                        sigmaX: 25, sigmaY: 25),
+                                                    child: Container(
+                                                      width: 200,
+                                                      height: 200,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          color: DefaultTheme
+                                                              .WHITE
+                                                              .withOpacity(
+                                                                  0.8)),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 100,
+                                                            height: 100,
+                                                            child: Image.asset(
+                                                                'assets/images/ic-failed.png'),
+                                                          ),
+                                                          Text(
+                                                            'Không thể tạo y lệnh, vui lòng tạo lại',
+                                                            style: TextStyle(
+                                                                color: DefaultTheme
+                                                                    .GREY_TEXT,
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .none),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                          Future.delayed(
+                                              const Duration(seconds: 2), () {
+                                            Navigator.of(context).pop();
+                                          });
+                                        }
+                                      });
+                                    });
                                   }
                                   // print(
                                   //     'HR ID when prepare submit is ${_healthRecordDTO.healthRecordId}');
@@ -1658,11 +1853,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
                                   // _insertMedicalInstruction(medInsDTO);
                                   // refreshListMedicalIns();
-                                  Future.delayed(Duration(seconds: 3), () {
-                                    _getPatientId();
-                                    getHRId();
-                                    Navigator.pop(context);
-                                  });
                                 },
                               ),
                               Padding(

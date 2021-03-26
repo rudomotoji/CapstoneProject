@@ -81,6 +81,7 @@ import 'package:capstone_home_doctor/services/appointment_helper.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
+import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
 import 'package:capstone_home_doctor/services/medical_share_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
@@ -116,6 +117,8 @@ final ContractHelper contractHelper = ContractHelper();
 final MedicalShareHelper _medicalShareHelper = MedicalShareHelper();
 final VitalSignHelper _vitalSignHelper = VitalSignHelper();
 final AppointmentHelper _appointmentHelper = AppointmentHelper();
+final MedicalInstructionHelper _medicalInstructionHelper =
+    MedicalInstructionHelper();
 //
 
 //repo for blocs
@@ -309,6 +312,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('COUNT_DOWN_DANGEROUS')) {
       _vitalSignHelper.initialCountDownDangerous();
+    }
+    if (!prefs.containsKey('MED_INSTRUCTION_CREATE')) {
+      _medicalInstructionHelper.initialMedicalInstructionCreate();
     }
   }
 
