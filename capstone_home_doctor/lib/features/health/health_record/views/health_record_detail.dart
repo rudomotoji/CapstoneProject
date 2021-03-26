@@ -5,6 +5,7 @@ import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/utils/img_util.dart';
+import 'package:capstone_home_doctor/commons/utils/teseract_oct.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
@@ -27,6 +28,7 @@ import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical
 import 'package:capstone_home_doctor/features/health/medical_share/events/medical_Share_event.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/states/medical_share_state.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
+import 'package:capstone_home_doctor/models/image_scanner_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
@@ -1500,14 +1502,14 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                               is MedInsScanTextStateSuccess) {
                                             if (state.data.title != null) {
                                               titleCompare = state.data.title;
+                                              _dianoseController.text =
+                                                  state.data.symptom;
                                               var percentCompare =
                                                   _selectedHRType
                                                       .toLowerCase()
                                                       .similarityTo(titleCompare
                                                           .toLowerCase());
                                               if (percentCompare > 0.7) {
-                                                _dianoseController.text =
-                                                    state.data.symptom;
                                                 return Container();
                                               } else {
                                                 if (_selectedHRType == "") {
