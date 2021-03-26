@@ -118,14 +118,18 @@ class MedicalInstructionRepository extends BaseApiClient {
             title = itemString;
           }
           if (title != "") {
-            if (strSymptom.contains('Triệu')) {
-              if (itemString.contains(' - ')) {
+            if (strSymptom.contains('Triệu') ||
+                strSymptom.contains('chứng') ||
+                strSymptom.contains('Chẩn')) {
+              if (itemString.contains('-')) {
                 strSymptom += itemString;
               } else if (itemString.contains('(')) {
                 strSymptom += itemString;
               }
             }
-            if (itemString.contains('Triệu ')) {
+            if (itemString.contains('Triệu') ||
+                itemString.contains('chứng') ||
+                itemString.contains('Chẩn')) {
               strSymptom += itemString;
             }
           }
