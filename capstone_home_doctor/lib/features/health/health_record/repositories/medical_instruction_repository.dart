@@ -91,8 +91,8 @@ class MedicalInstructionRepository extends BaseApiClient {
     request.fields['PatientId'] = '${dto.patientId}';
     request.fields['Description'] = '${dto.description}';
     request.fields['Diagnose'] = '${dto.diagnose}';
-    request.fields['DateStarted'] = '${dto.dateStarted}';
-    request.fields['DateFinished'] = '${dto.dateFinished}';
+    // request.fields['DateStarted'] = '${dto.dateStarted}';
+    // request.fields['DateFinished'] = '${dto.dateFinished}';
     request.files.add(http.MultipartFile(
         'image',
         File(dto.imageFile.path).readAsBytes().asStream(),

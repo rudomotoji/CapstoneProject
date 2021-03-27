@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:intl/intl.dart';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
@@ -512,6 +513,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         }
         if (state is MedicalInstructionListStateSuccess) {
           if (state.listMedIns != null || state.listMedIns.isNotEmpty) {
+            listMedicalIns.clear();
+            listMedicalInsShared.clear();
             for (var medicalIns in state.listMedIns) {
               if (medicalIns.status != null) {
                 if (medicalIns.status.contains('DOCTOR')) {
@@ -562,6 +565,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   }
 
   Widget _itemRow(MedicalInstructionDTO dto) {
+    DateTime dateCreated = DateFormat('yyyy-MM-dd').parse(dto.dateCreate);
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20),
       child: Row(
@@ -595,7 +599,10 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
                                       arguments: dto.medicalInstructionId);
                                 } else {
-                                  _showFullImageDescription(dto?.image, '', '');
+                                  _showFullImageDescription(
+                                      dto?.image,
+                                      dto.medicalInstructionType,
+                                      '${DateFormat('dd/MM/yyyy').format(dateCreated)}');
                                 }
                               },
                               child: Container(
@@ -631,12 +638,16 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                       )),
+                                  Text(
+                                    'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(dateCreated)}',
+                                    style: TextStyle(
+                                        color: DefaultTheme.GREY_TEXT),
+                                  ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      //
                                       Container(
                                         width: 80,
                                         child: Text(
@@ -717,127 +728,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
       ),
     );
   }
-
-  // Widget _itemMedInsShared(MedicalInstructionDTO medicalInsShared) {
-  //   print('${medicalInsShared.medicalInstructionType}');
-  //   return Container(
-  //     width: MediaQuery.of(context).size.width,
-  //     color: DefaultTheme.WHITE,
-  //     child: Column(
-  //       children: [
-  //         Divider(
-  //           color: DefaultTheme.GREY_TOP_TAB_BAR,
-  //           height: 1,
-  //         ),
-  //         Container(
-  //           width: MediaQuery.of(context).size.width,
-  //           padding: EdgeInsets.only(top: 10, bottom: 10, left: 20),
-  //           color: DefaultTheme.WHITE,
-  //           child: Row(
-  //             children: [
-  //               SizedBox(
-  //                 width: 20,
-  //                 height: 20,
-  //                 child:
-  //                     Image.asset('assets/images/ic-medical-instruction.png'),
-  //               ),
-  //               Padding(
-  //                 padding: EdgeInsets.only(left: 10),
-  //               ),
-  //               Text(
-  //                 '${medicalInsShared.medicalInstructionType}',
-  //                 textAlign: TextAlign.left,
-  //                 style:
-  //                     TextStyle(fontSize: 15, color: DefaultTheme.BLACK_BUTTON),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         Container(
-  //           width: MediaQuery.of(context).size.width,
-  //           height: 200,
-  //           child: ListView(
-  //             scrollDirection: Axis.horizontal,
-  //             children: [
-  //               Container(
-  //                 height: 200,
-  //                 child: ListView.builder(
-  //                   scrollDirection: Axis.horizontal,
-  //                   shrinkWrap: true,
-  //                   physics: NeverScrollableScrollPhysics(),
-  //                   itemCount: medicalInsShared.medicalInstructions.length,
-  //                   itemBuilder: (BuildContext context, int index) {
-  //                     return Container(
-  //                       height: 200,
-  //                       width: 150,
-  //                       margin: EdgeInsets.only(left: 10),
-  //                       child: (medicalInsShared
-  //                                   .medicalInstructions[index].image !=
-  //                               null)
-  //                           ? InkWell(
-  //                               onTap: () {
-  //                                 if (medicalInsShared. !=
-  //                                     null) {
-  //                                   Navigator.pushNamed(context,
-  //                                       RoutesHDr.MEDICAL_HISTORY_DETAIL,
-  //                                       arguments: medicalInsShared
-  //                                           .medicalInstructions[index]
-  //                                           .medicalInstructionId);
-  //                                 } else {
-  //                                   _showFullImageDescription(
-  //                                       medicalInsShared
-  //                                           .medicalInstructions[index].image,
-  //                                       '',
-  //                                       '');
-  //                                 }
-  //                               },
-  //                               child: Stack(
-  //                                 children: [
-  //                                   //
-  //                                   SizedBox(
-  //                                     width: 150,
-  //                                     height: 200,
-  //                                     child: Image.network(
-  //                                         'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInsShared.medicalInstructions[index].image}'),
-  //                                   ),
-  //                                   Positioned(
-  //                                     bottom: 0,
-  //                                     child: Container(
-  //                                       width: 150,
-  //                                       height: 100,
-  //                                       padding: EdgeInsets.only(bottom: 10),
-  //                                       decoration: BoxDecoration(
-  //                                         gradient: LinearGradient(
-  //                                             begin: Alignment.topCenter,
-  //                                             end: Alignment.bottomCenter,
-  //                                             colors: [
-  //                                               DefaultTheme.TRANSPARENT,
-  //                                               DefaultTheme.BLACK
-  //                                                   .withOpacity(0.9),
-  //                                             ]),
-  //                                       ),
-  //                                     ),
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             )
-  //                           : Container(
-  //                               width: 150,
-  //                               height: 200,
-  //                               color:
-  //                                   DefaultTheme.RED_CALENDAR.withOpacity(0.2),
-  //                             ),
-  //                     );
-  //                   },
-  //                 ),
-  //               )
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Future<void> _pullRefresh() async {
     getHRId();
@@ -924,12 +814,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                           Padding(
                             padding: EdgeInsets.only(bottom: 10),
                           ),
-                          // Text(
-                          //   'Ngày tạo $dateCreate',
-                          //   style: TextStyle(
-                          //       color: DefaultTheme.WHITE, fontSize: 15),
-                          // ),
-
+                          Text(
+                            'Ngày tạo $dateCreate',
+                            style: TextStyle(
+                                color: DefaultTheme.WHITE, fontSize: 15),
+                          ),
                           Padding(
                             padding: EdgeInsets.only(bottom: 50),
                           ),
@@ -1258,138 +1147,137 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                 height: 0.1,
                                 color: DefaultTheme.GREY_LIGHT,
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 20, right: 5),
-                                      child: Text(
-                                        'Ngày*',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16),
-                                      ),
-                                    ),
-                                    (_startDate == '')
-                                        ? Container()
-                                        : Text(
-                                            '${_dateView?.split("-")[2]}, tháng ${_dateView?.split("-")[1]}, ${_dateView.split("-")[0]}',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 15),
-                                          ),
-                                    Expanded(
-                                      child: ButtonHDr(
-                                        label: 'Chọn',
-                                        style: BtnStyle.BUTTON_FULL,
-                                        image: Image.asset(
-                                            'assets/images/ic-choose-date.png'),
-                                        width: 30,
-                                        height: 40,
-                                        labelColor: DefaultTheme.BLUE_REFERENCE,
-                                        bgColor: DefaultTheme.TRANSPARENT,
-                                        onTap: () {
-                                          showDialog(
-                                            context: context2,
-                                            builder: (BuildContext context2) {
-                                              return Center(
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(15)),
-                                                  child: BackdropFilter(
-                                                    filter: ImageFilter.blur(
-                                                        sigmaX: 25, sigmaY: 25),
-                                                    child: Container(
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width -
-                                                              20,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.5,
-                                                      decoration: BoxDecoration(
-                                                        color: DefaultTheme
-                                                            .WHITE
-                                                            .withOpacity(0.6),
-                                                      ),
-                                                      child: Column(
-                                                        children: <Widget>[
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .fromLTRB(20,
-                                                                    20, 20, 0),
-                                                            child: Align(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              child: Text(
-                                                                'Ngày',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 25,
-                                                                  color:
-                                                                      DefaultTheme
-                                                                          .BLACK,
-                                                                  decoration:
-                                                                      TextDecoration
-                                                                          .none,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                                CupertinoDatePicker(
-                                                                    mode: CupertinoDatePickerMode
-                                                                        .date,
-                                                                    onDateTimeChanged:
-                                                                        (dateTime) {
-                                                                      setModalState(
-                                                                          () {
-                                                                        _dateView = dateTime
-                                                                            .toString()
-                                                                            .split(' ')[0];
-
-                                                                        _startDate =
-                                                                            dateTime.toString();
-                                                                      });
-                                                                    }),
-                                                          ),
-                                                          ButtonHDr(
-                                                            style: BtnStyle
-                                                                .BUTTON_BLACK,
-                                                            label: 'Chọn',
-                                                            onTap: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              // Padding(
+                              //   padding: EdgeInsets.only(top: 0),
+                              //   child: Row(
+                              //     mainAxisAlignment: MainAxisAlignment.start,
+                              //     children: [
+                              //       Padding(
+                              //         padding:
+                              //             EdgeInsets.only(left: 20, right: 5),
+                              //         child: Text(
+                              //           'Ngày*',
+                              //           style: TextStyle(
+                              //               fontWeight: FontWeight.w500,
+                              //               fontSize: 16),
+                              //         ),
+                              //       ),
+                              //       (_startDate == '')
+                              //           ? Container()
+                              //           : Text(
+                              //               '${_dateView?.split("-")[2]}, tháng ${_dateView?.split("-")[1]}, ${_dateView.split("-")[0]}',
+                              //               style: TextStyle(
+                              //                   fontWeight: FontWeight.w400,
+                              //                   fontSize: 15),
+                              //             ),
+                              //       Expanded(
+                              //         child: ButtonHDr(
+                              //           label: 'Chọn',
+                              //           style: BtnStyle.BUTTON_FULL,
+                              //           image: Image.asset(
+                              //               'assets/images/ic-choose-date.png'),
+                              //           width: 30,
+                              //           height: 40,
+                              //           labelColor: DefaultTheme.BLUE_REFERENCE,
+                              //           bgColor: DefaultTheme.TRANSPARENT,
+                              //           onTap: () {
+                              //             showDialog(
+                              //               context: context2,
+                              //               builder: (BuildContext context2) {
+                              //                 return Center(
+                              //                   child: ClipRRect(
+                              //                     borderRadius:
+                              //                         BorderRadius.all(
+                              //                             Radius.circular(15)),
+                              //                     child: BackdropFilter(
+                              //                       filter: ImageFilter.blur(
+                              //                           sigmaX: 25, sigmaY: 25),
+                              //                       child: Container(
+                              //                         padding:
+                              //                             EdgeInsets.all(10),
+                              //                         width:
+                              //                             MediaQuery.of(context)
+                              //                                     .size
+                              //                                     .width -
+                              //                                 20,
+                              //                         height:
+                              //                             MediaQuery.of(context)
+                              //                                     .size
+                              //                                     .height *
+                              //                                 0.5,
+                              //                         decoration: BoxDecoration(
+                              //                           color: DefaultTheme
+                              //                               .WHITE
+                              //                               .withOpacity(0.6),
+                              //                         ),
+                              //                         child: Column(
+                              //                           children: <Widget>[
+                              //                             Padding(
+                              //                               padding: EdgeInsets
+                              //                                   .fromLTRB(20,
+                              //                                       20, 20, 0),
+                              //                               child: Align(
+                              //                                 alignment: Alignment
+                              //                                     .centerLeft,
+                              //                                 child: Text(
+                              //                                   'Ngày',
+                              //                                   style:
+                              //                                       TextStyle(
+                              //                                     fontSize: 25,
+                              //                                     color:
+                              //                                         DefaultTheme
+                              //                                             .BLACK,
+                              //                                     decoration:
+                              //                                         TextDecoration
+                              //                                             .none,
+                              //                                     fontWeight:
+                              //                                         FontWeight
+                              //                                             .w500,
+                              //                                   ),
+                              //                                 ),
+                              //                               ),
+                              //                             ),
+                              //                             Expanded(
+                              //                               child:
+                              //                                   CupertinoDatePicker(
+                              //                                       mode: CupertinoDatePickerMode
+                              //                                           .date,
+                              //                                       onDateTimeChanged:
+                              //                                           (dateTime) {
+                              //                                         setModalState(
+                              //                                             () {
+                              //                                           _dateView = dateTime
+                              //                                               .toString()
+                              //                                               .split(' ')[0];
+                              //                                           _startDate =
+                              //                                               dateTime.toString();
+                              //                                         });
+                              //                                       }),
+                              //                             ),
+                              //                             ButtonHDr(
+                              //                               style: BtnStyle
+                              //                                   .BUTTON_BLACK,
+                              //                               label: 'Chọn',
+                              //                               onTap: () {
+                              //                                 Navigator.of(
+                              //                                         context)
+                              //                                     .pop();
+                              //                               },
+                              //                             ),
+                              //                           ],
+                              //                         ),
+                              //                       ),
+                              //                     ),
+                              //                   ),
+                              //                 );
+                              //               },
+                              //             );
+                              //           },
+                              //         ),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
                               Divider(
                                 height: 0.1,
                                 color: DefaultTheme.GREY_LIGHT,
@@ -1586,8 +1474,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       patientId: _patientId,
                                       description: _note,
                                       diagnose: _dianoseController.text,
-                                      dateStarted: _startDate,
-                                      dateFinished: _startDate,
+                                      // dateStarted: _startDate,
+                                      // dateFinished: _startDate,
                                       imageFile: _imgFile,
                                     );
 
@@ -1648,12 +1536,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     });
                                     _medInsCreateBloc.add(
                                         MedInsCreateEventSend(dto: medInsDTO));
-                                    Navigator.of(context).pop();
-
                                     Future.delayed(Duration(seconds: 3), () {
                                       _medicalInstructionHelper
                                           .getMedicalInsCreate()
                                           .then((value) {
+                                        Navigator.of(context).pop();
                                         if (value) {
                                           showDialog(
                                             context: context,
@@ -1712,10 +1599,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                               );
                                             },
                                           );
+                                          getHRId();
                                           Future.delayed(
                                               const Duration(seconds: 2), () {
-                                            _getPatientId();
-                                            getHRId();
                                             Navigator.of(context).pop();
                                             Navigator.of(context).pop();
                                           });
@@ -1835,7 +1721,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         if (_hrId != 0) {
           _healthRecordDetailBloc.add(HealthRecordEventGetById(id: _hrId));
           _medicalInstructionListBloc
-              .add(MedicalInstructionListEventGetList(hrId: 9058));
+              .add(MedicalInstructionListEventGetList(hrId: _hrId));
           _medInsTypeListBloc.add(MedInsTypeEventGetList(status: 'active'));
         }
       },

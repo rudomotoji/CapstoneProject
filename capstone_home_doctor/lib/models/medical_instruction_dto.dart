@@ -113,14 +113,15 @@ class MedicalInstructionDTO {
   String description;
   String diagnose;
   String placeHealthRecord;
-  String dateStarted;
-  String dateFinished;
+  // String dateStarted;
+  // String dateFinished;
   String patientFullName;
   String status;
   PrescriptionDTO medicationsRespone;
   //for multiple part post api
   int medicalInstructionTypeId;
   int healthRecordId;
+  String dateCreate;
   int patientId;
   PickedFile imageFile;
 
@@ -131,8 +132,9 @@ class MedicalInstructionDTO {
       this.description,
       this.diagnose,
       this.placeHealthRecord,
-      this.dateStarted,
-      this.dateFinished,
+      // this.dateStarted,
+      // this.dateFinished,
+      this.dateCreate,
       this.medicalInstructionTypeId,
       this.healthRecordId,
       this.patientId,
@@ -147,8 +149,9 @@ class MedicalInstructionDTO {
     description = json['description'];
     diagnose = json['diagnose'];
     placeHealthRecord = json['placeHealthRecord'];
-    dateStarted = json['dateStarted'];
-    dateFinished = json['dateFinished'];
+    // dateStarted = json['dateStarted'];
+    // dateFinished = json['dateFinished'];
+    dateCreate = json['dateCreate'];
     patientFullName = json['patientFullName'];
     status = json['status'];
     medicationsRespone = json['prescriptionRespone'] != null
@@ -163,8 +166,9 @@ class MedicalInstructionDTO {
     data['description'] = this.description;
     data['diagnose'] = this.diagnose;
     data['placeHealthRecord'] = this.placeHealthRecord;
-    data['dateStarted'] = this.dateStarted;
-    data['dateFinished'] = this.dateFinished;
+    // data['dateStarted'] = this.dateStarted;
+    // data['dateFinished'] = this.dateFinished;
+    data['dateCreate'] = this.dateCreate;
     data['patientFullName'] = this.patientFullName;
     data['status'] = this.status;
     return data;
