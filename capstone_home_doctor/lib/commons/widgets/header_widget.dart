@@ -61,7 +61,7 @@ class _HeaderWidget extends State<HeaderWidget> {
   int _patientId = 0;
   SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   PatientBloc _patientBloc;
-  PatientDTO _patientDTO = PatientDTO();
+  PatientDTO _patientDTO = PatientDTO(fullName: 'User Full Name');
 
   @override
   _HeaderWidget(

@@ -43,7 +43,7 @@ import 'package:capstone_home_doctor/features/health/medical_share/views/medical
 import 'package:capstone_home_doctor/features/vital_sign/blocs/heart_rate_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
-import 'package:capstone_home_doctor/features/vital_sign/views/heart_chart.dart';
+import 'package:capstone_home_doctor/features/vital_sign/views/heart_detail_view.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/history_vital_sign.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/pressure_chart.dart';
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
@@ -189,6 +189,9 @@ void checkNotifiMedical() async {
       for (var schedule in value) {
         if (!body.contains(schedule.medicationName)) {
           body += schedule.medicationName + ', ';
+          if (value.length == 1) {
+            body = schedule.medicationName;
+          }
         }
       }
     });
@@ -198,6 +201,9 @@ void checkNotifiMedical() async {
       for (var schedule in value) {
         if (!body.contains(schedule.medicationName)) {
           body += schedule.medicationName + ', ';
+          if (value.length == 1) {
+            body = schedule.medicationName;
+          }
         }
       }
     });
@@ -207,6 +213,9 @@ void checkNotifiMedical() async {
       for (var schedule in value) {
         if (!body.contains(schedule.medicationName)) {
           body += schedule.medicationName + ', ';
+          if (value.length == 1) {
+            body = schedule.medicationName;
+          }
         }
       }
     });
@@ -216,6 +225,9 @@ void checkNotifiMedical() async {
       for (var schedule in value) {
         if (!body.contains(schedule.medicationName)) {
           body += schedule.medicationName + ', ';
+          if (value.length == 1) {
+            body = schedule.medicationName;
+          }
         }
       }
     });
@@ -309,6 +321,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('COUNT_DOWN_DANGEROUS')) {
       _vitalSignHelper.initialCountDownDangerous();
+    }
+    if (!prefs.containsKey('COUNT_IN_BACKGROUND')) {
+      _vitalSignHelper.initialCountInBackground();
     }
   }
 
@@ -538,7 +553,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                     CreateHealthRecord(_doNothing()),
                 RoutesHDr.HEALTH_RECORD_DETAIL: (context) =>
                     HealthRecordDetail(),
-                RoutesHDr.HEART: (context) => HeartChart(),
+                RoutesHDr.HEART: (context) => HeartDetailView(),
                 RoutesHDr.MEDICINE_NOTI_VIEW: (context) =>
                     ScheduleMedNotiView(),
                 RoutesHDr.MEDICAL_SHARE: (context) => MedicalShare(),

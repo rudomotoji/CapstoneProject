@@ -381,7 +381,7 @@ class _DetailContractView extends State<DetailContractView>
                     color: DefaultTheme.GREY_TOP_TAB_BAR,
                     height: 1,
                   ),
-                  (_stateContract.contains('ACTIVE'))
+                  (_stateContract.contains('APPROVED'))
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [

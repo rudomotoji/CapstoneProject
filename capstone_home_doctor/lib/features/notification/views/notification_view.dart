@@ -40,7 +40,6 @@ class _NotificationState extends State<NotificationPage> {
       _accountId = value;
     });
     if (_accountId != 0) {
-      print('accound id in notification view is ${_accountId}');
       _notificationListBloc
           .add(NotificationListEventGet(accountId: _accountId));
     }

@@ -4,7 +4,9 @@ import 'package:http/http.dart' as http;
 
 class BaseApiClient {
   static const baseUrl = 'http://45.76.186.233:8000/api/v1';
-  static const baseUrl2 = 'http://45.76.186.233:8000/api';
+  static const postmanUrl =
+      'http://a2417dcb-c449-4acb-8b24-ca65657f90b3.mock.pstmn.io';
+  static const mockupApi = 'https://605ec4f5e96e5c0017407ba8.mockapi.io/api/v1';
   //static const baseUrl = 'https://5f715f3b64a3720016e6059d.mockapi.io/api/v1';
   Future<http.Response> getApi(String url, String token) async => http.get(
         baseUrl + url,
@@ -15,8 +17,18 @@ class BaseApiClient {
         },
       );
 
-  Future<http.Response> getApi2(String url, String token) async => http.get(
-        baseUrl2 + url,
+  Future<http.Response> getApiPostman(String url, String token) async =>
+      http.get(
+        postmanUrl + url,
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/json",
+          HttpHeaders.authorizationHeader:
+              token == null ? null : "Bearer ${token}"
+        },
+      );
+  Future<http.Response> getApiMockup(String url, String token) async =>
+      http.get(
+        mockupApi + url,
         headers: {
           HttpHeaders.contentTypeHeader: "application/json",
           HttpHeaders.authorizationHeader:

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PeripheralHelper {
+  //PERIPHERAL CHECKING
   Future<void> initialPeripheralChecking() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('IS_PERIPHERALS_CONNECTED', false);
