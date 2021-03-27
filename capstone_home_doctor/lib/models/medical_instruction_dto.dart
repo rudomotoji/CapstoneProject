@@ -115,6 +115,8 @@ class MedicalInstructionDTO {
   String placeHealthRecord;
   String dateStarted;
   String dateFinished;
+  String patientFullName;
+  String status;
   PrescriptionDTO medicationsRespone;
   //for multiple part post api
   int medicalInstructionTypeId;
@@ -134,7 +136,9 @@ class MedicalInstructionDTO {
       this.medicalInstructionTypeId,
       this.healthRecordId,
       this.patientId,
-      this.imageFile});
+      this.imageFile,
+      this.patientFullName,
+      this.status});
 
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
     medicalInstructionId = json['medicalInstructionId'];
@@ -145,6 +149,8 @@ class MedicalInstructionDTO {
     placeHealthRecord = json['placeHealthRecord'];
     dateStarted = json['dateStarted'];
     dateFinished = json['dateFinished'];
+    patientFullName = json['patientFullName'];
+    status = json['status'];
     medicationsRespone = json['prescriptionRespone'] != null
         ? new PrescriptionDTO.fromJson(json['prescriptionRespone'])
         : null;
@@ -159,6 +165,8 @@ class MedicalInstructionDTO {
     data['placeHealthRecord'] = this.placeHealthRecord;
     data['dateStarted'] = this.dateStarted;
     data['dateFinished'] = this.dateFinished;
+    data['patientFullName'] = this.patientFullName;
+    data['status'] = this.status;
     return data;
   }
 }
@@ -169,6 +177,8 @@ class MedicalInstructionsDTO {
   String diagnose;
   String description;
   String image;
+  String dateCreate;
+  int medicalInstructionTypeId;
   PrescriptionDTO prescriptionRespone;
 
   MedicalInstructionsDTO(
@@ -177,7 +187,9 @@ class MedicalInstructionsDTO {
       this.diagnose,
       this.description,
       this.image,
-      this.prescriptionRespone});
+      this.prescriptionRespone,
+      this.dateCreate,
+      this.medicalInstructionTypeId});
 
   MedicalInstructionsDTO.fromJson(Map<String, dynamic> json) {
     status = json['status'];
@@ -185,6 +197,8 @@ class MedicalInstructionsDTO {
     diagnose = json['diagnose'];
     description = json['description'];
     image = json['image'];
+    dateCreate = json['dateCreate'];
+    medicalInstructionTypeId = json['medicalInstructionTypeId'];
 
     prescriptionRespone = json['prescriptionRespone'] != null
         ? new PrescriptionDTO.fromJson(json['prescriptionRespone'])
@@ -199,6 +213,8 @@ class MedicalInstructionsDTO {
     data['description'] = this.description;
     data['image'] = this.image;
     data['prescriptionRespone'] = this.prescriptionRespone;
+    data['dateCreate'] = this.dateCreate;
+    data['medicalInstructionTypeId'] = this.medicalInstructionTypeId;
     return data;
   }
 }

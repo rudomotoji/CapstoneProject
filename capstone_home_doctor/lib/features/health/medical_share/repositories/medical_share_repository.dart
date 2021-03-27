@@ -12,8 +12,9 @@ class MedicalShareInsRepository extends BaseApiClient {
       : assert(httpClient != null);
 
   Future<bool> shareMoreMedIns(
-      int contractID, List<int> listMedicalShare) async {
-    String url = '/MedicalInstructionShares?contractId=${contractID}';
+      int healthRecordId, List<int> listMedicalShare) async {
+    String url =
+        '/MedicalInstructions/ShareMedicalInstructions?healthRecordId=${healthRecordId}';
     try {
       final response = await postApi(url, null, listMedicalShare);
       if (response.statusCode == 201) {
