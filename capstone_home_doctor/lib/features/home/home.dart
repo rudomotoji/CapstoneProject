@@ -91,14 +91,6 @@ class _MainHomeState extends State<MainHome> {
     final cron = new Cron()
       ..schedule(Schedule.parse('* * * * * '), () async {
         print('At ${DateTime.now()} to Check Bluetooth funcs background');
-        //
-        await _backgroundRepository
-            .getSafeScopeHeartRate()
-            .then((scopeHearRate) async {
-          //
-          print(
-              'scope heart rate is ${scopeHearRate.minSafeHeartRate} - ${scopeHearRate.maxSafeHeartRate}');
-        });
 
         //check API Background setting
         _backgroundRepository
