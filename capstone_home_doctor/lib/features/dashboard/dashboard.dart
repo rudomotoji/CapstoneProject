@@ -116,7 +116,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
