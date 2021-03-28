@@ -16,6 +16,7 @@ import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:capstone_home_doctor/commons/constants/global.dart' as globals;
 
 class ProfileTab extends StatefulWidget {
   @override
@@ -26,8 +27,6 @@ class ProfileTab extends StatefulWidget {
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
 class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
-  // SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
-  // HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
   HealthRecordRepository healthRecordRepository =
       HealthRecordRepository(httpClient: http.Client());
   List<HealthRecordDTO> listHealthRecord = [];
@@ -35,11 +34,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   HealthRecordListBloc _healthRecordListBloc;
   HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
 
-  List<TypeFilter> _listFilter = [
-    TypeFilter(label: 'Hệ thống', value: 0),
-    TypeFilter(label: 'Cũ', value: 1),
-    TypeFilter(label: 'Tất cả', value: 2),
-  ];
+  List<TypeFilter> _listFilter = globals.listFilter;
   TypeFilter _valueFilter;
   //
   int _patientId = 0;
@@ -48,8 +43,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     _healthRecordListBloc = BlocProvider.of(context);
-    //for local list
-    // listHealthRecord = [];
+
     setState(() {
       _valueFilter = _listFilter[2];
     });

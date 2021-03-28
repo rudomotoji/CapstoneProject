@@ -21,13 +21,13 @@ import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:expandable_group/expandable_group_widget.dart';
 
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
-import 'package:capstone_home_doctor/features/health/health_record/states/hr_create_state.dart';
 import 'package:capstone_home_doctor/models/disease_dto.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:capstone_home_doctor/commons/constants/global.dart' as globals;
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
@@ -50,32 +50,10 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
   DiseaseRepository diseaseRepository =
       DiseaseRepository(httpClient: http.Client());
 
-  List<String> suggestions = [
-    'Bệnh Viện Đại Học Y Dược',
-    'Bệnh Viện Chợ Rẫy',
-    'Bệnh Viện Từ Dũ',
-    'Bệnh Viện Nhi Đồng 1',
-    'Bệnh Viện Nhi Đồng 2',
-    'Bệnh viện Đại học Y Dược TP. HCM',
-    'Viện Tim Tp.HCM',
-    'Bệnh viện Tim Tâm Đức',
-    'Phòng khám Bệnh viện Đại học Y Dược 1',
-    'Bệnh viện Đa khoa Quốc tế Vinmec',
-    'Phòng khám Đa khoa Saigon Healthcare',
-    'Bệnh Viện Thống Nhất',
-    'Bệnh Viện Ung Bướu',
-    'Bệnh viện truyền máu huyết học',
-    'Bệnh viện Nhân dân 115',
-    'Bệnh viện Nhân dân Gia Định',
-    'Bệnh viện Nguyễn Trãi',
-    'Bệnh viện Nguyễn Tri Phương',
-    'Bệnh viện Bệnh Nhiệt đới',
-    'Viện Y dược học cổ truyền',
-    'Bệnh viện Đa khoa Khu vực Thủ Đức'
-  ];
+  List<String> suggestions = globals.suggestions;
+  List<String> _listType = globals.listType;
 
   String _valueTypeIns;
-  List<String> _listType = ['Bệnh tim', 'Các bệnh khác'];
 
   //
   //SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();

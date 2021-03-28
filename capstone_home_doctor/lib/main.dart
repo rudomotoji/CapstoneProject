@@ -36,6 +36,7 @@ import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/create_health_record.dart';
+import 'package:capstone_home_doctor/features/health/health_record/views/create_medical_instruction.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/health_record_detail.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
@@ -578,6 +579,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
                     PressureDetailView(),
                 RoutesHDr.VITAL_SIGN_SCHEDULE_VIEW: (context) =>
                     VitalSignScheduleView(),
+                RoutesHDr.CREATE_MEDICAL_INSTRUCTION: (context) =>
+                    CreateMedicalInstructionView(),
               },
               home: _startScreen,
             ),
