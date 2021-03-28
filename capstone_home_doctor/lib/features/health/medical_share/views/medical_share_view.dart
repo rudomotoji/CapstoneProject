@@ -67,6 +67,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   @override
   void dispose() {
     // TODO: implement dispose
+    _medicalShareInsBloc.add(MedicalShareInsEventInitial());
     super.dispose();
   }
 
@@ -309,7 +310,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                 },
               ),
             ),
-            (listMedicalInsShare.length > 0)
+            (medicalInstructionIdsSelected.length <= 0)
                 ? Container()
                 : Positioned(
                     bottom: 0,
