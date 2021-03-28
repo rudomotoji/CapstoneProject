@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
-import 'package:capstone_home_doctor/models/vital_sign_schedule.dart';
+import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -20,6 +20,39 @@ class VitalSignRepository {
       BluetoothDevice device) async {
     List<BluetoothService> services = await device.discoverServices();
     return services;
+  }
+
+  //get battery device
+  Future<int> getBatteryDevice(String peripheralId) async {
+    try {
+      int batteryValue = 0;
+      BluetoothDevice device =
+          await peripheralRepository.findScanResultById(peripheralId);
+      device.disconnect();
+      await device.connect();
+      BluetoothCharacteristic _characteristic;
+      List<BluetoothService> services = await discoverServices(device);
+      services.forEach((service) {
+        for (BluetoothCharacteristic ch in service.characteristics) {
+          if (ch.uuid == PeripheralCharacteristics.BATTERY_INFORMATION) {
+            _characteristic = ch;
+          }
+        }
+      });
+      await _characteristic.setNotifyValue(true);
+      print('bluetooth Battery_ch set notify ${_characteristic.isNotifying}');
+      _characteristic.value.listen((value) {
+        if (value.isNotEmpty) {
+          print('Battery percent now at ${DateTime.now()} is: ${value[0]}');
+          batteryValue = value[0];
+        } else {
+          print('Cannot get battery percentage');
+        }
+      });
+      return batteryValue;
+    } catch (e) {
+      print('Error at get battery device: ${e}');
+    }
   }
 
   //get heart rate characteristic
@@ -93,15 +126,17 @@ class VitalSignServerRepository extends BaseApiClient {
       : assert(httpClient != null);
 
   //get vital sign schedule
-  Future<VitalSignScheduleDTO> getVitalSignSchedule() async {
-    String url = '';
+  Future<VitalSignScheduleDTO> getVitalSignSchedule(int patientId) async {
+    String url = '/VitalSigns?patientId=${patientId}&status=active';
     try {
       //
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
-        VitalSignScheduleDTO data =
-            VitalSignScheduleDTO.fromJson(jsonDecode(response.body));
-        return data;
+        final data = json.decode(response.body) as List;
+        List<VitalSignScheduleDTO> list = data.map((dto) {
+          return VitalSignScheduleDTO.fromJson(dto);
+        }).toList();
+        return list[0];
       }
       return VitalSignScheduleDTO();
     } catch (e) {

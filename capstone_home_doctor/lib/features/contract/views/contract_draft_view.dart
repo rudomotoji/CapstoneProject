@@ -1695,7 +1695,6 @@ class _ContractDraftView extends State<ContractDraftView>
                                         style: TextStyle(
                                           decoration: TextDecoration.none,
                                           color: DefaultTheme.BLACK,
-                                          fontWeight: FontWeight.w500,
                                           fontSize: 15,
                                         ),
                                         overflow: TextOverflow.ellipsis,

@@ -312,7 +312,7 @@ class _ManageContract extends State<ManageContract> {
                               (_listExecuting.length != 0)
                                   ? Container(
                                       width: MediaQuery.of(context).size.width,
-                                      height: 320,
+                                      height: 350,
                                       child: ListView.builder(
                                         scrollDirection: Axis.horizontal,
                                         // shrinkWrap: true,
@@ -355,7 +355,7 @@ class _ManageContract extends State<ManageContract> {
                                           //
                                           return Container(
                                             width: 250,
-                                            height: 320,
+                                            height: 350,
                                             // padding: EdgeInsets.only(left: 10),
                                             margin: EdgeInsets.only(left: 10),
                                             decoration: BoxDecoration(
@@ -470,7 +470,7 @@ class _ManageContract extends State<ManageContract> {
                                                       textAlign: TextAlign.left,
                                                       overflow:
                                                           TextOverflow.ellipsis,
-                                                      maxLines: 3,
+                                                      maxLines: 2,
                                                     ),
                                                   ),
                                                 Spacer(),
@@ -649,7 +649,7 @@ class _ManageContract extends State<ManageContract> {
                               (_listAcitved.length != 0)
                                   ? Container(
                                       width: MediaQuery.of(context).size.width,
-                                      height: 320,
+                                      height: 350,
                                       child: ListView.builder(
                                         scrollDirection: Axis.horizontal,
                                         // shrinkWrap: true,
@@ -692,7 +692,7 @@ class _ManageContract extends State<ManageContract> {
                                           //
                                           return Container(
                                             width: 250,
-                                            height: 320,
+                                            height: 350,
                                             // padding: EdgeInsets.only(left: 10),
                                             margin: EdgeInsets.only(left: 10),
                                             decoration: BoxDecoration(

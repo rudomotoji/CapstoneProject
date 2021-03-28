@@ -1,31 +1,25 @@
 class VitalSignScheduleDTO {
-  int healthRecordId;
-  int doctorAccountId;
-  int contractId;
-  String diagnose;
-  String dateStart;
-  String dateFinish;
-  String description;
+  int medicalInstructionId;
+  String status;
+  String dateCreate;
+  String dateStarted;
+  String dateFinished;
   List<VitalSigns> vitalSigns;
 
   VitalSignScheduleDTO(
-      {this.healthRecordId,
-      this.doctorAccountId,
-      this.contractId,
-      this.diagnose,
-      this.dateStart,
-      this.dateFinish,
-      this.description,
+      {this.medicalInstructionId,
+      this.status,
+      this.dateCreate,
+      this.dateStarted,
+      this.dateFinished,
       this.vitalSigns});
 
   VitalSignScheduleDTO.fromJson(Map<String, dynamic> json) {
-    healthRecordId = json['healthRecordId'];
-    doctorAccountId = json['doctorAccountId'];
-    contractId = json['contractId'];
-    diagnose = json['diagnose'];
-    dateStart = json['dateStart'];
-    dateFinish = json['dateFinish'];
-    description = json['description'];
+    medicalInstructionId = json['medicalInstructionId'];
+    status = json['status'];
+    dateCreate = json['dateCreate'];
+    dateStarted = json['dateStarted'];
+    dateFinished = json['dateFinished'];
     if (json['vitalSigns'] != null) {
       vitalSigns = new List<VitalSigns>();
       json['vitalSigns'].forEach((v) {
@@ -36,13 +30,11 @@ class VitalSignScheduleDTO {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['healthRecordId'] = this.healthRecordId;
-    data['doctorAccountId'] = this.doctorAccountId;
-    data['contractId'] = this.contractId;
-    data['diagnose'] = this.diagnose;
-    data['dateStart'] = this.dateStart;
-    data['dateFinish'] = this.dateFinish;
-    data['description'] = this.description;
+    data['medicalInstructionId'] = this.medicalInstructionId;
+    data['status'] = this.status;
+    data['dateCreate'] = this.dateCreate;
+    data['dateStarted'] = this.dateStarted;
+    data['dateFinished'] = this.dateFinished;
     if (this.vitalSigns != null) {
       data['vitalSigns'] = this.vitalSigns.map((v) => v.toJson()).toList();
     }
@@ -51,7 +43,7 @@ class VitalSignScheduleDTO {
 }
 
 class VitalSigns {
-  int vitalSignTypeId;
+  String vitalSignType;
   int numberMax;
   int numberMin;
   int minuteDangerInterval;
@@ -59,7 +51,7 @@ class VitalSigns {
   int minuteAgain;
 
   VitalSigns(
-      {this.vitalSignTypeId,
+      {this.vitalSignType,
       this.numberMax,
       this.numberMin,
       this.minuteDangerInterval,
@@ -67,7 +59,7 @@ class VitalSigns {
       this.minuteAgain});
 
   VitalSigns.fromJson(Map<String, dynamic> json) {
-    vitalSignTypeId = json['vitalSignTypeId'];
+    vitalSignType = json['vitalSignType'];
     numberMax = json['numberMax'];
     numberMin = json['numberMin'];
     minuteDangerInterval = json['minuteDangerInterval'];
@@ -77,7 +69,7 @@ class VitalSigns {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['vitalSignTypeId'] = this.vitalSignTypeId;
+    data['vitalSignType'] = this.vitalSignType;
     data['numberMax'] = this.numberMax;
     data['numberMin'] = this.numberMin;
     data['minuteDangerInterval'] = this.minuteDangerInterval;

@@ -24,7 +24,7 @@ import 'package:capstone_home_doctor/features/contract/views/detail_contract_vie
 import 'package:capstone_home_doctor/features/contract/views/doctor_information_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/manage_contract_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/reason_contract_view.dart';
-import 'package:capstone_home_doctor/features/contract/views/request_contract_view.dart';
+
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
@@ -45,7 +45,6 @@ import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.d
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/heart_detail_view.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/history_vital_sign.dart';
-import 'package:capstone_home_doctor/features/vital_sign/views/pressure_chart.dart';
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
@@ -74,6 +73,7 @@ import 'package:capstone_home_doctor/features/schedule/repositories/appointment_
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_medicine_noti_view.dart';
 import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
+import 'package:capstone_home_doctor/features/vital_sign/views/pressure_detail_view.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/vital_sign_schedule_view.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
@@ -574,7 +574,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.MEDICAL_HISTORY_DETAIL: (context) =>
                     MedicalHistoryDetailView(),
                 RoutesHDr.VITALSIGN_HISTORY: (context) => HistoryVitalSign(),
-                RoutesHDr.PRESSURE_CHART_VIEW: (context) => PressureChart(),
+                RoutesHDr.PRESSURE_CHART_VIEW: (context) =>
+                    PressureDetailView(),
                 RoutesHDr.VITAL_SIGN_SCHEDULE_VIEW: (context) =>
                     VitalSignScheduleView(),
               },

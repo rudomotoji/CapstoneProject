@@ -196,21 +196,22 @@ class _HeartDetailView extends State<HeartDetailView>
                             color: DefaultTheme.GREY_TOP_TAB_BAR,
                             height: 0.5,
                           ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            color: DefaultTheme.WHITE,
-                            height: 430,
-                            child: Column(
-                              children: [
-                                Container(
-                                  child:
-                                      // ListView(
-                                      //   shrinkWrap: true,
-                                      //   scrollDirection: Axis.horizontal,
-                                      //   children: <Widget>[
-                                      //
-                                      Echarts(
-                                    option: '''
+                          (listTimeXAxis != null && listValueMap != null)
+                              ? Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  color: DefaultTheme.WHITE,
+                                  height: 430,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        child:
+                                            // ListView(
+                                            //   shrinkWrap: true,
+                                            //   scrollDirection: Axis.horizontal,
+                                            //   children: <Widget>[
+                                            //
+                                            Echarts(
+                                          option: '''
                                     {
                                       color: ['#FF784B'],
                                       tooltip: {
@@ -265,21 +266,24 @@ class _HeartDetailView extends State<HeartDetailView>
                                       },]
                                     }
                                   ''',
+                                        ),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        // padding: EdgeInsets.only(right: 20),
+                                        height: 400,
+                                      ),
+                                      Text(
+                                          'Biểu đồ nhịp tim trong ngày'
+                                              .toUpperCase(),
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                            color: DefaultTheme.ORANGE_TEXT,
+                                          )),
+                                    ],
                                   ),
-                                  width: MediaQuery.of(context).size.width,
-                                  // padding: EdgeInsets.only(right: 20),
-                                  height: 400,
-                                ),
-                                Text(
-                                    'Biểu đồ nhịp tim trong ngày'.toUpperCase(),
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: DefaultTheme.ORANGE_TEXT,
-                                    )),
-                              ],
-                            ),
-                          ),
+                                )
+                              : Container(),
                           Divider(
                             color: DefaultTheme.GREY_TOP_TAB_BAR,
                             height: 0.5,

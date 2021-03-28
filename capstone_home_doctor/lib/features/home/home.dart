@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
@@ -17,9 +18,11 @@ import 'package:capstone_home_doctor/features/peripheral/events/peripheral_event
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/models/notification_dto.dart';
 import 'package:capstone_home_doctor/models/setting_background_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
@@ -41,6 +44,8 @@ final PeripheralHelper _peripheralHelper = PeripheralHelper();
 final VitalSignHelper vitalSignHelper = VitalSignHelper();
 final BackgroundRepository _backgroundRepository =
     BackgroundRepository(httpClient: http.Client());
+final VitalSignServerRepository _vitalSignServerRepository =
+    VitalSignServerRepository(httpClient: http.Client());
 
 //
 final FirebaseMessaging _fcm = FirebaseMessaging();
@@ -91,6 +96,18 @@ class _MainHomeState extends State<MainHome> {
     final cron = new Cron()
       ..schedule(Schedule.parse('* * * * * '), () async {
         print('At ${DateTime.now()} to Check Bluetooth funcs background');
+        //test local noti
+        // var dangerousNotification = {
+        //   "notification": {
+        //     "title": "Sinh hiệu bất thường",
+        //     "body":
+        //         "Nhịp tim của bạn có dấu hiệu bất thường.\n150 BPM vào lúc ${DateTime.now().toString().split(' ')[1].split('.')[0]}",
+        //   },
+        //   "data": {
+        //     "NAVIGATE_TO_SCREEN": RoutesHDr.HEART,
+        //   }
+        // };
+        // _handleGeneralMessage(dangerousNotification);
 
         //check API Background setting
         _backgroundRepository
@@ -136,6 +153,63 @@ class _MainHomeState extends State<MainHome> {
     initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+
+    //local notification
+    if (Platform.isIOS) {
+      _fcm.requestNotificationPermissions(const IosNotificationSettings(
+          sound: true, badge: true, alert: true, provisional: true));
+      _fcm.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
+        // print("Settings registered: $settings");
+      });
+    }
+    _fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        Platform.isIOS
+            ? _handleIOSGeneralMessage(message)
+            : _handleGeneralMessage(message);
+      },
+      // onBackgroundMessage: myBackgroundMessageHandler,
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+      },
+    );
+    localNotifyManager.setNotificationnOnClick(selectNotificationSubject);
+    //
+  }
+
+  //handle local notification for danger heart rate
+
+  void _handleGeneralMessage(Map<String, dynamic> message) {
+    String payload;
+    ReceiveNotification receiveNotification;
+    if (message.containsKey('data')) {
+      final dynamic data = message['data'];
+      payload = jsonEncode(data);
+    }
+    final dynamic notification = message['notification'];
+    receiveNotification = ReceiveNotification(
+        id: 0,
+        title: notification["title"],
+        body: notification["body"],
+        payload: payload);
+    localNotifyManager.show(receiveNotification);
+  }
+
+  void _handleIOSGeneralMessage(Map<String, dynamic> message) {
+    String payload = jsonEncode(message);
+    ReceiveNotification receiveNotification;
+    print(payload);
+    final dynamic notification = message['aps']['alert'];
+
+    receiveNotification = ReceiveNotification(
+        id: 0,
+        title: notification["title"],
+        body: notification["body"],
+        payload: payload);
+    localNotifyManager.show(receiveNotification);
   }
 
   _connectFirstOpenApp() async {
@@ -174,6 +248,7 @@ class _MainHomeState extends State<MainHome> {
 
   //connect device in bg
   _connectInBackground(int timeInsert) async {
+    print('time insert duoc truyen vao ${timeInsert} ');
     await _peripheralHelper.getPeripheralId().then((peripheralId) async {
       if (peripheralId != '') {
         //count dangerous means for every measurement again, get the first value to
@@ -204,57 +279,177 @@ class _MainHomeState extends State<MainHome> {
         });
         //
         //
-        //check default min-max heart rate
-        await _backgroundRepository
-            .getSafeScopeHeartRate()
-            .then((scopeHearRate) async {
+        if (_patientId != 0) {
           //
-          print(
-              'scope heart rate is ${scopeHearRate.minSafeHeartRate} - ${scopeHearRate.maxSafeHeartRate}');
-          //
-          if (countLastValue == 0) {
-            ////////////////////////
-            //LOCAL EXECUTE HERE
+          await _vitalSignServerRepository
+              .getVitalSignSchedule(_patientId)
+              .then((vitalSignSchedule) async {
             //
-            //
+            print(
+                'vital sign schedule now ${vitalSignSchedule.medicalInstructionId}');
+            if (vitalSignSchedule == null) {
+              await _backgroundRepository
+                  .getSafeScopeHeartRate()
+                  .then((scopeHearRate) async {
+                //
+                print(
+                    'scope heart rate is ${scopeHearRate.minSafeHeartRate} - max ${scopeHearRate.maxSafeHeartRate}. Dangerous count is ${scopeHearRate.dangerousCount}');
+                //
+                if (countLastValue == 0) {
+                  await vitalSignHelper.getHeartRateValue().then((value) async {
+                    if (value < scopeHearRate.minSafeHeartRate ||
+                        value > scopeHearRate.maxSafeHeartRate) {
+                      await vitalSignHelper
+                          .getCountDownDangerous()
+                          .then((countDown) async {
+                        //
+                        await vitalSignHelper
+                            .updateCountDownDangerous(countDown += 1);
+                        print(
+                            'DANGEROUS HR. COUNT DOWN DANGEROUS IS ${countDown}');
+                        if (countDown >= scopeHearRate.dangerousCount) {
+                          ////////////////////////
+                          //LOCAL EXECUTE HERE
+                          //
+                          var dangerousNotification = {
+                            "notification": {
+                              "title": "Sinh hiệu bất thường",
+                              "body":
+                                  "Nhịp tim của bạn có dấu hiệu bất thường.\n${value} BPM vào lúc ${DateTime.now().toString().split(' ')[1].split('.')[0]}",
+                            },
+                            "data": {
+                              "NAVIGATE_TO_SCREEN": RoutesHDr.MAIN_HOME,
+                            }
+                          };
+                          _handleGeneralMessage(dangerousNotification);
+                          ////////////////////////
+                          //SERVER EXECUTE HERE
+                          //
+                          //           NotificationPushDTO notiPushDTO = NotificationPushDTO(
+                          //               deviceType: 2,
+                          //               notificationType: 2,
+                          //               recipientAccountId: 2,
+                          //               senderAccountId: _accountId);
+                          //PUSH NOTI
+                          //           _notificationListBloc
+                          //               .add(NotiPushEvent(notiPushDTO: notiPushDTO));
 
-            ////////////////////////
-            //SERVER EXECUTE HERE
-            //   //
-            //   await vitalSignHelper.getHeartRateValue().then((value) async {
-            //     //
-            //     if (value < 100) {
-            //       await vitalSignHelper
-            //           .getCountDownDangerous()
-            //           .then((countDown) async {
-            //         await vitalSignHelper.updateCountDownDangerous(countDown += 1);
-            //         print('COUNT DOWN DANGEROUS IS ${countDown}');
-            //         if (countDown == 2) {
-            //           NotificationPushDTO notiPushDTO = NotificationPushDTO(
-            //               deviceType: 2,
-            //               notificationType: 2,
-            //               recipientAccountId: 2,
-            //               senderAccountId: _accountId);
-            //PUSH NOTI
-            //           _notificationListBloc
-            //               .add(NotiPushEvent(notiPushDTO: notiPushDTO));
+                          //           //
+                          //CHANGE STATUS PEOPLE
+                          //           _notificationListBloc.add(NotiChangePeopleStatusEvent(
+                          //               patientId: _patientId, status: 'DANGER'));
+                          //           await vitalSignHelper.updateCountDownDangerous(0);
+                          //         }
+                          if (countDown > scopeHearRate.dangerousCount) {
+                            await vitalSignHelper.updateCountDownDangerous(0);
+                          }
+                        }
+                      });
+                    } else {
+                      //
+                      await vitalSignHelper
+                          .getCountDownDangerous()
+                          .then((countDown) async {
+                        //
+                        if (countDown > 0) {
+                          await vitalSignHelper
+                              .updateCountDownDangerous(countDown -= 1);
+                        }
+                        print(
+                            'NORMAL HR. COUNT DOWN DANGEROUS IS ${countDown}');
+                      });
+                    }
+                  });
+                  //
+                  countLastValue++;
+                }
+                //
+              });
+            } else {
+              //
+              //schedule heart rate first
+              VitalSigns heartRateSchedule = vitalSignSchedule.vitalSigns
+                  .where((item) => item.vitalSignType == 'Nhịp tim')
+                  .first;
+              print(
+                  'Heart rate schedule: min ${heartRateSchedule.numberMin}-${heartRateSchedule.numberMax}');
+              if (countLastValue == 0) {
+                //
+                await vitalSignHelper.getHeartRateValue().then((value) async {
+                  //
+                  //TÍ SỬA CÁI NÀY GẤP. ĐỔI DẤU LẠI
+                  if (value > heartRateSchedule.numberMin ||
+                      value < heartRateSchedule.numberMax) {
+                    //
+                    await vitalSignHelper
+                        .getCountDownDangerous()
+                        .then((countDown) async {
+                      //
+                      await vitalSignHelper
+                          .updateCountDownDangerous(countDown += 1);
+                      print(
+                          'DANGEROUS HR. COUNT DOWN DANGEROUS IS ${countDown}');
+                      if (countDown >= heartRateSchedule.minuteDangerInterval) {
+                        ////////////////////////
+                        //LOCAL EXECUTE HERE
+                        //
+                        var dangerousNotification = {
+                          "notification": {
+                            "title": "Sinh hiệu bất thường",
+                            "body":
+                                "Nhịp tim của bạn có dấu hiệu bất thường.\n${value} BPM vào lúc ${DateTime.now().toString().split(' ')[1].split('.')[0]}",
+                          },
+                          "data": {
+                            "NAVIGATE_TO_SCREEN": RoutesHDr.MAIN_HOME,
+                          }
+                        };
+                        _handleGeneralMessage(dangerousNotification);
+                        ////////////////////////
+                        //SERVER EXECUTE HERE
+                        //
+                        //           NotificationPushDTO notiPushDTO = NotificationPushDTO(
+                        //               deviceType: 2,
+                        //               notificationType: 2,
+                        //               recipientAccountId: 2,
+                        //               senderAccountId: _accountId);
+                        //PUSH NOTI
+                        //           _notificationListBloc
+                        //               .add(NotiPushEvent(notiPushDTO: notiPushDTO));
 
-            //           //
-            //CHANGE STATUS PEOPLE
-            //           _notificationListBloc.add(NotiChangePeopleStatusEvent(
-            //               patientId: _patientId, status: 'DANGER'));
-            //           await vitalSignHelper.updateCountDownDangerous(0);
-            //         }
-            //         if (countDown > 2) {
-            //           await vitalSignHelper.updateCountDownDangerous(0);
-            //         }
-            //       });
-            //     }
-            //   });
-            countLastValue++;
-          }
-          //
-        });
+                        //           //
+                        //CHANGE STATUS PEOPLE
+                        //           _notificationListBloc.add(NotiChangePeopleStatusEvent(
+                        //               patientId: _patientId, status: 'DANGER'));
+                        //           await vitalSignHelper.updateCountDownDangerous(0);
+                        //         }
+                        if (countDown >
+                            heartRateSchedule.minuteDangerInterval) {
+                          await vitalSignHelper.updateCountDownDangerous(0);
+                        }
+                      }
+                      //
+                    });
+                  } else {
+                    //
+                    await vitalSignHelper
+                        .getCountDownDangerous()
+                        .then((countDown) async {
+                      //
+                      if (countDown > 0) {
+                        await vitalSignHelper
+                            .updateCountDownDangerous(countDown -= 1);
+                      }
+                      print('NORMAL HR. COUNT DOWN DANGEROUS IS ${countDown}');
+                    });
+                  }
+                });
+                countLastValue++;
+              }
+            }
+          });
+          //check default min-max heart rate
+        }
+
         //
 
       }

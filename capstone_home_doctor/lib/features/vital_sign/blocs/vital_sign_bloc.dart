@@ -25,6 +25,7 @@ class VitalSignBloc extends Bloc<VitalSignEvent, VitalSignState> {
       } catch (e) {
         yield VitalSignStateFailure();
       }
+      return;
     }
     if (event is VitalSignEventInsert) {
       yield VitalSignStateLoading();
@@ -34,6 +35,7 @@ class VitalSignBloc extends Bloc<VitalSignEvent, VitalSignState> {
       } catch (e) {
         yield VitalSignStateFailure();
       }
+      return;
     }
     if (event is VitalSignEventGetList) {
       yield VitalSignStateLoading();
@@ -44,6 +46,7 @@ class VitalSignBloc extends Bloc<VitalSignEvent, VitalSignState> {
       } catch (e) {
         yield VitalSignStateFailure();
       }
+      return;
     }
   }
 }
