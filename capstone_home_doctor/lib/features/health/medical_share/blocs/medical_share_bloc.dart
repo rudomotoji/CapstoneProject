@@ -22,7 +22,7 @@ class MedicalShareInsBloc
       yield MedicalShareInsStateLoading();
       try {
         final bool isShared = await medicalShareInsRepository.shareMoreMedIns(
-            event.contractID, event.listMediIns);
+            event.healthRecordId, event.listMediIns);
         if (isShared) {
           await _medicalShareHelper.updateMedicalShareChecking(isShared);
           yield MedicalShareInsStateSuccess(isShared: isShared);

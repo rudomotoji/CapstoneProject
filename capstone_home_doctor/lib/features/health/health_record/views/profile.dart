@@ -274,7 +274,8 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
       padding: EdgeInsets.only(left: 0, right: 10, top: 10, bottom: 10),
       child: InkWell(
         onTap: () {
-          //
+          _healthRecordHelper.setHealthReCordId(dto.healthRecordId);
+          Navigator.of(context).pushNamed(RoutesHDr.HEALTH_RECORD_DETAIL);
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -420,8 +421,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                         .setHealthReCordId(healthRecordId);
                                     Navigator.of(context).pop();
                                     Navigator.of(context).pushNamed(
-                                        RoutesHDr.HEALTH_RECORD_DETAIL,
-                                        arguments: contractID);
+                                        RoutesHDr.HEALTH_RECORD_DETAIL);
                                   },
                                 ),
                                 Divider(

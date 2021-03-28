@@ -26,8 +26,10 @@ class MedicalShareEventGet extends MedicalShareEvent {
 class MedicalShareEventGetMediIns extends MedicalShareEvent {
   final int patientID;
   final int contractID;
+  final int healthRecordId;
 
-  const MedicalShareEventGetMediIns({this.patientID, this.contractID})
+  const MedicalShareEventGetMediIns(
+      {this.patientID, this.contractID, this.healthRecordId})
       : assert(patientID != null, contractID != null);
   @override
   // TODO: implement props

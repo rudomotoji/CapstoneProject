@@ -1,19 +1,21 @@
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
-import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/medical_share_bloc.dart';
-import 'package:capstone_home_doctor/features/contract/events/contract_list_event.dart';
 import 'package:capstone_home_doctor/features/contract/events/medical_share_event.dart';
-import 'package:capstone_home_doctor/features/contract/states/contract_list_state.dart';
 import 'package:capstone_home_doctor/features/contract/states/medical_share_state.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/events/hr_list_event.dart';
+import 'package:capstone_home_doctor/features/health/health_record/states/hr_list_state.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/events/medical_Share_event.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/states/medical_share_state.dart';
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
+import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/medical_share_helper.dart';
@@ -21,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:photo_view/photo_view.dart';
+import 'package:intl/intl.dart';
 
 final MedicalShareHelper _medicalShareHelper = MedicalShareHelper();
 
@@ -36,9 +39,9 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
 
   int _contractId;
   int _patientId = 0;
-  List<ContractListDTO> _listContracts = List<ContractListDTO>();
-  ContractListDTO dropdownValue;
-  ContractListBloc _contractListBloc;
+  List<HealthRecordDTO> _listContracts = List<HealthRecordDTO>();
+  HealthRecordDTO dropdownValue;
+  HealthRecordListBloc _healthRecordListBloc;
   List<int> medicalInstructionIdsSelected = [];
   MedicalShareBloc _medicalShareBloc;
   MedicalShareInsBloc _medicalShareInsBloc;
@@ -54,7 +57,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _contractListBloc = BlocProvider.of(context);
+    _healthRecordListBloc = BlocProvider.of(context);
     _medicalShareBloc = BlocProvider.of(context);
     _medicalShareInsBloc = BlocProvider.of(context);
 
@@ -204,23 +207,19 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                   }
                   if (state is MedicalShareInsStateSuccess) {
                     print('---MedicalShareInsStateSuccess---');
-                    // setState(() {
                     dropdownValue = null;
                     listMedicalInsShare = [];
                     medicalInstructionIdsSelected = [];
-                    // });
                     _medicalShareInsBloc.add(MedicalShareInsEventInitial());
-                    Navigator.pop(context);
-                    // _popupDialog();
                   }
                   return RefreshIndicator(
                     onRefresh: _pullRefresh,
                     child: (_contractId == null)
                         ? ListView(
                             children: [
-                              BlocBuilder<ContractListBloc, ListContractState>(
+                              BlocBuilder<HealthRecordListBloc, HRListState>(
                                 builder: (context, state) {
-                                  if (state is ListContractStateLoading) {
+                                  if (state is HRListStateLoading) {
                                     return Container(
                                       margin:
                                           EdgeInsets.only(left: 20, right: 20),
@@ -238,7 +237,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                       ),
                                     );
                                   }
-                                  if (state is ListContractStateFailure) {
+                                  if (state is HRListStateFailure) {
                                     print('---ListContractStateFailure---');
                                     return Container(
                                       margin: EdgeInsets.only(
@@ -266,11 +265,14 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                       ),
                                     );
                                   }
-                                  if (state is ListContractStateSuccess) {
-                                    _listContracts = [];
-                                    for (var contract in state.listContract) {
-                                      if (contract.status.contains('ACTIVE')) {
-                                        _listContracts.add(contract);
+                                  if (state is HRListStateSuccess) {
+                                    if (state.listHealthRecord != null) {
+                                      _listContracts = [];
+                                      for (var contract
+                                          in state.listHealthRecord) {
+                                        if (contract.contractId != null) {
+                                          _listContracts.add(contract);
+                                        }
                                       }
                                     }
                                     return _selectContract();
@@ -278,12 +280,15 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                   return Container();
                                 },
                               ),
-                              Text(
-                                'Danh sách phiếu y lệnh:',
-                                style: TextStyle(
-                                    color: DefaultTheme.BLACK,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w600),
+                              Container(
+                                margin: EdgeInsets.only(top: 10, bottom: 10),
+                                child: Text(
+                                  'Danh sách phiếu y lệnh:',
+                                  style: TextStyle(
+                                      color: DefaultTheme.BLACK,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w600),
+                                ),
                               ),
                               _listShare(),
                             ],
@@ -304,6 +309,23 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                 },
               ),
             ),
+            (listMedicalInsShare.length > 0)
+                ? Container()
+                : Positioned(
+                    bottom: 0,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width - 40,
+                      margin: EdgeInsets.only(bottom: 20),
+                      child: ButtonHDr(
+                        style: BtnStyle.BUTTON_BLACK,
+                        label: 'Chia sẻ',
+                        onTap: () {
+                          _checkingShare(dropdownValue.contractId,
+                              medicalInstructionIdsSelected);
+                        },
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),
@@ -319,14 +341,16 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
         decoration: BoxDecoration(
             color: DefaultTheme.GREY_VIEW,
             borderRadius: BorderRadius.circular(6)),
-        child: DropdownButton<ContractListDTO>(
+        child: DropdownButton<HealthRecordDTO>(
           value: dropdownValue,
-          items: _listContracts.map((ContractListDTO value) {
-            return new DropdownMenuItem<ContractListDTO>(
+          items: _listContracts.map((HealthRecordDTO value) {
+            DateTime dateCreated =
+                DateFormat('yyyy-MM-dd').parse(value.dateCreated);
+            return new DropdownMenuItem<HealthRecordDTO>(
               value: value,
               child: new Text(
-                value.fullNameDoctor,
-                style: TextStyle(fontWeight: FontWeight.w600),
+                '${value.place}-${DateFormat('dd/MM/yyyy').format(dateCreated)}',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
               ),
             );
           }).toList(),
@@ -353,85 +377,14 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
             });
             if (_patientId != 0 && dropdownValue.contractId != 0) {
               await _medicalShareBloc.add(MedicalShareEventGetMediIns(
-                  patientID: _patientId, contractID: dropdownValue.contractId));
+                  patientID: _patientId,
+                  contractID: dropdownValue.contractId,
+                  healthRecordId: dropdownValue.healthRecordId));
             }
           },
         ),
       ),
     );
-  }
-
-  _popupDialog() {
-    setState(() {
-      return showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                  child: Container(
-                    padding: EdgeInsets.only(left: 10, top: 10, right: 10),
-                    width: 250,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: DefaultTheme.WHITE.withOpacity(0.7),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        // Container(
-                        //   padding: EdgeInsets.only(bottom: 10, top: 10),
-                        //   child: Text(
-                        //     'Chia sẻ thành công',
-                        //     style: TextStyle(
-                        //       decoration: TextDecoration.none,
-                        //       color: DefaultTheme.BLACK,
-                        //       fontWeight: FontWeight.w600,
-                        //       fontSize: 18,
-                        //     ),
-                        //   ),
-                        // ),
-                        Container(
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Bạn đã chia sẻ thành công',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                decoration: TextDecoration.none,
-                                color: DefaultTheme.GREY_TEXT,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        Divider(
-                          height: 1,
-                          color: DefaultTheme.GREY_TOP_TAB_BAR,
-                        ),
-                        ButtonHDr(
-                          height: 40,
-                          style: BtnStyle.BUTTON_TRANSPARENT,
-                          label: 'OK',
-                          labelColor: DefaultTheme.BLUE_TEXT,
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          });
-    });
   }
 
   Widget _listShare() {
@@ -610,13 +563,26 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                     children: <Widget>[
                                                       InkWell(
                                                         onTap: () {
-                                                          _showFullImageDescription(
-                                                              itemMedi.image,
-                                                              element
-                                                                  .medicalInstructionTypes[
-                                                                      indexType]
-                                                                  .miTypeName,
-                                                              '');
+                                                          if (itemMedi.image ==
+                                                                  null ||
+                                                              itemMedi.medicalInstructionTypeId ==
+                                                                  1) {
+                                                            Navigator.pushNamed(
+                                                                context,
+                                                                RoutesHDr
+                                                                    .MEDICAL_HISTORY_DETAIL,
+                                                                arguments: itemMedi
+                                                                    .medicalInstructionId);
+                                                          } else {
+                                                            _showFullImageDescription(
+                                                                itemMedi.image,
+                                                                element
+                                                                    .medicalInstructionTypes[
+                                                                        indexType]
+                                                                    .miTypeName,
+                                                                itemMedi
+                                                                    .dateCreate);
+                                                          }
                                                         },
                                                         child: ClipRRect(
                                                           borderRadius:
@@ -732,32 +698,19 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                           ],
                         ),
                       ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.only(bottom: 30),
-                      child: ButtonHDr(
-                        style: BtnStyle.BUTTON_BLACK,
-                        label: 'Chia sẻ',
-                        onTap: () {
-                          _checkingShare(dropdownValue.contractId,
-                              medicalInstructionIdsSelected);
-                          // _medicalShareInsBloc.add(MedicalShareInsEventSend(
-                          //     contractID: dropdownValue.contractId,
-                          //     listMediIns: medicalInstructionIdsSelected));
-                        },
-                      ),
-                    ),
                   ],
                 ),
               );
             }
             return Container();
           })
-        : Container();
+        : Container(
+            child: Text('Hãy chọn hợp đồng muốn chia sẻ trước',
+                style: TextStyle(color: DefaultTheme.GREY_TEXT)),
+          );
   }
 
   _checkingShare(int _contractId, List<int> _listMedIns) {
-    //
     setState(() {
       showDialog(
           context: context,
@@ -802,91 +755,111 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
             );
           });
       if (_contractId != 0 && _listMedIns.length > 0) {
-        //
         _medicalShareInsBloc.add(MedicalShareInsEventSend(
-            contractID: dropdownValue.contractId,
+            healthRecordId: dropdownValue.healthRecordId,
             listMediIns: medicalInstructionIdsSelected));
+        Navigator.of(context).pop();
         Future.delayed(const Duration(seconds: 3), () {
-          //
           _medicalShareHelper.isMedicalShared().then((value) {
             if (value == true) {
-              Navigator.of(context).pop();
-            } else {
-              //
-              Navigator.of(context).pop();
-              return showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                          child: Container(
-                            padding:
-                                EdgeInsets.only(left: 10, top: 10, right: 10),
-                            width: 250,
-                            height: 150,
-                            decoration: BoxDecoration(
-                              color: DefaultTheme.WHITE.withOpacity(0.7),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.only(bottom: 10, top: 10),
-                                  child: Text(
-                                    'Chia sẻ thất bại',
-                                    style: TextStyle(
-                                      decoration: TextDecoration.none,
-                                      color: DefaultTheme.BLACK,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 20, right: 20),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Đã có vấn đề trong khi chia sẻ các phiếu y lệnh. Xin vui lòng thử lại.',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        decoration: TextDecoration.none,
-                                        color: DefaultTheme.GREY_TEXT,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Spacer(),
-                                Divider(
-                                  height: 1,
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                ),
-                                ButtonHDr(
-                                  height: 40,
-                                  style: BtnStyle.BUTTON_TRANSPARENT,
-                                  label: 'OK',
-                                  labelColor: DefaultTheme.BLUE_TEXT,
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            ),
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                        child: Container(
+                          width: 200,
+                          height: 200,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: DefaultTheme.WHITE.withOpacity(0.8)),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 100,
+                                height: 100,
+                                child:
+                                    Image.asset('assets/images/ic-checked.png'),
+                              ),
+                              Text(
+                                'Chia sẻ thêm thành công',
+                                style: TextStyle(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                    decoration: TextDecoration.none),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    );
-                  });
+                    ),
+                  );
+                },
+              );
+              Future.delayed(const Duration(seconds: 3), () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              });
+            } else {
+              _alertError('Không thể chia sẻ, vui lòng thử lại');
             }
           });
         });
+      } else {
+        Navigator.of(context).pop();
+        _alertError('Bạn phải chọn ít nhất 1 phiếu để chia sẻ');
       }
+    });
+  }
+
+  _alertError(String title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: DefaultTheme.WHITE.withOpacity(0.8)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: Image.asset('assets/images/ic-failed.png'),
+                    ),
+                    Text(
+                      title,
+                      style: TextStyle(
+                          color: DefaultTheme.GREY_TEXT,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.none),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.of(context).pop();
     });
   }
 
@@ -902,7 +875,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
         medicalInstructionIdsSelected = [];
         medicalInstructionIdsSelected = [];
         if (_patientId != 0 && _contractId == null) {
-          _contractListBloc.add(ListContractEventSetPatientId(id: _patientId));
+          _healthRecordListBloc.add(
+              HRListEventSetPersonalHRId(personalHealthRecordId: _patientId));
         }
       });
     });

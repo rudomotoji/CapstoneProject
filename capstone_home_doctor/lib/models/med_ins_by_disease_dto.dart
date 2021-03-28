@@ -1,3 +1,5 @@
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
+
 class MedInsByDiseaseDTO {
   String healthRecordPlace;
   List<MedicalInstructionTypes> medicalInstructionTypes;
@@ -27,16 +29,16 @@ class MedInsByDiseaseDTO {
 
 class MedicalInstructionTypes {
   String miTypeName;
-  List<MedicalInstructions> medicalInstructions;
+  List<MedicalInstructionsDTO> medicalInstructions;
 
   MedicalInstructionTypes({this.miTypeName, this.medicalInstructions});
 
   MedicalInstructionTypes.fromJson(Map<String, dynamic> json) {
     miTypeName = json['miType'];
     if (json['medicalInstructions'] != null) {
-      medicalInstructions = new List<MedicalInstructions>();
+      medicalInstructions = new List<MedicalInstructionsDTO>();
       json['medicalInstructions'].forEach((v) {
-        medicalInstructions.add(new MedicalInstructions.fromJson(v));
+        medicalInstructions.add(new MedicalInstructionsDTO.fromJson(v));
       });
     }
   }
@@ -52,21 +54,21 @@ class MedicalInstructionTypes {
   }
 }
 
-class MedicalInstructions {
-  int medicalInstructionId;
-  String image;
+// class MedicalInstructions {
+//   int medicalInstructionId;
+//   String image;
 
-  MedicalInstructions({this.medicalInstructionId, this.image});
+//   MedicalInstructions({this.medicalInstructionId, this.image});
 
-  MedicalInstructions.fromJson(Map<String, dynamic> json) {
-    medicalInstructionId = json['medicalInstructionId'];
-    image = json['image'];
-  }
+//   MedicalInstructions.fromJson(Map<String, dynamic> json) {
+//     medicalInstructionId = json['medicalInstructionId'];
+//     image = json['image'];
+//   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['medicalInstructionId'] = this.medicalInstructionId;
-    data['image'] = this.image;
-    return data;
-  }
-}
+//   Map<String, dynamic> toJson() {
+//     final Map<String, dynamic> data = new Map<String, dynamic>();
+//     data['medicalInstructionId'] = this.medicalInstructionId;
+//     data['image'] = this.image;
+//     return data;
+//   }
+// }
