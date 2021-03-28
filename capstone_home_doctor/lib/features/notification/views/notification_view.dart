@@ -183,8 +183,10 @@ class _NotificationState extends State<NotificationPage> {
                                                   child: Text(
                                                     '${i.title}',
                                                     style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500),
+                                                        fontWeight: (i.status ==
+                                                                true)
+                                                            ? FontWeight.w500
+                                                            : FontWeight.w600),
                                                   ),
                                                 ),
                                                 Padding(
@@ -196,7 +198,14 @@ class _NotificationState extends State<NotificationPage> {
                                                           .size
                                                           .width -
                                                       80,
-                                                  child: Text('${i.body}'),
+                                                  child: Text('${i.body}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              (i.status == true)
+                                                                  ? FontWeight
+                                                                      .w400
+                                                                  : FontWeight
+                                                                      .w600)),
                                                 ),
                                               ],
                                             ),

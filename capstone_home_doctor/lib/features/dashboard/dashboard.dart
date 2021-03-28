@@ -399,7 +399,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                               margin: EdgeInsets.only(bottom: 5),
                               alignment: Alignment.bottomLeft,
                               child: Text(
-                                '${lastMeasurement.value1}',
+                                (lastMeasurement.value1 != null)
+                                    ? '${lastMeasurement.value1}'
+                                    : '--',
                                 style: TextStyle(
                                   color: DefaultTheme.ORANGE_TEXT,
                                   fontWeight: FontWeight.w500,

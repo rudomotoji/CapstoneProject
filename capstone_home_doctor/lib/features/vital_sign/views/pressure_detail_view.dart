@@ -1,4 +1,5 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -24,6 +25,11 @@ class _PressureDetailView extends State<PressureDetailView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             //
+            HeaderWidget(
+              title: 'Huyết áp',
+              isMainView: false,
+              buttonHeaderType: ButtonHeaderType.BACK_HOME,
+            ),
           ],
         ),
       ),
