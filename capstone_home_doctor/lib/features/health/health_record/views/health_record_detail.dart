@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 import 'package:intl/intl.dart';
 
@@ -107,15 +106,65 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                 isMainView: false,
                 buttonHeaderType: ButtonHeaderType.NONE,
               ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.82,
-                child: CustomScrollView(
-                  slivers: [
-                    buildSliverToBoxAdapterHeader(),
-                    buildSliverAppBarCollepse(),
-                    buildTabbarView(),
-                  ],
-                ),
+              BlocBuilder<HealthRecordDetailBloc, HealthRecordDetailState>(
+                builder: (context, state) {
+                  if (state is HealthRecordDetailStateLoading) {
+                    return Container(
+                      width: 200,
+                      height: 200,
+                      child: SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Image.asset('assets/images/loading.gif'),
+                      ),
+                    );
+                  }
+                  if (state is HealthRecordDetailStateFailure) {
+                    return Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Center(
+                            child: Text(
+                                'Kiểm tra lại đường truyền kết nối mạng')));
+                  }
+                  if (state is HealthRecordDetailStateSuccess) {
+                    if (state.healthRecordDTO != null) {
+                      _healthRecordDTO = state.healthRecordDTO;
+                    }
+
+                    return RefreshIndicator(
+                        child: (_healthRecordDTO.contractId == null)
+                            ? Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.82,
+                                child: CustomScrollView(
+                                  slivers: [
+                                    buildSliverToBoxAdapterHeader(),
+                                    buildTabbarViewNotContract(),
+                                  ],
+                                ),
+                              )
+                            : Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.82,
+                                child: CustomScrollView(
+                                  slivers: [
+                                    buildSliverToBoxAdapterHeader(),
+                                    buildSliverAppBarCollepse(),
+                                    buildTabbarViewHasContract(),
+                                  ],
+                                ),
+                              ),
+                        onRefresh: _pullRefresh);
+                  }
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: Center(
+                      child: Text(
+                        'Không thể tải danh sách hồ sơ',
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -170,363 +219,381 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     return SliverToBoxAdapter(
       child: Column(
         children: [
-          BlocBuilder<HealthRecordDetailBloc, HealthRecordDetailState>(
-            builder: (context, state) {
-              if (state is HealthRecordDetailStateLoading) {
-                return Container(
-                  width: 200,
-                  height: 200,
-                  child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Image.asset('assets/images/loading.gif'),
-                  ),
-                );
-              }
-              if (state is HealthRecordDetailStateFailure) {
-                return Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Center(
-                        child: Text('Kiểm tra lại đường truyền kết nối mạng')));
-              }
-              if (state is HealthRecordDetailStateSuccess) {
-                if (state.healthRecordDTO != null) {
-                  _healthRecordDTO = state.healthRecordDTO;
-                  return Column(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.only(top: 10, bottom: 10),
-                        decoration: BoxDecoration(
-                          color: DefaultTheme.GREY_VIEW,
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(left: 20),
-                                ),
-                                Container(
-                                  width: 125,
-                                  child: Text(
-                                    'Bệnh lý ',
-                                    style: TextStyle(
-                                      color: DefaultTheme.GREY_TEXT,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                ),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width - (155),
-                                  child: Text(
-                                    (_healthRecordDTO.diseases.length > 0)
-                                        ? '${getDisease(_healthRecordDTO.diseases)}'
-                                        : '', //lấy tên bệnh lý
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 3,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                            ),
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(left: 20),
-                                ),
-                                Container(
-                                  width: 125,
-                                  child: Text(
-                                    'Chăm khám tại ',
-                                    style: TextStyle(
-                                      color: DefaultTheme.GREY_TEXT,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                ),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width - (155),
-                                  child: Text(
-                                    '${_healthRecordDTO.place}',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 3,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                            ),
-                            (_healthRecordDTO.description != '')
-                                ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      (_healthRecordDTO.description != null)
-                                          ? Row(
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 20),
-                                                ),
-                                                Container(
-                                                  width: 125,
-                                                  child: Text(
-                                                    'Ghi chú',
-                                                    style: TextStyle(
-                                                      color: DefaultTheme
-                                                          .GREY_TEXT,
-                                                      fontSize: 15,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 10),
-                                                ),
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width -
-                                                      (155),
-                                                  child: Text(
-                                                    '${_healthRecordDTO.description}',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 3,
-                                                    style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 15,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          : Container(),
-                                    ],
-                                  )
-                                : Container(
-                                    height: 0,
-                                    width: 0,
-                                  ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 20, bottom: 5, top: 5),
-                        child: Text(
-                          'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: DefaultTheme.BLACK, fontSize: 13),
-                        ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 30, left: 20, bottom: 0),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      'Danh sách y lệnh',
-                                      style: TextStyle(
-                                        color: DefaultTheme.BLACK,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                    left: 20,
-                                  ),
-                                  child: Text(
-                                    'Bao gồm các phiếu bệnh án/ y lệnh được thêm trước đó',
-                                    style: TextStyle(
-                                        color: DefaultTheme.GREY_TEXT,
-                                        fontSize: 13),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: ButtonHDr(
-                              style: BtnStyle.BUTTON_GREY,
-                              label: 'Thêm y lệnh',
-                              onTap: () {
-                                Navigator.of(context)
-                                    .pushNamed(
-                                        RoutesHDr.CREATE_MEDICAL_INSTRUCTION)
-                                    .then((value) {
-                                  _pullRefresh();
-                                });
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: 20),
-                          )
-                        ],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 10),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 5),
-                        child: Divider(
-                          color: DefaultTheme.GREY_TOP_TAB_BAR,
-                          height: 0.1,
-                        ),
-                      ),
-                    ],
-                  );
-                }
-              }
-              return Container(
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                  child: Text(
-                    'Không thể tải danh sách hồ sơ',
-                  ),
+          // BlocBuilder<HealthRecordDetailBloc, HealthRecordDetailState>(
+          //   builder: (context, state) {
+          //     if (state is HealthRecordDetailStateLoading) {
+          //       return Container(
+          //         width: 200,
+          //         height: 200,
+          //         child: SizedBox(
+          //           width: 100,
+          //           height: 100,
+          //           child: Image.asset('assets/images/loading.gif'),
+          //         ),
+          //       );
+          //     }
+          //     if (state is HealthRecordDetailStateFailure) {
+          //       return Container(
+          //           width: MediaQuery.of(context).size.width,
+          //           child: Center(
+          //               child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+          //     }
+          //     if (state is HealthRecordDetailStateSuccess) {
+          //       if (state.healthRecordDTO != null) {
+          //         _healthRecordDTO = state.healthRecordDTO;
+          //         }
+          //     }
+          //     return Container(
+          //       width: MediaQuery.of(context).size.width,
+          //       child: Center(
+          //         child: Text(
+          //           'Không thể tải danh sách hồ sơ',
+          //         ),
+          //       ),
+          //     );
+          //   },
+          // ),
+          Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(top: 10, bottom: 10),
+                decoration: BoxDecoration(
+                  color: DefaultTheme.GREY_VIEW,
                 ),
-              );
-            },
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 20),
+                        ),
+                        Container(
+                          width: 125,
+                          child: Text(
+                            'Bệnh lý ',
+                            style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width - (155),
+                          child: Text(
+                            (_healthRecordDTO.diseases.length > 0)
+                                ? '${getDisease(_healthRecordDTO.diseases)}'
+                                : '', //lấy tên bệnh lý
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                    ),
+                    Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 20),
+                        ),
+                        Container(
+                          width: 125,
+                          child: Text(
+                            'Chăm khám tại ',
+                            style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width - (155),
+                          child: Text(
+                            '${_healthRecordDTO.place}',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                    ),
+                    (_healthRecordDTO.description != '')
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              (_healthRecordDTO.description != null)
+                                  ? Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 20),
+                                        ),
+                                        Container(
+                                          width: 125,
+                                          child: Text(
+                                            'Ghi chú',
+                                            style: TextStyle(
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              (155),
+                                          child: Text(
+                                            '${_healthRecordDTO.description}',
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 3,
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : Container(),
+                            ],
+                          )
+                        : Container(
+                            height: 0,
+                            width: 0,
+                          ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 20, bottom: 5, top: 5),
+                child: Text(
+                  'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: DefaultTheme.BLACK, fontSize: 13),
+                ),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding:
+                              EdgeInsets.only(top: 30, left: 20, bottom: 0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Danh sách y lệnh',
+                              style: TextStyle(
+                                color: DefaultTheme.BLACK,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: 20,
+                          ),
+                          child: Text(
+                            'Bao gồm các phiếu bệnh án/ y lệnh được thêm trước đó',
+                            style: TextStyle(
+                                color: DefaultTheme.GREY_TEXT, fontSize: 13),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: ButtonHDr(
+                      style: BtnStyle.BUTTON_GREY,
+                      label: 'Thêm y lệnh',
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION)
+                            .then((value) {
+                          _pullRefresh();
+                        });
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: 20),
+                  )
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 10),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 5),
+                child: Divider(
+                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                  height: 0.1,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  SliverFillRemaining buildTabbarView() {
+  SliverFillRemaining buildTabbarViewHasContract() {
     return SliverFillRemaining(
-      child: TabBarView(
-        controller: controller,
-        children: <Widget>[
-          _medicalInsert(),
-          _medicalShare(),
-        ],
+      child:
+          BlocBuilder<MedicalInstructionListBloc, MedicalInstructionListState>(
+        builder: (context, state) {
+          if (state is MedicalInstructionListStateLoading) {
+            return Container(
+              width: 200,
+              height: 200,
+              child: SizedBox(
+                width: 100,
+                height: 100,
+                child: Image.asset('assets/images/loading.gif'),
+              ),
+            );
+          }
+          if (state is MedicalInstructionListStateFailed) {
+            return Container(
+                width: MediaQuery.of(context).size.width,
+                child: Center(
+                    child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+          }
+          if (state is MedicalInstructionListStateSuccess) {
+            if (state.listMedIns != null || state.listMedIns.isNotEmpty) {
+              listMedicalIns.clear();
+              listMedicalInsShared.clear();
+              for (var medicalIns in state.listMedIns) {
+                if (medicalIns.status != null) {
+                  if (medicalIns.status.contains('DOCTOR')) {
+                    listMedicalIns.add(medicalIns);
+                  } else {
+                    listMedicalInsShared.add(medicalIns);
+                  }
+                }
+              }
+            }
+          }
+
+          return TabBarView(
+            controller: controller,
+            children: <Widget>[
+              _medicalInsert(),
+              _medicalShare(),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  SliverFillRemaining buildTabbarViewNotContract() {
+    return SliverFillRemaining(
+      child:
+          BlocBuilder<MedicalInstructionListBloc, MedicalInstructionListState>(
+        builder: (context, state) {
+          if (state is MedicalInstructionListStateLoading) {
+            return Container(
+              width: 200,
+              height: 200,
+              child: SizedBox(
+                width: 100,
+                height: 100,
+                child: Image.asset('assets/images/loading.gif'),
+              ),
+            );
+          }
+          if (state is MedicalInstructionListStateFailed) {
+            return Container(
+                width: MediaQuery.of(context).size.width,
+                child: Center(
+                    child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+          }
+          if (state is MedicalInstructionListStateSuccess) {
+            if (state.listMedIns != null || state.listMedIns.isNotEmpty) {
+              listMedicalIns.clear();
+              listMedicalInsShared.clear();
+              for (var medicalIns in state.listMedIns) {
+                if (medicalIns.status != null) {
+                  if (medicalIns.status.contains('DOCTOR')) {
+                    listMedicalIns.add(medicalIns);
+                  } else {
+                    listMedicalInsShared.add(medicalIns);
+                  }
+                }
+              }
+            }
+          }
+
+          return _medicalShare();
+        },
       ),
     );
   }
 
   Widget _medicalInsert() {
-    return BlocBuilder<MedicalInstructionListBloc, MedicalInstructionListState>(
-      builder: (context, state) {
-        if (state is MedicalInstructionListStateLoading) {
-          return Container(
-            width: 200,
+    return (listMedicalIns.length != 0)
+        ? ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: listMedicalIns.length,
+            itemBuilder: (BuildContext buildContext, int index) {
+              return _itemRow(listMedicalIns[index]);
+            })
+        : Container(
             height: 200,
-            child: SizedBox(
-              width: 100,
-              height: 100,
-              child: Image.asset('assets/images/loading.gif'),
+            width: MediaQuery.of(context).size.width,
+            child: Center(
+              child: Text('Không có hồ sơ nào'),
             ),
           );
-        }
-        if (state is MedicalInstructionListStateFailed) {
-          return Container(
-              width: MediaQuery.of(context).size.width,
-              child: Center(
-                  child: Text('Kiểm tra lại đường truyền kết nối mạng')));
-        }
-        if (state is MedicalInstructionListStateSuccess) {
-          if (state.listMedIns != null || state.listMedIns.isNotEmpty) {
-            listMedicalIns.clear();
-            listMedicalInsShared.clear();
-            for (var medicalIns in state.listMedIns) {
-              if (medicalIns.status != null) {
-                if (medicalIns.status.contains('DOCTOR')) {
-                  listMedicalIns.add(medicalIns);
-                } else {
-                  listMedicalInsShared.add(medicalIns);
-                }
-              }
-            }
-          }
-        }
-        return (listMedicalIns != null || !listMedicalIns.isEmpty)
-            ? ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: listMedicalIns.length,
-                itemBuilder: (BuildContext buildContext, int index) {
-                  return _itemRow(listMedicalIns[index]);
-                })
-            : Container(
-                height: 200,
-                width: MediaQuery.of(context).size.width,
-                child: Center(
-                  child: Text('Không có hồ sơ nào'),
-                ),
-              );
-      },
-    );
+    //   },
+    // );
   }
 
   Widget _medicalShare() {
-    return BlocBuilder<MedicalInstructionListBloc, MedicalInstructionListState>(
-      builder: (context, state) {
-        if (state is MedicalInstructionListStateLoading) {
-          return Container(
-            width: 200,
+    return (listMedicalInsShared.length != 0)
+        ? ListView.builder(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: listMedicalInsShared.length,
+            itemBuilder: (BuildContext context, int index) {
+              print(index);
+              return _itemRow(listMedicalInsShared[index]);
+            },
+          )
+        : Container(
             height: 200,
-            child: SizedBox(
-              width: 100,
-              height: 100,
-              child: Image.asset('assets/images/loading.gif'),
-            ),
+            width: MediaQuery.of(context).size.width,
+            child: Text('Bạn chưa chia sẻ thêm phiếu nào'),
           );
-        }
-        if (state is MedicalInstructionListStateFailed) {
-          return Container(
-              width: MediaQuery.of(context).size.width,
-              child: Center(
-                  child: Text('Kiểm tra lại đường truyền kết nối mạng')));
-        }
-        return (listMedicalInsShared.length != 0)
-            ? ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: listMedicalInsShared.length,
-                itemBuilder: (BuildContext context, int index) {
-                  print(index);
-                  return _itemRow(listMedicalInsShared[index]);
-                },
-              )
-            : Container(
-                height: 200,
-                width: MediaQuery.of(context).size.width,
-                child: Text('Bạn chưa chia sẻ thêm phiếu nào'),
-              );
-      },
-    );
   }
 
   Widget _itemRow(MedicalInstructionDTO dto) {
