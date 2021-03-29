@@ -153,6 +153,7 @@ VitalSignRepository _vitalSignRepository = VitalSignRepository();
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
 
 void _handleGeneralMessage(Map<String, dynamic> message) {
+  print('message android: $message');
   String payload;
   ReceiveNotification receiveNotification;
   if (message.containsKey('data')) {
@@ -171,7 +172,7 @@ void _handleGeneralMessage(Map<String, dynamic> message) {
 void _handleIOSGeneralMessage(Map<String, dynamic> message) {
   String payload = jsonEncode(message);
   ReceiveNotification receiveNotification;
-  print(payload);
+  print('payload ios: $payload');
   final dynamic notification = message['aps']['alert'];
 
   receiveNotification = ReceiveNotification(
@@ -369,11 +370,14 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     _fcm.configure(
       onMessage: (Map<String, dynamic> message) async {
+        onNotificationReceive(message);
         Platform.isIOS
             ? _handleIOSGeneralMessage(message)
             : _handleGeneralMessage(message);
       },
-      // onBackgroundMessage: myBackgroundMessageHandler,
+      // onBackgroundMessage: (Map<String, dynamic> message) async {
+      //   print('onBackgroundMessage: $message');
+      // },
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
       },
@@ -399,6 +403,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
 
     // localNotifyManager.setOnNotificationReceive(onNotificationReceive);
     localNotifyManager.setNotificationnOnClick(selectNotificationSubject);
+  }
+
+  onNotificationReceive(message) {
+    print('message: $message');
   }
 
   @override
