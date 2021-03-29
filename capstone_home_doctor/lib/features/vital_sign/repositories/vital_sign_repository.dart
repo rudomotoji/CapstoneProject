@@ -50,12 +50,12 @@ class VitalSignRepository {
 
           print('Battery percent now at ${DateTime.now()} is: ${batteryData}');
 
-          batteryValue = batteryData;
+          return batteryData;
         } else {
           print('Cannot get battery percentage');
         }
       });
-      return batteryValue;
+      // return batteryValue;
     } catch (e) {
       print('Error at get battery device: ${e}');
     }

@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:flutter/material.dart';
 
 class ButtonArtBoard extends StatefulWidget {
@@ -40,6 +41,14 @@ class _ButtonArtBoard extends State<ButtonArtBoard> {
         width: MediaQuery.of(context).size.width - 40,
         height: 100,
         decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.5),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: Offset(0, 1), // changes position of shadow
+            ),
+          ],
           color: Color(0xffEEEFF3),
           borderRadius: BorderRadius.circular(15),
         ),

@@ -803,7 +803,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     return Column(
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.only(top: 20, bottom: 10),
+          padding: EdgeInsets.only(top: 20, bottom: 20),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -825,7 +825,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           },
         ),
         Padding(
-          padding: EdgeInsets.only(bottom: 10),
+          padding: EdgeInsets.only(bottom: 20),
         ),
         ButtonArtBoard(
           title: 'Kết nối thiết bị',

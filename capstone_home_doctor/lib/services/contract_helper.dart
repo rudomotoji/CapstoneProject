@@ -116,7 +116,6 @@ class ContractHelper {
 
   //FOR SAVE CONTRACT ID
   Future<void> initialContracId() async {
-    print('nhay vao initial');
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('CONTRACT_ID', 0);
   }

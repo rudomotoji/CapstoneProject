@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' as io;
 import 'package:capstone_home_doctor/models/heart_rate_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:uuid/uuid.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:path/path.dart';
@@ -19,9 +20,9 @@ class SQFLiteHelper {
   static const String MEDICAL_SCHEDULE_TABLE = 'MedicalScheduleTbl';
 
   //vital sign
-  static const String HEART_RATE_TABLE = 'HRTable';
   //
   static const String VITAL_SIGN_TABLE = 'VitalSignTbl';
+  static const String VITAL_SIGN_SCHEDULE = 'VitalSignScheduleTbl';
 
   SQFLiteHelper();
 
@@ -61,7 +62,7 @@ class SQFLiteHelper {
         FOREIGN KEY (medical_response_id) REFERENCES $MEDICAL_RESPONSE_TABLE (medical_response_id) ON DELETE NO ACTION ON UPDATE NO ACTION
         )""");
     await db.execute(
-        "CREATE TABLE ${HEART_RATE_TABLE} (value INTEGER, date TEXT PRIMARY KEY)");
+        "CREATE TABLE ${VITAL_SIGN_SCHEDULE} (id PRIMARYKEY TEXT, id_schedule INTEGER, vital_sign_type TEXT, number_max INTEGER, number_min INTEGER, minute_danger_interval INTEGER, time_start TEXT, minute_again INTEGER)");
     await db.execute(
         "CREATE TABLE ${VITAL_SIGN_TABLE} (id PRIMARYKEY TEXT, patient_id INTEGER, value_type TEXT, value1 INTEGER, value2 INTEGER, date_time TEXT)");
   }
@@ -229,32 +230,6 @@ class SQFLiteHelper {
         [id]);
   }
 
-  //HEART RATE TABLE
-  Future<void> insertHeartRate(HeartRateDTO dto) async {
-    var dbClient = await database;
-    try {
-      await dbClient.insert(HEART_RATE_TABLE, dto.toMapSQL());
-    } catch (e) {
-      print('error at insert heart rate ${e}');
-    }
-  }
-
-  Future<List<HeartRateDTO>> getListHeartRate() async {
-    var dbClient = await database;
-    try {
-      var maps = await dbClient.rawQuery('SELECT * FROM $HEART_RATE_TABLE');
-      List<HeartRateDTO> listHeartRate = [];
-      if (maps.length > 0) {
-        for (int i = 0; i < maps.length; i++) {
-          listHeartRate.add(HeartRateDTO.fromMapSQL(maps[i]));
-        }
-        return listHeartRate;
-      }
-    } catch (e) {
-      print('error at get list heart rate ${e}');
-    }
-  }
-
   //VITAL_SIGN_TABLE
   Future<void> insertVitalSign(VitalSignDTO dto) async {
     var dbClient = await database;
@@ -301,115 +276,44 @@ class SQFLiteHelper {
     }
   }
 
-  // //
-  // //HEALTH_RECORD_TABLE
-  // Future<void> insertHealthRecord(HealthRecordDTO dto) async {
-  //   var dbClient = await database;
-  //   await dbClient.insert(HEALTH_RECORD_TABLE, dto.toMapSqflite());
-  // }
+  //VITAL SIGN SCHEDULE
+  Future<void> insertVitalSignSchedule(VitalSigns dto) async {
+    //
+    var dbClient = await database;
+    try {
+      //
+      await dbClient.insert(VITAL_SIGN_SCHEDULE, dto.toMapSQL());
+      print(
+          'INSERT VitalSign Schedule ${dto.vitalSignType} Successful at ${DateTime.now()}');
+    } catch (e) {
+      print('ERROR at insert VitalSign Schedule: $e');
+    }
+  }
 
-  // Future<HealthRecordDTO> findHealthRecordById(String healthRecordId) async {
-  //   var dbClient = await database;
-  //   var maps = await dbClient.query(HEALTH_RECORD_TABLE,
-  //       columns: [
-  //         'health_record_id',
-  //         'disease',
-  //         'place',
-  //         'doctor_name',
-  //         'description',
-  //         'personal_health_record_id',
-  //         'date_create',
-  //         'contract_id',
-  //       ],
-  //       where: 'health_record_id = ?',
-  //       whereArgs: [healthRecordId]);
-  //   HealthRecordDTO dto = HealthRecordDTO();
-  //   if (maps.length > 0) {
-  //     dto = HealthRecordDTO.fromMapSqflite(maps.first);
-  //   }
-  //   return dto;
-  // }
+  Future<List<VitalSigns>> getVitalSignScheduleOffline() async {
+    var dbClient = await database;
+    try {
+      //
+      var maps = await dbClient.rawQuery('SELECT * FROM $VITAL_SIGN_SCHEDULE');
+      List<VitalSigns> list = [];
+      for (int i = 0; i < maps.length; i++) {
+        list.add(VitalSigns.fromMapSQL(maps[i]));
+      }
+      print(
+          'GET SCHEDULE ${list[0].idSchedule} VITAL SIGN OFFLINE SUCCESS at ${DateTime.now()}');
+      return list;
+    } catch (e) {
+      print('ERROR at get VitalSign Schedule Offline: $e');
+    }
+  }
 
-  // Future<List<HealthRecordDTO>> getListHealthRecord(
-  //     String personalHealthRecordId) async {
-  //   var dbClient = await database;
-  //   List<Map> maps = await dbClient.query(HEALTH_RECORD_TABLE,
-  //       columns: [
-  //         'health_record_id',
-  //         'disease',
-  //         'place',
-  //         'doctor_name',
-  //         'description',
-  //         'personal_health_record_id',
-  //         'date_create',
-  //         'contract_id',
-  //       ],
-  //       where: 'personal_health_record_id = ?',
-  //       whereArgs: [personalHealthRecordId]);
-  //   List<HealthRecordDTO> listHealthRecord = [];
-  //   if (maps.length > 0) {
-  //     for (int i = 0; i < maps.length; i++) {
-  //       listHealthRecord.add(HealthRecordDTO.fromMapSqflite(maps[i]));
-  //     }
-  //   }
-  //   return listHealthRecord;
-  // }
-
-  // Future<void> deleteHealthRecord(String healthRecordId) async {
-  //   bool isDeleted = false;
-  //   var dbClient = await database;
-  //   int check = await dbClient.delete(HEALTH_RECORD_TABLE,
-  //       where: 'health_record_id = ?', whereArgs: [healthRecordId]);
-  // }
-
-  // //
-  // //MEDICAL_INSTRUCTION_TABLE
-  // Future<void> insertMedicalIns(MedicalInstructionDTO dto) async {
-  //   var dbClient = await database;
-  //   await dbClient.insert(MEDICAL_INSTRUCTION_TABLE, dto.toMapSqflite());
-  // }
-
-  // Future<List<MedicalInstructionDTO>> getListMedicalIns(
-  //     String healthRecordId) async {
-  //   var dbClient = await database;
-  //   List<Map> maps = await dbClient.query(MEDICAL_INSTRUCTION_TABLE,
-  //       columns: [
-  //         'medical_instruction_id',
-  //         'description',
-  //         'image',
-  //         'dianose',
-  //         'date_start',
-  //         'date_finish',
-  //         'medical_instruction_type_id',
-  //         'health_record_id',
-  //       ],
-  //       where: 'health_record_id = ?',
-  //       whereArgs: [healthRecordId]);
-  //   List<MedicalInstructionDTO> listMedicalIns = [];
-  //   if (maps.length > 0) {
-  //     for (int i = 0; i < maps.length; i++) {
-  //       listMedicalIns.add(MedicalInstructionDTO.fromMapSqflite(maps[i]));
-  //       listMedicalIns.sort((a, b) => b.dateStarted.compareTo(a.dateStarted));
-  //     }
-  //   }
-
-  //   return listMedicalIns;
-  // }
-
-  // Future<void> deleteMedicalIns(String medicalInsId) async {
-  //   bool isDeleted = false;
-  //   var dbClient = await database;
-  //   int check = await dbClient.delete(MEDICAL_INSTRUCTION_TABLE,
-  //       where: 'medical_instruction_id = ?', whereArgs: [medicalInsId]);
-  // }
-
-  // //
-  // //MEDICAL_INSTRUCTION_TYPE_TABLE
-  // Future<MedicalInstructionDTO> insertMedicalInsType(
-  //     MedicalInstructionDTO dto) async {
-  //   var dbClient = await database;
-  //   await dbClient.insert(MEDICAL_INSTRUCTION_TYPE_TABLE, dto.toMapSqflite());
-  //   return dto;
-  // }
-
+  Future<void> deleteVitalSignSchedule() async {
+    var dbClient = await database;
+    try {
+      await dbClient.delete(VITAL_SIGN_SCHEDULE);
+      print('DELETE VITAL SIGN SCHEDULE OFFLINE SUCCESSFUL');
+    } catch (e) {
+      print('ERROR at delete heart rate by patientId ${e}');
+    }
+  }
 }

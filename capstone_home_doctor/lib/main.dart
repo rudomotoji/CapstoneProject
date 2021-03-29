@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
 import 'package:capstone_home_doctor/features/chat/chat.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_checking_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.dart';
@@ -41,7 +42,6 @@ import 'package:capstone_home_doctor/features/health/health_record/views/health_
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/views/medical_share_view.dart';
-import 'package:capstone_home_doctor/features/vital_sign/blocs/heart_rate_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/heart_detail_view.dart';
@@ -76,8 +76,12 @@ import 'package:capstone_home_doctor/features/schedule/views/schedule_medicine_n
 import 'package:capstone_home_doctor/features/schedule/views/schedule_view.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/pressure_detail_view.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/vital_sign_schedule_view.dart';
+import 'package:capstone_home_doctor/models/notification_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
+import 'package:capstone_home_doctor/models/setting_background_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/appointment_helper.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
@@ -94,7 +98,8 @@ import 'package:cron/cron.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter_blue/flutter_blue.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/health/health_record/blocs/medical_scan_image_bloc.dart';
 import 'features/home/home.dart';
@@ -121,6 +126,13 @@ final AppointmentHelper _appointmentHelper = AppointmentHelper();
 final MedicalInstructionHelper _medicalInstructionHelper =
     MedicalInstructionHelper();
 //
+/////////////////////
+final PeripheralHelper _peripheralHelper = PeripheralHelper();
+final VitalSignHelper vitalSignHelper = VitalSignHelper();
+final BackgroundRepository _backgroundRepository =
+    BackgroundRepository(httpClient: http.Client());
+final VitalSignServerRepository _vitalSignServerRepository =
+    VitalSignServerRepository(httpClient: http.Client());
 
 //repo for blocs
 HealthRecordRepository _healthRecordRepository =
@@ -151,6 +163,8 @@ VitalSignRepository _vitalSignRepository = VitalSignRepository();
 
 //AccountBloc
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
+//
+VitalSignScheduleDTO _vitalSignScheduleDTO = VitalSignScheduleDTO();
 
 void _handleGeneralMessage(Map<String, dynamic> message) {
   String payload;
@@ -248,6 +262,12 @@ void checkNotifiMedical() async {
   }
 }
 
+//patientId
+int _patientId = 0;
+int _accountId = 0;
+var uuid = Uuid();
+
+/////////
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -257,13 +277,389 @@ void main() async {
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
+  await _getAccountId();
+  await _getPatientId();
+
+  //connect device for 1st time and when bluetooth is on
+  FlutterBlue.instance.state.listen((state) async {
+    if (state == BluetoothState.on) {
+      if (_patientId != 0) {
+        await _connectFirstOpenApp();
+      }
+    }
+  });
+  //THIS IS CRON
   final cron = Cron()
     ..schedule(Schedule.parse('* * * * * '), () async {
       checkNotifiMedical();
-      // print(
-      //     'Fetch background IN MAIN_FUNCTION every 1 minute ${DateTime.now()} and do something here');
+      //
+      //DO BLUETOOTH CONNECT AND GET HEART RATE
+      print('At ${DateTime.now()} to Check Bluetooth funcs background');
+
+      int countConnectBg = 0;
+
+      await authenHelper.getPatientId().then((pIdCron) async {
+        _patientId = pIdCron;
+        if (_patientId != 0) {
+          await FlutterBlue.instance.state.listen((state) async {
+            if (state == BluetoothState.on) {
+              //
+              //check API Background setting
+              if (countConnectBg == 0) {
+                await _backgroundRepository
+                    .getSettingBackground()
+                    .then((backGroundSetting) async {
+                  SettingBackgroundDTO settingDTO = SettingBackgroundDTO(
+                    backgroundRun: backGroundSetting.backgroundRun,
+                    insertLocal: backGroundSetting.insertLocal,
+                  );
+                  if (settingDTO != null) {
+                    print(
+                        'FROM setting API: check heart rate every ${backGroundSetting.backgroundRun} minute(s), and insert every ${backGroundSetting.insertLocal} times');
+                    //COUNT IN BACKGROUND
+
+                    await vitalSignHelper
+                        .getCountInBackground()
+                        .then((countInBackGround) async {
+                      //countInBackGround += 1
+                      await vitalSignHelper
+                          .updateCountInBackground(countInBackGround += 1);
+                      //
+
+                      if (countInBackGround ==
+                          backGroundSetting.backgroundRun) {
+                        print(
+                            'Every $countInBackGround minute(s), check heart rate (not insert)');
+                        //
+                        //check bluetooth on or off, then do action connect and get value
+                        FlutterBlue.instance.state.listen((state) async {
+                          print('state is ${state}');
+                          if (state == BluetoothState.on) {
+                            await _connectInBackground(
+                                backGroundSetting.insertLocal);
+                          }
+                        });
+                        //
+                        //reset count in background
+                        await vitalSignHelper.updateCountInBackground(0);
+                      }
+                    });
+                  }
+                });
+                countConnectBg++;
+              }
+            }
+          });
+        } else {
+          print('user has logged out of system');
+        }
+      });
     });
   runApp(HomeDoctor());
+}
+
+_getPatientId() async {
+  await authenHelper.getPatientId().then((value) {
+    _patientId = value;
+  });
+  if (_patientId != 0) {
+    await _vitalSignServerRepository
+        .getVitalSignSchedule(_patientId)
+        .then((scheduleDTO) async {
+      _vitalSignScheduleDTO = scheduleDTO;
+      await _sqfLiteHelper.deleteVitalSignSchedule();
+      //insert schedule vitalsign into local db
+      if (_vitalSignScheduleDTO != null) {
+        for (VitalSigns x in _vitalSignScheduleDTO.vitalSigns) {
+          VitalSigns vitalSignDTO = VitalSigns(
+            id: uuid.v1(),
+            idSchedule: _vitalSignScheduleDTO.medicalInstructionId,
+            vitalSignType: x.vitalSignType,
+            minuteAgain: x.minuteAgain,
+            minuteDangerInterval: x.minuteDangerInterval,
+            numberMax: x.numberMax,
+            numberMin: x.numberMin,
+            timeStart: x.timeStart,
+          );
+
+          await _sqfLiteHelper.insertVitalSignSchedule(vitalSignDTO);
+        }
+      }
+    });
+  }
+}
+
+//
+_connectFirstOpenApp() async {
+  await _peripheralHelper.getPeripheralId().then((value) async {
+    if (value != '') {
+      await _peripheralRepository.connectDeviceInBackground(value);
+    }
+  });
+}
+
+//insert hr into db
+_insertHeartRateIntoDb() async {
+  await vitalSignHelper.getHeartRateValue().then((heartRateValue) async {
+    if (heartRateValue != 0 && _patientId != 0) {
+      VitalSignDTO vitalSignDTO = VitalSignDTO(
+        id: uuid.v1(),
+        patientId: _patientId,
+        valueType: 'HEART_RATE',
+        value1: heartRateValue,
+        value2: null,
+        dateTime: DateTime.now().toString(),
+      );
+
+      await _sqfLiteHelper.insertVitalSign(vitalSignDTO);
+    }
+  });
+}
+
+_getAccountId() async {
+  await authenHelper.getAccountId().then((value) {
+    _accountId = value;
+  });
+}
+
+//connect device in bg
+_connectInBackground(int timeInsert) async {
+  //count when dangerous plus
+  int dangerPlus = 0;
+  //count when insert db
+  int insertPlus = 0;
+
+//    print('time insert duoc truyen vao ${timeInsert} ');
+  await _peripheralHelper.getPeripheralId().then((peripheralId) async {
+    if (peripheralId != '') {
+      //
+      //test battery
+      await _vitalSignRepository
+          .getBatteryDevice(peripheralId)
+          .then((batteryValue) {
+        //
+        print('BATTERY OF DEVICE IS ${batteryValue}');
+      });
+
+      //
+      //count dangerous means for every measurement again, get the first value to
+      //regconized value to notify server
+      int countLastValue = 0;
+
+      //function get heart rate from device
+      await _vitalSignRepository.getHeartRateValueFromDevice(peripheralId);
+      //
+      //
+      //getCountingHR means space time for insert local DB
+      await vitalSignHelper.getCountingHR().then((timeToInsertLocalDB) async {
+        if (insertPlus == 0) {
+          //get and count += 1
+          await vitalSignHelper.updateCountingHR(timeToInsertLocalDB += 1);
+          //
+          print('Its just be ${timeToInsertLocalDB} times');
+          //
+          if (timeToInsertLocalDB == timeInsert) {
+            //
+            print(
+                'COUNTED: ${timeToInsertLocalDB}.DO INSERT HEART RATE INTO LOCAL DB');
+            await _insertHeartRateIntoDb();
+            if (timeToInsertLocalDB >= timeInsert) {
+              //reset space time to 0 and count space time again
+              await vitalSignHelper.updateCountingHR(0);
+            }
+          }
+
+          insertPlus++;
+        }
+      });
+      //
+      //
+      if (_patientId != 0) {
+        // print('patient ID before get vital sign schedule ${_patientId}');
+        //
+
+        await _sqfLiteHelper
+            .getVitalSignScheduleOffline()
+            .then((scheduleOffline) async {
+          print('THERE ARE ELEMENTS IN TABLE SCHEDULE OFFLINE: ');
+          for (VitalSigns a in scheduleOffline) {
+            print('${a.vitalSignType}');
+          }
+          //
+          //
+          print(
+              'vital sign schedule now ${_vitalSignScheduleDTO.medicalInstructionId}');
+          if (scheduleOffline == null) {
+            await _backgroundRepository
+                .getSafeScopeHeartRate()
+                .then((scopeHearRate) async {
+              //
+              print(
+                  'scope heart rate is ${scopeHearRate.minSafeHeartRate} - max ${scopeHearRate.maxSafeHeartRate}. Dangerous count is ${scopeHearRate.dangerousCount}');
+              //
+              if (countLastValue == 0) {
+                await vitalSignHelper.getHeartRateValue().then((value) async {
+                  if (value != 0) {
+                    if (value < scopeHearRate.minSafeHeartRate ||
+                        value > scopeHearRate.maxSafeHeartRate) {
+                      await vitalSignHelper
+                          .getCountDownDangerous()
+                          .then((countDown) async {
+                        //
+                        if (dangerPlus == 0) {
+                          await vitalSignHelper
+                              .updateCountDownDangerous(countDown += 1);
+                          print(
+                              'DANGEROUS HR. COUNT DOWN DANGEROUS IS ${countDown} at ${DateTime.now()}');
+                          if (countDown == scopeHearRate.dangerousCount) {
+                            ////////////////////////
+                            //LOCAL EXECUTE HERE
+                            //
+                            var dangerousNotification = {
+                              "notification": {
+                                "title": "Sinh hiệu bất thường",
+                                "body":
+                                    "Nhịp tim của bạn có dấu hiệu bất thường.\n${value} BPM vào lúc ${DateTime.now().toString().split(' ')[1].split('.')[0]}",
+                              },
+                              "data": {
+                                "NAVIGATE_TO_SCREEN": RoutesHDr.MAIN_HOME,
+                              }
+                            };
+                            _handleGeneralMessage(dangerousNotification);
+                            if (countDown >= scopeHearRate.dangerousCount) {
+                              await vitalSignHelper.updateCountDownDangerous(0);
+                            }
+                          }
+
+                          dangerPlus++;
+                        }
+                      });
+                    } else {
+                      //
+                      await vitalSignHelper
+                          .getCountDownDangerous()
+                          .then((countDown) async {
+                        //
+                        if (countDown > 0) {
+                          await vitalSignHelper
+                              .updateCountDownDangerous(countDown -= 1);
+                        }
+                        print(
+                            'NORMAL HR. COUNT DOWN DANGEROUS IS ${countDown}');
+                      });
+                    }
+                  }
+                });
+                //
+                countLastValue++;
+              } else {
+                //
+                print(
+                    'value heart rate == 0. it means cannot get heart rate or disconnected');
+              }
+              //
+            });
+          } else {
+            //
+            //schedule heart rate first
+            VitalSigns heartRateSchedule = scheduleOffline
+                .where((item) => item.vitalSignType == 'Nhịp tim')
+                .first;
+            print(
+                'Heart rate schedule: min ${heartRateSchedule.numberMin}-${heartRateSchedule.numberMax}');
+            if (countLastValue == 0) {
+              //
+              await vitalSignHelper.getHeartRateValue().then((value) async {
+                //
+                if (value != 0) {
+                  if (value < heartRateSchedule.numberMin ||
+                      value > heartRateSchedule.numberMax) {
+                    //
+                    await vitalSignHelper
+                        .getCountDownDangerous()
+                        .then((countDown) async {
+                      //
+                      if (dangerPlus == 0) {
+                        await vitalSignHelper
+                            .updateCountDownDangerous(countDown += 1);
+                        print(
+                            'DANGEROUS HR. COUNT DOWN DANGEROUS IS ${countDown}');
+                        if (countDown ==
+                            heartRateSchedule.minuteDangerInterval) {
+                          ////////////////////////
+                          //LOCAL EXECUTE HERE
+                          //
+                          var dangerousNotification = {
+                            "notification": {
+                              "title": "Sinh hiệu bất thường",
+                              "body":
+                                  "Nhịp tim của bạn có dấu hiệu bất thường.\n${value} BPM vào lúc ${DateTime.now().toString().split(' ')[1].split('.')[0]}",
+                            },
+                            "data": {
+                              "NAVIGATE_TO_SCREEN": RoutesHDr.MAIN_HOME,
+                            }
+                          };
+                          _handleGeneralMessage(dangerousNotification);
+                          ////////////////////////
+                          //SERVER EXECUTE HERE
+
+                          NotificationPushDTO notiPushDTO = NotificationPushDTO(
+                              deviceType: 2,
+                              notificationType: 2,
+                              recipientAccountId:
+                                  _vitalSignScheduleDTO.doctorAccountId,
+                              senderAccountId: _accountId);
+                          //PUSH NOTI
+                          await notificationRepository
+                              .pushNotification(notiPushDTO);
+                          //
+                          //CHANGE STATUS PEOPLE
+                          await notificationRepository.changePersonalStatus(
+                              _patientId, 'DANGER');
+                          if (countDown >=
+                              heartRateSchedule.minuteDangerInterval) {
+                            await vitalSignHelper.updateCountDownDangerous(0);
+                          }
+                        }
+
+                        dangerPlus++;
+                      }
+
+                      //
+                    });
+                  } else {
+                    //
+                    await vitalSignHelper
+                        .getCountDownDangerous()
+                        .then((countDown) async {
+                      //
+                      if (countDown > 0) {
+                        await vitalSignHelper
+                            .updateCountDownDangerous(countDown -= 1);
+                      }
+                      print('NORMAL HR. COUNT DOWN DANGEROUS IS ${countDown}');
+                    });
+                  }
+                } else {
+                  //
+                  print(
+                      'value heart rate == 0. it means cannot get heart rate or disconnected');
+                }
+              });
+              countLastValue++;
+            }
+          }
+
+          //
+        });
+      }
+
+      //
+
+    } else {
+      print('user logged in but not connect with peripheral');
+    }
+  });
 }
 
 class HomeDoctor extends StatefulWidget {
@@ -502,10 +898,6 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<AppointmentBloc>(
             create: (BuildContext context) =>
                 AppointmentBloc(appointmentRepository: _appointmentRepository),
-          ),
-          BlocProvider<HeartRateBloc>(
-            create: (BuildContext context) =>
-                HeartRateBloc(sqfLiteHelper: _sqfLiteHelper),
           ),
           BlocProvider<PeripheralBloc>(
             create: (BuildContext context) =>
