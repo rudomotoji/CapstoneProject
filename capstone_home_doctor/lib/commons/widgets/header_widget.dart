@@ -381,13 +381,19 @@ class _HeaderWidget extends State<HeaderWidget> {
                                 .getPeripheralId()
                                 .then((peripheralId) async {
                               //
-                              await _peripheralRepository
-                                  .findScanResultById(peripheralId)
-                                  .then((device) async {
+                              if (peripheralId != '' ||
+                                  peripheralId != 'NOTHING') {
                                 //
                                 await _peripheralRepository
-                                    .disconnectDevice(device);
-                              });
+                                    .findScanResultById(peripheralId)
+                                    .then((device) async {
+                                  //
+                                  if (device != null) {
+                                    await _peripheralRepository
+                                        .disconnectDevice(device);
+                                  }
+                                });
+                              }
                             });
                             //
                             //remove all shared preference

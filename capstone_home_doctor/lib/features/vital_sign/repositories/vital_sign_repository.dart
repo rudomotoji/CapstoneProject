@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:http/http.dart' as http;
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
@@ -23,9 +25,9 @@ class VitalSignRepository {
   }
 
   //get battery device
-  Future<int> getBatteryDevice(String peripheralId) async {
+  Future<ByteData> getBatteryDevice(String peripheralId) async {
     try {
-      int batteryValue = 0;
+      ByteData batteryValue;
       BluetoothDevice device =
           await peripheralRepository.findScanResultById(peripheralId);
       device.disconnect();
@@ -43,8 +45,12 @@ class VitalSignRepository {
       print('bluetooth Battery_ch set notify ${_characteristic.isNotifying}');
       _characteristic.value.listen((value) {
         if (value.isNotEmpty) {
-          print('Battery percent now at ${DateTime.now()} is: ${value[0]}');
-          batteryValue = value[0];
+          var manifactureData = Uint8List.fromList(value);
+          var batteryData = ByteData.sublistView(manifactureData, 14, 15);
+
+          print('Battery percent now at ${DateTime.now()} is: ${batteryData}');
+
+          batteryValue = batteryData;
         } else {
           print('Cannot get battery percentage');
         }

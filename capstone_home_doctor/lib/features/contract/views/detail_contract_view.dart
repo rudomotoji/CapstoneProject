@@ -390,7 +390,8 @@ class _DetailContractView extends State<DetailContractView>
                               width: MediaQuery.of(context).size.width,
                               height: 30,
                               padding: EdgeInsets.only(top: 5, bottom: 5),
-                              color: DefaultTheme.RED_CALENDAR.withOpacity(0.3),
+                              color:
+                                  DefaultTheme.SUCCESS_STATUS.withOpacity(0.3),
                               child: InkWell(
                                 onTap: () {
                                   if (_patientId != 0 &&
@@ -419,7 +420,7 @@ class _DetailContractView extends State<DetailContractView>
                                                     top: 10,
                                                     right: 10),
                                                 width: 250,
-                                                height: 180,
+                                                height: 185,
                                                 decoration: BoxDecoration(
                                                   color: DefaultTheme.WHITE
                                                       .withOpacity(0.7),
@@ -512,6 +513,9 @@ class _DetailContractView extends State<DetailContractView>
                                                                       .BLUE_TEXT)),
                                                           onPressed: () {
                                                             //
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                             _showContractDocument(
                                                                 contractUpdateDTO,
                                                                 true);
@@ -544,7 +548,7 @@ class _DetailContractView extends State<DetailContractView>
                                     Text(
                                       'XÁC NHẬN HỢP ĐỒNG',
                                       style: TextStyle(
-                                          color: DefaultTheme.RED_CALENDAR,
+                                          color: DefaultTheme.BLUE_DARK,
                                           fontWeight: FontWeight.w600),
                                     )
                                   ],
@@ -1056,6 +1060,140 @@ class _DetailContractView extends State<DetailContractView>
                                         width: 20,
                                         height: 20,
                                         child: Image.asset(
+                                            'assets/images/ic-calendar.png'),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      Text(
+                                        'Thời gian',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            color: DefaultTheme.BLACK_BUTTON),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                //
+                                Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Ngày bắt đầu:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        (_contractFullDTO.dateFinished != null)
+                                            ? Row(
+                                                children: [
+                                                  //
+
+                                                  Container(
+                                                    width: 100,
+                                                    child: Text(
+                                                      'Ngày kết thúc:',
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                            100 -
+                                                            40,
+                                                    child: Text(
+                                                      '${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}',
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : Row(
+                                                children: [
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                            40,
+                                                    child: Text(
+                                                      'Ngày kết thúc sẽ được cập nhật sau khi bác sĩ xét duyệt.',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: DefaultTheme
+                                                              .SUCCESS_STATUS,
+                                                          wordSpacing: 1,
+                                                          letterSpacing: 0.4),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                      ],
+                                    )),
+                                //
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+//
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            color: DefaultTheme.WHITE,
+                            child: Column(
+                              children: [
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.only(
+                                      top: 10, bottom: 10, left: 20),
+                                  color: DefaultTheme.WHITE,
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: Image.asset(
                                             'assets/images/ic-money.png'),
                                       ),
                                       Padding(
@@ -1092,7 +1230,7 @@ class _DetailContractView extends State<DetailContractView>
                                                 Container(
                                                   width: 100,
                                                   child: Text(
-                                                    'Ngày theo dõi:',
+                                                    'Số ngày:',
                                                   ),
                                                 ),
                                                 Container(
@@ -1152,7 +1290,7 @@ class _DetailContractView extends State<DetailContractView>
                                           height: 50,
                                           child: Center(
                                               child: Text(
-                                                  'Được cập nhật sau khi bác sĩ xét duyệt hợp đồng của bạn.')),
+                                                  'Giá tiền sẽ được cập nhật sau khi bác sĩ xét duyệt')),
                                         ),
                                 ),
                                 //
@@ -1614,7 +1752,10 @@ class _DetailContractView extends State<DetailContractView>
                                           padding: EdgeInsets.only(
                                               left: 20, right: 20, bottom: 20),
                                           child: Text(
-                                            'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateStarted)}',
+                                            (_contractFullDTO.dateFinished ==
+                                                    null)
+                                                ? 'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateStarted)}. \n Ngày kết thúc sẽ được cập nhật sau khi bác sĩ xét duyệt.'
+                                                : 'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateStarted)} đến ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateFinished)}.',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 16,
@@ -1924,7 +2065,7 @@ class _DetailContractView extends State<DetailContractView>
                                                     right: 20,
                                                     bottom: 10),
                                                 child: Text(
-                                                  '- Phí tiền dịch vụ: ${_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense} VND',
+                                                  '- Phí tiền dịch vụ: ${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)}',
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -2002,7 +2143,7 @@ class _DetailContractView extends State<DetailContractView>
                                               left: 20, right: 20, bottom: 20),
                                           child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                MainAxisAlignment.center,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
@@ -2080,7 +2221,7 @@ class _DetailContractView extends State<DetailContractView>
                                               child: Align(
                                                 alignment: Alignment.center,
                                                 heightFactor: 50,
-                                                child: Text('Gửi yêu cầu',
+                                                child: Text('Xác nhận hợp đồng',
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.w500,

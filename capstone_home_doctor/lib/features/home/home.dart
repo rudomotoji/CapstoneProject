@@ -42,6 +42,7 @@ import 'package:firebase_core/firebase_core.dart';
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
 final VitalSignHelper vitalSignHelper = VitalSignHelper();
+final VitalSignRepository _vitalSignRepository = VitalSignRepository();
 final BackgroundRepository _backgroundRepository =
     BackgroundRepository(httpClient: http.Client());
 final VitalSignServerRepository _vitalSignServerRepository =
@@ -49,6 +50,7 @@ final VitalSignServerRepository _vitalSignServerRepository =
 
 //
 final FirebaseMessaging _fcm = FirebaseMessaging();
+//
 
 class MainHome extends StatefulWidget {
   @override
@@ -94,10 +96,11 @@ class _MainHomeState extends State<MainHome> {
       await Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
     });
 
-    final cron = new Cron()
+    final Cron cron = new Cron()
       ..schedule(Schedule.parse('* * * * * '), () async {
         print('At ${DateTime.now()} to Check Bluetooth funcs background');
         int countConnectBg = 0;
+
         //test local noti
         // var dangerousNotification = {
         //   "notification": {
@@ -117,48 +120,49 @@ class _MainHomeState extends State<MainHome> {
               if (state == BluetoothState.on) {
                 //
                 //check API Background setting
-                await _backgroundRepository
-                    .getSettingBackground()
-                    .then((backGroundSetting) async {
-                  SettingBackgroundDTO settingDTO = SettingBackgroundDTO(
-                    backgroundRun: backGroundSetting.backgroundRun,
-                    insertLocal: backGroundSetting.insertLocal,
-                  );
-                  if (settingDTO != null) {
-                    print(
-                        'FROM setting API: check heart rate every ${backGroundSetting.backgroundRun} minute(s), and insert every ${backGroundSetting.insertLocal} times');
-                    //COUNT IN BACKGROUND
-                    await vitalSignHelper
-                        .getCountInBackground()
-                        .then((countInBackGround) async {
-                      //countInBackGround += 1
-                      await vitalSignHelper
-                          .updateCountInBackground(countInBackGround += 1);
-                      //
+                if (countConnectBg == 0) {
+                  await _backgroundRepository
+                      .getSettingBackground()
+                      .then((backGroundSetting) async {
+                    SettingBackgroundDTO settingDTO = SettingBackgroundDTO(
+                      backgroundRun: backGroundSetting.backgroundRun,
+                      insertLocal: backGroundSetting.insertLocal,
+                    );
+                    if (settingDTO != null) {
+                      print(
+                          'FROM setting API: check heart rate every ${backGroundSetting.backgroundRun} minute(s), and insert every ${backGroundSetting.insertLocal} times');
+                      //COUNT IN BACKGROUND
 
-                      if (countInBackGround ==
-                          backGroundSetting.backgroundRun) {
-                        print(
-                            'Every $countInBackGround minute(s), check heart rate (not insert)');
+                      await vitalSignHelper
+                          .getCountInBackground()
+                          .then((countInBackGround) async {
+                        //countInBackGround += 1
+                        await vitalSignHelper
+                            .updateCountInBackground(countInBackGround += 1);
                         //
-                        //check bluetooth on or off, then do action connect and get value
-                        await FlutterBlue.instance.state.listen((state) async {
-                          print('state is ${state}');
-                          if (state == BluetoothState.on) {
-                            if (countConnectBg == 0) {
+
+                        if (countInBackGround ==
+                            backGroundSetting.backgroundRun) {
+                          print(
+                              'Every $countInBackGround minute(s), check heart rate (not insert)');
+                          //
+                          //check bluetooth on or off, then do action connect and get value
+                          FlutterBlue.instance.state.listen((state) async {
+                            print('state is ${state}');
+                            if (state == BluetoothState.on) {
                               await _connectInBackground(
                                   backGroundSetting.insertLocal);
-                              countConnectBg++;
                             }
-                          }
-                        });
-                        //
-                        //reset count in background
-                        await vitalSignHelper.updateCountInBackground(0);
-                      }
-                    });
-                  }
-                });
+                          });
+                          //
+                          //reset count in background
+                          await vitalSignHelper.updateCountInBackground(0);
+                        }
+                      });
+                    }
+                  });
+                  countConnectBg++;
+                }
               }
             });
           } else {
@@ -276,6 +280,16 @@ class _MainHomeState extends State<MainHome> {
 //    print('time insert duoc truyen vao ${timeInsert} ');
     await _peripheralHelper.getPeripheralId().then((peripheralId) async {
       if (peripheralId != '') {
+        //
+        //test battery
+        await _vitalSignRepository
+            .getBatteryDevice(peripheralId)
+            .then((batteryValue) {
+          //
+          print('BATTERY OF DEVICE IS ${batteryValue}');
+        });
+
+        //
         //count dangerous means for every measurement again, get the first value to
         //regconized value to notify server
         int countLastValue = 0;
@@ -294,15 +308,15 @@ class _MainHomeState extends State<MainHome> {
             //
             print('Its just be ${timeToInsertLocalDB} times');
             //
-            if (timeToInsertLocalDB >= timeInsert) {
+            if (timeToInsertLocalDB == timeInsert) {
               //
               print(
                   'COUNTED: ${timeToInsertLocalDB}.DO INSERT HEART RATE INTO LOCAL DB');
               await _insertHeartRateIntoDb();
-              if (timeToInsertLocalDB > timeInsert) {
-                //reset space time to 0 and count space time again
-                await vitalSignHelper.updateCountingHR(0);
-              }
+            }
+            if (timeToInsertLocalDB > timeInsert) {
+              //reset space time to 0 and count space time again
+              await vitalSignHelper.updateCountingHR(0);
             }
             insertPlus++;
           }
@@ -341,7 +355,7 @@ class _MainHomeState extends State<MainHome> {
                                 .updateCountDownDangerous(countDown += 1);
                             print(
                                 'DANGEROUS HR. COUNT DOWN DANGEROUS IS ${countDown} at ${DateTime.now()}');
-                            if (countDown >= scopeHearRate.dangerousCount) {
+                            if (countDown == scopeHearRate.dangerousCount) {
                               ////////////////////////
                               //LOCAL EXECUTE HERE
                               //
@@ -356,13 +370,11 @@ class _MainHomeState extends State<MainHome> {
                                 }
                               };
                               _handleGeneralMessage(dangerousNotification);
-
-                              if (countDown > scopeHearRate.dangerousCount) {
-                                await vitalSignHelper
-                                    .updateCountDownDangerous(0);
-                              }
-                              dangerPlus++;
                             }
+                            if (countDown > scopeHearRate.dangerousCount) {
+                              await vitalSignHelper.updateCountDownDangerous(0);
+                            }
+                            dangerPlus++;
                           }
                         });
                       } else {
@@ -416,7 +428,7 @@ class _MainHomeState extends State<MainHome> {
                               .updateCountDownDangerous(countDown += 1);
                           print(
                               'DANGEROUS HR. COUNT DOWN DANGEROUS IS ${countDown}');
-                          if (countDown >=
+                          if (countDown ==
                               heartRateSchedule.minuteDangerInterval) {
                             ////////////////////////
                             //LOCAL EXECUTE HERE
@@ -450,10 +462,10 @@ class _MainHomeState extends State<MainHome> {
                             //               patientId: _patientId, status: 'DANGER'));
                             //           await vitalSignHelper.updateCountDownDangerous(0);
                             //         }
-                            if (countDown >
-                                heartRateSchedule.minuteDangerInterval) {
-                              await vitalSignHelper.updateCountDownDangerous(0);
-                            }
+                          }
+                          if (countDown >
+                              heartRateSchedule.minuteDangerInterval) {
+                            await vitalSignHelper.updateCountDownDangerous(0);
                           }
                           dangerPlus++;
                         }
