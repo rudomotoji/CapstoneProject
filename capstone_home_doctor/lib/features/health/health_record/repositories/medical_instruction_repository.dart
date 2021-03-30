@@ -140,6 +140,7 @@ class MedicalInstructionRepository extends BaseApiClient {
       return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
     } catch (e) {
       print('ERROR AT getTextIMG repo: ${e}');
+      // return ImageScannerDTO(symptom: '', title: '');
     }
   }
 
