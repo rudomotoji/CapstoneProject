@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:string_similarity/string_similarity.dart';
+import 'package:sentry/sentry.dart';
 
 class MedicalInstructionRepository extends BaseApiClient {
   final http.Client httpClient;
@@ -138,10 +139,16 @@ class MedicalInstructionRepository extends BaseApiClient {
       // }
 
       return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
-    } catch (e) {
-      print('ERROR AT getTextIMG repo: ${e}');
-      // return ImageScannerDTO(symptom: '', title: '');
+    } catch (exception, stackTrace) {
+      await Sentry.captureException(
+        exception,
+        stackTrace: stackTrace,
+      );
     }
+    // catch (e) {
+    //   print('ERROR AT getTextIMG repo: ${e}');
+    //   // return ImageScannerDTO(symptom: '', title: '');
+    // }
   }
 
   // //create medical instruction by multiple part

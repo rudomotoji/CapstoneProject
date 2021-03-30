@@ -23,7 +23,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  tesseract_ocr: ^0.3.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -72,6 +71,8 @@ dev_dependencies:
   expandable_group: ^0.0.7
   photo_view: ^0.10.0
   connectivity: ^2.0.2
+  tesseract_ocr: ^0.3.1
+  sentry_flutter: ^4.0.6
 
 
 # For information on the generic Dart part of this file, see the

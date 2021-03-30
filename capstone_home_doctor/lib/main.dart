@@ -109,6 +109,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 final MORNING = 6;
 final NOON = 11;
@@ -359,7 +360,14 @@ void main() async {
         }
       });
     });
-  runApp(HomeDoctor());
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://0ccf617d2df8401a93b955bb5ea55728@o440638.ingest.sentry.io/5698108';
+    },
+    appRunner: () => runApp(HomeDoctor()),
+  );
+  // runApp(HomeDoctor());
 }
 
 _getPatientId() async {
