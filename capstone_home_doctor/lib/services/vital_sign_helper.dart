@@ -90,4 +90,48 @@ class VitalSignHelper {
     }
     return prefs.getInt('COUNT_IN_BACKGROUND');
   }
+
+  //CHECK DANGEROUS BACK TO NORMAL
+  Future<void> initialCheckToNormal() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('DANGER_TO_NORMAL', false);
+  }
+
+  Future<void> updateCheckToNormal(bool check) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('DANGER_TO_NORMAL')) {
+      initialCheckToNormal();
+    }
+    prefs.setBool('DANGER_TO_NORMAL', check);
+  }
+
+  Future<bool> isCheckToNormal() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('DANGER_TO_NORMAL')) {
+      initialCheckToNormal();
+    }
+    return prefs.getBool('DANGER_TO_NORMAL');
+  }
+
+  //COUNT TO NORMAL
+  Future<void> initialCountToNormal() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('COUNT_TO_NORMAL', 0);
+  }
+
+  Future<void> updateCountToNormal(int value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('COUNT_TO_NORMAL')) {
+      initialCountToNormal();
+    }
+    prefs.setInt('COUNT_TO_NORMAL', value);
+  }
+
+  Future<int> getCountToNormal() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('COUNT_TO_NORMAL')) {
+      initialCountToNormal();
+    }
+    return prefs.getInt('COUNT_TO_NORMAL');
+  }
 }

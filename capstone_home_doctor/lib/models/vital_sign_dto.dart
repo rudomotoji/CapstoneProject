@@ -46,6 +46,10 @@ class VitalSignDTO {
     return '${dateTime.split(' ')[1].split(':')[0].toString()}g ${dateTime.split(' ')[1].split(':')[1].toString()}p';
   }
 
+  String toDatePush() {
+    return '${dateTime.split(' ')[1].split(':')[0].toString()}:${dateTime.split(' ')[1].split(':')[1].toString()}';
+  }
+
   String toTimeMinString() {
     return '${dateTime.split(' ')[1].split(':')[1].toString()},';
   }

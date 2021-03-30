@@ -25,18 +25,21 @@ class SafeScopeHeartRateDTO {
   int minSafeHeartRate;
   int maxSafeHeartRate;
   int dangerousCount;
+  int normalCount;
 
   SafeScopeHeartRateDTO(
       {this.id,
       this.minSafeHeartRate,
       this.maxSafeHeartRate,
-      this.dangerousCount});
+      this.dangerousCount,
+      this.normalCount});
 
   SafeScopeHeartRateDTO.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     minSafeHeartRate = json['minSafeHeartRate'];
     maxSafeHeartRate = json['maxSafeHeartRate'];
     dangerousCount = json['dangerousCount'];
+    normalCount = json['normalCount'];
   }
 
   Map<String, dynamic> toJson() {
@@ -45,6 +48,7 @@ class SafeScopeHeartRateDTO {
     data['minSafeHeartRate'] = this.minSafeHeartRate;
     data['maxSafeHeartRate'] = this.maxSafeHeartRate;
     data['dangerousCount'] = this.dangerousCount;
+    data['normalCount'] = this.normalCount;
     return data;
   }
 }

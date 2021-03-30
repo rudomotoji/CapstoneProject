@@ -405,6 +405,9 @@ class _HeaderWidget extends State<HeaderWidget> {
                             await _vitalSignHelper.updateCountInBackground(0);
                             await _vitalSignHelper.updateCountingHR(0);
                             await _vitalSignHelper.updateHeartValue(0);
+                            await _vitalSignHelper.updateCheckToNormal(false);
+                            await _vitalSignHelper.updateCountToNormal(0);
+                            await _sqfLiteHelper.deleteVitalSignSchedule();
                             //
                             Navigator.pushNamedAndRemoveUntil(
                                 context,

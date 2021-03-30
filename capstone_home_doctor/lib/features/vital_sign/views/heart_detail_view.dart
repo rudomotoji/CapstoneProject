@@ -197,7 +197,7 @@ class _HeartDetailView extends State<HeartDetailView>
                             height: 0.5,
                           ),
                           (listTimeXAxis != null && listValueMap != null)
-                              ? Container(
+                              ? new Container(
                                   width: MediaQuery.of(context).size.width,
                                   color: DefaultTheme.WHITE,
                                   height: 430,
@@ -210,7 +210,7 @@ class _HeartDetailView extends State<HeartDetailView>
                                             //   scrollDirection: Axis.horizontal,
                                             //   children: <Widget>[
                                             //
-                                            Echarts(
+                                            new Echarts(
                                           option: '''
                                     {
                                       color: ['#FF784B'],

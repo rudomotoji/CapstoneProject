@@ -62,7 +62,7 @@ class SQFLiteHelper {
         FOREIGN KEY (medical_response_id) REFERENCES $MEDICAL_RESPONSE_TABLE (medical_response_id) ON DELETE NO ACTION ON UPDATE NO ACTION
         )""");
     await db.execute(
-        "CREATE TABLE ${VITAL_SIGN_SCHEDULE} (id PRIMARYKEY TEXT, id_schedule INTEGER, vital_sign_type TEXT, number_max INTEGER, number_min INTEGER, minute_danger_interval INTEGER, time_start TEXT, minute_again INTEGER)");
+        "CREATE TABLE ${VITAL_SIGN_SCHEDULE} (id PRIMARYKEY TEXT, id_schedule INTEGER,vital_sign_schedule_id INTEGER, vital_sign_type TEXT, number_max INTEGER, number_min INTEGER, minute_danger_interval INTEGER, minute_normal_interval INTEGER, time_start TEXT, minute_again INTEGER)");
     await db.execute(
         "CREATE TABLE ${VITAL_SIGN_TABLE} (id PRIMARYKEY TEXT, patient_id INTEGER, value_type TEXT, value1 INTEGER, value2 INTEGER, date_time TEXT)");
   }
@@ -293,17 +293,18 @@ class SQFLiteHelper {
   Future<List<VitalSigns>> getVitalSignScheduleOffline() async {
     var dbClient = await database;
     try {
+      List<VitalSigns> list = [];
       //
       var maps = await dbClient.rawQuery('SELECT * FROM $VITAL_SIGN_SCHEDULE');
-      List<VitalSigns> list = [];
-      for (int i = 0; i < maps.length; i++) {
-        list.add(VitalSigns.fromMapSQL(maps[i]));
+
+      if (maps.length > 0) {
+        for (int i = 0; i < maps.length; i++) {
+          list.add(VitalSigns.fromMapSQL(maps[i]));
+        }
       }
-      print(
-          'GET SCHEDULE ${list[0].idSchedule} VITAL SIGN OFFLINE SUCCESS at ${DateTime.now()}');
       return list;
     } catch (e) {
-      print('ERROR at get VitalSign Schedule Offline: $e');
+      print('Error at getVitalSignScheduleOffline: ${e}');
     }
   }
 

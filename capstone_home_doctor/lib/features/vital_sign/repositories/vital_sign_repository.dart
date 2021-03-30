@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
+import 'package:capstone_home_doctor/models/vital_sign_push_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
@@ -90,11 +91,14 @@ class VitalSignRepository {
           heartRateValue = value[1];
           await vitalSignHelper.updateHeartValue(value[1]);
         } else {
+          heartRateValue = 0;
+          await vitalSignHelper.updateHeartValue(0);
           print('Empty heart rate');
         }
       });
       return heartRateValue;
     } catch (e) {
+      await vitalSignHelper.updateHeartValue(0);
       print('error at getHeartRateValueFromDevice ${e}');
     }
   }
@@ -147,6 +151,24 @@ class VitalSignServerRepository extends BaseApiClient {
       return VitalSignScheduleDTO();
     } catch (e) {
       print('Error at get vital sign schedule ${e}');
+    }
+  }
+
+  //push vital sign đi
+  Future<bool> pushVitalSign(VitalSignPushDTO dto) async {
+    String url = '/VitalSigns';
+    try {
+      //
+      final response = await putApi(url, null, dto.toJson());
+      if (response.statusCode == 204) {
+        print('PUSH SUCCESSFUL VALUE VITAL SIGN INTO SERVER');
+        return true;
+      } else {
+        print('PUSH FAIL VALUE  VITAL SIGN INTO SERVER');
+        return false;
+      }
+    } catch (e) {
+      print('error at push vital sign: ${e}');
     }
   }
 }

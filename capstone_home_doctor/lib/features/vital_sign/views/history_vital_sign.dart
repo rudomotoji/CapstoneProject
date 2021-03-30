@@ -1,9 +1,9 @@
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
-import 'package:capstone_home_doctor/features/vital_sign/events/heart_rate_event.dart';
+
 import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
-import 'package:capstone_home_doctor/features/vital_sign/states/heart_rate_state.dart';
+
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/heart_rate_dto.dart';
 import 'package:capstone_home_doctor/models/history_vivtal_sign.dart';
