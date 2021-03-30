@@ -13,6 +13,7 @@ import 'package:capstone_home_doctor/features/health/health_record/events/med_in
 import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_type_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_type_list_state.dart';
+import 'package:capstone_home_doctor/features/health/health_record/states/medical_scan_image_state.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
@@ -261,7 +262,65 @@ class _CreateMedicalInstructionViewState
                         Padding(
                           padding: EdgeInsets.only(bottom: 10),
                         ),
-                        (_imgFile == null) ? Container() : checktitle(),
+                        // (_imgFile == null) ? Container() : checktitle(),
+                        (_imgFile == null)
+                            ? Container()
+                            : BlocBuilder<MedInsScanTextBloc,
+                                MedInsScanTextState>(builder: (context, state) {
+                                if (state is MedInsScanTextStateLoading) {
+                                  return Container(
+                                    width: 50,
+                                    height: 50,
+                                    child: SizedBox(
+                                      width: 50,
+                                      height: 50,
+                                      child: Image.asset(
+                                          'assets/images/loading.gif'),
+                                    ),
+                                  );
+                                }
+                                if (state is MedInsScanTextStateFailure) {
+                                  return Container();
+                                }
+                                if (state is MedInsScanTextStateSuccess) {
+                                  if (state.data.title != null) {
+                                    titleCompare = state.data.title;
+                                    _dianoseController.clear();
+                                    _dianoseController.text =
+                                        state.data.symptom;
+                                    var percentCompare = _selectedHRType
+                                        .toLowerCase()
+                                        .similarityTo(
+                                            titleCompare.toLowerCase());
+                                    if (percentCompare > 0.7) {
+                                      return Container();
+                                    } else {
+                                      if (_selectedHRType == "") {
+                                        return Container(
+                                            height: 35,
+                                            child: Text(
+                                                'Bạn chưa chọn loại phiếu',
+                                                style: TextStyle(
+                                                  color: DefaultTheme.RED_TEXT,
+                                                  fontSize: 20,
+                                                )));
+                                      } else {
+                                        return Container(
+                                            height: 35,
+                                            child: Text(
+                                                'Bạn có chắc đây là $_selectedHRType',
+                                                style: TextStyle(
+                                                  color: DefaultTheme.RED_TEXT,
+                                                  fontSize: 20,
+                                                )));
+                                      }
+                                    }
+                                  } else {
+                                    Container(height: 35, child: Text(''));
+                                  }
+                                }
+                              }),
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,79 +362,79 @@ class _CreateMedicalInstructionViewState
                                         });
                                         if (_imgFile.path != null ||
                                             _imgFile.path != '') {
-                                          // _medicalScanText.add(
-                                          //     MedInsGetTextEventSend(
-                                          //         imagePath: _imgFile.path));
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return Center(
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(5)),
-                                                  child: BackdropFilter(
-                                                    filter: ImageFilter.blur(
-                                                        sigmaX: 25, sigmaY: 25),
-                                                    child: Container(
-                                                      width: 300,
-                                                      height: 300,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                          color: DefaultTheme
-                                                              .WHITE
-                                                              .withOpacity(
-                                                                  0.8)),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 200,
-                                                            height: 200,
-                                                            child: Image.asset(
-                                                                'assets/images/loading.gif'),
-                                                          ),
-                                                          Text(
-                                                            'Vui lòng chờ trong giây lát....',
-                                                            style: TextStyle(
-                                                                color: DefaultTheme
-                                                                    .GREY_TEXT,
-                                                                fontSize: 15,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                decoration:
-                                                                    TextDecoration
-                                                                        .none),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
+                                          _medicalScanText.add(
+                                              MedInsGetTextEventSend(
+                                                  imagePath: _imgFile.path));
+                                          // showDialog(
+                                          //   context: context,
+                                          //   builder: (BuildContext context) {
+                                          //     return Center(
+                                          //       child: ClipRRect(
+                                          //         borderRadius:
+                                          //             BorderRadius.all(
+                                          //                 Radius.circular(5)),
+                                          //         child: BackdropFilter(
+                                          //           filter: ImageFilter.blur(
+                                          //               sigmaX: 25, sigmaY: 25),
+                                          //           child: Container(
+                                          //             width: 300,
+                                          //             height: 300,
+                                          //             decoration: BoxDecoration(
+                                          //                 borderRadius:
+                                          //                     BorderRadius
+                                          //                         .circular(10),
+                                          //                 color: DefaultTheme
+                                          //                     .WHITE
+                                          //                     .withOpacity(
+                                          //                         0.8)),
+                                          //             child: Column(
+                                          //               mainAxisAlignment:
+                                          //                   MainAxisAlignment
+                                          //                       .center,
+                                          //               crossAxisAlignment:
+                                          //                   CrossAxisAlignment
+                                          //                       .center,
+                                          //               children: [
+                                          //                 SizedBox(
+                                          //                   width: 200,
+                                          //                   height: 200,
+                                          //                   child: Image.asset(
+                                          //                       'assets/images/loading.gif'),
+                                          //                 ),
+                                          //                 Text(
+                                          //                   'Vui lòng chờ trong giây lát....',
+                                          //                   style: TextStyle(
+                                          //                       color: DefaultTheme
+                                          //                           .GREY_TEXT,
+                                          //                       fontSize: 15,
+                                          //                       fontWeight:
+                                          //                           FontWeight
+                                          //                               .w400,
+                                          //                       decoration:
+                                          //                           TextDecoration
+                                          //                               .none),
+                                          //                 ),
+                                          //               ],
+                                          //             ),
+                                          //           ),
+                                          //         ),
+                                          //       ),
+                                          //     );
+                                          //   },
+                                          // );
 
-                                          await _medicalInstructionRepository
-                                              .getTextFromImage(_imgFile.path)
-                                              .then((value) {
-                                            Navigator.of(context).pop();
-                                            if (value != null) {
-                                              setState(() {
-                                                _dianoseController.text =
-                                                    value.symptom;
-                                                titleCompare = value.title;
-                                              });
-                                            }
-                                          });
+                                          // await _medicalInstructionRepository
+                                          //     .getTextFromImage(_imgFile.path)
+                                          //     .then((value) {
+                                          //   Navigator.of(context).pop();
+                                          //   if (value != null) {
+                                          //     setState(() {
+                                          //       _dianoseController.text =
+                                          //           value.symptom;
+                                          //       titleCompare = value.title;
+                                          //     });
+                                          //   }
+                                          // });
                                         }
                                       } else {
                                         print('No image selected.');
