@@ -316,7 +316,10 @@ class _CreateMedicalInstructionViewState
                                       }
                                     }
                                   } else {
-                                    Container(height: 35, child: Text(''));
+                                    Container(
+                                        height: 35,
+                                        child: Text(
+                                            'Bạn có chắc đây là phiếu khám bệnh'));
                                   }
                                 }
                               }),
