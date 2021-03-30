@@ -630,7 +630,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   Navigator.pushNamed(
                                       context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
                                       arguments: dto.medicalInstructionId);
-                                } else {
+                                }
+                                if (dto?.image != null) {
                                   _showFullImageDescription(
                                       dto?.image,
                                       dto.medicalInstructionType,
@@ -740,19 +741,19 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     ),
                   ],
                 ),
-                Positioned(
-                  width: 35,
-                  height: 35,
-                  top: 7,
-                  right: 0,
-                  child: ButtonHDr(
-                    style: BtnStyle.BUTTON_IMAGE,
-                    image: Image.asset('assets/images/ic-more.png'),
-                    onTap: () {
-                      _showMorePopup();
-                    },
-                  ),
-                ),
+                // Positioned(
+                //   width: 35,
+                //   height: 35,
+                //   top: 7,
+                //   right: 0,
+                //   child: ButtonHDr(
+                //     style: BtnStyle.BUTTON_IMAGE,
+                //     image: Image.asset('assets/images/ic-more.png'),
+                //     onTap: () {
+                //       _showMorePopup();
+                //     },
+                //   ),
+                // ),
               ],
             ),
           ),

@@ -112,34 +112,30 @@ class MedicalInstructionRepository extends BaseApiClient {
         var str_list = newArrData.where((s) => !s.isEmpty).toList();
 
         for (var itemString in str_list) {
-          if (itemString.contains('PHIẾU')) {
-            title += itemString;
-          } else if (itemString.contains('BỆNH ÁN')) {
+          if (itemString.contains('PHIẾU') ||
+              itemString.contains('BỆNH ÁN') ||
+              itemString.contains('XÉT NGHIỆM')) {
             title = itemString;
           }
-          if (title != "") {
-            if (strSymptom.contains('Triệu') ||
-                strSymptom.contains('chứng') ||
-                strSymptom.contains('Chẩn')) {
-              if (itemString.contains('-')) {
-                strSymptom += itemString;
-              } else if (itemString.contains('(')) {
-                strSymptom += itemString;
-              }
+          if (strSymptom != null && strSymptom != '') {
+            if (itemString.contains('-') && itemString.contains('/')) {
+              strSymptom += itemString;
             }
+          } else {
             if (itemString.contains('Triệu') ||
                 itemString.contains('chứng') ||
-                itemString.contains('Chẩn')) {
-              strSymptom += itemString;
+                itemString.contains('Chẩn') ||
+                itemString.contains('đoán')) {
+              strSymptom = itemString;
             }
           }
         }
       });
 
-      var arr = strSymptom.split(':');
-      if (arr.length > 1) {
-        strSymptom = arr[1];
-      }
+      // var arr = strSymptom.split(':');
+      // if (arr.length > 1) {
+      //   strSymptom = arr[1];
+      // }
 
       return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
     } catch (e) {
