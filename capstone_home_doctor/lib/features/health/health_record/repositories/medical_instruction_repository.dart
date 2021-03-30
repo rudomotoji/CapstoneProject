@@ -9,8 +9,8 @@ import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:string_similarity/string_similarity.dart';
 import 'package:sentry/sentry.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 
 class MedicalInstructionRepository extends BaseApiClient {
   final http.Client httpClient;
@@ -215,5 +215,64 @@ class MedicalInstructionRepository extends BaseApiClient {
     } catch (e) {
       print('ERROR AT GET DOCTOR BY DOCTOR_ID API $e');
     }
+  }
+
+  Future<ImageScannerDTO> recogniseText(String imageFile) async {
+    if (imageFile == null) {
+      return null;
+    } else {
+      final visionImage = FirebaseVisionImage.fromFilePath(imageFile);
+      final textRecognizer = FirebaseVision.instance.textRecognizer();
+      try {
+        final visionText = await textRecognizer.processImage(visionImage);
+        await textRecognizer.close();
+
+        final text = extractText(visionText);
+        // return text.isEmpty ? 'No text found in the image' : text;
+        String strSymptom = "";
+        String title = "";
+
+        var newArrData = text.split("\n");
+        var str_list = newArrData.where((s) => !s.isEmpty).toList();
+
+        for (var itemString in str_list) {
+          if (itemString.contains('PHIẾU') ||
+              itemString.contains('BỆNH ÁN') ||
+              itemString.contains('XÉT NGHIỆM')) {
+            title = itemString;
+          }
+          if (strSymptom != null && strSymptom != '') {
+            if (itemString.contains('-') && itemString.contains('/')) {
+              strSymptom += itemString;
+            }
+          } else {
+            if (itemString.contains('Triệu') ||
+                itemString.contains('chứng') ||
+                itemString.contains('Chẩn') ||
+                itemString.contains('đoán')) {
+              strSymptom = itemString;
+            }
+          }
+        }
+        return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
+      } catch (error) {
+        return null;
+      }
+    }
+  }
+
+  static extractText(VisionText visionText) {
+    String text = '';
+
+    for (TextBlock block in visionText.blocks) {
+      for (TextLine line in block.lines) {
+        for (TextElement word in line.elements) {
+          text = text + word.text + ' ';
+        }
+        text = text + '\n';
+      }
+    }
+
+    return text;
   }
 }
