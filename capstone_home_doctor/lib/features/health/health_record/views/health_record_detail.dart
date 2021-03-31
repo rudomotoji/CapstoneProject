@@ -135,7 +135,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                         child: (_healthRecordDTO.contractId == null)
                             ? Container(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.82,
+                                    MediaQuery.of(context).size.height * 0.80,
                                 child: CustomScrollView(
                                   slivers: [
                                     buildSliverToBoxAdapterHeader(),
@@ -145,7 +145,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                               )
                             : Container(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.82,
+                                    MediaQuery.of(context).size.height * 0.80,
                                 child: CustomScrollView(
                                   slivers: [
                                     buildSliverToBoxAdapterHeader(),
