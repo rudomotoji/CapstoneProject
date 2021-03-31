@@ -78,7 +78,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
           padding: EdgeInsets.only(top: 10, left: 20, right: 20),
         ),
         ButtonArtBoard(
-          title: 'Tạo hồ sơ sức khoẻ',
+          title: 'Tạo hồ sơ sức khỏe',
           description: 'Một hồ sơ sức khoẻ bao gồm nhiều y lệnh',
           imageAsset: 'assets/images/ic-health-record.png',
           onTap: () async {

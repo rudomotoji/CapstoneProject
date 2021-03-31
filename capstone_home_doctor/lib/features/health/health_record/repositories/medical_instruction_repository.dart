@@ -18,7 +18,7 @@ class MedicalInstructionRepository extends BaseApiClient {
   MedicalInstructionRepository({@required this.httpClient})
       : assert(httpClient != null);
 
-  TesseractOCRUtil _ocrUtil = TesseractOCRUtil();
+  // TesseractOCRUtil _ocrUtil = TesseractOCRUtil();
 
   Future<List<MedInsByDiseaseDTO>> getMedInsByDisease(
       int patientId, String diseaseId) async {
@@ -104,105 +104,106 @@ class MedicalInstructionRepository extends BaseApiClient {
     return false;
   }
 
-  Future<ImageScannerDTO> getTextFromImage(String imagePath) async {
-    try {
-      String strSymptom = '';
-      String title = '';
-      await _ocrUtil.convertImgToString(imagePath).then((value) {
-        if (value != null) {
-          var newArrData = value.split("\n");
-          var str_list = newArrData.where((s) => !s.isEmpty).toList();
-
-          for (var itemString in str_list) {
-            if (itemString.contains('PHIẾU') ||
-                itemString.contains('BỆNH ÁN') ||
-                itemString.contains('XÉT NGHIỆM')) {
-              title = itemString;
-            }
-            if (strSymptom != null && strSymptom != '') {
-              if (itemString.contains('-') && itemString.contains('/')) {
-                strSymptom += itemString;
-              }
-            } else {
-              if ((itemString.contains('Triệu') ||
-                      itemString.contains('chứng') ||
-                      itemString.contains('Chẩn') ||
-                      itemString.contains('đoán')) &&
-                  strSymptom == '') {
-                strSymptom = itemString;
-              }
-            }
-          }
-        }
-      });
-
-      // var arr = strSymptom.split(':');
-      // if (arr.length > 1) {
-      //   strSymptom = arr[1];
-      // }
-
-      return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
-    } catch (exception, stackTrace) {
-      await Sentry.captureException(
-        exception,
-        stackTrace: stackTrace,
-      );
-      return ImageScannerDTO(symptom: '', title: '');
-    }
-    // catch (e) {
-    //   print('ERROR AT getTextIMG repo: ${e}');
-    //   // return ImageScannerDTO(symptom: '', title: '');
-    // }
-  }
-
-  // //create medical instruction by multiple part
   // Future<ImageScannerDTO> getTextFromImage(String imagePath) async {
-  //   var uri = Uri.parse('http://0.0.0.0:80/scanMedicalInsurance');
-  //   var request = new http.MultipartRequest('POST', uri);
   //   try {
-  //     request.files.add(http.MultipartFile(
-  //         'file',
-  //         File(imagePath).readAsBytes().asStream(),
-  //         File(imagePath).lengthSync(),
-  //         filename: imagePath.split("/").last));
-  //     final response = await request.send();
-  //     if (response.statusCode == 200) {
-  //       var responseString = await response.stream.bytesToString();
-  //       dynamic dto = json.decode(responseString);
+  //     String strSymptom = '';
+  //     String title = '';
+  //     await _ocrUtil.convertImgToString(imagePath).then((value) {
+  //       if (value != null) {
+  //         var newArrData = value.split("\n");
+  //         var str_list = newArrData.where((s) => !s.isEmpty).toList();
 
-  //       var newArrData = dto['data'].split("\n");
-  //       var str_list = newArrData.where((s) => !s.isEmpty).toList();
-
-  //       String strSymptom = "";
-  //       String title = "";
-
-  //       for (var itemString in str_list) {
-  //         if (itemString.contains('PHIẾU')) {
-  //           title += itemString;
-  //         } else if (itemString.contains('BỆNH ÁN')) {
-  //           title = itemString;
-  //         }
-  //         if (title != "") {
-  //           if (strSymptom.contains('Triệu')) {
-  //             if (itemString.contains(' - ')) {
-  //               strSymptom += itemString;
-  //             } else if (itemString.contains('(')) {
+  //         for (var itemString in str_list) {
+  //           if (itemString.contains('PHIẾU') ||
+  //               itemString.contains('BỆNH ÁN') ||
+  //               itemString.contains('XÉT NGHIỆM')) {
+  //             title = itemString;
+  //           }
+  //           if (strSymptom != null && strSymptom != '') {
+  //             if (itemString.contains('-') && itemString.contains('/')) {
   //               strSymptom += itemString;
   //             }
-  //           }
-  //           if (itemString.contains('Triệu ')) {
-  //             strSymptom += itemString;
+  //           } else {
+  //             if ((itemString.contains('Triệu') ||
+  //                     itemString.contains('chứng') ||
+  //                     itemString.contains('Chẩn') ||
+  //                     itemString.contains('đoán')) &&
+  //                 strSymptom == '') {
+  //               strSymptom = itemString;
+  //             }
   //           }
   //         }
   //       }
+  //     });
 
-  //       return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
-  //     }
-  //     return ImageScannerDTO();
-  //   } catch (e) {
-  //     print('ERROR AT getTextIMG repo: ${e}');
+  //     // var arr = strSymptom.split(':');
+  //     // if (arr.length > 1) {
+  //     //   strSymptom = arr[1];
+  //     // }
+
+  //     return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
+  //   } catch (exception, stackTrace) {
+  //     await Sentry.captureException(
+  //       exception,
+  //       stackTrace: stackTrace,
+  //     );
+  //     return ImageScannerDTO(symptom: '', title: '');
   //   }
+  //   // catch (e) {
+  //   //   print('ERROR AT getTextIMG repo: ${e}');
+  //   //   // return ImageScannerDTO(symptom: '', title: '');
+  //   // }
   // }
+
+  //create medical instruction by multiple part
+  Future<ImageScannerDTO> getTextFromImage(String imagePath) async {
+    var uri = Uri.parse('http://0.0.0.0:80/scanMedicalInsurance');
+    var request = new http.MultipartRequest('POST', uri);
+    try {
+      request.files.add(http.MultipartFile(
+          'file',
+          File(imagePath).readAsBytes().asStream(),
+          File(imagePath).lengthSync(),
+          filename: imagePath.split("/").last));
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        var responseString = await response.stream.bytesToString();
+        dynamic dto = json.decode(responseString);
+
+        var newArrData = dto['data'].split("\n");
+        var str_list = newArrData.where((s) => !s.isEmpty).toList();
+
+        String strSymptom = "";
+        String title = "";
+
+        for (var itemString in str_list) {
+          if (itemString.contains('PHIẾU')) {
+            title += itemString;
+          } else if (itemString.contains('BỆNH ÁN')) {
+            title = itemString;
+          }
+          if (title != "") {
+            if (strSymptom.contains('Triệu')) {
+              if (itemString.contains(' - ')) {
+                strSymptom += itemString;
+              } else if (itemString.contains('(')) {
+                strSymptom += itemString;
+              }
+            }
+            if (itemString.contains('Triệu ')) {
+              strSymptom += itemString;
+            }
+          }
+        }
+
+        return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
+      }
+      return ImageScannerDTO();
+    } catch (e) {
+      print('ERROR AT getTextIMG repo: ${e}');
+      return ImageScannerDTO(symptom: '', title: '');
+    }
+  }
 
   //// lấy chi tiết đơn thuốc
   Future<MedicalInstructionDTO> getMedicalInstructionById(

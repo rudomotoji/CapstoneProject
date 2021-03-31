@@ -27,24 +27,24 @@ class HealthRecordHelper {
   //create health record
   Future<void> initialHRRsponse() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool('HEALTH_RECORD_RESPONSE', false);
+    prefs.setInt('HEALTH_RECORD_RESPONSE', 0);
   }
 
-  Future<void> setHRResponse(bool response) async {
+  Future<void> setHRResponse(int response) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('HEALTH_RECORD_RESPONSE') ||
-        prefs.getBool('HEALTH_RECORD_RESPONSE') == null) {
+        prefs.getInt('HEALTH_RECORD_RESPONSE') == null) {
       initialHRRsponse();
     }
-    prefs.setBool('HEALTH_RECORD_RESPONSE', response);
+    prefs.setInt('HEALTH_RECORD_RESPONSE', response);
   }
 
-  Future<bool> getHRResponse() async {
+  Future<int> getHRResponse() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('HEALTH_RECORD_RESPONSE') ||
-        prefs.getBool('HEALTH_RECORD_RESPONSE') == null) {
+        prefs.getInt('HEALTH_RECORD_RESPONSE') == null) {
       initialHRRsponse();
     }
-    return prefs.getBool('HEALTH_RECORD_RESPONSE');
+    return prefs.getInt('HEALTH_RECORD_RESPONSE');
   }
 }

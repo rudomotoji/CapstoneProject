@@ -18,14 +18,14 @@ class HealthRecordCreateBloc extends Bloc<HRCreateEvent, HRCreateState> {
     if (event is HRCreateEventSend) {
       yield HRCreateStateLoading();
       try {
-        final bool isCreated =
+        final int healthRecordID =
             await healthRecordRepository.createHealthRecord(event.dto);
-        if (isCreated) {
+        if (healthRecordID != null) {
           yield HRCreateStateSuccess(isCreateHR: true);
-          hrHelper.setHRResponse(true);
+          hrHelper.setHRResponse(healthRecordID);
         } else {
           yield HRCreateStateFailure();
-          hrHelper.setHRResponse(false);
+          hrHelper.setHRResponse(0);
         }
       } catch (e) {
         yield HRCreateStateFailure();

@@ -36,7 +36,7 @@ class _RegisterPage1State extends State<RegisterPage1> {
             placeHolder: 'abc123',
             inputType: TFInputType.TF_TEXT,
             controller: widget.usernameController,
-            keyboardAction: TextInputAction.next,
+            keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
           TextFieldHDr(
@@ -45,7 +45,7 @@ class _RegisterPage1State extends State<RegisterPage1> {
             placeHolder: '',
             inputType: TFInputType.TF_PASSWORD,
             controller: widget.passwordController,
-            keyboardAction: TextInputAction.next,
+            keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
           TextFieldHDr(
@@ -54,7 +54,7 @@ class _RegisterPage1State extends State<RegisterPage1> {
             placeHolder: '',
             inputType: TFInputType.TF_PASSWORD,
             controller: widget.passwordConfirmController,
-            keyboardAction: TextInputAction.next,
+            keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
         ],

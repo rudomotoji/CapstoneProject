@@ -104,7 +104,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               HeaderWidget(
                 title: 'Chi tiết hồ sơ',
                 isMainView: false,
-                buttonHeaderType: ButtonHeaderType.NONE,
+                buttonHeaderType: ButtonHeaderType.BACK_HOME,
               ),
               BlocBuilder<HealthRecordDetailBloc, HealthRecordDetailState>(
                 builder: (context, state) {

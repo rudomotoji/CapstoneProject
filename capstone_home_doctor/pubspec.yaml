@@ -71,7 +71,7 @@ dev_dependencies:
   photo_view: ^0.10.0
   connectivity: ^2.0.2
   percent_indicator: 2.1.9+1
-  tesseract_ocr: ^0.3.1
+  # tesseract_ocr: ^0.3.1
   sentry_flutter: ^4.0.6
 
 # For information on the generic Dart part of this file, see the

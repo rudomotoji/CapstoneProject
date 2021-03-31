@@ -19,6 +19,7 @@ import 'package:capstone_home_doctor/features/health/health_record/events/hr_cre
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:expandable_group/expandable_group_widget.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
 import 'package:capstone_home_doctor/models/disease_dto.dart';
@@ -108,7 +109,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             HeaderWidget(
-              title: 'Tạo hồ sơ sức khoẻ',
+              title: 'Tạo hồ sơ sức khỏe',
               isMainView: false,
               buttonHeaderType: ButtonHeaderType.NONE,
             ),
@@ -257,7 +258,10 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                       style: BtnStyle.BUTTON_BLACK,
                       label: 'Tạo hồ sơ',
                       onTap: () {
-                        if (_patientId != 0) {
+                        if (_patientId != 0 &&
+                            _placeController.text != null &&
+                            (_listLv3IdSelected.length > 0 ||
+                                _diseaseIds.length > 0)) {
                           healthRecordDTO = HealthRecordDTO(
                             patientId: _patientId,
                             diceaseIds: _diseaseIds.length <= 0
@@ -267,8 +271,8 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                             description: _note,
                           );
                           _insertHealthRecord(healthRecordDTO);
-                          // widget.refresh();
-                          // Navigator.pop(context);
+                        } else {
+                          _insertHealthRecord(null);
                         }
                       },
                     ),
@@ -774,18 +778,100 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
 
   _insertHealthRecord(HealthRecordDTO dto) {
     if (dto == null) {
-      return Dialog(
-        child: Container(
-          width: 200,
-          height: 200,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: DefaultTheme.WHITE),
-          child: Text('Bệnh lý rỗng.'),
-        ),
-      );
-    }
+      alertError('Hãy điền vào hồ sơ');
+    } else {
+      setState(() {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    width: 300,
+                    height: 300,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: DefaultTheme.WHITE.withOpacity(0.8)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 200,
+                          height: 200,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                        Text(
+                          'Đang tạo...',
+                          style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              decoration: TextDecoration.none),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
 
+        _healthRecordCreateBloc.add(HRCreateEventSend(dto: dto));
+        Future.delayed(
+          const Duration(seconds: 3),
+          () {
+            hrHelper.getHRResponse().then(
+              (value) {
+                Navigator.of(context).pop();
+                if (value > 0) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: new Text(
+                          "Tạo thành công",
+                          style: TextStyle(
+                              color: DefaultTheme.BLUE_DARK, fontSize: 18),
+                        ),
+                        content: new Text("Bạn có muốn tạo thêm y lệnh ngay"),
+                        actions: <Widget>[
+                          new FlatButton(
+                            child: new Text("Không"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          new FlatButton(
+                            child: new Text("Có"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              hrHelper.setHealthReCordId(value);
+                              Navigator.of(context)
+                                  .pushNamed(RoutesHDr.HEALTH_RECORD_DETAIL);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  alertError('Lỗi tạo hồ sơ');
+                }
+              },
+            );
+          },
+        );
+      });
+    }
+  }
+
+  alertError(String title) {
     setState(() {
       showDialog(
         context: context,
@@ -796,8 +882,8 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
                 child: Container(
-                  width: 300,
-                  height: 300,
+                  width: 200,
+                  height: 200,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: DefaultTheme.WHITE.withOpacity(0.8)),
@@ -806,12 +892,12 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: Image.asset('assets/images/loading.gif'),
+                        width: 100,
+                        height: 100,
+                        child: Image.asset('assets/images/ic-failed.png'),
                       ),
                       Text(
-                        'Đang tạo...',
+                        title,
                         style: TextStyle(
                             color: DefaultTheme.GREY_TEXT,
                             fontSize: 15,
@@ -826,108 +912,9 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
           );
         },
       );
-
-      _healthRecordCreateBloc.add(HRCreateEventSend(dto: dto));
-      Future.delayed(
-        const Duration(seconds: 3),
-        () {
-          hrHelper.getHRResponse().then(
-            (value) {
-              Navigator.of(context).pop();
-              if (value) {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                          child: Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: DefaultTheme.WHITE.withOpacity(0.8)),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: Image.asset(
-                                      'assets/images/ic-checked.png'),
-                                ),
-                                Text(
-                                  'Tạo thành công',
-                                  style: TextStyle(
-                                      color: DefaultTheme.GREY_TEXT,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                      decoration: TextDecoration.none),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-                Future.delayed(const Duration(seconds: 1), () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                });
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                          child: Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: DefaultTheme.WHITE.withOpacity(0.8)),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: Image.asset(
-                                      'assets/images/ic-failed.png'),
-                                ),
-                                Text(
-                                  'Lỗi tạo hồ sơ',
-                                  style: TextStyle(
-                                      color: DefaultTheme.GREY_TEXT,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                      decoration: TextDecoration.none),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-                Future.delayed(const Duration(seconds: 1), () {
-                  Navigator.of(context).pop();
-                });
-              }
-            },
-          );
-        },
-      );
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.of(context).pop();
+      });
     });
   }
 

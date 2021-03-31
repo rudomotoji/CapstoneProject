@@ -2,12 +2,9 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
-import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/slide_dot.dart';
-import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
-import 'package:capstone_home_doctor/features/information/views/patient_info_views.dart';
 import 'package:capstone_home_doctor/features/register/nomal_info_view.dart';
 import 'package:capstone_home_doctor/features/register/register_form_1.dart';
 import 'package:capstone_home_doctor/features/register/register_form_3.dart';
@@ -16,7 +13,6 @@ import 'package:capstone_home_doctor/features/register/repositories/register_rep
 import 'package:capstone_home_doctor/models/patient_dto.dart';
 import 'package:capstone_home_doctor/models/relative_dto.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -189,9 +185,8 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                         _currentPage = _currentPage - 1;
                       } else {
                         _currentPage = 0;
+                        Navigator.of(context).pop();
                       }
-
-                      print('_currentPage: $_currentPage');
 
                       _pageController.animateToPage(
                         _currentPage,
@@ -209,211 +204,245 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                         ? 'Tạo'
                         : 'Tiếp tục',
                     onTap: () async {
-                      if (_currentPage < slideList.length - 1) {
-                        _currentPage = _currentPage + 1;
-                      } else {
-                        PatientHealthRecordDTO patientHealthRecordDTO =
-                            PatientHealthRecordDTO(
-                          height: int.parse(_heightController.text) ?? 0,
-                          weight: int.parse(_weightController.text) ?? 0,
-                          personalMedicalHistory: patientController.text,
-                          familyMedicalHistory: familyController.text,
-                          relatives: listRelative,
-                        );
-                        String dateOfBirthDay = DateFormat('yyyy-MM-dd')
-                            .format(DateFormat('yyyy-MM-dd').parse(birthday));
-
-                        PatientDTO patientDTO = PatientDTO(
-                          fullName: _fullNameController.text,
-                          phoneNumber: _phoneController.text,
-                          email: _emailController.text,
-                          address: _addressController.text,
-                          dateOfBirth: dateOfBirthDay,
-                          gender: selectGender,
-                          career: _careerController.text,
-                          patientHealthRecord: patientHealthRecordDTO,
-                        );
-
-                        FormRegisterDTO formRegisterDTO = FormRegisterDTO(
-                          username: usernameController.text,
-                          password: passwordController.text,
-                          patientInformation: patientDTO,
-                        );
-
-                        setState(
-                          () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Center(
-                                  child: ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(
-                                          sigmaX: 25, sigmaY: 25),
-                                      child: Container(
-                                        width: 300,
-                                        height: 300,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: DefaultTheme.WHITE
-                                                .withOpacity(0.8)),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            SizedBox(
-                                              width: 200,
-                                              height: 200,
-                                              child: Image.asset(
-                                                  'assets/images/loading.gif'),
-                                            ),
-                                            Text(
-                                              'Đang tạo...',
-                                              style: TextStyle(
-                                                  color: DefaultTheme.GREY_TEXT,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400,
-                                                  decoration:
-                                                      TextDecoration.none),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        );
-
-                        _registerRepository
-                            .registerAccPatient(formRegisterDTO)
-                            .then(
-                          (value) {
-                            Navigator.pop(context);
-                            if (value) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Center(
-                                    child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                      child: BackdropFilter(
-                                        filter: ImageFilter.blur(
-                                            sigmaX: 25, sigmaY: 25),
-                                        child: Container(
-                                          width: 200,
-                                          height: 200,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: DefaultTheme.WHITE
-                                                  .withOpacity(0.8)),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              SizedBox(
-                                                width: 100,
-                                                height: 100,
-                                                child: Image.asset(
-                                                    'assets/images/ic-checked.png'),
-                                              ),
-                                              Text(
-                                                'Tạo thành công',
-                                                style: TextStyle(
-                                                    color:
-                                                        DefaultTheme.GREY_TEXT,
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w400,
-                                                    decoration:
-                                                        TextDecoration.none),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                              Future.delayed(const Duration(seconds: 1), () {
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pop();
-                              });
-                            } else {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Center(
-                                    child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                      child: BackdropFilter(
-                                        filter: ImageFilter.blur(
-                                            sigmaX: 25, sigmaY: 25),
-                                        child: Container(
-                                          width: 200,
-                                          height: 200,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: DefaultTheme.WHITE
-                                                  .withOpacity(0.8)),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              SizedBox(
-                                                width: 100,
-                                                height: 100,
-                                                child: Image.asset(
-                                                    'assets/images/ic-failed.png'),
-                                              ),
-                                              Text(
-                                                'Không thể tạo tài khoản, vui kiểm tra lại',
-                                                style: TextStyle(
-                                                    color:
-                                                        DefaultTheme.GREY_TEXT,
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w400,
-                                                    decoration:
-                                                        TextDecoration.none),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                              Future.delayed(const Duration(seconds: 1), () {
-                                Navigator.of(context).pop();
-                              });
-                            }
-                          },
-                        );
+                      bool checkError = false;
+                      if (_currentPage == 0) {
+                        if (usernameController.text == '' ||
+                            passwordController.text == '' ||
+                            passwordConfirmController.text == '') {
+                          alertError(
+                              'Vui lòng điền đầy đủ thông tin có dấu (*)');
+                        } else if (passwordController.text !=
+                            passwordConfirmController.text) {
+                          alertError('2 mật khẩu chưa trùng khớp');
+                        } else {
+                          checkError = true;
+                        }
+                      }
+                      if (_currentPage == 1) {
+                        if (_fullNameController.text == '' ||
+                            _phoneController.text == '' ||
+                            _addressController.text == '' ||
+                            _heightController.text == '' ||
+                            _weightController.text == '' ||
+                            birthday == null) {
+                          alertError(
+                              'Vui lòng điền đầy đủ thông tin có dấu (*)');
+                        } else {
+                          checkError = true;
+                        }
+                      }
+                      if (_currentPage == 2 || _currentPage == 3) {
+                        checkError = true;
                       }
 
-                      print('_currentPage: $_currentPage');
+                      if (checkError) {
+                        if (_currentPage < slideList.length - 1) {
+                          _currentPage = _currentPage + 1;
+                        } else {
+                          PatientHealthRecordDTO patientHealthRecordDTO =
+                              PatientHealthRecordDTO(
+                            height: int.parse(_heightController.text) ?? 0,
+                            weight: int.parse(_weightController.text) ?? 0,
+                            personalMedicalHistory: patientController.text,
+                            familyMedicalHistory: familyController.text,
+                            relatives: listRelative,
+                          );
+                          String dateOfBirthDay = DateFormat('yyyy-MM-dd')
+                              .format(DateFormat('yyyy-MM-dd').parse(birthday));
 
-                      _pageController.animateToPage(
-                        _currentPage,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeIn,
-                      );
+                          PatientDTO patientDTO = PatientDTO(
+                            fullName: _fullNameController.text,
+                            phoneNumber: _phoneController.text,
+                            email: _emailController.text,
+                            address: _addressController.text,
+                            dateOfBirth: dateOfBirthDay,
+                            gender: selectGender,
+                            career: _careerController.text,
+                            patientHealthRecord: patientHealthRecordDTO,
+                          );
+
+                          FormRegisterDTO formRegisterDTO = FormRegisterDTO(
+                            username: usernameController.text,
+                            password: passwordController.text,
+                            patientInformation: patientDTO,
+                          );
+
+                          setState(
+                            () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Center(
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                            sigmaX: 25, sigmaY: 25),
+                                        child: Container(
+                                          width: 300,
+                                          height: 300,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: DefaultTheme.WHITE
+                                                  .withOpacity(0.8)),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              SizedBox(
+                                                width: 200,
+                                                height: 200,
+                                                child: Image.asset(
+                                                    'assets/images/loading.gif'),
+                                              ),
+                                              Text(
+                                                'Đang tạo...',
+                                                style: TextStyle(
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w400,
+                                                    decoration:
+                                                        TextDecoration.none),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+
+                          _registerRepository
+                              .registerAccPatient(formRegisterDTO)
+                              .then(
+                            (value) {
+                              Navigator.pop(context);
+                              if (value) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Center(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5)),
+                                        child: BackdropFilter(
+                                          filter: ImageFilter.blur(
+                                              sigmaX: 25, sigmaY: 25),
+                                          child: Container(
+                                            width: 200,
+                                            height: 200,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: DefaultTheme.WHITE
+                                                    .withOpacity(0.8)),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: 100,
+                                                  height: 100,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-checked.png'),
+                                                ),
+                                                Text(
+                                                  'Tạo thành công',
+                                                  style: TextStyle(
+                                                      color: DefaultTheme
+                                                          .GREY_TEXT,
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      decoration:
+                                                          TextDecoration.none),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                                Future.delayed(const Duration(seconds: 1), () {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                });
+                              } else {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Center(
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5)),
+                                        child: BackdropFilter(
+                                          filter: ImageFilter.blur(
+                                              sigmaX: 25, sigmaY: 25),
+                                          child: Container(
+                                            width: 200,
+                                            height: 200,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: DefaultTheme.WHITE
+                                                    .withOpacity(0.8)),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: 100,
+                                                  height: 100,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-failed.png'),
+                                                ),
+                                                Text(
+                                                  'Không thể tạo tài khoản, vui kiểm tra lại',
+                                                  style: TextStyle(
+                                                      color: DefaultTheme
+                                                          .GREY_TEXT,
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      decoration:
+                                                          TextDecoration.none),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                                Future.delayed(const Duration(seconds: 1), () {
+                                  Navigator.of(context).pop();
+                                });
+                              }
+                            },
+                          );
+                        }
+
+                        _pageController.animateToPage(
+                          _currentPage,
+                          duration: Duration(milliseconds: 300),
+                          curve: Curves.easeIn,
+                        );
+                      }
                     },
                   ),
                 ),
@@ -425,15 +454,62 @@ class _Register extends State<Register> with WidgetsBindingObserver {
     );
   }
 
-  setBirthday(date) {
+  setBirthday(String date) {
     setState(() {
       birthday = date;
     });
   }
 
-  setGender(select) {
+  setGender(String select) {
     setState(() {
       selectGender = select;
+    });
+  }
+
+  alertError(String title) {
+    setState(() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: DefaultTheme.WHITE.withOpacity(0.8)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: Image.asset('assets/images/ic-failed.png'),
+                      ),
+                      Text(
+                        title,
+                        style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            decoration: TextDecoration.none),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+      Future.delayed(const Duration(seconds: 1), () {
+        Navigator.of(context).pop();
+      });
     });
   }
 }

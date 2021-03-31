@@ -6,6 +6,7 @@ import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 class NomalInfoView extends StatefulWidget {
   TextEditingController fullNameController = TextEditingController();
@@ -61,7 +62,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             placeHolder: 'Nguyễn Văn A',
             inputType: TFInputType.TF_TEXT,
             controller: widget.fullNameController,
-            keyboardAction: TextInputAction.next,
+            keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
           TextFieldHDr(
@@ -70,12 +71,12 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             placeHolder: '123456789',
             inputType: TFInputType.TF_PHONE,
             controller: widget.phoneController,
-            keyboardAction: TextInputAction.next,
+            keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
           Row(
             children: [
-              Text('Giới tính:'),
+              Text('Giới tính(*):'),
               Row(
                 children: <Widget>[
                   addRadioButton(0, 'Nam'),
@@ -85,73 +86,77 @@ class _NomalInfoViewState extends State<NomalInfoView> {
               ),
             ],
           ),
-          Container(
-            margin: EdgeInsets.only(left: 20, right: 20),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(6),
-                color: DefaultTheme.GREY_BUTTON),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                ),
-                Text(
-                  widget.dateOfBirth == null ? '' : widget.dateOfBirth,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                ),
-                Spacer(),
-                ButtonHDr(
-                  label: 'Chọn',
-                  style: BtnStyle.BUTTON_FULL,
-                  image: Image.asset('assets/images/ic-choose-date.png'),
-                  width: 30,
-                  height: 40,
-                  labelColor: DefaultTheme.BLUE_DARK,
-                  bgColor: DefaultTheme.TRANSPARENT,
-                  onTap: () {
-                    _showDatePickerStart();
-                  },
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                )
-              ],
-            ),
-          ),
-          // Row(
-          //   children: [
-          //     Text('Ngày sinh (*):'),
-          //     FlatButton(
-          //       child: Text(
-          //         widget.birthday == null
-          //             ? 'Chọn ngày sinh'
-          //             : widget.birthday.toString(),
-          //         style: TextStyle(color: Colors.black),
+          // Container(
+          //   margin: EdgeInsets.only(left: 20, right: 20),
+          //   decoration: BoxDecoration(
+          //       borderRadius: BorderRadius.circular(6),
+          //       color: DefaultTheme.GREY_BUTTON),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.start,
+          //     crossAxisAlignment: CrossAxisAlignment.center,
+          //     children: <Widget>[
+          //       Padding(
+          //         padding: EdgeInsets.only(left: 20),
           //       ),
-          //       onPressed: () async {
-          //         DateTime newDateTime = await showRoundedDatePicker(
-          //             context: context,
-          //             initialDate: DateTime.now(),
-          //             firstDate: DateTime(DateTime.now().year - 100),
-          //             lastDate: DateTime.now(),
-          //             borderRadius: 16,
-          //             theme: ThemeData.dark());
-          //         if (newDateTime != null) {
-          //           setState(() => widget.birthday = newDateTime);
-          //         }
-          //       },
-          //     ),
-          //   ],
+          //       Text(
+          //         widget.dateOfBirth == null ? '' : widget.dateOfBirth,
+          //         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+          //       ),
+          //       Spacer(),
+          //       ButtonHDr(
+          //         label: 'Chọn',
+          //         style: BtnStyle.BUTTON_FULL,
+          //         image: Image.asset('assets/images/ic-choose-date.png'),
+          //         width: 30,
+          //         height: 40,
+          //         labelColor: DefaultTheme.BLUE_DARK,
+          //         bgColor: DefaultTheme.TRANSPARENT,
+          //         onTap: () {
+          //           _showDatePickerStart();
+          //         },
+          //       ),
+          //       Padding(
+          //         padding: EdgeInsets.only(right: 10),
+          //       )
+          //     ],
+          //   ),
           // ),
+          Row(
+            children: [
+              Text('Ngày sinh (*):'),
+              FlatButton(
+                child: Text(
+                  widget.dateOfBirth == null
+                      ? 'Chọn ngày sinh'
+                      : DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd')
+                          .parse(widget.dateOfBirth.toString())),
+                  // : widget.birthday.toString(),
+                  style: TextStyle(color: Colors.black),
+                ),
+                onPressed: () async {
+                  DateTime newDateTime = await showRoundedDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(DateTime.now().year - 100),
+                      lastDate: DateTime.now(),
+                      borderRadius: 16,
+                      theme: ThemeData.dark());
+                  if (newDateTime != null) {
+                    // setState(() => widget.birthday = newDateTime);
+                    // widget.dateOfBirth = newDateTime.toString();
+                    widget.birthday(newDateTime.toString());
+                  }
+                },
+              ),
+            ],
+          ),
           TextFieldHDr(
             style: TFStyle.BORDERED,
             label: 'Email:',
             placeHolder: 'abc@gmail.com',
             inputType: TFInputType.TF_EMAIL,
             controller: widget.emailController,
-            keyboardAction: TextInputAction.next,
+            keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
           TextFieldHDr(
@@ -160,7 +165,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             placeHolder: 'Hai Bà Trưng HN...',
             inputType: TFInputType.TF_TEXT,
             controller: widget.addressController,
-            keyboardAction: TextInputAction.next,
+            keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
           TextFieldHDr(
@@ -169,7 +174,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             placeHolder: 'Sinh viên',
             inputType: TFInputType.TF_TEXT,
             controller: widget.careerController,
-            keyboardAction: TextInputAction.next,
+            keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
           TextFieldHDr(
@@ -178,7 +183,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             placeHolder: '175',
             inputType: TFInputType.TF_NUMBER,
             controller: widget.heightController,
-            keyboardAction: TextInputAction.next,
+            keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
           TextFieldHDr(
