@@ -40,12 +40,14 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   TypeFilter _valueFilter;
   int _patientId = 0;
   TabController controller;
+  ScrollController _scrollController;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     _healthRecordListBloc = BlocProvider.of(context);
+    _scrollController = ScrollController(initialScrollOffset: 0.0);
 
     setState(() {
       _valueFilter = _listFilter[2];
@@ -66,6 +68,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.addObserver(this);
     super.dispose();
+    _scrollController.dispose();
   }
 
   @override
@@ -73,8 +76,9 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     return DefaultTabController(
       length: 2,
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.82,
+        height: MediaQuery.of(context).size.height * 0.7,
         child: CustomScrollView(
+          controller: _scrollController,
           slivers: [
             buildSliverToBoxAdapterHeader(),
             buildSliverAppBarCollepse(),
@@ -230,7 +234,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     if (listHealthRecordOld.length > 0) {
       return ListView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        // physics: NeverScrollableScrollPhysics(),
         itemCount: listHealthRecordOld.length,
         itemBuilder: (BuildContext buildContext, int index) {
           return _itemHealthRecord(listHealthRecordOld[index]);
@@ -238,7 +242,23 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
       );
     } else {
       return Container(
-        child: Text('Chưa có phiếu nào'),
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Image.asset('assets/images/ic-dashboard.png'),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 20),
+              ),
+              Text('Bạn chưa có phiếu nào hãy tạo hồ sơ để lưu trữ'),
+            ],
+          ),
+        ),
       );
     }
   }
@@ -247,7 +267,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     if (listHealthRecordSystem.length > 0) {
       return ListView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        // physics: NeverScrollableScrollPhysics(),
         itemCount: listHealthRecordSystem.length,
         itemBuilder: (BuildContext buildContext, int index) {
           return _itemHealthRecord(listHealthRecordSystem[index]);
@@ -255,7 +275,23 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
       );
     } else {
       return Container(
-        child: Text('Chưa có phiếu nào'),
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Image.asset('assets/images/ic-dashboard.png'),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 20),
+              ),
+              Text('Bạn chưa có phiếu nào'),
+            ],
+          ),
+        ),
       );
     }
   }
