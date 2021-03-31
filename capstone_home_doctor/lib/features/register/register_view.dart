@@ -46,8 +46,8 @@ class _Register extends State<Register> with WidgetsBindingObserver {
         child: Column(
           children: [
             HeaderWidget(
-              title: 'Đăng ký thông tin bệnh nhân',
-              isMainView: true,
+              title: 'Đăng ký',
+              isMainView: false,
             ),
             Padding(padding: EdgeInsets.only(top: 20)),
             TextFieldHDr(

@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -93,4 +94,44 @@ class PeripheralRepository {
 
   //...
 
+  //discover services
+  Future<List<BluetoothService>> discoverServices(
+      BluetoothDevice device) async {
+    List<BluetoothService> services = await device.discoverServices();
+    return services;
+  }
+
+  //get battery device
+  Future<int> getBatteryDevice(String peripheralId) async {
+    try {
+      BluetoothDevice device = await findScanResultById(peripheralId);
+      // device.disconnect();
+      // await device.connect();
+      BluetoothCharacteristic _characteristic;
+      List<BluetoothService> services = await discoverServices(device);
+      services.forEach((service) {
+        for (BluetoothCharacteristic ch in service.characteristics) {
+          if (ch.uuid == PeripheralCharacteristics.BATTERY_INFORMATION) {
+            _characteristic = ch;
+          }
+        }
+      });
+      await _characteristic.setNotifyValue(true);
+      int batteryValue = 0;
+      print('bluetooth Battery_ch set notify ${_characteristic.isNotifying}');
+      await _characteristic.value.listen((value) async {
+        if (value.isNotEmpty) {
+          batteryValue = value[1];
+
+          print('battery value into function get ${batteryValue}');
+          return batteryValue;
+        } else {
+          print('Cannot get battery percentage');
+        }
+      });
+      return batteryValue;
+    } catch (e) {
+      print('Error at get battery device: ${e}');
+    }
+  }
 }

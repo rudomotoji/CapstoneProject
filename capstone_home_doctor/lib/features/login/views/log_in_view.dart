@@ -208,6 +208,33 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                 }
               },
             ),
+            Padding(padding: EdgeInsets.only(top: 15)),
+            Text(
+              'hoặc',
+              style: TextStyle(
+                color: DefaultTheme.GREY_TEXT,
+                fontSize: 12,
+              ),
+            ),
+            Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                height: 30,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(30),
+                  child: Center(
+                    child: Text(
+                      'Đăng kí tài khoản',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: DefaultTheme.BLUE_TEXT,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pushNamed(RoutesHDr.REGISTER);
+                  },
+                )),
             Padding(padding: EdgeInsets.only(top: 20)),
             Text(
               'Powered by HomeDoctor',
@@ -275,6 +302,8 @@ class _Login extends State<Login> with WidgetsBindingObserver {
           _authenticateHelper.isAuthenticated().then((value) async {
             if (value == true) {
               Navigator.of(context).pop();
+              //
+
               await Navigator.pushNamedAndRemoveUntil(context,
                   RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
             } else {

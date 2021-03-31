@@ -83,3 +83,27 @@ class PeripheralBloc extends Bloc<PeripheralEvent, PeripheralState> {
     }
   }
 }
+
+class BatteryDeviceBloc extends Bloc<PeripheralEvent, PeripheralState> {
+  final PeripheralRepository peripheralRepository;
+  BatteryDeviceBloc({@required this.peripheralRepository})
+      : assert(peripheralRepository != null),
+        super(PeripheralStateInitial());
+
+  @override
+  Stream<PeripheralState> mapEventToState(PeripheralEvent event) async* {
+    if (event is BatteryEventGet) {
+      yield PeripheralStateLoading();
+      try {
+        int battery =
+            await peripheralRepository.getBatteryDevice(event.peripheralId);
+        print('peripheral id in bloc: ${event.peripheralId}');
+        print('into bloc value now is $battery');
+        yield BatteryStateSuccess(value: battery);
+      } catch (e) {
+        print('CATCH BATTERY: ${e}');
+        yield PeripheralStateFailure();
+      }
+    }
+  }
+}

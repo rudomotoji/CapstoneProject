@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
@@ -338,9 +340,100 @@ void main() async {
                         //check bluetooth on or off, then do action connect and get value
                         FlutterBlue.instance.state.listen((state) async {
                           print('state is ${state}');
-                          if (state == BluetoothState.on) {
+                          if (state == BluetoothState.turningOn) {
+                            //
+                          } else if (state == BluetoothState.on) {
                             await _connectInBackground(
                                 backGroundSetting.insertLocal);
+                          } else if (state == BluetoothState.off) {
+                            //BLUETOOTH OF BUT USER STIL DANGER
+                            int dangerPlus = 0;
+                            //IF HAS SCHEDULE OFFLINE
+                            List<VitalSigns> scheduleOffline = [];
+
+                            await _sqfLiteHelper
+                                .getVitalSignScheduleOffline()
+                                .then((sOffline) async {
+                              scheduleOffline = sOffline;
+                            });
+                            if (scheduleOffline.isNotEmpty) {
+                              //DANGEROUS IS COUNTING BUT LOSE DEVICE CONNECTION
+                              //
+                              VitalSigns heartRateSchedule = scheduleOffline
+                                  .where((item) =>
+                                      item.vitalSignType == 'Nhịp tim')
+                                  .first;
+                              print(
+                                  'Heart rate schedule from server: min ${heartRateSchedule.numberMin}- max ${heartRateSchedule.numberMax}\nDanger minute is ${heartRateSchedule.minuteDangerInterval}- minute normal is ${heartRateSchedule.minuteNormalInterval}');
+                              //DANGEROUS IS COUNTING BUT LOSE DEVICE CONNECTION
+                              //
+                              await vitalSignHelper
+                                  .getCountDownDangerous()
+                                  .then((countDown) async {
+                                //
+                                if (dangerPlus == 0) {
+                                  //
+                                  if (countDown > 0) {
+                                    //
+                                    print(
+                                        'lose bluetooth connection AND the last people status is dangerous');
+                                    await vitalSignHelper
+                                        .updateCountDownDangerous(
+                                            countDown += 1);
+                                    print(
+                                        'DANGEROUS HR (LOSE DEVICE CONNECTION). COUNT DOWN DANGEROUS IS ${countDown}');
+                                    if (countDown ==
+                                        heartRateSchedule
+                                            .minuteDangerInterval) {
+                                      ////////////////////////
+                                      //LOCAL EXECUTE HERE
+                                      //
+                                      var dangerousNotification = {
+                                        "notification": {
+                                          "title": "Sinh hiệu bất thường",
+                                          "body":
+                                              "Nhịp tim của bạn có dấu hiệu bất thường.",
+                                        },
+                                        "data": {
+                                          "NAVIGATE_TO_SCREEN":
+                                              RoutesHDr.MAIN_HOME,
+                                        }
+                                      };
+                                      _handleGeneralMessage(
+                                          dangerousNotification);
+                                      ////////////////////////
+                                      //SERVER EXECUTE HERE
+
+                                      NotificationPushDTO notiPushDTO =
+                                          NotificationPushDTO(
+                                              deviceType: 2,
+                                              notificationType: 2,
+                                              recipientAccountId:
+                                                  _vitalSignScheduleDTO
+                                                      .doctorAccountId,
+                                              senderAccountId: _accountId);
+                                      //PUSH NOTI
+                                      await notificationRepository
+                                          .pushNotification(notiPushDTO);
+                                      //
+                                      //CHANGE STATUS PEOPLE
+                                      await notificationRepository
+                                          .changePersonalStatus(
+                                              _patientId, 'DANGER');
+                                    }
+                                    // // set into 0 when normal
+                                    // if (countDown >= heartRateSchedule.minuteDangerInterval) {
+                                    //   await vitalSignHelper.updateCountDownDangerous(0);
+                                    // }
+                                    //
+                                  } else {
+                                    print(
+                                        'lose bluetooth connection but the last people status is normal');
+                                  }
+                                  dangerPlus++;
+                                }
+                              });
+                            }
                           }
                         });
                         //
@@ -440,13 +533,6 @@ _connectInBackground(int timeInsert) async {
   await _peripheralHelper.getPeripheralId().then((peripheralId) async {
     if (peripheralId != '') {
       //
-      // //test battery
-      // await _vitalSignRepository
-      //     .getBatteryDevice(peripheralId)
-      //     .then((batteryValue) {
-      //   //
-      //   print('BATTERY OF DEVICE IS ${batteryValue}');
-      // });
 
       //
       //count dangerous means for every measurement again, get the first value to
@@ -724,34 +810,34 @@ _connectInBackground(int timeInsert) async {
                         /////////
                         ///PUSH VITAL SIGN INTO SERVER
                         ///
-                        String listValue = '';
-                        String listTime = '';
-                        int countGetList = 0;
-                        _sqfLiteHelper
-                            .getListVitalSign('HEART_RATE', _patientId)
-                            .then((listHeartRate) async {
-                          if (countGetList == 0) {
-                            for (VitalSignDTO dto in listHeartRate) {
-                              listValue += dto.value1.toString() + ',';
-                              listTime += dto.toDatePush() + ',';
-                            }
-                          }
-                          //
+                        // String listValue = '';
+                        // String listTime = '';
+                        // int countGetList = 0;
+                        // _sqfLiteHelper
+                        //     .getListVitalSign('HEART_RATE', _patientId)
+                        //     .then((listHeartRate) async {
+                        //   if (countGetList == 0) {
+                        //     for (VitalSignDTO dto in listHeartRate) {
+                        //       listValue += dto.value1.toString() + ',';
+                        //       listTime += dto.toDatePush() + ',';
+                        //     }
+                        //   }
+                        //   //
 
-                          countGetList++;
-                          print('list value: $listValue');
-                          print('list time: $listTime');
-                          VitalSignPushDTO vitalSignPush = VitalSignPushDTO(
-                            vitalSignScheduleId:
-                                heartRateSchedule.vitalSignScheduleId,
-                            currentDate: DateTime.now().toString(),
-                            vitalSignTypeId: 1,
-                            numberValue: listValue,
-                            timeValue: listTime,
-                          );
-                          await _vitalSignServerRepository
-                              .pushVitalSign(vitalSignPush);
-                        });
+                        //   countGetList++;
+                        //   print('list value: $listValue');
+                        //   print('list time: $listTime');
+                        //   VitalSignPushDTO vitalSignPush = VitalSignPushDTO(
+                        //     vitalSignScheduleId:
+                        //         heartRateSchedule.vitalSignScheduleId,
+                        //     currentDate: DateTime.now().toString(),
+                        //     vitalSignTypeId: 1,
+                        //     numberValue: listValue,
+                        //     timeValue: listTime,
+                        //   );
+                        //   await _vitalSignServerRepository
+                        //       .pushVitalSign(vitalSignPush);
+                        // });
 
                         //NOTI
                         NotificationPushDTO notiPushDTO = NotificationPushDTO(
@@ -1159,6 +1245,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<PeripheralBloc>(
             create: (BuildContext context) =>
                 PeripheralBloc(peripheralRepository: _peripheralRepository),
+          ),
+          BlocProvider<BatteryDeviceBloc>(
+            create: (BuildContext context) =>
+                BatteryDeviceBloc(peripheralRepository: _peripheralRepository),
           ),
           BlocProvider<VitalSignBloc>(
             create: (BuildContext context) => VitalSignBloc(

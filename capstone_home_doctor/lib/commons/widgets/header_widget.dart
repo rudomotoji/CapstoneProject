@@ -431,8 +431,8 @@ class _HeaderWidget extends State<HeaderWidget> {
   }
 
   void _backToHome() {
-    Navigator.pushNamedAndRemoveUntil(
-        context, RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
   }
 
   void _onButtonShowModelSheet() {
@@ -665,6 +665,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                         image: Image.asset('assets/images/ic-device-list.png'),
                         imgHeight: 25,
                         onTap: () {
+                          Navigator.of(context).pop();
                           Navigator.of(context)
                               .pushNamed(RoutesHDr.PERIPHERAL_SERVICE);
                         },
@@ -733,6 +734,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                               height: 70,
                               label: 'Đăng xuất',
                               onTap: () {
+                                Navigator.of(context).pop();
                                 _signOut();
                               },
                             ),

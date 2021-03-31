@@ -399,9 +399,12 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                               margin: EdgeInsets.only(bottom: 5),
                               alignment: Alignment.bottomLeft,
                               child: Text(
-                                (lastMeasurement.value1 != null)
+                                (lastMeasurement.value1 != null &&
+                                        lastMeasurement.value1 != 0)
                                     ? '${lastMeasurement.value1}'
-                                    : '--',
+                                    : (lastMeasurement.value1 == 0)
+                                        ? '--'
+                                        : '--',
                                 style: TextStyle(
                                   color: DefaultTheme.ORANGE_TEXT,
                                   fontWeight: FontWeight.w500,
@@ -442,41 +445,56 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                     : Container(),
                                 (lastMeasurement.value1 == null)
                                     ? Container()
-                                    : (lastMeasurement.value1 < 55)
-                                        ? Text('Thấp',
+                                    : (lastMeasurement.value1 == 0)
+                                        ? Text('-',
                                             textAlign: TextAlign.right,
                                             style: TextStyle(
                                                 color:
                                                     DefaultTheme.RED_CALENDAR,
                                                 fontWeight: FontWeight.w500))
-                                        : (lastMeasurement.value1 >= 55 &&
-                                                lastMeasurement.value1 < 120)
-                                            ? Text('Bình thường',
+                                        : (lastMeasurement.value1 < 55 &&
+                                                lastMeasurement.value1 > 0)
+                                            ? Text('Thấp',
                                                 textAlign: TextAlign.right,
                                                 style: TextStyle(
                                                     color: DefaultTheme
-                                                        .SUCCESS_STATUS,
+                                                        .RED_CALENDAR,
                                                     fontWeight:
                                                         FontWeight.w500))
-                                            : (lastMeasurement.value1 >= 120)
-                                                ? Text('Cao',
+                                            : (lastMeasurement.value1 >= 55 &&
+                                                    lastMeasurement.value1 <
+                                                        120)
+                                                ? Text('Bình thường',
                                                     textAlign: TextAlign.right,
                                                     style: TextStyle(
                                                         color: DefaultTheme
-                                                            .CHIP_BLUE,
+                                                            .SUCCESS_STATUS,
                                                         fontWeight:
                                                             FontWeight.w500))
-                                                : (lastMeasurement.value1 > 150)
-                                                    ? Text('Cao bất thường',
+                                                : (lastMeasurement.value1 >=
+                                                        120)
+                                                    ? Text('Cao',
                                                         textAlign:
                                                             TextAlign.right,
                                                         style: TextStyle(
                                                             color: DefaultTheme
-                                                                .RED_TEXT,
+                                                                .CHIP_BLUE,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w500))
-                                                    : Container()
+                                                    : (lastMeasurement.value1 >
+                                                            150)
+                                                        ? Text('Cao bất thường',
+                                                            textAlign:
+                                                                TextAlign.right,
+                                                            style: TextStyle(
+                                                                color:
+                                                                    DefaultTheme
+                                                                        .RED_TEXT,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500))
+                                                        : Container()
                               ],
                             ),
                             Padding(

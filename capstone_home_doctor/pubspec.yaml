@@ -72,6 +72,8 @@ dev_dependencies:
   expandable_group: ^0.0.7
   photo_view: ^0.10.0
   connectivity: ^2.0.2
+  percent_indicator: 2.1.9+1
+  
 
 
 # For information on the generic Dart part of this file, see the

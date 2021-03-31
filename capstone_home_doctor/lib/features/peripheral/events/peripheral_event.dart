@@ -66,3 +66,12 @@ class PeripheralEventDisconnect extends PeripheralEvent {
   // TODO: implement props
   List<Object> get props => [device];
 }
+
+class BatteryEventGet extends PeripheralEvent {
+  final String peripheralId;
+  const BatteryEventGet({@required this.peripheralId});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [peripheralId];
+}

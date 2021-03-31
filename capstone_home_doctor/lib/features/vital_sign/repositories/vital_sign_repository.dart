@@ -25,43 +25,6 @@ class VitalSignRepository {
     return services;
   }
 
-  //get battery device
-  Future<ByteData> getBatteryDevice(String peripheralId) async {
-    try {
-      ByteData batteryValue;
-      BluetoothDevice device =
-          await peripheralRepository.findScanResultById(peripheralId);
-      device.disconnect();
-      await device.connect();
-      BluetoothCharacteristic _characteristic;
-      List<BluetoothService> services = await discoverServices(device);
-      services.forEach((service) {
-        for (BluetoothCharacteristic ch in service.characteristics) {
-          if (ch.uuid == PeripheralCharacteristics.BATTERY_INFORMATION) {
-            _characteristic = ch;
-          }
-        }
-      });
-      await _characteristic.setNotifyValue(true);
-      print('bluetooth Battery_ch set notify ${_characteristic.isNotifying}');
-      _characteristic.value.listen((value) {
-        if (value.isNotEmpty) {
-          var manifactureData = Uint8List.fromList(value);
-          var batteryData = ByteData.sublistView(manifactureData, 14, 15);
-
-          print('Battery percent now at ${DateTime.now()} is: ${batteryData}');
-
-          return batteryData;
-        } else {
-          print('Cannot get battery percentage');
-        }
-      });
-      // return batteryValue;
-    } catch (e) {
-      print('Error at get battery device: ${e}');
-    }
-  }
-
   //get heart rate characteristic
   Future<int> getHeartRateValueFromDevice(String peripheralId) async {
     try {
@@ -102,31 +65,6 @@ class VitalSignRepository {
       print('error at getHeartRateValueFromDevice ${e}');
     }
   }
-
-  //get heart rate value
-  // Future<int> getHeartRateValueFromDevice(String peripheralId) async {
-  //   print('go into get heart rate from device func');
-  //   BluetoothDevice device =
-  //       await peripheralRepository.findScanResultById(peripheralId);
-
-  //   print('device when get heart rate is ${device.name}');
-  //   BluetoothCharacteristic characteristic =
-  //       await getHeartRateCharacteristic(device);
-  //   int heartRateValue = 0;
-  //   await characteristic.setNotifyValue(true);
-  //   print(
-  //       'bluetooth HeartRate_Characteristic set notify ${characteristic.isNotifying}');
-  //   await characteristic.value.listen((value) {
-  //     if (value.isNotEmpty) {
-  //       print('Heart rate recently at ${DateTime.now()} is ${value[1]}');
-  //       heartRateValue = value[1];
-  //     } else {
-  //       print('Empty heart rate');
-  //     }
-  //   });
-  //   return heartRateValue;
-  // }
-
 }
 
 class VitalSignServerRepository extends BaseApiClient {

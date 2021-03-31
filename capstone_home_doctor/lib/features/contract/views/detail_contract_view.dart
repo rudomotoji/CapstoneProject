@@ -1366,75 +1366,91 @@ class _DetailContractView extends State<DetailContractView>
                                                 width: 150,
                                                 margin:
                                                     EdgeInsets.only(left: 10),
-                                                child:
-                                                    (x.medicalInstructions[index]
-                                                                .image !=
-                                                            null)
-                                                        ? InkWell(
-                                                            onTap: () {
-                                                              _showFullImageDescription(
-                                                                  x.medicalInstructions[
-                                                                      index],
-                                                                  x.medicalInstructionTypeName);
-                                                            },
-                                                            child: Stack(
-                                                              children: [
-                                                                //
-                                                                SizedBox(
-                                                                  width: 150,
-                                                                  height: 200,
-                                                                  child: Image
-                                                                      .network(
-                                                                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${x.medicalInstructions[index].image}'),
-                                                                ),
-                                                                Positioned(
-                                                                  bottom: 0,
-                                                                  child:
-                                                                      Container(
-                                                                    width: 150,
-                                                                    height: 100,
-                                                                    padding: EdgeInsets.only(
+                                                child: (x
+                                                            .medicalInstructions[
+                                                                index]
+                                                            .image !=
+                                                        null)
+                                                    ? InkWell(
+                                                        onTap: () {
+                                                          _showFullImageDescription(
+                                                              x.medicalInstructions[
+                                                                  index],
+                                                              x.medicalInstructionTypeName);
+                                                        },
+                                                        child: Stack(
+                                                          children: [
+                                                            //
+                                                            SizedBox(
+                                                              width: 150,
+                                                              height: 200,
+                                                              child: Image.network(
+                                                                  'http://45.76.186.233:8000/api/v1/Images?pathImage=${x.medicalInstructions[index].image}'),
+                                                            ),
+                                                            Positioned(
+                                                              bottom: 0,
+                                                              child: Container(
+                                                                width: 150,
+                                                                height: 100,
+                                                                padding: EdgeInsets
+                                                                    .only(
                                                                         bottom:
                                                                             10),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      gradient: LinearGradient(
-                                                                          begin: Alignment
-                                                                              .topCenter,
-                                                                          end: Alignment
-                                                                              .bottomCenter,
-                                                                          colors: [
-                                                                            DefaultTheme.TRANSPARENT,
-                                                                            DefaultTheme.BLACK.withOpacity(0.9),
-                                                                          ]),
-                                                                    ),
-                                                                    child:
-                                                                        Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .bottomCenter,
-                                                                      child:
-                                                                          Text(
-                                                                        '${x.medicalInstructionTypeName}',
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                DefaultTheme.WHITE,
-                                                                            fontWeight: FontWeight.w500),
-                                                                      ),
-                                                                    ),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  gradient: LinearGradient(
+                                                                      begin: Alignment
+                                                                          .topCenter,
+                                                                      end: Alignment
+                                                                          .bottomCenter,
+                                                                      colors: [
+                                                                        DefaultTheme
+                                                                            .TRANSPARENT,
+                                                                        DefaultTheme
+                                                                            .BLACK
+                                                                            .withOpacity(0.9),
+                                                                      ]),
+                                                                ),
+                                                                child: Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .bottomCenter,
+                                                                  child: Text(
+                                                                    '${x.medicalInstructionTypeName}',
+                                                                    style: TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .WHITE,
+                                                                        fontWeight:
+                                                                            FontWeight.w500),
                                                                   ),
                                                                 ),
-                                                              ],
+                                                              ),
                                                             ),
-                                                          )
-                                                        : Container(
-                                                            width: 150,
-                                                            height: 200,
-                                                            color: DefaultTheme
-                                                                .RED_CALENDAR
-                                                                .withOpacity(
-                                                                    0.2),
-                                                          ),
+                                                          ],
+                                                        ),
+                                                      )
+                                                    : Container(
+                                                        width: 150,
+                                                        height: 200,
+                                                        color: DefaultTheme
+                                                            .GREY_TOP_TAB_BAR
+                                                            .withOpacity(0.8),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: <Widget>[
+                                                            //
+                                                            SizedBox(
+                                                              width: 25,
+                                                              height: 25,
+                                                              child: Image.asset(
+                                                                  'assets/images/ic-medicine.png'),
+                                                            ),
+                                                            Text('Đơn thuốc'),
+                                                          ],
+                                                        ),
+                                                      ),
                                               );
                                             },
                                           ),

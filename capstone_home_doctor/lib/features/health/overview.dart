@@ -97,77 +97,81 @@ class _OverviewTabState extends State<OverviewTab> {
                   ));
             }
             if (state is VitalScheduleStateSuccess) {
-              if (state.dto != null) {
+              if (state.dto.medicalInstructionId == null) {
+                return Container();
+              } else {
                 _saveVitalSignScheduleOffline(state.dto);
-              }
-              return Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: DefaultTheme.GREY_VIEW,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    //
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child:
-                          Text('Bác sĩ đã đặt các chỉ số đo sinh hiệu cho bạn'),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Text(
-                          'Bắt đầu từ ngày ${_dateValidator.parseToDateView(state.dto.dateStarted)}'),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: state.dto.vitalSigns.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: (state.dto.vitalSigns[index]
+                return Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: DefaultTheme.GREY_VIEW,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      //
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Text(
+                            'Bác sĩ đã đặt các chỉ số đo sinh hiệu cho bạn'),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: (state.dto.dateStarted != null)
+                            ? Text(
+                                'Bắt đầu từ ngày ${_dateValidator.parseToDateView(state.dto.dateStarted)}')
+                            : Container(),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: state.dto.vitalSigns.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: (state.dto.vitalSigns[index]
+                                                  .vitalSignType ==
+                                              'Nhịp tim')
+                                          ? Image.asset(
+                                              'assets/images/ic-heart-rate.png')
+                                          : (state.dto.vitalSigns[index]
+                                                      .vitalSignType ==
+                                                  'Huyết áp')
+                                              ? Image.asset(
+                                                  'assets/images/ic-blood-pressure.png')
+                                              : Image.asset(
+                                                  'assets/images/ic-health-selected.png'),
+                                    ),
+                                    Text(
+                                        '${state.dto.vitalSigns[index].vitalSignType}'),
+                                  ],
+                                ),
+                                (state.dto.vitalSigns[index].vitalSignType ==
+                                        'Nhịp tim')
+                                    ? Text(
+                                        'Nhịp tim của bạn an toàn trong khoảng ${state.dto.vitalSigns[index].numberMin} - ${state.dto.vitalSigns[index].numberMax}')
+                                    : (state.dto.vitalSigns[index]
                                                 .vitalSignType ==
-                                            'Nhịp tim')
-                                        ? Image.asset(
-                                            'assets/images/ic-heart-rate.png')
-                                        : (state.dto.vitalSigns[index]
-                                                    .vitalSignType ==
-                                                'Huyết áp')
-                                            ? Image.asset(
-                                                'assets/images/ic-blood-pressure.png')
-                                            : Image.asset(
-                                                'assets/images/ic-health-selected.png'),
-                                  ),
-                                  Text(
-                                      '${state.dto.vitalSigns[index].vitalSignType}'),
-                                ],
-                              ),
-                              (state.dto.vitalSigns[index].vitalSignType ==
-                                      'Nhịp tim')
-                                  ? Text(
-                                      'Nhịp tim của bạn an toàn trong khoảng ${state.dto.vitalSigns[index].numberMin} - ${state.dto.vitalSigns[index].numberMax}')
-                                  : (state.dto.vitalSigns[index]
-                                              .vitalSignType ==
-                                          'Huyết áp được đo bắt đầu vào ${state.dto.vitalSigns[index].timeStart} giờ, cách ${(state.dto.vitalSigns[index].minuteAgain / 60).toInt()} tiếng đo lại.')
-                                      ? Text('')
-                                      : Text(''),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              );
+                                            'Huyết áp được đo bắt đầu vào ${state.dto.vitalSigns[index].timeStart} giờ, cách ${(state.dto.vitalSigns[index].minuteAgain / 60).toInt()} tiếng đo lại.')
+                                        ? Text('')
+                                        : Text(''),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              }
             }
             return Container();
           }),

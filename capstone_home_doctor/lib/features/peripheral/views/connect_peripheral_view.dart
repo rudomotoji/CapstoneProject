@@ -155,7 +155,7 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                                               'id device when tap: ${listScanned[index].device.name}');
                                           print('TAPPED');
                                           //connect, update SharePreferenced, navigate
-                                          _peripheralBloc.add(
+                                          await _peripheralBloc.add(
                                               PeripheralEventConnectFirstTime(
                                                   scanResult:
                                                       listScanned[index]));

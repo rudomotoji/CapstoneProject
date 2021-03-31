@@ -59,6 +59,8 @@ class _ManageContract extends State<ManageContract> {
   List<ContractListDTO> _listFinished = List<ContractListDTO>();
 
   List<ContractListDTO> _listCancel = List<ContractListDTO>();
+  List<ContractListDTO> _listCancelD = List<ContractListDTO>();
+  List<ContractListDTO> _listCancelP = List<ContractListDTO>();
   var _idDoctorController = TextEditingController();
   String _idDoctor = '';
   ContractListBloc _contractListBloc;
@@ -267,18 +269,27 @@ class _ManageContract extends State<ManageContract> {
                               .where((item) => item.status == 'ACTIVE')
                               .toList();
                           //
+                          _listExecuting.clear();
                           _listExecuting =
                               _listPending + _listApprove + _listActive;
                           //
-
+                          _listAcitved.clear();
                           _listAcitved = state.listContract
                               .where((item) => item.status == 'FINISHED')
                               .toList();
 
-                          _listCancel = state.listContract
+                          _listCancelP = state.listContract
                               .where((item) => item.status == 'CANCELP')
                               .toList();
+                          _listCancelD = state.listContract
+                              .where((item) => item.status == 'CANCELD')
+                              .toList();
 
+                          //
+                          _listCancel.clear();
+                          _listCancel = _listCancelP + _listCancelD;
+
+                          //
                           return Column(
                             children: <Widget>[
                               Padding(
@@ -964,18 +975,50 @@ class _ManageContract extends State<ManageContract> {
                                     ),
                                   )),
                               Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 20, right: 50, bottom: 10),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      'Danh sách các hợp đồng đã huỷ và không được phê duyệt của bạn',
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: DefaultTheme.GREY_TEXT),
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 50, bottom: 10),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Danh sách các hợp đồng đã huỷ và không được phê duyệt',
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: DefaultTheme.GREY_TEXT),
+                                  ),
+                                ),
+                              ),
+                              (_listCancel.length != 0)
+                                  ? Container()
+                                  : Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 100,
+                                      child: Center(
+                                          child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: Image.asset(
+                                                'assets/images/ic-contract-empty.png'),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 10),
+                                          ),
+                                          Text(
+                                            'Không có hợp đồng nào trong danh sách này',
+                                            style: TextStyle(
+                                                color: DefaultTheme.GREY_TEXT),
+                                          ),
+                                        ],
+                                      )),
                                     ),
-                                  )),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 30),
+                              ),
                             ],
                           );
                         }

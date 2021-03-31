@@ -8,7 +8,7 @@ abstract class PatientEvent extends Equatable {
 class PatientEventSetId extends PatientEvent {
   final int id;
 
-  const PatientEventSetId({@required this.id}) : assert(id != null);
+  const PatientEventSetId({@required this.id});
 
   @override
   // TODO: implement props

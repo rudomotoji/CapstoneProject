@@ -53,3 +53,12 @@ class PeripheralStateStopScan extends PeripheralState {}
 
 //disconnect
 class PeripheralStateDisconnect extends PeripheralState {}
+
+//get battery success
+class BatteryStateSuccess extends PeripheralState {
+  final int value;
+  const BatteryStateSuccess({@required this.value});
+  @override
+  // TODO: implement props
+  List<Object> get props => [value];
+}

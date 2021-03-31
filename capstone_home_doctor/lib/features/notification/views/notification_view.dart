@@ -85,7 +85,25 @@ class _NotificationState extends State<NotificationPage> {
                                 'Kiểm tra lại đường truyền kết nối mạng')));
                   }
                   if (state is NotificationListStateSuccess) {
-                    if (state.listNotification == null) {
+                    if (state.listNotification.isEmpty) {
+                      return Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Center(
+                              child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: Image.asset('assets/images/ic-noti.png'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 20),
+                              ),
+                              Text('Hiện tại bạn chưa có thông báo nào')
+                            ],
+                          )));
+                    } else if (state.listNotification == null) {
                       return Container(
                           width: MediaQuery.of(context).size.width,
                           child: Center(
