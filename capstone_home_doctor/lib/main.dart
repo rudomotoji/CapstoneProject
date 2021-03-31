@@ -451,14 +451,14 @@ void main() async {
         }
       });
     });
-  await SentryFlutter.init(
-    (options) {
-      options.dsn =
-          'https://0ccf617d2df8401a93b955bb5ea55728@o440638.ingest.sentry.io/5698108';
-    },
-    appRunner: () => runApp(HomeDoctor()),
-  );
-  // runApp(HomeDoctor());
+  // await SentryFlutter.init(
+  //   (options) {
+  //     options.dsn =
+  //         'https://0ccf617d2df8401a93b955bb5ea55728@o440638.ingest.sentry.io/5698108';
+  //   },
+  //   appRunner: () => runApp(HomeDoctor()),
+  // );
+  runApp(HomeDoctor());
 }
 
 _getPatientId() async {

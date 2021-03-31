@@ -14,6 +14,7 @@ class PatientDTO {
   String dateStarted;
   String dateFinished;
   List<RelativeDTO> relatives;
+  PatientHealthRecordDTO patientHealthRecord;
 
   PatientDTO(
       {this.patientId,
@@ -28,7 +29,8 @@ class PatientDTO {
       this.weight,
       this.dateStarted,
       this.dateFinished,
-      this.relatives});
+      this.relatives,
+      this.patientHealthRecord});
 
   PatientDTO.fromJson(Map<String, dynamic> json) {
     patientId = json['patientId'];
@@ -49,6 +51,9 @@ class PatientDTO {
         relatives.add(new RelativeDTO.fromJson(v));
       });
     }
+    patientHealthRecord = json['patientHealthRecord'] != null
+        ? new PatientHealthRecordDTO.fromJson(json['patientHealthRecord'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -65,6 +70,49 @@ class PatientDTO {
     data['weight'] = this.weight;
     data['dateStarted'] = this.dateStarted;
     data['dateFinished'] = this.dateFinished;
+    if (this.relatives != null) {
+      data['relatives'] = this.relatives.map((v) => v.toJson()).toList();
+    }
+    if (this.patientHealthRecord != null) {
+      data['patientHealthRecord'] = this.patientHealthRecord.toJson();
+    }
+    return data;
+  }
+}
+
+class PatientHealthRecordDTO {
+  int height;
+  int weight;
+  String personalMedicalHistory;
+  String familyMedicalHistory;
+  List<RelativeDTO> relatives;
+
+  PatientHealthRecordDTO(
+      {this.height,
+      this.weight,
+      this.personalMedicalHistory,
+      this.familyMedicalHistory,
+      this.relatives});
+
+  PatientHealthRecordDTO.fromJson(Map<String, dynamic> json) {
+    height = json['height'];
+    weight = json['weight'];
+    personalMedicalHistory = json['personalMedicalHistory'];
+    familyMedicalHistory = json['familyMedicalHistory'];
+    if (json['relatives'] != null) {
+      relatives = new List<RelativeDTO>();
+      json['relatives'].forEach((v) {
+        relatives.add(new RelativeDTO.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['height'] = this.height;
+    data['weight'] = this.weight;
+    data['personalMedicalHistory'] = this.personalMedicalHistory;
+    data['familyMedicalHistory'] = this.familyMedicalHistory;
     if (this.relatives != null) {
       data['relatives'] = this.relatives.map((v) => v.toJson()).toList();
     }
