@@ -36,16 +36,12 @@ dev_dependencies:
   equatable: ^1.2.5
   flutter_bloc: ^6.1.1
   rxdart: ^0.24.1
-  firebase_analytics: 
-  # firebase_analytics: ^6.3.0
-  firebase_core: ^0.7.0
-  # firebase_core: ^0.5.3
-  firebase_messaging:
-  # firebase_messaging: ^7.0.3
+  firebase_analytics: ^6.3.0
+  firebase_core: ^0.5.3
+  firebase_messaging: ^7.0.3
   # firebase_auth: 
   flutter_local_notifications: ^3.0.2
-  cloud_firestore:
-  # cloud_firestore: ^0.14.4
+  cloud_firestore: ^0.14.4
   uuid: ^2.2.2
   cached_network_image: ^2.4.1
   intl: ^0.16.1
@@ -76,7 +72,6 @@ dev_dependencies:
   connectivity: ^2.0.2
   tesseract_ocr: ^0.3.1
   sentry_flutter: ^4.0.6
-  firebase_ml_vision: 
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

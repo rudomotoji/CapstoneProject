@@ -20,7 +20,6 @@ class MedInsCreateBloc extends Bloc<MedInsCreateEvent, MedInsCreateState> {
       //
       yield MedInsCreateStateLoading();
       try {
-        //
         final bool isCreated = await medicalInstructionRepository
             .createMedicalInstruction(event.dto);
         _medicalInstructionHelper.updateMedicalInstructionCreate(isCreated);

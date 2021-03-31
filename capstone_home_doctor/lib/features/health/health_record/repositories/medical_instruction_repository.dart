@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:sentry/sentry.dart';
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+// import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 
 class MedicalInstructionRepository extends BaseApiClient {
   final http.Client httpClient;
@@ -106,28 +106,31 @@ class MedicalInstructionRepository extends BaseApiClient {
 
   Future<ImageScannerDTO> getTextFromImage(String imagePath) async {
     try {
-      String strSymptom = "";
-      String title = "";
+      String strSymptom = '';
+      String title = '';
       await _ocrUtil.convertImgToString(imagePath).then((value) {
-        var newArrData = value.split("\n");
-        var str_list = newArrData.where((s) => !s.isEmpty).toList();
+        if (value != null) {
+          var newArrData = value.split("\n");
+          var str_list = newArrData.where((s) => !s.isEmpty).toList();
 
-        for (var itemString in str_list) {
-          if (itemString.contains('PHIẾU') ||
-              itemString.contains('BỆNH ÁN') ||
-              itemString.contains('XÉT NGHIỆM')) {
-            title = itemString;
-          }
-          if (strSymptom != null && strSymptom != '') {
-            if (itemString.contains('-') && itemString.contains('/')) {
-              strSymptom += itemString;
+          for (var itemString in str_list) {
+            if (itemString.contains('PHIẾU') ||
+                itemString.contains('BỆNH ÁN') ||
+                itemString.contains('XÉT NGHIỆM')) {
+              title = itemString;
             }
-          } else {
-            if (itemString.contains('Triệu') ||
-                itemString.contains('chứng') ||
-                itemString.contains('Chẩn') ||
-                itemString.contains('đoán')) {
-              strSymptom = itemString;
+            if (strSymptom != null && strSymptom != '') {
+              if (itemString.contains('-') && itemString.contains('/')) {
+                strSymptom += itemString;
+              }
+            } else {
+              if ((itemString.contains('Triệu') ||
+                      itemString.contains('chứng') ||
+                      itemString.contains('Chẩn') ||
+                      itemString.contains('đoán')) &&
+                  strSymptom == '') {
+                strSymptom = itemString;
+              }
             }
           }
         }
@@ -144,6 +147,7 @@ class MedicalInstructionRepository extends BaseApiClient {
         exception,
         stackTrace: stackTrace,
       );
+      return ImageScannerDTO(symptom: '', title: '');
     }
     // catch (e) {
     //   print('ERROR AT getTextIMG repo: ${e}');
@@ -217,62 +221,62 @@ class MedicalInstructionRepository extends BaseApiClient {
     }
   }
 
-  Future<ImageScannerDTO> recogniseText(String imageFile) async {
-    if (imageFile == null) {
-      return null;
-    } else {
-      final visionImage = FirebaseVisionImage.fromFilePath(imageFile);
-      final textRecognizer = FirebaseVision.instance.textRecognizer();
-      try {
-        final visionText = await textRecognizer.processImage(visionImage);
-        await textRecognizer.close();
+  // Future<ImageScannerDTO> recogniseText(String imageFile) async {
+  //   if (imageFile == null) {
+  //     return null;
+  //   } else {
+  //     final visionImage = FirebaseVisionImage.fromFilePath(imageFile);
+  //     final textRecognizer = FirebaseVision.instance.textRecognizer();
+  //     try {
+  //       final visionText = await textRecognizer.processImage(visionImage);
+  //       await textRecognizer.close();
 
-        final text = extractText(visionText);
-        // return text.isEmpty ? 'No text found in the image' : text;
-        String strSymptom = "";
-        String title = "";
+  //       final text = extractText(visionText);
+  //       // return text.isEmpty ? 'No text found in the image' : text;
+  //       String strSymptom = "";
+  //       String title = "";
 
-        var newArrData = text.split("\n");
-        var str_list = newArrData.where((s) => !s.isEmpty).toList();
+  //       var newArrData = text.split("\n");
+  //       var str_list = newArrData.where((s) => !s.isEmpty).toList();
 
-        for (var itemString in str_list) {
-          if (itemString.contains('PHIẾU') ||
-              itemString.contains('BỆNH ÁN') ||
-              itemString.contains('XÉT NGHIỆM')) {
-            title = itemString;
-          }
-          if (strSymptom != null && strSymptom != '') {
-            if (itemString.contains('-') && itemString.contains('/')) {
-              strSymptom += itemString;
-            }
-          } else {
-            if (itemString.contains('Triệu') ||
-                itemString.contains('chứng') ||
-                itemString.contains('Chẩn') ||
-                itemString.contains('đoán')) {
-              strSymptom = itemString;
-            }
-          }
-        }
-        return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
-      } catch (error) {
-        return null;
-      }
-    }
-  }
+  //       for (var itemString in str_list) {
+  //         if (itemString.contains('PHIẾU') ||
+  //             itemString.contains('BỆNH ÁN') ||
+  //             itemString.contains('XÉT NGHIỆM')) {
+  //           title = itemString;
+  //         }
+  //         if (strSymptom != null && strSymptom != '') {
+  //           if (itemString.contains('-') && itemString.contains('/')) {
+  //             strSymptom += itemString;
+  //           }
+  //         } else {
+  //           if (itemString.contains('Triệu') ||
+  //               itemString.contains('chứng') ||
+  //               itemString.contains('Chẩn') ||
+  //               itemString.contains('đoán')) {
+  //             strSymptom = itemString;
+  //           }
+  //         }
+  //       }
+  //       return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
+  //     } catch (error) {
+  //       return null;
+  //     }
+  //   }
+  // }
 
-  static extractText(VisionText visionText) {
-    String text = '';
+  // static extractText(VisionText visionText) {
+  //   String text = '';
 
-    for (TextBlock block in visionText.blocks) {
-      for (TextLine line in block.lines) {
-        for (TextElement word in line.elements) {
-          text = text + word.text + ' ';
-        }
-        text = text + '\n';
-      }
-    }
+  //   for (TextBlock block in visionText.blocks) {
+  //     for (TextLine line in block.lines) {
+  //       for (TextElement word in line.elements) {
+  //         text = text + word.text + ' ';
+  //       }
+  //       text = text + '\n';
+  //     }
+  //   }
 
-    return text;
-  }
+  //   return text;
+  // }
 }
