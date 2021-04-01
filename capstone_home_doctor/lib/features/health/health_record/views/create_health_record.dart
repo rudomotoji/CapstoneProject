@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
@@ -26,9 +27,9 @@ import 'package:capstone_home_doctor/models/disease_dto.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:capstone_home_doctor/commons/constants/global.dart' as globals;
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
@@ -51,8 +52,8 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
   DiseaseRepository diseaseRepository =
       DiseaseRepository(httpClient: http.Client());
 
-  List<String> suggestions = globals.suggestions;
-  List<String> _listType = globals.listType;
+  List<String> suggestions = [];
+  List<String> _listType = [];
 
   String _valueTypeIns;
 
@@ -81,6 +82,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     _getPatientId();
+    getDataFromJSONFile();
     _healthRecordCreateBloc = BlocProvider.of(context);
     _diseaseListBloc = BlocProvider.of(context);
   }
@@ -91,6 +93,24 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
         _patientId = value;
       });
     });
+  }
+
+  Future<void> getDataFromJSONFile() async {
+    final String response = await rootBundle.loadString('assets/global.json');
+
+    if (response.contains('suggestions')) {
+      final data = await json.decode(response);
+      for (var item in data['suggestions']) {
+        suggestions.add(item);
+      }
+    }
+
+    if (response.contains('listType')) {
+      final data = await json.decode(response);
+      for (var item in data['listType']) {
+        _listType.add(item);
+      }
+    }
   }
 
   @override

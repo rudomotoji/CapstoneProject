@@ -1,0 +1,50 @@
+{
+    "suggestions": [
+        "Bệnh Viện Đại Học Y Dược",
+        "Bệnh Viện Chợ Rẫy",
+        "Bệnh Viện Từ Dũ",
+        "Bệnh Viện Nhi Đồng 1",
+        "Bệnh Viện Nhi Đồng 2",
+        "Bệnh viện Đại học Y Dược TP. HCM",
+        "Viện Tim Tp.HCM",
+        "Bệnh viện Tim Tâm Đức",
+        "Phòng khám Bệnh viện Đại học Y Dược 1",
+        "Bệnh viện Đa khoa Quốc tế Vinmec",
+        "Phòng khám Đa khoa Saigon Healthcare",
+        "Bệnh Viện Thống Nhất",
+        "Bệnh Viện Ung Bướu",
+        "Bệnh viện truyền máu huyết học",
+        "Bệnh viện Nhân dân 115",
+        "Bệnh viện Nhân dân Gia Định",
+        "Bệnh viện Nguyễn Trãi",
+        "Bệnh viện Nguyễn Tri Phương",
+        "Bệnh viện Bệnh Nhiệt đới",
+        "Viện Y dược học cổ truyền",
+        "Bệnh viện Đa khoa Khu vực Thủ Đức"
+    ],
+    "listFilter": [
+        {
+            "label": "Hệ thống",
+            "value": 0
+        },
+        {
+            "label": "Cũ",
+            "value": 1
+        },
+        {
+            "label": "Tất cả",
+            "value": 2
+        }
+    ],
+    "session": {
+        "morning": 6,
+        "noon": 11,
+        "afternoon": 16,
+        "night": 22,
+        "minutes": 11
+    },
+    "listType": [
+        "Bệnh tim",
+        "Các bệnh khác"
+    ]
+}
