@@ -53,9 +53,10 @@ class VitalSignRepository {
           print('Heart rate recently at ${DateTime.now()} is ${value[1]}');
           heartRateValue = value[1];
           await vitalSignHelper.updateHeartValue(value[1]);
+          return value[1];
         } else {
-          heartRateValue = 0;
-          await vitalSignHelper.updateHeartValue(0);
+          // heartRateValue = 0;
+          // await vitalSignHelper.updateHeartValue(0);
           print('Empty heart rate');
         }
       });
@@ -84,7 +85,7 @@ class VitalSignServerRepository extends BaseApiClient {
         List<VitalSignScheduleDTO> list = data.map((dto) {
           return VitalSignScheduleDTO.fromJson(dto);
         }).toList();
-        return list[0];
+        return list.last;
       }
       return VitalSignScheduleDTO();
     } catch (e) {

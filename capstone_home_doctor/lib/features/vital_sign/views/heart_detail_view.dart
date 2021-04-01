@@ -152,7 +152,13 @@ class _HeartDetailView extends State<HeartDetailView>
                           if (null != listSortedValue) {
                             listSortedValue
                                 .sort((a, b) => a.value1.compareTo(b.value1));
-                            minVitalSignValue = listSortedValue.first.value1;
+                            for (int z = 0; z < listSortedValue.length; z++) {
+                              if (listSortedValue[z].value1 != 0) {
+                                minVitalSignValue = listSortedValue[z].value1;
+                                break;
+                              }
+                            }
+
                             maxVitalSignValue = listSortedValue.last.value1;
                             everageVitalSignValue =
                                 ((minVitalSignValue + maxVitalSignValue) / 2)
@@ -434,6 +440,116 @@ class _HeartDetailView extends State<HeartDetailView>
                                 Navigator.pushNamed(
                                     context, RoutesHDr.VITALSIGN_HISTORY);
                               },
+                            ),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            color: DefaultTheme.WHITE,
+                            height: 430,
+                            child: Column(
+                              children: [
+                                Container(
+                                  child:
+                                      // ListView(
+                                      //   shrinkWrap: true,
+                                      //   scrollDirection: Axis.horizontal,
+                                      //   children: <Widget>[
+                                      //
+                                      new Echarts(
+                                    option: '''
+   {
+     
+                                      color: '#FF784B',
+                                      tooltip: {
+                                        trigger: "axis",
+                                        axisPointer: {
+                                          type: "shadow"
+                                      },
+                                      formatter: function (params)  {
+            var tar = params[0];
+           
+            return 'Nhịp tim lúc ' + (tar.value[0]+1) + 'giờ' + '<br/>' + 'Khoảng ' + tar.value[1] + '-' + tar.value[2] + ' BPM';
+        }
+                                  },
+    xAxis: {
+        name: 'GIỜ',
+                                      nameTextStyle: {
+                                      verticalAlign: "middle",
+                                      color: "#FF784B"
+                                      },
+          axisTick: {
+                                        show: false
+                                      },
+       data: function () {
+            var list = [];
+            for (var i = 1; i <= 12; i++) {
+                list.push(i + ':00');
+            }
+            return list;
+        }()
+    },
+    yAxis: {
+           name: 'BPM',
+                                      nameTextStyle: {
+                                      verticalAlign: "middle",
+                                      color: "#FF784B"
+                                      },
+                                      axisTick: {
+                                        show: false
+                                      },
+                                      type: 'value',
+                                      axisLine: {
+                                        lineStyle: {
+                                          color: '#303030',
+                                        },
+                                      },
+                                      axisLabel: {
+                                        color: '#303030',
+                                      }
+                                      
+                               
+    },
+    series: [{
+        type: 'k',
+         itemStyle: {
+                emphasis: {
+                    barBorderRadius: [50, 50]
+                },
+                normal: {
+                    barBorderRadius: [50, 50, 0 ,0 ]
+                }
+            },
+          color: '#FF784B',
+        data: [
+            [0,30,30,30],
+            [30,35,35,35],
+            [20,40,40,40],
+            [50,70,70,70],
+            [20,30,30,30],
+            [0,0,0,0],
+            [20,40,40,40],
+            [50,70,70,70],
+            [20,30,30,30],
+            [30,35,35,35],
+            [20,40,40,40],
+            [50,70,70,70]
+        ]
+    }]
+}
+                                  ''',
+                                  ),
+                                  width: MediaQuery.of(context).size.width,
+                                  // padding: EdgeInsets.only(right: 20),
+                                  height: 400,
+                                ),
+                                Text(
+                                    'Biểu đồ nhịp tim trong ngày'.toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: DefaultTheme.ORANGE_TEXT,
+                                    )),
+                              ],
                             ),
                           ),
                           Padding(

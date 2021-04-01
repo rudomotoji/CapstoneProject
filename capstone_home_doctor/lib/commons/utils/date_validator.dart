@@ -28,6 +28,30 @@ class DateValidator {
     return result;
   }
 
+  String parseToDateView3(String dateString) {
+    String result = '';
+    String day, month, year;
+    String date = dateString.split(' ')[0];
+    day = date.split('-')[2];
+    month = date.split('-')[1];
+    year = date.split('-')[0];
+    result = '${day} tháng ${month}, ${year}';
+    return result;
+  }
+
+  String getHourAndMinute(String dateString) {
+    String result = '';
+    if (dateString.contains(' ')) {
+      String hour, minute;
+      String date = dateString.split(' ')[1];
+      String time = date.split('.')[0];
+      hour = time.split(':')[0];
+      minute = time.split(':')[1];
+      result = hour + ':' + minute;
+    }
+    return result;
+  }
+
   // String parseDateToNotiView(String importedDate) {
   //   String result = '';
   //   //imported date

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
@@ -26,6 +27,7 @@ import 'package:http/http.dart' as http;
 //
 final DateValidator _dateValidator = DateValidator();
 final ContractHelper _contractHelper = ContractHelper();
+final ArrayValidator _arrayValidator = ArrayValidator();
 
 class ContractDraftView extends StatefulWidget {
   @override
@@ -1049,7 +1051,7 @@ class _ContractDraftView extends State<ContractDraftView>
                 Container(
                   width: MediaQuery.of(context).size.width - (40 + 120 + 20),
                   child: Text(
-                    '${state.dto.phone}',
+                    '${_arrayValidator.parsePhoneToView(state.dto.phone)}',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
                     style: TextStyle(
@@ -1231,7 +1233,7 @@ class _ContractDraftView extends State<ContractDraftView>
                         width:
                             MediaQuery.of(context).size.width - (40 + 120 + 20),
                         child: Text(
-                          '${state4.dto.phoneNumber}',
+                          '${_arrayValidator.parsePhoneToView(state4.dto.phoneNumber)}',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 3,
                           style: TextStyle(
@@ -1603,7 +1605,7 @@ class _ContractDraftView extends State<ContractDraftView>
                                         child: Align(
                                           alignment: Alignment.centerLeft,
                                           child: Text(
-                                            '${doctorDTO.phone}',
+                                            '${_arrayValidator.parsePhoneToView(doctorDTO.phone)}',
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               decoration: TextDecoration.none,

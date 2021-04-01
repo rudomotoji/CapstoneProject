@@ -337,7 +337,7 @@ class _ManageContract extends State<ManageContract> {
                                           if (_listExecuting[index]
                                               .status
                                               .contains('PENDING')) {
-                                            statusTemp = 'Yêu cầu';
+                                            statusTemp = 'Xét duyệt';
                                             statusColor =
                                                 DefaultTheme.ORANGE_TEXT;
                                           }
@@ -351,14 +351,14 @@ class _ManageContract extends State<ManageContract> {
                                           if (_listExecuting[index]
                                               .status
                                               .contains('APPROVE')) {
-                                            statusTemp = 'Đã duyệt';
+                                            statusTemp = 'Chấp thuận';
                                             statusColor =
                                                 DefaultTheme.GRADIENT_2;
                                           }
                                           if (_listExecuting[index]
                                               .status
                                               .contains('FINISHED')) {
-                                            statusTemp = 'Đã kết thúc';
+                                            statusTemp = 'Kết thúc';
                                             statusColor =
                                                 DefaultTheme.CHIP_BLUE;
                                           }
@@ -674,7 +674,7 @@ class _ManageContract extends State<ManageContract> {
                                           if (_listAcitved[index]
                                               .status
                                               .contains('PENDING')) {
-                                            statusTemp = 'Yêu cầu';
+                                            statusTemp = 'Xét duyệt';
                                             statusColor =
                                                 DefaultTheme.ORANGE_TEXT;
                                           }
@@ -688,14 +688,14 @@ class _ManageContract extends State<ManageContract> {
                                           if (_listAcitved[index]
                                               .status
                                               .contains('APPROVE')) {
-                                            statusTemp = 'Đã duyệt';
+                                            statusTemp = 'Chấp thuận';
                                             statusColor =
                                                 DefaultTheme.GRADIENT_2;
                                           }
                                           if (_listAcitved[index]
                                               .status
                                               .contains('FINISHED')) {
-                                            statusTemp = 'Đã kết thúc';
+                                            statusTemp = 'Kết thúc';
                                             statusColor =
                                                 DefaultTheme.CHIP_BLUE;
                                           }

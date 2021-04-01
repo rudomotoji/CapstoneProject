@@ -81,6 +81,7 @@ class PeripheralRepository {
           await connectDevice1stTime(r);
           stopScanning();
           print('Re-connect peripheral device successful');
+          await _peripheralHelper.updatePeripheralChecking(true, peripheralId);
           check = true;
           return check;
         } else {
@@ -113,6 +114,7 @@ class PeripheralRepository {
         for (BluetoothCharacteristic ch in service.characteristics) {
           if (ch.uuid == PeripheralCharacteristics.BATTERY_INFORMATION) {
             _characteristic = ch;
+            break;
           }
         }
       });
@@ -120,11 +122,12 @@ class PeripheralRepository {
       int batteryValue = 0;
       print('bluetooth Battery_ch set notify ${_characteristic.isNotifying}');
       await _characteristic.value.listen((value) async {
+        print('list value of battery $value');
         if (value.isNotEmpty) {
           batteryValue = value[1];
 
-          print('battery value into function get ${batteryValue}');
-          return batteryValue;
+          print('battery value into function get ${value[1]}');
+          return value[1];
         } else {
           print('Cannot get battery percentage');
         }

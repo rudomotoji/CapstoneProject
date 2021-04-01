@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
@@ -1523,7 +1524,197 @@ class _DetailContractView extends State<DetailContractView>
                             height: 1,
                           ),
                           Padding(
-                            padding: EdgeInsets.only(bottom: 50),
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          (_stateContract.contains('PENDING'))
+                              ? Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 40,
+                                  child: InkWell(
+                                    onTap: () {
+                                      //
+                                      if (_patientId != 0 &&
+                                          _contractId != 0 &&
+                                          _doctorId != 0) {
+                                        ContractUpdateDTO contractCancelDTO =
+                                            ContractUpdateDTO(
+                                          contractId: _contractId,
+                                          doctorId: _doctorId,
+                                          patientId: _patientId,
+                                          status: 'CANCELP',
+                                        );
+                                        //
+                                        return showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Center(
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(15)),
+                                                child: BackdropFilter(
+                                                  filter: ImageFilter.blur(
+                                                      sigmaX: 25, sigmaY: 25),
+                                                  child: Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 10,
+                                                        top: 10,
+                                                        right: 10),
+                                                    width: 250,
+                                                    height: 185,
+                                                    decoration: BoxDecoration(
+                                                      color: DefaultTheme.WHITE
+                                                          .withOpacity(0.7),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Spacer(),
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 10,
+                                                                  top: 0),
+                                                          child: Text(
+                                                            'Lưu ý',
+                                                            style: TextStyle(
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .none,
+                                                              color:
+                                                                  DefaultTheme
+                                                                      .BLACK,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 18,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 20,
+                                                                  right: 20),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                              'Huỷ yêu cầu đồng nghĩa bác sĩ sẽ không xem xét được tình trạng bệnh lý và yêu cầu chăm khám. Bạn có muốn huỷ?',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: TextStyle(
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .none,
+                                                                color: DefaultTheme
+                                                                    .GREY_TEXT,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 13,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Spacer(),
+                                                        Divider(
+                                                          height: 1,
+                                                          color: DefaultTheme
+                                                              .GREY_TOP_TAB_BAR,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            FlatButton(
+                                                              height: 40,
+                                                              minWidth:
+                                                                  250 / 2 -
+                                                                      10.5,
+                                                              child: Text(
+                                                                  'ĐÓNG',
+                                                                  style: TextStyle(
+                                                                      color: DefaultTheme
+                                                                          .BLUE_TEXT)),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                            ),
+                                                            Container(
+                                                              height: 40,
+                                                              width: 1,
+                                                              color: DefaultTheme
+                                                                  .GREY_TOP_TAB_BAR,
+                                                            ),
+                                                            FlatButton(
+                                                              height: 40,
+                                                              minWidth:
+                                                                  250 / 2 -
+                                                                      10.5,
+                                                              child: Text('HUỶ',
+                                                                  style: TextStyle(
+                                                                      color: DefaultTheme
+                                                                          .RED_TEXT)),
+                                                              onPressed: () {
+                                                                //
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                //
+                                                                print(
+                                                                    'CONTRACT CANCEL DTO:\n contractId:${contractCancelDTO.contractId} -dateStart: ${contractCancelDTO.dateStart} -daysOfTracking: ${contractCancelDTO.daysOfTracking} - status:${contractCancelDTO.status} -patientId: ${contractCancelDTO.patientId} - doctorId: ${contractCancelDTO.doctorId} ');
+                                                                _contractUpdateBloc.add(
+                                                                    ContractUpdateEventUpdate(
+                                                                        dto:
+                                                                            contractCancelDTO));
+                                                                Future.delayed(
+                                                                    const Duration(
+                                                                        seconds:
+                                                                            1),
+                                                                    () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pushNamed(
+                                                                          RoutesHDr
+                                                                              .MANAGE_CONTRACT);
+                                                                });
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    child: Center(
+                                      child: Text(
+                                        'Huỷ yêu cầu hợp đồng',
+                                        style: TextStyle(
+                                            color: DefaultTheme.RED_CALENDAR,
+                                            decoration:
+                                                TextDecoration.underline),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : Container(),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 30),
                           ),
                           //
                           ///
@@ -2081,7 +2272,7 @@ class _DetailContractView extends State<DetailContractView>
                                                     right: 20,
                                                     bottom: 10),
                                                 child: Text(
-                                                  '- Phí tiền dịch vụ: ${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)}',
+                                                  '- Phí tiền dịch vụ: ${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)} từ ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)} đến ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}.',
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -2132,7 +2323,10 @@ class _DetailContractView extends State<DetailContractView>
                                           padding: EdgeInsets.only(
                                               left: 20, right: 20, bottom: 10),
                                           child: Text(
-                                            '1. Hai bên cam kết thực hiện đúng những điều khoản trong hợp đồng, những vấn đề phát sinh khác ngoài hợp đồng, kể cả việc kéo dài hoặc chấm dứt hợp đồng trước thời hạn sẽ được hai bên cùng thảo luận giải quyết, thể hiện bằng việc ký kết một hợp mới, hợp đồng hiện hành sẽ hết hạn kể từ khi hợp đồng mới được ký.',
+                                            (_contractFullDTO.dateFinished ==
+                                                    null)
+                                                ? '1. Hai bên cam kết thực hiện đúng những điều khoản trong hợp đồng từ ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)}. Ngày kết thúc hợp đồng sẽ được bác sĩ phê duyệt.'
+                                                : '1. Hai bên cam kết thực hiện đúng những điều khoản trong hợp đồng từ ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)} đến ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}.',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 16,
@@ -2143,7 +2337,7 @@ class _DetailContractView extends State<DetailContractView>
                                           padding: EdgeInsets.only(
                                               left: 20, right: 20, bottom: 10),
                                           child: Text(
-                                            '2. Hai bên thống nhất việc sử dụng ứng dụng HDr cho việc khám chữa bệnh và tuân thủ các quy định liên quan tới phần mềm để hỗ trợ việc theo dõi bệnh.',
+                                            '2. Những vấn đề phát sinh khác ngoài hợp đồng, kể cả việc kéo dài hoặc chấm dứt hợp đồng trước thời hạn sẽ được hai bên cùng thảo luận giải quyết, thể hiện bằng việc ký kết một hợp mới, hợp đồng hiện hành sẽ hết hạn kể từ khi hợp đồng mới được ký.',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 16,

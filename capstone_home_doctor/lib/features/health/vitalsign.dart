@@ -130,15 +130,6 @@ class _VitalSignTabState extends State<VitalSignTab> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        ButtonArtBoard(
-          title: 'Lịch sinh hiệu',
-          description:
-              'Quy trình đo sinh hiệu sẽ được bác sĩ lên lịch để theo dõi tốt hơn',
-          imageAsset: 'assets/images/ic-health-selected.png',
-          onTap: () {
-            Navigator.pushNamed(context, RoutesHDr.VITAL_SIGN_SCHEDULE_VIEW);
-          },
-        ),
         Padding(
           padding: EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 10),
           child: Align(

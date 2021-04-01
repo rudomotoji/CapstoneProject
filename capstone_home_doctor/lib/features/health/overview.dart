@@ -57,6 +57,7 @@ class _OverviewTabState extends State<OverviewTab> {
           vitalSignType: x.vitalSignType,
           minuteAgain: x.minuteAgain,
           minuteDangerInterval: x.minuteDangerInterval,
+          minuteNormalInterval: x.minuteNormalInterval,
           numberMax: x.numberMax,
           numberMin: x.numberMin,
           timeStart: x.timeStart,
@@ -160,8 +161,9 @@ class _OverviewTabState extends State<OverviewTab> {
                                         'Nhịp tim của bạn an toàn trong khoảng ${state.dto.vitalSigns[index].numberMin} - ${state.dto.vitalSigns[index].numberMax}')
                                     : (state.dto.vitalSigns[index]
                                                 .vitalSignType ==
-                                            'Huyết áp được đo bắt đầu vào ${state.dto.vitalSigns[index].timeStart} giờ, cách ${(state.dto.vitalSigns[index].minuteAgain / 60).toInt()} tiếng đo lại.')
-                                        ? Text('')
+                                            'Huyết áp')
+                                        ? Text(
+                                            'Huyết áp  được đo bắt đầu vào ${state.dto.vitalSigns[index].timeStart} giờ, cách ${(state.dto.vitalSigns[index].minuteAgain / 60).toInt()} tiếng đo lại.')
                                         : Text(''),
                               ],
                             ),

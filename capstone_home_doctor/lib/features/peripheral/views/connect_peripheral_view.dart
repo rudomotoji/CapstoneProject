@@ -127,7 +127,10 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                         if (state is PeripheralStateScanSuccess) {
                           listScanned = [];
                           for (ScanResult r in state.list) {
-                            if (r.device.name.toUpperCase().contains('MI')) {
+                            if (r.device.name.toUpperCase().contains('MI') ||
+                                r.device.name
+                                    .toUpperCase()
+                                    .contains('GALAXY FIT')) {
                               listScanned.add(r);
                               print('device added: ${r.device.name}');
                             }

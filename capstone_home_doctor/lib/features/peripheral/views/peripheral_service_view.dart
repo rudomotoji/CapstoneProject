@@ -2,10 +2,12 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+
 import 'package:capstone_home_doctor/features/peripheral/blocs/peripheral_bloc.dart';
 import 'package:capstone_home_doctor/features/peripheral/events/peripheral_event.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repo.dart';
 import 'package:capstone_home_doctor/features/peripheral/states/peripheral_state.dart';
+
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:flutter/material.dart';
@@ -64,210 +66,428 @@ class _PeripheralService extends State<PeripheralService>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [DefaultTheme.GRADIENT_1, DefaultTheme.GRADIENT_2]),
-      ),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-        child: Scaffold(
-          backgroundColor: DefaultTheme.BLACK.withOpacity(0.8),
-          body: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                HeaderWidget(
-                  title: '',
-                  isMainView: false,
-                  buttonHeaderType: ButtonHeaderType.NONE,
-                ),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      //
-                      BlocBuilder<PeripheralBloc, PeripheralState>(
-                        builder: (context, state) {
-                          if (state is PeripheralStateLoading) {
-                            //
-                            return Container(
-                              height: MediaQuery.of(context).size.height * 0.45,
-                              width: MediaQuery.of(context).size.width - 40,
-                              child: SizedBox(
-                                width: 100,
-                                height: 100,
-                                child: Image.asset('assets/images/loading.gif'),
-                              ),
-                            );
-                          }
-                          if (state is PeripheralStateFailure) {
-                            return Container(
-                              child: Text('Chưa có thiết bị kết nối'),
-                            );
-                          }
+    return StreamBuilder<BluetoothState>(
+        stream: FlutterBlue.instance.state,
+        initialData: BluetoothState.unknown,
+        builder: (c, snapshot) {
+          final state = snapshot.data;
+          if (state == BluetoothState.turningOn) {
+            _getPeripheralId();
+          }
+          if (state == BluetoothState.on) {
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [DefaultTheme.GRADIENT_1, DefaultTheme.GRADIENT_2]),
+              ),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                child: Scaffold(
+                  backgroundColor: DefaultTheme.BLACK.withOpacity(0.8),
+                  body: SafeArea(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        HeaderWidget(
+                          title: '',
+                          isMainView: false,
+                          buttonHeaderType: ButtonHeaderType.NONE,
+                        ),
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              //
 
-                          if (state is PeripheralStateFindByIdSuccess) {
-                            if (state.device != null) {
-                              print('state device name is ${state.device}');
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    'Thiết bị ghép nối',
-                                    style: TextStyle(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        fontSize: 16),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 5),
-                                  ),
-                                  Text(
-                                    '${state.device.name}',
-                                    style: TextStyle(
-                                        color: DefaultTheme.WHITE,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 25),
-                                  ),
-                                  (state.device.name.contains('Mi'))
-                                      ? SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: 300,
-                                          child: Image.asset(
-                                              'assets/images/ic-mi-band.png'),
-                                        )
-                                      : Container(),
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                  ),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width - 40,
-                                    padding:
-                                        EdgeInsets.only(left: 20, right: 20),
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: DefaultTheme.GREY_TEXT
-                                              .withOpacity(0.5),
-                                          spreadRadius: 1,
-                                          blurRadius: 5,
-                                          offset: Offset(0,
-                                              1), // changes position of shadow
-                                        ),
-                                      ],
-                                      color: DefaultTheme.GREY_VIEW,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Text('Trạng thái'),
-                                        Spacer(),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                  ),
-                                  BlocBuilder<BatteryDeviceBloc,
-                                          PeripheralState>(
-                                      builder: (context, state) {
-                                    if (state is PeripheralStateLoading) {
-                                      return Container(
-                                        height: 60,
-                                        width:
-                                            MediaQuery.of(context).size.width -
+                              BlocBuilder<PeripheralBloc, PeripheralState>(
+                                builder: (context, state) {
+                                  if (state is PeripheralStateLoading) {
+                                    //
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.45,
+                                      width: MediaQuery.of(context).size.width -
+                                          40,
+                                      child: SizedBox(
+                                        width: 100,
+                                        height: 100,
+                                        child: Image.asset(
+                                            'assets/images/loading.gif'),
+                                      ),
+                                    );
+                                  }
+                                  if (state is PeripheralStateFailure) {
+                                    return Container(
+                                      child: Text('Chưa có thiết bị kết nối'),
+                                    );
+                                  }
+
+                                  if (state is PeripheralStateFindByIdSuccess) {
+                                    if (state.device != null) {
+                                      print(
+                                          'state device name is ${state.device}');
+                                      return Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text(
+                                            'Thiết bị ghép nối',
+                                            style: TextStyle(
+                                                color: DefaultTheme
+                                                    .GREY_TOP_TAB_BAR,
+                                                fontSize: 16),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 5),
+                                          ),
+                                          Text(
+                                            '${state.device.name}',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 25),
+                                          ),
+                                          (state.device.name.contains('Mi'))
+                                              ? SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  height: 300,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-mi-band.png'),
+                                                )
+                                              : Container(),
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 20),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
                                                 40,
-                                        child: SizedBox(
-                                          width: 60,
-                                          height: 60,
-                                          child: Image.asset(
-                                              'assets/images/loading.gif'),
-                                        ),
-                                      );
-                                    }
-                                    if (state is PeripheralStateFailure) {}
-                                    if (state is BatteryStateSuccess) {
-                                      print('state value?? ${state.value}');
-                                      return Container(
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                40,
-                                        padding: EdgeInsets.only(
-                                            left: 20, right: 20),
-                                        height: 60,
-                                        decoration: BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: DefaultTheme.GREY_TEXT
-                                                  .withOpacity(0.5),
-                                              spreadRadius: 1,
-                                              blurRadius: 5,
-                                              offset: Offset(0,
-                                                  1), // changes position of shadow
+                                            padding: EdgeInsets.only(
+                                                left: 20, right: 20),
+                                            height: 60,
+                                            decoration: BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: DefaultTheme.GREY_TEXT
+                                                      .withOpacity(0.5),
+                                                  spreadRadius: 1,
+                                                  blurRadius: 5,
+                                                  offset: Offset(0,
+                                                      1), // changes position of shadow
+                                                ),
+                                              ],
+                                              color: DefaultTheme.DARK_VIEW,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
-                                          ],
-                                          color: DefaultTheme.GREY_VIEW,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Text('Phần trăm pin'),
-                                            Spacer(),
-                                            CircularPercentIndicator(
-                                              radius: 50.0,
-                                              lineWidth: 10.0,
-                                              animation: true,
-                                              percent: (state.value != null)
-                                                  ? (state.value / 100)
-                                                  : 0,
-                                              center: Text(
-                                                "${state.value}",
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w600,
+                                            child: Row(
+                                              children: [
+                                                Text('Trạng thái',
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: DefaultTheme
+                                                            .WHITE)),
+                                                Spacer(),
+                                              ],
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 20),
+                                          ),
+                                          BlocBuilder<BatteryDeviceBloc,
+                                                  PeripheralState>(
+                                              builder: (context, state) {
+                                            if (state
+                                                is PeripheralStateLoading) {
+                                              return Container(
+                                                height: 60,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    40,
+                                                child: SizedBox(
+                                                  width: 60,
+                                                  height: 60,
+                                                  child: Image.asset(
+                                                      'assets/images/loading.gif'),
+                                                ),
+                                              );
+                                            }
+                                            if (state
+                                                is PeripheralStateFailure) {}
+                                            if (state is BatteryStateSuccess) {
+                                              print(
+                                                  'state value?? ${state.value}');
+                                              return Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    40,
+                                                padding: EdgeInsets.only(
+                                                    left: 20, right: 20),
+                                                height: 60,
+                                                decoration: BoxDecoration(
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: DefaultTheme
+                                                          .GREY_TEXT
+                                                          .withOpacity(0.5),
+                                                      spreadRadius: 1,
+                                                      blurRadius: 5,
+                                                      offset: Offset(0,
+                                                          1), // changes position of shadow
+                                                    ),
+                                                  ],
+                                                  color: DefaultTheme.DARK_VIEW,
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Text('Phần trăm pin',
+                                                        style: TextStyle(
+                                                            fontSize: 18,
+                                                            color: DefaultTheme
+                                                                .WHITE)),
+                                                    Spacer(),
+                                                    CircularPercentIndicator(
+                                                      radius: 50.0,
+                                                      lineWidth: 10.0,
+                                                      animation: true,
+                                                      percent: (state.value !=
+                                                              null)
+                                                          ? (state.value / 100)
+                                                          : 0,
+                                                      center: Text(
+                                                        "${state.value}",
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: DefaultTheme
+                                                                .WHITE),
+                                                      ),
+                                                      backgroundColor:
+                                                          DefaultTheme
+                                                              .GREY_TOP_TAB_BAR,
+                                                      circularStrokeCap:
+                                                          CircularStrokeCap
+                                                              .round,
+                                                      linearGradient:
+                                                          LinearGradient(
+                                                              begin: Alignment
+                                                                  .topRight,
+                                                              end: Alignment
+                                                                  .bottomLeft,
+                                                              colors: [
+                                                            DefaultTheme
+                                                                .GRADIENT_1,
+                                                            DefaultTheme
+                                                                .GRADIENT_2
+                                                          ]),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }
+                                            return Container();
+                                          }),
+                                          //
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 20),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                40,
+                                            padding: EdgeInsets.only(
+                                                left: 20,
+                                                right: 20,
+                                                bottom: 10,
+                                                top: 15),
+                                            // height: 60,
+                                            decoration: BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: DefaultTheme.GREY_TEXT
+                                                      .withOpacity(0.5),
+                                                  spreadRadius: 1,
+                                                  blurRadius: 5,
+                                                  offset: Offset(0,
+                                                      1), // changes position of shadow
+                                                ),
+                                              ],
+                                              color: DefaultTheme.DARK_VIEW,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                //
+                                                Text(
+                                                    'Thiết bị hỗ trợ đo sinh hiệu',
+                                                    style: TextStyle(
+                                                        color:
+                                                            DefaultTheme.WHITE,
+                                                        fontSize: 18)),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 20),
+                                                ),
+                                                Row(
+                                                  children: <Widget>[
+                                                    //
+                                                    SizedBox(
+                                                      width: 20,
+                                                      height: 20,
+                                                      child: Image.asset(
+                                                          'assets/images/ic-heart-rate.png'),
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          right: 15),
+                                                    ),
+                                                    Text('Nhịp tim',
+                                                        style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .WHITE)),
+                                                  ],
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 20, bottom: 10),
+                                                  child: Divider(
                                                     color: DefaultTheme
-                                                        .BLACK_BUTTON),
-                                              ),
-                                              backgroundColor:
-                                                  DefaultTheme.GREY_TOP_TAB_BAR,
-                                              circularStrokeCap:
-                                                  CircularStrokeCap.round,
-                                              linearGradient: LinearGradient(
-                                                  begin: Alignment.topRight,
-                                                  end: Alignment.bottomLeft,
-                                                  colors: [
-                                                    DefaultTheme.GRADIENT_1,
-                                                    DefaultTheme.GRADIENT_2
-                                                  ]),
+                                                        .GREY_TOP_TAB_BAR,
+                                                    height: 1,
+                                                  ),
+                                                ),
+                                                Text(
+                                                    'Các sinh hiệu khác không được hỗ trợ với thiết bị đeo của bạn. Dùng các thiết bị đo chuyên dụng khác, sau đó nhập dữ liệu vào các mục sinh hiệu.',
+                                                    style: TextStyle(
+                                                        color: DefaultTheme
+                                                            .WHITE)),
+                                              ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 20),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width -
+                                                40,
+                                            padding: EdgeInsets.only(
+                                                left: 20, right: 20),
+                                            height: 60,
+                                            decoration: BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: DefaultTheme.GREY_TEXT
+                                                      .withOpacity(0.5),
+                                                  spreadRadius: 1,
+                                                  blurRadius: 5,
+                                                  offset: Offset(0,
+                                                      1), // changes position of shadow
+                                                ),
+                                              ],
+                                              color: DefaultTheme.DARK_VIEW,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 30),
+                                          ),
+                                        ],
                                       );
                                     }
-                                    return Container();
-                                  }),
-                                ],
-                              );
-                            }
-                          }
-                          return Container();
-                        },
-                      ),
-                    ],
+                                  }
+                                  return Container();
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
+              ),
+            );
+          }
+          return _notAvailableBluetooth();
+        });
+  }
+
+  Widget _notAvailableBluetooth() {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            HeaderWidget(
+              title: 'Chi tiết thiết bị',
+              isMainView: false,
+              buttonHeaderType: ButtonHeaderType.BACK_HOME,
             ),
-          ),
+            Expanded(
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width - 80,
+                height: MediaQuery.of(context).size.height - 500,
+                child: Image.asset('assets/images/img-bluetooth.png'),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 20),
+              child: Text(
+                'Bluetooth không khả dụng',
+                style: TextStyle(
+                  color: DefaultTheme.BLACK,
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Padding(
+              padding:
+                  EdgeInsets.only(top: 10, bottom: 40, left: 40, right: 40),
+              child: Text(
+                'Bật kết nối bluetooth trong cài đặt để thực hiện ghép nối',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: DefaultTheme.GREY_TEXT,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 30),
+            )
+          ],
         ),
       ),
     );

@@ -110,7 +110,8 @@ class ContractRepository extends BaseApiClient {
         '/Contracts/${dto.contractId}?doctorId=${dto.doctorId}&patientId=${dto.patientId}&status=${dto.status}';
     try {
       //
-      final request = await putApi(url, null, dto.toJson());
+      print('this is from API: $url');
+      final request = await putApi(url, null, null);
       print('${request.body}');
       if (request.statusCode == 204) {
         return true;

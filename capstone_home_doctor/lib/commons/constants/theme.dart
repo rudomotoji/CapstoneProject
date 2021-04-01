@@ -27,4 +27,5 @@ class DefaultTheme {
   static final Color YELLOW = Color(0xFFE2CB14);
   static final Color BLUE_LIGHT = Color(0xFF42ECDE);
   static final Color BLUE_DARK = Color(0xFF0F7CB8);
+  static final Color DARK_VIEW = Color(0xFF242526);
 }

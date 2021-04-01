@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
@@ -14,6 +15,7 @@ import 'package:uuid/uuid.dart';
 
 final AuthenticateHelper authenHelper = AuthenticateHelper();
 final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
+final DateValidator _dateValidator = DateValidator();
 
 class PressureDetailView extends StatefulWidget {
   @override
@@ -68,19 +70,19 @@ class _PressureDetailView extends State<PressureDetailView> {
                   Container(
                     margin: EdgeInsets.only(left: 20, right: 20),
                     width: MediaQuery.of(context).size.width,
-                    height: 40,
+                    height: 45,
                     child: ButtonHDr(
                       style: BtnStyle.BUTTON_BLACK,
                       label: 'Thêm dữ liệu',
                       onTap: () {
-                        _onButtonShowModelSheet();
+                        _onButtonShowModelSheet(DateTime.now());
                       },
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(bottom: 20),
                   ),
-                  _lineChartBloodPressure(),
+                  // _lineChartBloodPressure(),
                 ],
               ),
             ),
@@ -90,7 +92,7 @@ class _PressureDetailView extends State<PressureDetailView> {
     );
   }
 
-  void _onButtonShowModelSheet() {
+  void _onButtonShowModelSheet(DateTime dateNow) {
     final _tamThuController = TextEditingController();
     final _tamTruongController = TextEditingController();
     showModalBottomSheet(
@@ -119,7 +121,32 @@ class _PressureDetailView extends State<PressureDetailView> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           //
-                          Padding(padding: EdgeInsets.only(top: 50)),
+
+                          Padding(
+                            padding: EdgeInsets.only(top: 30, left: 20),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: Image.asset(
+                                          'assets/images/ic-blood-pressure.png'),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 15),
+                                    ),
+                                    Text('Huyết áp',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        )),
+                                  ],
+                                )),
+                          ),
+
+                          Padding(padding: EdgeInsets.only(top: 20)),
                           Divider(
                             color: DefaultTheme.GREY_TOP_TAB_BAR,
                             height: 0.25,
@@ -128,7 +155,7 @@ class _PressureDetailView extends State<PressureDetailView> {
                             style: TFStyle.NO_BORDER,
                             label: 'Tâm thu',
                             placeHolder: '',
-                            inputType: TFInputType.TF_TEXT,
+                            inputType: TFInputType.TF_NUMBER,
                             controller: _tamThuController,
                             keyboardAction: TextInputAction.next,
                             onChange: (text) {
@@ -143,12 +170,60 @@ class _PressureDetailView extends State<PressureDetailView> {
                             style: TFStyle.NO_BORDER,
                             label: 'Tâm trương',
                             placeHolder: '',
-                            inputType: TFInputType.TF_TEXT,
+                            inputType: TFInputType.TF_NUMBER,
                             controller: _tamTruongController,
-                            keyboardAction: TextInputAction.next,
+                            keyboardAction: TextInputAction.done,
                             onChange: (text) {
                               //
                             },
+                          ),
+                          Divider(
+                            color: DefaultTheme.GREY_TOP_TAB_BAR,
+                            height: 0.25,
+                          ),
+                          Container(
+                            height: 50,
+                            padding: EdgeInsets.only(left: 20, right: 20),
+                            width: MediaQuery.of(context).size.width,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 140,
+                                  child: Text(
+                                    'Ngày',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                Text(
+                                    '${_dateValidator.parseToDateView3(dateNow.toString())}'),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            color: DefaultTheme.GREY_TOP_TAB_BAR,
+                            height: 0.25,
+                          ),
+                          Container(
+                            height: 50,
+                            padding: EdgeInsets.only(left: 20, right: 20),
+                            width: MediaQuery.of(context).size.width,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 140,
+                                  child: Text(
+                                    'Thời gian',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                                Text(
+                                    '${_dateValidator.getHourAndMinute(dateNow.toString())}'),
+                              ],
+                            ),
                           ),
                           Divider(
                             color: DefaultTheme.GREY_TOP_TAB_BAR,
@@ -158,12 +233,13 @@ class _PressureDetailView extends State<PressureDetailView> {
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20),
                             width: MediaQuery.of(context).size.width,
-                            height: 40,
+                            height: 45,
                             child: ButtonHDr(
                               style: BtnStyle.BUTTON_BLACK,
                               label: 'Thêm',
                               onTap: () async {
                                 //
+                                // if((_tamThuController.text).){}
                                 if (_patientId != 0) {
                                   //
                                   VitalSignDTO vitalSignDTO = VitalSignDTO(
@@ -206,72 +282,73 @@ class _PressureDetailView extends State<PressureDetailView> {
         });
   }
 
-  Widget _lineChartBloodPressure() {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16.0),
-        child: BarChart(
-          BarChartData(
-            alignment: BarChartAlignment.start,
-            barTouchData: BarTouchData(
-              enabled: false,
-            ),
-            titlesData: FlTitlesData(
-              show: true,
-              bottomTitles: SideTitles(
-                showTitles: true,
-                getTextStyles: (value) =>
-                    const TextStyle(color: Color(0xff939393), fontSize: 10),
-                margin: 5,
-              ),
-              leftTitles: SideTitles(
-                showTitles: true,
-                getTextStyles: (value) => const TextStyle(
-                    color: Color(
-                      0xff939393,
-                    ),
-                    fontSize: 10),
-                margin: 0,
-                getTitles: (double value) {
-                  if (value % 10 == 0) return '${value.floor()}';
-                },
-              ),
-            ),
-            borderData: FlBorderData(
-              show: false,
-            ),
-            barGroups: getData(),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _lineChartBloodPressure() {
+  //   return Card(
+  //     elevation: 4,
+  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+  //     color: Colors.white,
+  //     child: Padding(
+  //       padding: const EdgeInsets.only(top: 16.0),
+  //       child: BarChart(
+  //         BarChartData(
+  //           alignment: BarChartAlignment.start,
+  //           barTouchData: BarTouchData(
+  //             enabled: false,
+  //           ),
+  //           titlesData: FlTitlesData(
+  //             show: true,
+  //             bottomTitles: SideTitles(
+  //               showTitles: true,
+  //               getTextStyles: (value) =>
+  //                   const TextStyle(color: Color(0xff939393), fontSize: 10),
+  //               margin: 5,
+  //             ),
+  //             leftTitles: SideTitles(
+  //               showTitles: true,
+  //               getTextStyles: (value) => const TextStyle(
+  //                   color: Color(
+  //                     0xff939393,
+  //                   ),
+  //                   fontSize: 10),
+  //               margin: 0,
+  //               getTitles: (double value) {
+  //                 if (value % 10 == 0) return '${value.floor()}';
+  //               },
+  //             ),
+  //           ),
+  //           borderData: FlBorderData(
+  //             show: false,
+  //           ),
+  //           barGroups: getData(),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  List<BarChartGroupData> getData() {
-    return [
-      BarChartGroupData(
-        x: 0,
-        barRods: [
-          BarChartRodData(
-            y: 100,
-            rodStackItems: [
-              BarChartRodStackItem(0, 50, DefaultTheme.WHITE),
-              BarChartRodStackItem(50, 100, DefaultTheme.RED_CALENDAR),
-            ],
-          ),
-          BarChartRodData(
-            y: 100,
-            rodStackItems: [
-              BarChartRodStackItem(0, 10, DefaultTheme.WHITE),
-              BarChartRodStackItem(10, 30, DefaultTheme.RED_CALENDAR),
-              BarChartRodStackItem(30, 100, DefaultTheme.WHITE),
-            ],
-          ),
-        ],
-      ),
-    ];
-  }
+  // List<BarChartGroupData> getData() {
+  //   return [
+  //     BarChartGroupData(
+  //       x: 0,
+  //       barRods: [
+  //         BarChartRodData(
+  //           y: 100,
+  //           rodStackItems: [
+  //             BarChartRodStackItem(0, 50, DefaultTheme.WHITE),
+  //             BarChartRodStackItem(50, 100, DefaultTheme.RED_CALENDAR),
+  //           ],
+  //         ),
+  //         BarChartRodData(
+  //           y: 100,
+  //           rodStackItems: [
+  //             BarChartRodStackItem(0, 10, DefaultTheme.WHITE),
+  //             BarChartRodStackItem(10, 30, DefaultTheme.RED_CALENDAR),
+  //             BarChartRodStackItem(30, 100, DefaultTheme.WHITE),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   ];
+  // }
+
 }
