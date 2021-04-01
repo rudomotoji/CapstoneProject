@@ -182,10 +182,10 @@ void _handleGeneralMessage(Map<String, dynamic> message) {
       payload: payload);
   localNotifyManager.show(receiveNotification);
   //
-  if (receiveNotification.body.contains('')) {
+  if (receiveNotification.body.contains('Bạn có một lịch đo sinh hiệu mới')) {
     //DO INSERT LOCAL DB VITAL SIGN SCHEDULE
     //
-
+    print('CATCHED THIS NOTI TO PUSH NEW SCHEDULE');
   }
 }
 

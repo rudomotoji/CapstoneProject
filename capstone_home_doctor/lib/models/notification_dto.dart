@@ -70,7 +70,7 @@ class Notifications {
   int notificationType;
   int contractId;
   int medicalInstructionId;
-  String timeAgo;
+  double timeAgo;
 
   Notifications(
       {this.notificationId,

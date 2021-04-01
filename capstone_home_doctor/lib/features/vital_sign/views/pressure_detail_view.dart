@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
@@ -16,6 +17,7 @@ import 'package:uuid/uuid.dart';
 final AuthenticateHelper authenHelper = AuthenticateHelper();
 final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 final DateValidator _dateValidator = DateValidator();
+final ArrayValidator _arrayValidator = ArrayValidator();
 
 class PressureDetailView extends StatefulWidget {
   @override
@@ -239,22 +241,27 @@ class _PressureDetailView extends State<PressureDetailView> {
                               label: 'Thêm',
                               onTap: () async {
                                 //
-                                // if((_tamThuController.text).){}
-                                if (_patientId != 0) {
-                                  //
-                                  VitalSignDTO vitalSignDTO = VitalSignDTO(
-                                    id: uuid.v1(),
-                                    patientId: _patientId,
-                                    valueType: 'PRESSURE',
-                                    value1:
-                                        int.tryParse(_tamThuController.text),
-                                    value2:
-                                        int.tryParse(_tamTruongController.text),
-                                    dateTime: DateTime.now().toString(),
-                                  );
-                                  await _sqfLiteHelper
-                                      .insertVitalSign(vitalSignDTO);
-                                }
+                                // if (_arrayValidator
+                                //         .isNumeric(_tamThuController.text) &&
+                                //     _arrayValidator
+                                //         .isNumeric(_tamTruongController.text)) {
+                                //   //
+                                //   if (_patientId != 0) {
+                                //     //
+                                //     VitalSignDTO vitalSignDTO = VitalSignDTO(
+                                //       id: uuid.v1(),
+                                //       patientId: _patientId,
+                                //       valueType: 'PRESSURE',
+                                //       value1:
+                                //           int.tryParse(_tamThuController.text),
+                                //       value2: int.tryParse(
+                                //           _tamTruongController.text),
+                                //       dateTime: DateTime.now().toString(),
+                                //     );
+                                //     await _sqfLiteHelper
+                                //         .insertVitalSign(vitalSignDTO);
+                                //   }
+                                // }
                               },
                             ),
                           ),

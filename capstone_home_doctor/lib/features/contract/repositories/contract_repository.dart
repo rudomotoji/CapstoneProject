@@ -106,12 +106,11 @@ class ContractRepository extends BaseApiClient {
   //update status contract
   Future<bool> changeStatusContract(ContractUpdateDTO dto) async {
     //
-    final url =
-        '/Contracts/${dto.contractId}?doctorId=${dto.doctorId}&patientId=${dto.patientId}&status=${dto.status}';
+    final url = '/Contracts/${dto.contractId}';
     try {
       //
       print('this is from API: $url');
-      final request = await putApi(url, null, null);
+      final request = await putApi(url, null, dto.toJson());
       print('${request.body}');
       if (request.statusCode == 204) {
         return true;

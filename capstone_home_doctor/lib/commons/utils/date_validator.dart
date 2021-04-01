@@ -144,10 +144,10 @@ class DateValidator {
     return result;
   }
 
-  String renderLastTimeNoti(String timeAgo) {
+  String renderLastTimeNoti(double timeAgo) {
     String result = '';
     //
-    double value = double.tryParse(timeAgo);
+    double value = timeAgo;
     int minutes = value.toInt();
     if (minutes <= 1) {
       result = 'vài giây trước';
