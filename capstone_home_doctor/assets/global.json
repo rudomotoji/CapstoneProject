@@ -46,5 +46,6 @@
     "listType": [
         "Bệnh tim",
         "Các bệnh khác"
-    ]
+    ],
+    "percentCompare": 0.7
 }

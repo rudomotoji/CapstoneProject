@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -20,6 +21,7 @@ import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:string_similarity/string_similarity.dart';
@@ -44,6 +46,7 @@ class _CreateMedicalInstructionViewState
   String _imgString = '';
   String nowDate = '${DateTime.now()}';
   List<MedicalInstructionTypeDTO> _listMedInsType = [];
+  double percenntCompare = 0;
 
   var _dianoseController = TextEditingController();
   MedicalInstructionHelper _medicalInstructionHelper =
@@ -67,6 +70,15 @@ class _CreateMedicalInstructionViewState
     _medInsTypeListBloc = BlocProvider.of(context);
     _getPatientId();
     getHRId();
+  }
+
+  Future<void> getDataFromJSONFile() async {
+    final String response = await rootBundle.loadString('assets/global.json');
+
+    if (response.contains('percentCompare')) {
+      final data = await json.decode(response);
+      percenntCompare = data["percentCompare"];
+    }
   }
 
   @override
@@ -296,7 +308,73 @@ class _CreateMedicalInstructionViewState
                                 ),
                               ),
                               onTap: () async {
-                                _selectImage(context);
+                                if (_selectedHRType != '') {
+                                  _showPicker(context);
+                                } else {
+                                  setState(() {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Center(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5)),
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 25, sigmaY: 25),
+                                              child: Container(
+                                                width: 200,
+                                                height: 200,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: DefaultTheme.WHITE
+                                                        .withOpacity(0.8)),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 100,
+                                                      height: 100,
+                                                      child: Image.asset(
+                                                          'assets/images/ic-failed.png'),
+                                                    ),
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        'Hãy chọn loại phiếu trước',
+                                                        style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .GREY_TEXT,
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .none),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                    Future.delayed(const Duration(seconds: 2),
+                                        () {
+                                      Navigator.of(context).pop();
+                                    });
+                                  });
+                                }
                               },
                             ),
                             (_imgString == '')
@@ -391,7 +469,7 @@ class _CreateMedicalInstructionViewState
                                       );
                                     });
 
-                                    if (titleCompare < 0.7) {
+                                    if (titleCompare < percenntCompare) {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
@@ -442,61 +520,6 @@ class _CreateMedicalInstructionViewState
         ),
       ),
     );
-  }
-
-  _selectImage(context) {
-    if (_selectedHRType != '') {
-      _showPicker(context);
-    } else {
-      setState(() {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: DefaultTheme.WHITE.withOpacity(0.8)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Image.asset('assets/images/ic-failed.png'),
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Hãy chọn loại phiếu trước',
-                            style: TextStyle(
-                                color: DefaultTheme.GREY_TEXT,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                decoration: TextDecoration.none),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-        Future.delayed(const Duration(seconds: 2), () {
-          Navigator.of(context).pop();
-        });
-      });
-    }
   }
 
   _createMedIns(medInsDTO) {
@@ -611,7 +634,7 @@ class _CreateMedicalInstructionViewState
 
   checktitle() {
     if (titleCompare != null) {
-      if (titleCompare > 0.7) {
+      if (titleCompare > percenntCompare) {
         return Container();
       } else {
         return Container(
@@ -637,7 +660,7 @@ class _CreateMedicalInstructionViewState
     }
   }
 
-  void _showPicker(context) {
+  _showPicker(context) {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext bc) {
@@ -731,7 +754,7 @@ class _CreateMedicalInstructionViewState
                 _dianoseController.text = value.symptom;
                 titleCompare = value.titleCompare;
               });
-              if (titleCompare < 0.7) {
+              if (titleCompare < percenntCompare) {
                 setState(() {
                   showDialog(
                     context: context,

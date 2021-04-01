@@ -61,7 +61,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
   //SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   DateValidator _dateValidator = DateValidator();
   var _placeController = TextEditingController();
-  var _diseaseController = TextEditingController();
+  // var _diseaseController = TextEditingController();
   String _note = '';
   List<DiseaseDTO> _listDisease = [];
   List<DiseaseDTO> _listDiseaseSelected = [];
