@@ -3,7 +3,7 @@ import 'package:capstone_home_doctor/models/relative_dto.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage4 extends StatefulWidget {
-  List<RelativeDTO> listRelative;
+  List<RelativeRegisterDTO> listRelative;
   TextEditingController relativeNameController = TextEditingController();
   TextEditingController phoneRelativeController = TextEditingController();
   VoidCallback addRelative;
@@ -36,6 +36,7 @@ class _RegisterPage4State extends State<RegisterPage4> {
             ),
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 child: Column(
@@ -73,30 +74,27 @@ class _RegisterPage4State extends State<RegisterPage4> {
               )
             ],
           ),
+          Padding(padding: EdgeInsets.only(top: 20)),
           ListView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
             itemCount: widget.listRelative.length,
             itemBuilder: (context, index) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        child: Column(
-                          children: [
-                            Text(widget.listRelative[index].fullName),
-                            Text(widget.listRelative[index].phoneNumber),
-                          ],
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => widget.deleteRelative(index),
-                        child: Text('Xóa'),
-                      )
-                    ],
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.listRelative[index].fullName),
+                        Text(widget.listRelative[index].phoneNumber),
+                      ],
+                    ),
                   ),
+                  InkWell(
+                    onTap: () => widget.deleteRelative(index),
+                    child: Text('Xóa'),
+                  )
                 ],
               );
             },

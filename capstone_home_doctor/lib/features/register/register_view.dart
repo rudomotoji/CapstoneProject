@@ -47,7 +47,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
   TextEditingController patientController = TextEditingController();
 
   //page 3
-  List<RelativeDTO> listRelative = [];
+  List<RelativeRegisterDTO> listRelative = [];
   final relativeNameController = TextEditingController();
   final phoneRelativeController = TextEditingController();
 
@@ -96,86 +96,90 @@ class _Register extends State<Register> with WidgetsBindingObserver {
             ),
             Padding(padding: EdgeInsets.only(top: 20)),
             Expanded(
-              child: Stack(
-                alignment: AlignmentDirectional.bottomCenter,
-                children: <Widget>[
-                  PageView.builder(
-                    physics: new NeverScrollableScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    controller: _pageController,
-                    onPageChanged: onPageChanged,
-                    itemCount: slideList.length,
-                    itemBuilder: (ctx, i) {
-                      if (i == 1) {
-                        return NomalInfoView(
-                          fullNameController: _fullNameController,
-                          phoneController: _phoneController,
-                          emailController: _emailController,
-                          addressController: _addressController,
-                          careerController: _careerController,
-                          weightController: _weightController,
-                          heightController: _heightController,
-                          gender: gender,
-                          select: selectGender,
-                          birthday: setBirthday,
-                          dateOfBirth: birthday,
-                          choiceGender: setGender,
-                        );
-                      } else if (i == 0) {
-                        return RegisterPage1(
-                          usernameController: usernameController,
-                          passwordController: passwordController,
-                          passwordConfirmController: passwordConfirmController,
-                        );
-                      } else if (i == 2) {
-                        return RegisterPage3(
-                          familyController: familyController,
-                          patientController: patientController,
-                        );
-                      } else if (i == 3) {
-                        return RegisterPage4(
-                            listRelative: listRelative,
-                            relativeNameController: relativeNameController,
-                            phoneRelativeController: phoneRelativeController,
-                            addRelative: () {
-                              RelativeDTO dto = RelativeDTO(
-                                fullName: relativeNameController.text,
-                                phoneNumber: phoneRelativeController.text,
-                              );
-                              setState(() {
-                                listRelative.add(dto);
-                              });
-                              relativeNameController.text = '';
-                              phoneRelativeController.text = '';
-                            },
-                            deleteRelative: deleteRelative);
-                      }
-                    },
-                  ),
-                  Stack(
-                    alignment: AlignmentDirectional.topStart,
-                    children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 35),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            for (int i = 0; i < slideList.length; i++)
-                              if (i == _currentPage)
-                                SlideDots(true)
-                              else
-                                SlideDots(false)
-                          ],
-                        ),
-                      )
-                    ],
-                  )
-                ],
+              child: Padding(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child: Stack(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  children: <Widget>[
+                    PageView.builder(
+                      physics: new NeverScrollableScrollPhysics(),
+                      scrollDirection: Axis.horizontal,
+                      controller: _pageController,
+                      onPageChanged: onPageChanged,
+                      itemCount: slideList.length,
+                      itemBuilder: (ctx, i) {
+                        if (i == 1) {
+                          return NomalInfoView(
+                            fullNameController: _fullNameController,
+                            phoneController: _phoneController,
+                            emailController: _emailController,
+                            addressController: _addressController,
+                            careerController: _careerController,
+                            weightController: _weightController,
+                            heightController: _heightController,
+                            gender: gender,
+                            select: selectGender,
+                            birthday: setBirthday,
+                            dateOfBirth: birthday,
+                            choiceGender: setGender,
+                          );
+                        } else if (i == 0) {
+                          return RegisterPage1(
+                            usernameController: usernameController,
+                            passwordController: passwordController,
+                            passwordConfirmController:
+                                passwordConfirmController,
+                          );
+                        } else if (i == 2) {
+                          return RegisterPage3(
+                            familyController: familyController,
+                            patientController: patientController,
+                          );
+                        } else if (i == 3) {
+                          return RegisterPage4(
+                              listRelative: listRelative,
+                              relativeNameController: relativeNameController,
+                              phoneRelativeController: phoneRelativeController,
+                              addRelative: () {
+                                RelativeRegisterDTO dto = RelativeRegisterDTO(
+                                  fullName: relativeNameController.text,
+                                  phoneNumber: phoneRelativeController.text,
+                                );
+                                setState(() {
+                                  listRelative.add(dto);
+                                });
+                                relativeNameController.text = '';
+                                phoneRelativeController.text = '';
+                              },
+                              deleteRelative: deleteRelative);
+                        }
+                      },
+                    ),
+                    Stack(
+                      alignment: AlignmentDirectional.topStart,
+                      children: <Widget>[
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 35),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              for (int i = 0; i < slideList.length; i++)
+                                if (i == _currentPage)
+                                  SlideDots(true)
+                                else
+                                  SlideDots(false)
+                            ],
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width / 2 - 20,
@@ -256,7 +260,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                             weight: int.parse(_weightController.text) ?? 0,
                             personalMedicalHistory: patientController.text,
                             familyMedicalHistory: familyController.text,
-                            relatives: listRelative,
+                            relativesRegister: listRelative,
                           );
                           String dateOfBirthDay = DateFormat('yyyy-MM-dd')
                               .format(DateFormat('yyyy-MM-dd').parse(birthday));
