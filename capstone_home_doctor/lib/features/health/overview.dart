@@ -54,6 +54,7 @@ class _OverviewTabState extends State<OverviewTab> {
         VitalSigns vitalSignDTO = VitalSigns(
           id: uuid.v1(),
           idSchedule: _vitalSignScheduleDTO.medicalInstructionId,
+          vitalSignScheduleId: _vitalSignScheduleDTO.vitalSignScheduleId,
           vitalSignType: x.vitalSignType,
           minuteAgain: x.minuteAgain,
           minuteDangerInterval: x.minuteDangerInterval,

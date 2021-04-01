@@ -166,7 +166,7 @@ VitalSignRepository _vitalSignRepository = VitalSignRepository();
 //
 VitalSignScheduleDTO _vitalSignScheduleDTO = VitalSignScheduleDTO();
 
-void _handleGeneralMessage(Map<String, dynamic> message) {
+void _handleGeneralMessage(Map<String, dynamic> message) async {
   print('message android: $message');
   String payload;
   ReceiveNotification receiveNotification;
@@ -182,14 +182,9 @@ void _handleGeneralMessage(Map<String, dynamic> message) {
       payload: payload);
   localNotifyManager.show(receiveNotification);
   //
-  if (receiveNotification.body.contains('Bạn có một lịch đo sinh hiệu mới')) {
-    //DO INSERT LOCAL DB VITAL SIGN SCHEDULE
-    //
-    print('CATCHED THIS NOTI TO PUSH NEW SCHEDULE');
-  }
 }
 
-void _handleIOSGeneralMessage(Map<String, dynamic> message) {
+void _handleIOSGeneralMessage(Map<String, dynamic> message) async {
   String payload = jsonEncode(message);
   ReceiveNotification receiveNotification;
   print('payload ios: $payload');
@@ -306,50 +301,6 @@ void main() async {
 
       //DO BLUETOOTH CONNECT AND GET HEART RATE
       print('At ${DateTime.now()} to Check Bluetooth funcs background');
-
-      ///////-----------------------------------------------
-      ///FOR ANOTHER VITAL SIGN EXCEPT HEART RATE
-      int countNotiSchedule = 0;
-      if (countNotiSchedule == 0) {
-        List<VitalSigns> schedulePSOffline = [];
-
-        await _sqfLiteHelper
-            .getVitalSignScheduleOffline()
-            .then((sOffline) async {
-          schedulePSOffline = sOffline;
-        });
-        VitalSigns pressureSchedule = schedulePSOffline
-            .where((item) => item.vitalSignType == 'Huyết áp')
-            .first;
-        print(
-            'Time start of a day for pressure: ${pressureSchedule.timeStart}');
-        //
-        if (pressureSchedule.timeStart != null) {
-          if (pressureSchedule.timeStart.isNotEmpty) {
-            //
-            int hour = int.tryParse(pressureSchedule.timeStart.split(':')[0]);
-            int minute = int.tryParse(pressureSchedule.timeStart.split(':')[1]);
-            String now = DateTime.now().toString();
-            String timeNow = now.split(' ')[1];
-            int hourNow = int.tryParse(timeNow.split(':')[0]);
-            int minuteNow = int.tryParse(timeNow.split(':')[1].split('.')[0]);
-            if (hour == hourNow && minute == minuteNow) {
-              var dangerousNotification = {
-                "notification": {
-                  "title": "Nhắc nhở đo sinh hiệu",
-                  "body":
-                      "Bác sĩ nhắc bạn đo và ghi nhận huyết áp vào khoảng thời gian này.",
-                },
-                "data": {
-                  "NAVIGATE_TO_SCREEN": RoutesHDr.PRESSURE_CHART_VIEW,
-                }
-              };
-              _handleGeneralMessage(dangerousNotification);
-            }
-          }
-        }
-        countNotiSchedule++;
-      }
 
       ///////-----------------------------------------------
       ///FOR HEART RATE PROCESSING
@@ -526,7 +477,50 @@ void main() async {
           print('user has logged out of system');
         }
       });
+      ///////-----------------------------------------------
+      ///FOR ANOTHER VITAL SIGN EXCEPT HEART RATE
+      int countNotiSchedule = 0;
+      if (countNotiSchedule == 0) {
+        List<VitalSigns> schedulePSOffline = [];
+
+        await _sqfLiteHelper
+            .getVitalSignScheduleOffline()
+            .then((sOffline) async {
+          VitalSigns pressureSchedule =
+              sOffline.where((item) => item.vitalSignType == 'Huyết áp').first;
+          print(
+              'Time start of a day for pressure: ${pressureSchedule.timeStart}');
+          //
+          if (pressureSchedule.timeStart != null) {
+            if (pressureSchedule.timeStart.isNotEmpty) {
+              //
+              int hour = int.tryParse(pressureSchedule.timeStart.split(':')[0]);
+              int minute =
+                  int.tryParse(pressureSchedule.timeStart.split(':')[1]);
+              String now = DateTime.now().toString();
+              String timeNow = now.split(' ')[1];
+              int hourNow = int.tryParse(timeNow.split(':')[0]);
+              int minuteNow = int.tryParse(timeNow.split(':')[1].split('.')[0]);
+              if (hour == hourNow && minute == minuteNow) {
+                var dangerousNotification = {
+                  "notification": {
+                    "title": "Nhắc nhở đo sinh hiệu",
+                    "body":
+                        "Bác sĩ nhắc bạn đo và ghi nhận huyết áp vào khoảng thời gian này.",
+                  },
+                  "data": {
+                    "NAVIGATE_TO_SCREEN": RoutesHDr.PRESSURE_CHART_VIEW,
+                  }
+                };
+                _handleGeneralMessage(dangerousNotification);
+              }
+            }
+          }
+          countNotiSchedule++;
+        });
+      }
     });
+
   // await SentryFlutter.init(
   //   (options) {
   //     options.dsn =
@@ -903,36 +897,40 @@ _connectInBackground(int timeInsert) async {
                         /////////
                         ///PUSH VITAL SIGN INTO SERVER
                         ///
-                        // String listValue = '';
-                        // String listTime = '';
-                        // int countGetList = 0;
-                        // _sqfLiteHelper
-                        //     .getListVitalSign('HEART_RATE', _patientId)
-                        //     .then((listHeartRate) async {
-                        //   if (countGetList == 0) {
-                        //     for (VitalSignDTO dto in listHeartRate) {
-                        //       listValue += dto.value1.toString() + ',';
-                        //       listTime += dto.toDatePush() + ',';
-                        //     }
-                        //   }
-                        //   //
+                        String listValue = '';
+                        String listTime = '';
+                        int countGetList = 0;
+                        _sqfLiteHelper
+                            .getListVitalSign('HEART_RATE', _patientId)
+                            .then((listHeartRate) async {
+                          if (countGetList == 0) {
+                            for (VitalSignDTO dto in listHeartRate) {
+                              listValue += dto.value1.toString() + ',';
+                              listTime += dto.toDatePush() + ',';
+                            }
+                          }
+                          //
 
-                        //   countGetList++;
-                        //   print('list value: $listValue');
-                        //   print('list time: $listTime');
-                        //   VitalSignPushDTO vitalSignPush = VitalSignPushDTO(
-                        //     vitalSignScheduleId:
-                        //         heartRateSchedule.vitalSignScheduleId,
-                        //     currentDate:
-                        //         DateTime.now().toString().split(' ')[0],
-                        //     vitalSignTypeId: 1,
-                        //     numberValue: listValue,
-                        //     timeValue: listTime,
-                        //   );
+                          countGetList++;
+                          print('list value: $listValue');
+                          print('list time: $listTime');
+                          VitalSignPushDTO vitalSignPush = VitalSignPushDTO(
+                            vitalSignScheduleId:
+                                heartRateSchedule.vitalSignScheduleId,
+                            currentDate:
+                                DateTime.now().toString().split(' ')[0],
+                            vitalSignTypeId: 1,
+                            numberValue: listValue,
+                            timeValue: listTime,
+                          );
+                          print(
+                              'DTO HEREEE: \n vitalSignScheduleId: ${vitalSignPush.vitalSignScheduleId}\ncurrentDate: ${vitalSignPush.currentDate}\nnumberValue: ${vitalSignPush.numberValue}\ntimeValue: ${vitalSignPush.timeValue}');
 
-                        //   // await _vitalSignServerRepository
-                        //   //     .pushVitalSign(vitalSignPush);
-                        // });
+                          print(
+                              '\n\nJSON OBJECT: \n\n ${vitalSignPush.toJson().toString()}\n\n');
+                          //   // await _vitalSignServerRepository
+                          //   //     .pushVitalSign(vitalSignPush);
+                        });
 
                         //NOTI
                         NotificationPushDTO notiPushDTO = NotificationPushDTO(
@@ -1238,15 +1236,32 @@ class _HomeDoctorState extends State<HomeDoctor> {
         Platform.isIOS
             ? _handleIOSGeneralMessage(message)
             : _handleGeneralMessage(message);
+        print('Whats on OnMessage?');
       },
       // onBackgroundMessage: (Map<String, dynamic> message) async {
       //   print('onBackgroundMessage: $message');
       // },
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
+        print('on launch msg: ${message.values}');
+        if (message.values.contains('Bạn có một lịch đo sinh hiệu mới')) {
+          //
+          await _saveVitalSignScheduleOffline();
+        }
+        // if (message.containsValue('Bạn có một lịch đo sinh hiệu mới')) {
+        //   //DO INSERT LOCAL DB VITAL SIGN SCHEDULE
+        //   //
+        //   await _saveVitalSignScheduleOffline();
+        //   print('CATCHED THIS NOTI TO PUSH NEW SCHEDULE');
+        // }
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: $message");
+        print('on launch msg: ${message.values}');
+        if (message.values.contains('Bạn có một lịch đo sinh hiệu mới')) {
+          //
+          await _saveVitalSignScheduleOffline();
+        }
       },
     );
     _fcm.getToken().then((String token) {

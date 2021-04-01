@@ -21,7 +21,7 @@ final Shader _normalHealthColors = LinearGradient(
     DefaultTheme.GRADIENT_1,
     DefaultTheme.GRADIENT_2,
   ],
-).createShader(new Rect.fromLTWH(10.0, 1.0, 100.0, 20.0));
+).createShader(new Rect.fromLTWH(30.0, 1.0, 50.0, 200.0));
 
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
 final VitalSignRepository _vitalSignRepository = VitalSignRepository();
@@ -199,6 +199,12 @@ class _PeripheralService extends State<PeripheralService>
                                                         color: DefaultTheme
                                                             .WHITE)),
                                                 Spacer(),
+                                                Text('Đang kết nối',
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        foreground: Paint()
+                                                          ..shader =
+                                                              _normalHealthColors)),
                                               ],
                                             ),
                                           ),

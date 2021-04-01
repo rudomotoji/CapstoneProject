@@ -125,7 +125,8 @@ class _PressureDetailView extends State<PressureDetailView> {
                           //
 
                           Padding(
-                            padding: EdgeInsets.only(top: 30, left: 20),
+                            padding:
+                                EdgeInsets.only(top: 30, left: 20, right: 30),
                             child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: Row(
@@ -139,11 +140,15 @@ class _PressureDetailView extends State<PressureDetailView> {
                                     Padding(
                                       padding: EdgeInsets.only(left: 15),
                                     ),
-                                    Text('Huyết áp',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
-                                        )),
+                                    Text(
+                                      'Huyết áp',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Text('(mmHg)')
                                   ],
                                 )),
                           ),
