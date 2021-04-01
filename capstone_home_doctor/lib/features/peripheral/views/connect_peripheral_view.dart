@@ -177,7 +177,8 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                                               PeripheralEventConnectFirstTime(
                                                   scanResult:
                                                       listScanned[index]));
-
+                                          Navigator.of(context).pushNamed(
+                                              RoutesHDr.PERIPHERAL_SERVICE);
                                           await _authenticateHelper
                                               .getPatientId()
                                               .then((value) async {
@@ -196,9 +197,6 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                                                 if (isConnectedSendingServer) {
                                                   print(
                                                       'update connected with server');
-                                                  Navigator.of(context)
-                                                      .pushNamed(RoutesHDr
-                                                          .PERIPHERAL_SERVICE);
                                                 }
                                               });
                                             }
