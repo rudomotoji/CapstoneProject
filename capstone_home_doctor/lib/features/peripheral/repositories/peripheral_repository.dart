@@ -1,6 +1,9 @@
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
+import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
 
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
 
@@ -135,6 +138,31 @@ class PeripheralRepository {
       return batteryValue;
     } catch (e) {
       print('Error at get battery device: ${e}');
+    }
+  }
+}
+
+class PeripheralSeverRepository extends BaseApiClient {
+  final http.Client httpClient;
+  //constructor
+  PeripheralSeverRepository({@required this.httpClient})
+      : assert(httpClient != null);
+
+  Future<bool> updatePeripheralConnect(int patientId, bool status) async {
+    String url =
+        '/PersonalHealthReocrds/UpdateSmartWatchConnected?patientId=${patientId}&isConnected=${status}';
+    try {
+      //
+      final response = await putApi(url, null, null);
+      if (response.statusCode == 204) {
+        print('UPDATE STATUS $status OF CONNECT PERIPHERAL SUCCESS');
+        return true;
+      } else {
+        print('UPDATE STATUS $status OF CONNECT PERIPHERAL FAILED');
+        return false;
+      }
+    } catch (e) {
+      print('error at update peripheral status: ${e}');
     }
   }
 }

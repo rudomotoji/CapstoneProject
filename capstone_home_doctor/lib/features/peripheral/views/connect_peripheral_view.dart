@@ -163,6 +163,7 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                                                   scanResult:
                                                       listScanned[index]));
                                           //
+
                                           Navigator.of(context).pushNamed(
                                               RoutesHDr.PERIPHERAL_SERVICE);
                                         },

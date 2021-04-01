@@ -1681,11 +1681,9 @@ class _DetailContractView extends State<DetailContractView>
                                                                         seconds:
                                                                             1),
                                                                     () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pushNamed(
-                                                                          RoutesHDr
-                                                                              .MANAGE_CONTRACT);
+                                                                //
+                                                                Navigator.of(context).pushNamedAndRemoveUntil(
+        RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
                                                                 });
                                                               },
                                                             ),

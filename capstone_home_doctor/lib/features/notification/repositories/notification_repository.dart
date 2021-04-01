@@ -68,7 +68,8 @@ class NotificationRepository extends BaseApiClient {
         '/PersonalHealthReocrds/UpdatePersonalStatus?patientId=${patientId}&status=${status}';
     try {
       final request = await putApi(url, null, null);
-      if (request.statusCode == 204) {
+      // print('request status code is ${request.body}');
+      if (request.statusCode == 200) {
         return true;
       } else {
         return false;

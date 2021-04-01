@@ -181,6 +181,12 @@ void _handleGeneralMessage(Map<String, dynamic> message) async {
       payload: payload);
   localNotifyManager.show(receiveNotification);
   //
+  if (notification["body"]
+      .toString()
+      .contains('Bạn có một lịch đo sinh hiệu mới')) {
+    _saveVitalSignScheduleOffline();
+    print('CATCHED THIS NOTI TO DOWNLOAD NEW SCHEDULE');
+  }
 }
 
 void _handleIOSGeneralMessage(Map<String, dynamic> message) async {
@@ -195,6 +201,12 @@ void _handleIOSGeneralMessage(Map<String, dynamic> message) async {
       body: notification["body"],
       payload: payload);
   localNotifyManager.show(receiveNotification);
+  if (notification["body"]
+      .toString()
+      .contains('Bạn có một lịch đo sinh hiệu mới')) {
+    _saveVitalSignScheduleOffline();
+    print('CATCHED THIS NOTI TO DOWNLOAD NEW SCHEDULE');
+  }
 }
 
 void checkNotifiMedical() async {
@@ -421,15 +433,6 @@ void main() async {
                                     ////////////////////////
                                     //SERVER EXECUTE HERE
 
-                                    NotificationPushDTO notiPushDTO =
-                                        NotificationPushDTO(
-                                            deviceType: 2,
-                                            notificationType: 2,
-                                            recipientAccountId:
-                                                _vitalSignScheduleDTO
-                                                    .doctorAccountId,
-                                            senderAccountId: _accountId);
-
                                     //
                                     //KICK VARIABLE CHECK DANGER TO NORMAL
                                     await _vitalSignHelper
@@ -438,13 +441,23 @@ void main() async {
                                     //CHANGE STATUS PEOPLE
                                     await notificationRepository
                                         .changePersonalStatus(
-                                            _patientId, 'DANGER');
-                                    Future.delayed(const Duration(seconds: 1),
-                                        () async {
-                                      // deleayed code here
+                                            _patientId, 'DANGER')
+                                        .then((isSuccess) async {
+                                      NotificationPushDTO notiPushDTO =
+                                          NotificationPushDTO(
+                                              deviceType: 2,
+                                              notificationType: 2,
+                                              recipientAccountId:
+                                                  _vitalSignScheduleDTO
+                                                      .doctorAccountId,
+                                              senderAccountId: _accountId);
                                       //PUSH NOTI
-                                      await notificationRepository
-                                          .pushNotification(notiPushDTO);
+                                      if (isSuccess) {
+                                        await notificationRepository
+                                            .pushNotification(notiPushDTO);
+                                        print(
+                                            'update people to danger successful');
+                                      }
                                     });
                                   }
                                   // // set into 0 when normal
@@ -560,7 +573,7 @@ _saveVitalSignScheduleOffline() async {
         VitalSigns vitalSignDTO = VitalSigns(
           id: uuid.v1(),
           idSchedule: _vitalSignScheduleDTO.medicalInstructionId,
-          vitalSignScheduleId: x.vitalSignScheduleId,
+          vitalSignScheduleId: _vitalSignScheduleDTO.vitalSignScheduleId,
           vitalSignType: x.vitalSignType,
           minuteAgain: x.minuteAgain,
           minuteDangerInterval: x.minuteDangerInterval,
@@ -939,31 +952,44 @@ _connectInBackground(int timeInsert) async {
 
                           print(
                               '\n\nJSON OBJECT: \n\n ${vitalSignPush.toJson().toString()}\n\n');
-                          //   // await _vitalSignServerRepository
-                          //   //     .pushVitalSign(vitalSignPush);
+                          await _vitalSignServerRepository
+                              .pushVitalSign(vitalSignPush)
+                              .then((isSuccess) {
+                            if (isSuccess) {
+                              print('SUCCESSFUL PUSH DATA HEART RATE');
+                            } else {
+                              print('FAILED TO PUSH DATA HEART RATE');
+                            }
+                          });
                         });
-
-                        //NOTI
-                        NotificationPushDTO notiPushDTO = NotificationPushDTO(
-                            deviceType: 2,
-                            notificationType: 2,
-                            recipientAccountId:
-                                _vitalSignScheduleDTO.doctorAccountId,
-                            senderAccountId: _accountId);
 
                         //
                         //CHANGE STATUS PEOPLE
-                        await notificationRepository.changePersonalStatus(
-                            _patientId, 'DANGER');
-                        Future.delayed(const Duration(seconds: 1), () async {
-                          // deleayed code here
-                          //PUSH NOTI
-                          await notificationRepository
-                              .pushNotification(notiPushDTO);
+                        await notificationRepository
+                            .changePersonalStatus(_patientId, 'DANGER')
+                            .then((isSuccess) async {
+                          // print('patient id before change? $_patientId');
+                          // print('CHANGE STATUS DANGER IS? ${isSuccess}');
+                          if (isSuccess) {
+                            //
+                            //NOTI
+                            NotificationPushDTO notiPushDTO =
+                                NotificationPushDTO(
+                                    deviceType: 2,
+                                    notificationType: 2,
+                                    recipientAccountId:
+                                        _vitalSignScheduleDTO.doctorAccountId,
+                                    senderAccountId: _accountId);
+                            await notificationRepository
+                                .pushNotification(notiPushDTO);
+                            //KICK VARIABLE CHECK DANGER TO NORMAL
+                            await _vitalSignHelper.updateCheckToNormal(true);
+                            print('update people to danger successful');
+                          }
                         });
+
                         /////////////
-                        //KICK VARIABLE CHECK DANGER TO NORMAL
-                        await _vitalSignHelper.updateCheckToNormal(true);
+
                       }
                       // set into 0 when normal
                       if (countDown >= heartRateSchedule.minuteDangerInterval) {
@@ -1006,30 +1032,31 @@ _connectInBackground(int timeInsert) async {
                           if (countToNormal >=
                               heartRateSchedule.minuteNormalInterval) {
                             //UPDATE NORMAL STATUS
-                            await notificationRepository.changePersonalStatus(
-                                _patientId, 'NORMAL');
-                            print('Updated normal people status successful!');
-                            //UPDATE VARIABLE CHECK DANGEROUS TO NORMAL = FALSE
-                            //
-                            //PUSH NOTI TO NORMAL
-
-                            NotificationPushDTO notiPushDTO =
-                                NotificationPushDTO(
-                                    deviceType: 2,
-                                    notificationType: 17,
-                                    recipientAccountId:
-                                        _vitalSignScheduleDTO.doctorAccountId,
-                                    senderAccountId: _accountId);
-
-                            Future.delayed(const Duration(seconds: 1),
-                                () async {
-                              // deleayed code here
-                              //PUSH NOTI
-                              await notificationRepository
-                                  .pushNotification(notiPushDTO);
+                            await notificationRepository
+                                .changePersonalStatus(_patientId, 'NORMAL')
+                                .then((isSuccess) async {
+                              //
+                              if (isSuccess) {
+                                print(
+                                    'Updated normal people status successful!');
+                                //UPDATE VARIABLE CHECK DANGEROUS TO NORMAL = FALSE
+                                //
+                                //PUSH NOTI TO NORMAL
+                                //PUSH NOTI
+                                NotificationPushDTO notiPushDTO =
+                                    NotificationPushDTO(
+                                        deviceType: 2,
+                                        notificationType: 17,
+                                        recipientAccountId:
+                                            _vitalSignScheduleDTO
+                                                .doctorAccountId,
+                                        senderAccountId: _accountId);
+                                await notificationRepository
+                                    .pushNotification(notiPushDTO);
+                                await _vitalSignHelper
+                                    .updateCheckToNormal(false);
+                              }
                             });
-
-                            await _vitalSignHelper.updateCheckToNormal(false);
                           }
                           if (countToNormal >=
                               heartRateSchedule.minuteNormalInterval) {
@@ -1074,25 +1101,28 @@ _connectInBackground(int timeInsert) async {
                         _handleGeneralMessage(dangerousNotification);
                         ////////////////////////
                         //SERVER EXECUTE HERE
-
-                        NotificationPushDTO notiPushDTO = NotificationPushDTO(
-                            deviceType: 2,
-                            notificationType: 2,
-                            recipientAccountId:
-                                _vitalSignScheduleDTO.doctorAccountId,
-                            senderAccountId: _accountId);
-                        //PUSH NOTI
-
-                        Future.delayed(const Duration(seconds: 1), () async {
-                          // deleayed code here
-                          //PUSH NOTI
-                          await notificationRepository
-                              .pushNotification(notiPushDTO);
-                        });
-                        //
                         //CHANGE STATUS PEOPLE
-                        await notificationRepository.changePersonalStatus(
-                            _patientId, 'DANGER');
+                        await notificationRepository
+                            .changePersonalStatus(_patientId, 'DANGER')
+                            .then((isSuccess) async {
+                          if (isSuccess) {
+                            NotificationPushDTO notiPushDTO =
+                                NotificationPushDTO(
+                                    deviceType: 2,
+                                    notificationType: 2,
+                                    recipientAccountId:
+                                        _vitalSignScheduleDTO.doctorAccountId,
+                                    senderAccountId: _accountId);
+                            //
+                            //PUSH NOTI
+                            await notificationRepository
+                                .pushNotification(notiPushDTO);
+                            print('update people to danger successful');
+                          }
+                        });
+
+                        //
+
                       }
                       // // set into 0 when normal
                       // if (countDown >= heartRateSchedule.minuteDangerInterval) {

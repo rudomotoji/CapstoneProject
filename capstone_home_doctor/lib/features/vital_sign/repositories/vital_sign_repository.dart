@@ -99,6 +99,7 @@ class VitalSignServerRepository extends BaseApiClient {
     try {
       //
       final response = await putApi(url, null, dto.toJson());
+      print('response ${response.body}');
       if (response.statusCode == 204) {
         print('PUSH SUCCESSFUL VALUE VITAL SIGN INTO SERVER');
         return true;
