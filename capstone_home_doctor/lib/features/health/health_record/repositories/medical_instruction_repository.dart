@@ -7,6 +7,7 @@ import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:flutter/material.dart';
+import 'package:string_similarity/string_similarity.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:sentry/sentry.dart';
@@ -104,55 +105,97 @@ class MedicalInstructionRepository extends BaseApiClient {
     return false;
   }
 
-  Future<ImageScannerDTO> getTextFromImage(String imagePath) async {
+  Future<ImageScannerDTO> getTextFromImage(
+      String imagePath, String strCompare) async {
     try {
       String strSymptom = '';
       String title = '';
-      await _ocrUtil.convertImgToString(imagePath).then((value) {
-        if (value != null) {
-          var newArrData = value.split("\n");
-          var str_list = newArrData.where((s) => !s.isEmpty).toList();
+      double titleCompare = 0;
+      if (Platform.isIOS) {
+      } else {
+        await _ocrUtil.convertImgToString(imagePath).then((value) {
+          if (value != null) {
+            var newArrData = value.split("\n");
+            var str_list = newArrData.where((s) => !s.isEmpty).toList();
 
-          for (var itemString in str_list) {
-            if (itemString.contains('PHIẾU') ||
-                itemString.contains('BỆNH ÁN') ||
-                itemString.contains('XÉT NGHIỆM')) {
-              title = itemString;
-            }
-            if (strSymptom != null && strSymptom != '') {
-              if (itemString.contains('-') && itemString.contains('/')) {
-                strSymptom += itemString;
-              }
-            } else {
-              if ((itemString.contains('Triệu') ||
-                      itemString.contains('chứng') ||
-                      itemString.contains('Chẩn') ||
-                      itemString.contains('đoán')) &&
-                  strSymptom == '') {
-                strSymptom = itemString;
+            titleCompare = checkTitleMedicalIns(
+                str_list.toString().replaceAll(" ", "").toString(),
+                strCompare.replaceAll(" ", "").toString().toUpperCase());
+
+            // RegExp regExp = new RegExp(
+            //     r'[AÁẢÀÃẠÂẤẨẦẪẬĂẮẲẰẴẶBCDĐEÉẺÈẼẸÊẾỂỀỄỆFGHIÍỈÌĨỊJKLMNOÓỎÒÕỌƠỚỞỜỠỢÔỐỔỒỖỘPQTUÚỦÙŨỤƯỨỬỪỮỰVYWZ]');
+
+            for (var itemString in str_list) {
+              if (strSymptom != null && strSymptom != '') {
+                if (itemString.contains('-') && itemString.contains('/')) {
+                  strSymptom += itemString;
+                }
+              } else {
+                if ((itemString.contains('Triệu') ||
+                        itemString.contains('chứng') ||
+                        itemString.contains('Chẩn') ||
+                        itemString.contains('đoán')) &&
+                    strSymptom == '') {
+                  strSymptom = itemString;
+                }
               }
             }
           }
-        }
-      });
-
-      // var arr = strSymptom.split(':');
-      // if (arr.length > 1) {
-      //   strSymptom = arr[1];
-      // }
-
-      return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
+        });
+      }
+      return ImageScannerDTO(
+          symptom: strSymptom.trim(),
+          title: title.trim(),
+          titleCompare: titleCompare);
     } catch (exception, stackTrace) {
       await Sentry.captureException(
         exception,
         stackTrace: stackTrace,
       );
-      return ImageScannerDTO(symptom: '', title: '');
+      return ImageScannerDTO(symptom: '', title: '', titleCompare: 0);
     }
-    // catch (e) {
-    //   print('ERROR AT getTextIMG repo: ${e}');
-    //   // return ImageScannerDTO(symptom: '', title: '');
-    // }
+  }
+
+  double checkTitleMedicalIns(String strImage, String strCompare) {
+    double percentCompare = 0;
+    try {
+      int lengStrCompare = strCompare.length;
+      for (var i = 0; i < lengStrCompare; i++) {
+        String strImageClone = strImage;
+        String titleOfStrImage = '';
+        bool flagCheck = false;
+        while (!flagCheck) {
+          String startStr = strCompare[i];
+          int indexOfStartStrInStrImage = strImageClone.indexOf(startStr);
+          if (indexOfStartStrInStrImage == -1) {
+            flagCheck = true;
+          } else {
+            if (i != 0 && indexOfStartStrInStrImage >= i) {
+              indexOfStartStrInStrImage = indexOfStartStrInStrImage - i;
+            }
+            if ((indexOfStartStrInStrImage + lengStrCompare) >
+                strImage.length) {
+              flagCheck = true;
+            } else {
+              titleOfStrImage = strImageClone.substring(
+                  indexOfStartStrInStrImage,
+                  indexOfStartStrInStrImage + lengStrCompare);
+              var percentComp = strCompare.similarityTo(titleOfStrImage);
+              if (percentComp > percentCompare) {
+                percentCompare = percentComp;
+                print(percentCompare);
+              }
+              strImageClone =
+                  strImageClone.replaceFirst(RegExp(startStr), '', 1);
+            }
+          }
+        }
+      }
+      return percentCompare;
+    } catch (e) {
+      print('checkTitleMedicalIns: $e');
+      return percentCompare;
+    }
   }
 
   // //create medical instruction by multiple part
@@ -201,6 +244,7 @@ class MedicalInstructionRepository extends BaseApiClient {
   //     return ImageScannerDTO();
   //   } catch (e) {
   //     print('ERROR AT getTextIMG repo: ${e}');
+  //     return ImageScannerDTO(symptom: '', title: '');
   //   }
   // }
 

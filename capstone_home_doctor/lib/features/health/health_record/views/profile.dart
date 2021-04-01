@@ -38,13 +38,16 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
 
   List<TypeFilter> _listFilter = globals.listFilter;
   TypeFilter _valueFilter;
-  //
   int _patientId = 0;
+  TabController controller;
+  ScrollController _scrollController;
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     _healthRecordListBloc = BlocProvider.of(context);
+    _scrollController = ScrollController(initialScrollOffset: 0.0);
 
     setState(() {
       _valueFilter = _listFilter[2];
@@ -65,255 +68,230 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.addObserver(this);
     super.dispose();
+    _scrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        //
-        Padding(
-          padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+    return DefaultTabController(
+      length: 2,
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            buildSliverToBoxAdapterHeader(),
+            buildSliverAppBarCollepse(),
+            buildTabbarViewHasContract(),
+          ],
         ),
-        ButtonArtBoard(
-          title: 'Tạo hồ sơ sức khoẻ',
-          description: 'Một hồ sơ sức khoẻ bao gồm nhiều y lệnh',
-          imageAsset: 'assets/images/ic-health-record.png',
-          onTap: () async {
-            //MOVE TO CREATE HR AND CALL BACK REFRESH LIST
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (context) =>
-                        new CreateHealthRecord(refreshListHR))).then((value) {
-              refreshListHR();
-            });
-            // Navigator.of(context).pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
-          },
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 15),
-        ),
-        ButtonArtBoard(
-          title: 'Chia sẻ y lệnh',
-          description:
-              'Các phiếu y lệnh được chia sẻ giúp bác sĩ chẩn đoán tốt hơn',
-          imageAsset: 'assets/images/ic-medical-instruction.png',
-          onTap: () async {
-            Navigator.of(context).pushNamed(RoutesHDr.MEDICAL_SHARE);
-          },
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'Danh sách hồ sơ sức khoẻ',
-                  style: TextStyle(
-                    color: DefaultTheme.BLACK,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter buildSliverToBoxAdapterHeader() {
+    return SliverToBoxAdapter(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+          ),
+          ButtonArtBoard(
+            title: 'Tạo hồ sơ sức khỏe',
+            description: 'Một hồ sơ sức khoẻ bao gồm nhiều y lệnh',
+            imageAsset: 'assets/images/ic-health-record.png',
+            onTap: () async {
+              //MOVE TO CREATE HR AND CALL BACK REFRESH LIST
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) =>
+                          new CreateHealthRecord(refreshListHR))).then((value) {
+                refreshListHR();
+              });
+              // Navigator.of(context).pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
+            },
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 15),
+          ),
+          ButtonArtBoard(
+            title: 'Chia sẻ y lệnh',
+            description:
+                'Các phiếu y lệnh được chia sẻ giúp bác sĩ chẩn đoán tốt hơn',
+            imageAsset: 'assets/images/ic-medical-instruction.png',
+            onTap: () async {
+              Navigator.of(context).pushNamed(RoutesHDr.MEDICAL_SHARE);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  SliverAppBar buildSliverAppBarCollepse() {
+    return SliverAppBar(
+      pinned: true,
+      automaticallyImplyLeading: false,
+      backgroundColor: DefaultTheme.WHITE,
+      title: TabBar(
+        labelStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            foreground: Paint()..shader = _normalHealthColors),
+        indicatorPadding: EdgeInsets.only(left: 20),
+        unselectedLabelStyle:
+            TextStyle(color: DefaultTheme.BLACK.withOpacity(0.6)),
+        indicatorColor: Colors.white.withOpacity(0.0),
+        controller: controller,
+        tabs: [
+          Tab(
+            child: Container(
+              height: 25,
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Hồ sơ cũ',
                 ),
-                Padding(padding: EdgeInsets.all(10)),
-                Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 5),
-                      child: Text(
-                        'Loại:',
-                        style: TextStyle(
-                          color: DefaultTheme.BLACK,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 180,
-                      margin: EdgeInsets.only(left: 10),
-                      child: Container(
-                        padding: EdgeInsets.only(left: 20),
-                        margin: EdgeInsets.only(bottom: 10),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: DefaultTheme.GREY_VIEW),
-                        child: DropdownButton<TypeFilter>(
-                          value: _valueFilter,
-                          items: _listFilter.map((TypeFilter value) {
-                            return new DropdownMenuItem<TypeFilter>(
-                              value: value,
-                              child: new Text(
-                                value.label,
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                            );
-                          }).toList(),
-                          dropdownColor: DefaultTheme.GREY_VIEW,
-                          elevation: 1,
-                          hint: Container(
-                            width: 130,
-                            child: Text(
-                              'Chọn loại bệnh để chia sẻ (*):',
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                          underline: Container(
-                            width: 0,
-                          ),
-                          isExpanded: false,
-                          onChanged: (res) async {
-                            setState(() {
-                              _valueFilter = res;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-        //start of list
-        _loadListHealthRecord(),
-        //end of list
-        Padding(
-          padding: EdgeInsets.only(bottom: 20),
-        ),
-      ],
+          Tab(
+            child: Container(
+              height: 25,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Hồ sơ của hệ thống',
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  _loadListHealthRecord() {
-    return BlocBuilder<HealthRecordListBloc, HRListState>(
-      builder: (context, state) {
-        if (state is HRListStateLoading) {
-          return Container(
-            width: 200,
-            height: 200,
-            child: SizedBox(
-              width: 100,
-              height: 100,
-              child: Image.asset('assets/images/loading.gif'),
-            ),
-          );
-        }
-        if (state is HRListStateFailure) {
-          return Container(
-              width: MediaQuery.of(context).size.width,
-              child: Center(
-                  child: Text('Kiểm tra lại đường truyền kết nối mạng')));
-        }
-        if (state is HRListStateSuccess) {
-          listHealthRecord = state.listHealthRecord;
-          listHealthRecordOld = [];
-          listHealthRecordSystem = [];
-          if (null != listHealthRecord) {
-            if (listHealthRecord.length > 1) {
-              listHealthRecord
-                  .sort((a, b) => b.dateCreated.compareTo(a.dateCreated));
-            }
+  SliverFillRemaining buildTabbarViewHasContract() {
+    return SliverFillRemaining(
+      child: BlocBuilder<HealthRecordListBloc, HRListState>(
+        builder: (context, state) {
+          if (state is HRListStateLoading) {
+            return Container(
+              width: 200,
+              height: 200,
+              child: SizedBox(
+                width: 100,
+                height: 100,
+                child: Image.asset('assets/images/loading.gif'),
+              ),
+            );
+          }
+          if (state is HRListStateFailure) {
+            return Container(
+                width: MediaQuery.of(context).size.width,
+                child: Center(
+                    child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+          }
+          if (state is HRListStateSuccess) {
+            listHealthRecord = state.listHealthRecord;
+            listHealthRecordOld = [];
+            listHealthRecordSystem = [];
+            if (null != listHealthRecord) {
+              if (listHealthRecord.length > 1) {
+                listHealthRecord
+                    .sort((a, b) => b.dateCreated.compareTo(a.dateCreated));
+              }
 
-            for (var item in listHealthRecord) {
-              if (item.contractId == null) {
-                listHealthRecordOld.add(item);
-              } else {
-                listHealthRecordSystem.add(item);
+              for (var item in listHealthRecord) {
+                if (item.contractId == null) {
+                  listHealthRecordOld.add(item);
+                } else {
+                  listHealthRecordSystem.add(item);
+                }
               }
             }
+
+            return TabBarView(
+              controller: controller,
+              children: <Widget>[
+                listOldHealthRecord(),
+                listSystemHealthRecord(),
+              ],
+            );
           }
-
-          return (state.listHealthRecord == null)
-              ? Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Center(
-                    child: Text('Kiểm tra lại đường truyền kết nối mạng'),
-                  ),
-                )
-              : checkListRender();
-
-          // ListView.builder(
-          //     shrinkWrap: true,
-          //     physics: NeverScrollableScrollPhysics(),
-          //     itemCount: listHealthRecord.length,
-          //     itemBuilder: (BuildContext buildContext, int index) {
-          // if (_valueFilter != null) {
-          //   if (_valueFilter.value == 0) {
-          //     if (listHealthRecord[index].contractId != null) {
-          //       return _itemHealthRecord(listHealthRecord[index]);
-          //     }
-          //   }
-          //   if (_valueFilter.value == 1) {
-          //     if (listHealthRecord[index].contractId == null) {
-          //       return _itemHealthRecord(listHealthRecord[index]);
-          //     }
-          //   }
-          //   if (_valueFilter.value == 2) {
-          //     return _itemHealthRecord(listHealthRecord[index]);
-          //   }
-          // } else {
-          //   return _itemHealthRecord(listHealthRecord[index]);
-          // }
-          //     });
-
-        }
-        return Container(
-            width: MediaQuery.of(context).size.width,
-            child: Center(child: Text('Không thể tải danh sách hồ sơ')));
-      },
+          return Container(
+              width: MediaQuery.of(context).size.width,
+              child: Center(child: Text('Không thể tải danh sách hồ sơ')));
+        },
+      ),
     );
   }
 
-  checkListRender() {
-    if (_valueFilter != null) {
-      if (_valueFilter.value == 0) {
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: listHealthRecordSystem.length,
-          itemBuilder: (BuildContext buildContext, int index) {
-            return _itemHealthRecord(listHealthRecordSystem[index]);
-          },
-        );
-      }
-      if (_valueFilter.value == 1) {
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: listHealthRecordOld.length,
-          itemBuilder: (BuildContext buildContext, int index) {
-            return _itemHealthRecord(listHealthRecordOld[index]);
-          },
-        );
-      }
-      if (_valueFilter.value == 2) {
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: listHealthRecord.length,
-          itemBuilder: (BuildContext buildContext, int index) {
-            return _itemHealthRecord(listHealthRecord[index]);
-          },
-        );
-      }
-    } else {
+  listOldHealthRecord() {
+    if (listHealthRecordOld.length > 0) {
       return ListView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: listHealthRecord.length,
+        // physics: NeverScrollableScrollPhysics(),
+        itemCount: listHealthRecordOld.length,
         itemBuilder: (BuildContext buildContext, int index) {
-          return _itemHealthRecord(listHealthRecord[index]);
+          return _itemHealthRecord(listHealthRecordOld[index]);
         },
+      );
+    } else {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Image.asset('assets/images/ic-dashboard.png'),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 20),
+              ),
+              Text('Bạn chưa có phiếu nào hãy tạo hồ sơ để lưu trữ'),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  listSystemHealthRecord() {
+    if (listHealthRecordSystem.length > 0) {
+      return ListView.builder(
+        shrinkWrap: true,
+        // physics: NeverScrollableScrollPhysics(),
+        itemCount: listHealthRecordSystem.length,
+        itemBuilder: (BuildContext buildContext, int index) {
+          return _itemHealthRecord(listHealthRecordSystem[index]);
+        },
+      );
+    } else {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Image.asset('assets/images/ic-dashboard.png'),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 20),
+              ),
+              Text('Bạn chưa có phiếu nào'),
+            ],
+          ),
+        ),
       );
     }
   }
@@ -550,6 +528,12 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
 class TypeFilter {
   String label;
   int value;
-
   TypeFilter({this.label, this.value});
 }
+
+final Shader _normalHealthColors = LinearGradient(
+  colors: <Color>[
+    DefaultTheme.GRADIENT_1,
+    DefaultTheme.GRADIENT_2,
+  ],
+).createShader(new Rect.fromLTWH(0.0, 0.0, 200.0, 90.0));

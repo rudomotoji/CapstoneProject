@@ -50,19 +50,17 @@ class HealthRecordRepository extends BaseApiClient {
   }
 
   //create new healthRecord
-  Future<bool> createHealthRecord(HealthRecordDTO dto) async {
+  Future<int> createHealthRecord(HealthRecordDTO dto) async {
     final String url = '/HealthRecords';
     try {
       final request = await postApi(url, null, dto.toJson());
       if (request.statusCode == 201) {
-        return true;
+        return int.parse(request.body);
       }
-      if (request.statusCode == 400) {
-        return false;
-      }
-      return false;
+      return null;
     } catch (e) {
       print('ERROR AT CREATE HEALTH RECORD API: $e');
+      return null;
     }
   }
 
