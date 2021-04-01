@@ -7,13 +7,20 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/peripheral/blocs/peripheral_bloc.dart';
 import 'package:capstone_home_doctor/features/peripheral/events/peripheral_event.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repo.dart';
+import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
 import 'package:capstone_home_doctor/features/peripheral/states/peripheral_state.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:http/http.dart' as http;
 
 PeripheralHelper peripheralHelper = PeripheralHelper();
+PeripheralSeverRepository _peripheralSeverRepository =
+    PeripheralSeverRepository(httpClient: http.Client());
+
+final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
 class ConnectPeripheral extends StatefulWidget {
   @override
@@ -27,11 +34,19 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
   //
   PeripheralBloc _peripheralBloc;
   List<ScanResult> listScanned = [];
+  int _patientId = 0;
 
   @override
   void initState() {
     super.initState();
     _peripheralBloc = BlocProvider.of(context);
+    _getPatientId();
+  }
+
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) {
+      _patientId = value;
+    });
   }
 
   @override
@@ -158,14 +173,36 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                                               'id device when tap: ${listScanned[index].device.name}');
                                           print('TAPPED');
                                           //connect, update SharePreferenced, navigate
-                                          await _peripheralBloc.add(
+                                          _peripheralBloc.add(
                                               PeripheralEventConnectFirstTime(
                                                   scanResult:
                                                       listScanned[index]));
-                                          //
 
-                                          Navigator.of(context).pushNamed(
-                                              RoutesHDr.PERIPHERAL_SERVICE);
+                                          await _authenticateHelper
+                                              .getPatientId()
+                                              .then((value) async {
+                                            _patientId = value;
+                                            print('_patient id? ${_patientId}');
+
+                                            //R
+                                            if (_patientId != 0) {
+                                              await _peripheralSeverRepository
+                                                  .updatePeripheralConnect(
+                                                      _patientId, true)
+                                                  .then(
+                                                      (isConnectedSendingServer) async {
+                                                print(
+                                                    'is connected with sever? ${isConnectedSendingServer}');
+                                                if (isConnectedSendingServer) {
+                                                  print(
+                                                      'update connected with server');
+                                                  Navigator.of(context)
+                                                      .pushNamed(RoutesHDr
+                                                          .PERIPHERAL_SERVICE);
+                                                }
+                                              });
+                                            }
+                                          });
                                         },
                                       );
                                       // Container(

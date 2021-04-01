@@ -154,7 +154,9 @@ class PeripheralSeverRepository extends BaseApiClient {
     try {
       //
       final response = await putApi(url, null, null);
-      if (response.statusCode == 204) {
+      print('GO INTO THIS FUNCTION');
+      print('response: ${response.body}');
+      if (response.statusCode == 200) {
         print('UPDATE STATUS $status OF CONNECT PERIPHERAL SUCCESS');
         return true;
       } else {
