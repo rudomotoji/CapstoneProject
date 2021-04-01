@@ -27,6 +27,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class CreateMedicalInstructionView extends StatefulWidget {
   @override
@@ -46,7 +47,8 @@ class _CreateMedicalInstructionViewState
   String _imgString = '';
   String nowDate = '${DateTime.now()}';
   List<MedicalInstructionTypeDTO> _listMedInsType = [];
-  double percenntCompare = 0;
+  double percenntCompare = 100;
+  var f = NumberFormat("###.0#", "en_US");
 
   var _dianoseController = TextEditingController();
   MedicalInstructionHelper _medicalInstructionHelper =
@@ -68,6 +70,7 @@ class _CreateMedicalInstructionViewState
     _medInsCreateBloc = BlocProvider.of(context);
     // _medicalScanText = BlocProvider.of(context);
     _medInsTypeListBloc = BlocProvider.of(context);
+    getDataFromJSONFile();
     _getPatientId();
     getHRId();
   }
@@ -77,7 +80,9 @@ class _CreateMedicalInstructionViewState
 
     if (response.contains('percentCompare')) {
       final data = await json.decode(response);
-      percenntCompare = data["percentCompare"];
+      setState(() {
+        percenntCompare = data["percentCompare"];
+      });
     }
   }
 
@@ -280,14 +285,17 @@ class _CreateMedicalInstructionViewState
                           padding: EdgeInsets.only(bottom: 10),
                         ),
                         (_imgFile == null) ? Container() : checktitle(),
+                        (titleCompare != null)
+                            ? Text('${f.format(titleCompare * 100)} %')
+                            : Container(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             InkWell(
                               child: Container(
-                                width: 120,
-                                height: 120,
+                                width: (_imgString == '') ? 120 : 50,
+                                height: (_imgString == '') ? 120 : 50,
                                 decoration: BoxDecoration(
                                   color: DefaultTheme.TRANSPARENT,
                                   border: Border.all(
@@ -300,7 +308,7 @@ class _CreateMedicalInstructionViewState
                                   child: Text(
                                     (_imgString == '')
                                         ? 'Chọn ảnh +'
-                                        : 'Chọn ảnh khác',
+                                        : 'Chọn lại',
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: DefaultTheme.BLUE_REFERENCE),
@@ -377,6 +385,7 @@ class _CreateMedicalInstructionViewState
                                 }
                               },
                             ),
+                            Padding(padding: EdgeInsets.only(right: 10),),
                             (_imgString == '')
                                 ? Container()
                                 : ClipRRect(

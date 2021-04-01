@@ -261,10 +261,11 @@ class _HeaderWidget extends State<HeaderWidget> {
                     children: [
                       Align(
                         alignment: Alignment.centerRight,
-                        child: Text(
-                            (_patientDTO.fullName.split(' ').length > 1)
-                                ? '${_patientDTO.fullName.split(' ')[1]} ${_patientDTO.fullName.split(' ').last}'
-                                : '${_patientDTO.fullName}',
+                        child:
+                        Text('${_patientDTO.fullName}',
+                            // (_patientDTO.fullName.split(' ').length >= 2)
+                            //     ? '${_patientDTO.fullName.split(' ').first} ${_patientDTO.fullName.split(' ').last}'
+                            //     : '${_patientDTO.fullName}',
                             style: TextStyle(fontWeight: FontWeight.w500)),
                       ),
                       Padding(padding: EdgeInsets.only(left: 10)),

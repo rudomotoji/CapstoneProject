@@ -723,13 +723,15 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
           );
         }
         if (state is DiseaseListStateSuccess) {
-          if (state.listDisease.length > 0) {
+          if (state.listDisease != null) {
             _listDisease = state.listDisease;
           }
           return _selectBoxInsOtherDissease();
         }
         if (state is DiseaseHeartListStateSuccess) {
-          _listDiseaseForHeart = state.listDiseaseContract;
+          if(state.listDiseaseContract!=null){
+            _listDiseaseForHeart = state.listDiseaseContract;
+          }
           return _selectBoxInsHeart();
         }
         return Container();
