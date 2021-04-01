@@ -63,4 +63,20 @@ class ArrayValidator {
     });
     return mostPopularValues;
   }
+
+  String phoneNumberValidator(String value) {
+    Pattern pattern = r'^(?:[+84])?[0-9]{10}$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value))
+      return 'SĐT không đúng với cấu trúc (0123456789)';
+    else
+      return null;
+  }
+
+  bool validateEmail(String value) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    return (!regex.hasMatch(value)) ? false : true;
+  }
 }

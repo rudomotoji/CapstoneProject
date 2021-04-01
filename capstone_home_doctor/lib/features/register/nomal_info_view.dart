@@ -81,7 +81,6 @@ class _NomalInfoViewState extends State<NomalInfoView> {
                 children: <Widget>[
                   addRadioButton(0, 'Nam'),
                   addRadioButton(1, 'Nữ'),
-                  addRadioButton(2, 'Khác'),
                 ],
               ),
             ],

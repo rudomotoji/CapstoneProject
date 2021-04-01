@@ -632,13 +632,17 @@ class _CreateMedicalInstructionViewState
                                   child: Image.asset(
                                       'assets/images/ic-failed.png'),
                                 ),
-                                Text(
-                                  'Không thể tạo bệnh án, vui lòng tạo lại',
-                                  style: TextStyle(
-                                      color: DefaultTheme.GREY_TEXT,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                      decoration: TextDecoration.none),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    'Không thể tạo bệnh án, vui lòng tạo lại',
+                                    style: TextStyle(
+                                        color: DefaultTheme.GREY_TEXT,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                        decoration: TextDecoration.none),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
                               ],
                             ),

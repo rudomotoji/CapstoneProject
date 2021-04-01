@@ -701,7 +701,7 @@ class _ScheduleView extends State<ScheduleView>
         );
       },
     );
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 2), () {
       Navigator.of(context).pop();
       Navigator.of(context).pop();
       _getPatientId();
@@ -732,13 +732,17 @@ class _ScheduleView extends State<ScheduleView>
                       height: 100,
                       child: Image.asset('assets/images/ic-failed.png'),
                     ),
-                    Text(
-                      '$title',
-                      style: TextStyle(
-                          color: DefaultTheme.GREY_TEXT,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          decoration: TextDecoration.none),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$title',
+                        style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            decoration: TextDecoration.none),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                 ),

@@ -16,21 +16,22 @@ class PatientDTO {
   List<RelativeDTO> relatives;
   PatientHealthRecordDTO patientHealthRecord;
 
-  PatientDTO(
-      {this.patientId,
-      this.fullName,
-      this.gender,
-      this.phoneNumber,
-      this.email,
-      this.address,
-      this.dateOfBirth,
-      this.career,
-      this.height,
-      this.weight,
-      this.dateStarted,
-      this.dateFinished,
-      this.relatives,
-      this.patientHealthRecord});
+  PatientDTO({
+    this.patientId,
+    this.fullName,
+    this.gender,
+    this.phoneNumber,
+    this.email,
+    this.address,
+    this.dateOfBirth,
+    this.career,
+    this.height,
+    this.weight,
+    this.dateStarted,
+    this.dateFinished,
+    this.relatives,
+    this.patientHealthRecord,
+  });
 
   PatientDTO.fromJson(Map<String, dynamic> json) {
     patientId = json['patientId'];
@@ -78,6 +79,21 @@ class PatientDTO {
     }
     return data;
   }
+
+  Map<String, dynamic> toJsonRegister() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['fullName'] = this.fullName;
+    data['phoneNumber'] = this.phoneNumber;
+    data['email'] = this.email;
+    data['address'] = this.address;
+    data['dateOfBirth'] = this.dateOfBirth;
+    data['gender'] = this.gender;
+    data['career'] = this.career;
+    if (this.patientHealthRecord != null) {
+      data['patientHealthRecord'] = this.patientHealthRecord.toJsonRegister();
+    }
+    return data;
+  }
 }
 
 class PatientHealthRecordDTO {
@@ -86,13 +102,16 @@ class PatientHealthRecordDTO {
   String personalMedicalHistory;
   String familyMedicalHistory;
   List<RelativeDTO> relatives;
+  List<RelativeRegisterDTO> relativesRegister;
 
-  PatientHealthRecordDTO(
-      {this.height,
-      this.weight,
-      this.personalMedicalHistory,
-      this.familyMedicalHistory,
-      this.relatives});
+  PatientHealthRecordDTO({
+    this.height,
+    this.weight,
+    this.personalMedicalHistory,
+    this.familyMedicalHistory,
+    this.relatives,
+    this.relativesRegister,
+  });
 
   PatientHealthRecordDTO.fromJson(Map<String, dynamic> json) {
     height = json['height'];
@@ -115,6 +134,19 @@ class PatientHealthRecordDTO {
     data['familyMedicalHistory'] = this.familyMedicalHistory;
     if (this.relatives != null) {
       data['relatives'] = this.relatives.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+
+  Map<String, dynamic> toJsonRegister() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['height'] = this.height;
+    data['weight'] = this.weight;
+    data['personalMedicalHistory'] = this.personalMedicalHistory;
+    data['familyMedicalHistory'] = this.familyMedicalHistory;
+    if (this.relativesRegister != null) {
+      data['relatives'] =
+          this.relativesRegister.map((v) => v.toJson()).toList();
     }
     return data;
   }
