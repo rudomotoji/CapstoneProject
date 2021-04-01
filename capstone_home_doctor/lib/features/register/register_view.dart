@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/slide_dot.dart';
@@ -37,7 +38,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
   final _careerController = TextEditingController();
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
-  List gender = ["Nam", "Nữ", "Khác"];
+  List gender = ["Nam", "Nữ"];
   String selectGender = 'Nam';
   String birthday;
 
@@ -59,6 +60,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
     RegisterPage3(),
     RegisterPage4(),
   ];
+  ArrayValidator _validator = ArrayValidator();
 
   RegisterRepository _registerRepository =
       RegisterRepository(httpClient: http.Client());
@@ -132,21 +134,21 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                         );
                       } else if (i == 3) {
                         return RegisterPage4(
-                          listRelative: listRelative,
-                          relativeNameController: relativeNameController,
-                          phoneRelativeController: phoneRelativeController,
-                          addRelative: () {
-                            RelativeDTO dto = RelativeDTO(
-                              fullName: relativeNameController.text,
-                              phoneNumber: phoneRelativeController.text,
-                            );
-                            setState(() {
-                              listRelative.add(dto);
-                            });
-                            relativeNameController.text = '';
-                            phoneRelativeController.text = '';
-                          },
-                        );
+                            listRelative: listRelative,
+                            relativeNameController: relativeNameController,
+                            phoneRelativeController: phoneRelativeController,
+                            addRelative: () {
+                              RelativeDTO dto = RelativeDTO(
+                                fullName: relativeNameController.text,
+                                phoneNumber: phoneRelativeController.text,
+                              );
+                              setState(() {
+                                listRelative.add(dto);
+                              });
+                              relativeNameController.text = '';
+                              phoneRelativeController.text = '';
+                            },
+                            deleteRelative: deleteRelative);
                       }
                     },
                   ),
@@ -227,6 +229,15 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                             birthday == null) {
                           alertError(
                               'Vui lòng điền đầy đủ thông tin có dấu (*)');
+                        } else if (_validator
+                                .phoneNumberValidator(_phoneController.text) !=
+                            null) {
+                          alertError(_validator
+                              .phoneNumberValidator(_phoneController.text));
+                        } else if (_emailController.text != '' &&
+                            !_validator.validateEmail(_emailController.text)) {
+                          alertError(
+                              'Vui lòng nhập đúng địa chỉ email (abc@gmail.com)');
                         } else {
                           checkError = true;
                         }
@@ -375,7 +386,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                                     );
                                   },
                                 );
-                                Future.delayed(const Duration(seconds: 1), () {
+                                Future.delayed(const Duration(seconds: 2), () {
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pop();
                                 });
@@ -410,16 +421,21 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                                                   child: Image.asset(
                                                       'assets/images/ic-failed.png'),
                                                 ),
-                                                Text(
-                                                  'Không thể tạo tài khoản, vui kiểm tra lại',
-                                                  style: TextStyle(
-                                                      color: DefaultTheme
-                                                          .GREY_TEXT,
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      decoration:
-                                                          TextDecoration.none),
+                                                Align(
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    'Không thể tạo tài khoản, vui kiểm tra lại',
+                                                    style: TextStyle(
+                                                        color: DefaultTheme
+                                                            .GREY_TEXT,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .none),
+                                                    textAlign: TextAlign.center,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -429,7 +445,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                                     );
                                   },
                                 );
-                                Future.delayed(const Duration(seconds: 1), () {
+                                Future.delayed(const Duration(seconds: 2), () {
                                   Navigator.of(context).pop();
                                 });
                               }
@@ -466,6 +482,12 @@ class _Register extends State<Register> with WidgetsBindingObserver {
     });
   }
 
+  deleteRelative(int index) {
+    setState(() {
+      listRelative.removeAt(index);
+    });
+  }
+
   alertError(String title) {
     setState(() {
       showDialog(
@@ -491,13 +513,17 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                         height: 100,
                         child: Image.asset('assets/images/ic-failed.png'),
                       ),
-                      Text(
-                        title,
-                        style: TextStyle(
-                            color: DefaultTheme.GREY_TEXT,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            decoration: TextDecoration.none),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$title',
+                          style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              decoration: TextDecoration.none),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ],
                   ),
@@ -507,7 +533,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
           );
         },
       );
-      Future.delayed(const Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 2), () {
         Navigator.of(context).pop();
       });
     });
@@ -524,7 +550,7 @@ class FormRegisterDTO {
     data['username'] = this.username;
     data['password'] = this.password;
     if (this.patientInformation != null) {
-      data['patientInformation'] = this.patientInformation.toJson();
+      data['patientInformation'] = this.patientInformation.toJsonRegister();
     }
     return data;
   }

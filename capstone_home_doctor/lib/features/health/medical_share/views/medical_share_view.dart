@@ -843,13 +843,17 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                       height: 100,
                       child: Image.asset('assets/images/ic-failed.png'),
                     ),
-                    Text(
-                      title,
-                      style: TextStyle(
-                          color: DefaultTheme.GREY_TEXT,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          decoration: TextDecoration.none),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$title',
+                        style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            decoration: TextDecoration.none),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                 ),

@@ -7,6 +7,7 @@ class RegisterPage4 extends StatefulWidget {
   TextEditingController relativeNameController = TextEditingController();
   TextEditingController phoneRelativeController = TextEditingController();
   VoidCallback addRelative;
+  void Function(int) deleteRelative;
 
   RegisterPage4({
     Key key,
@@ -14,6 +15,7 @@ class RegisterPage4 extends StatefulWidget {
     this.relativeNameController,
     this.phoneRelativeController,
     this.addRelative,
+    this.deleteRelative,
   }) : super(key: key);
 
   @override
@@ -79,8 +81,22 @@ class _RegisterPage4State extends State<RegisterPage4> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.listRelative[index].fullName),
-                  Text(widget.listRelative[index].phoneNumber),
+                  Row(
+                    children: [
+                      Container(
+                        child: Column(
+                          children: [
+                            Text(widget.listRelative[index].fullName),
+                            Text(widget.listRelative[index].phoneNumber),
+                          ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => widget.deleteRelative(index),
+                        child: Text('Xóa'),
+                      )
+                    ],
+                  ),
                 ],
               );
             },
