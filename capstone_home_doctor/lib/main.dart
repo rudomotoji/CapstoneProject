@@ -111,12 +111,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
-
-final MORNING = 6;
-final NOON = 11;
-final AFTERNOON = 16;
-final NIGHT = 21;
-final MINUTES = 00;
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:capstone_home_doctor/commons/constants/global.dart' as globals;
 
 //helper
 final AuthenticateHelper authenHelper = AuthenticateHelper();
@@ -213,7 +209,7 @@ void checkNotifiMedical() async {
   final minute = DateTime.now().minute;
   var body = "";
 
-  if (hour == MORNING && minute == MINUTES) {
+  if (hour == globals.MORNING && minute == globals.MINUTES) {
     await _sqLiteHelper.getAllBy('morning').then((value) {
       for (var schedule in value) {
         if (!body.contains(schedule.medicationName)) {
@@ -225,7 +221,7 @@ void checkNotifiMedical() async {
       }
     });
   }
-  if (hour == NOON && minute == MINUTES) {
+  if (hour == globals.NOON && minute == globals.MINUTES) {
     await _sqLiteHelper.getAllBy('noon').then((value) {
       for (var schedule in value) {
         if (!body.contains(schedule.medicationName)) {
@@ -237,7 +233,7 @@ void checkNotifiMedical() async {
       }
     });
   }
-  if (hour == AFTERNOON && minute == MINUTES) {
+  if (hour == globals.AFTERNOON && minute == globals.MINUTES) {
     await _sqLiteHelper.getAllBy('afterNoon').then((value) {
       for (var schedule in value) {
         if (!body.contains(schedule.medicationName)) {
@@ -249,7 +245,7 @@ void checkNotifiMedical() async {
       }
     });
   }
-  if (hour == NIGHT && minute == MINUTES) {
+  if (hour == globals.NIGHT && minute == globals.MINUTES) {
     await _sqLiteHelper.getAllBy('night').then((value) {
       for (var schedule in value) {
         if (!body.contains(schedule.medicationName)) {
@@ -261,8 +257,11 @@ void checkNotifiMedical() async {
       }
     });
   }
-  if ((hour == MORNING || hour == NOON || hour == AFTERNOON || hour == NIGHT) &&
-      minute == MINUTES) {
+  if ((hour == globals.MORNING ||
+          hour == globals.NOON ||
+          hour == globals.AFTERNOON ||
+          hour == globals.NIGHT) &&
+      minute == globals.MINUTES) {
     var message = {
       "notification": {"title": "Nhắc nhở uống thuốc", "body": body},
       "data": {
@@ -528,7 +527,14 @@ void main() async {
         }
       });
     });
-  runApp(HomeDoctor());
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://0ccf617d2df8401a93b955bb5ea55728@o440638.ingest.sentry.io/5698108';
+    },
+    appRunner: () => runApp(HomeDoctor()),
+  );
+  // runApp(HomeDoctor());
 }
 
 _getPatientId() async {

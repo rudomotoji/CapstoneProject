@@ -30,6 +30,8 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   HealthRecordRepository healthRecordRepository =
       HealthRecordRepository(httpClient: http.Client());
   List<HealthRecordDTO> listHealthRecord = [];
+  List<HealthRecordDTO> listHealthRecordOld = [];
+  List<HealthRecordDTO> listHealthRecordSystem = [];
   DateValidator _dateValidator = DateValidator();
   HealthRecordListBloc _healthRecordListBloc;
   HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
@@ -214,10 +216,20 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
         }
         if (state is HRListStateSuccess) {
           listHealthRecord = state.listHealthRecord;
+          listHealthRecordOld = [];
+          listHealthRecordSystem = [];
           if (null != listHealthRecord) {
             if (listHealthRecord.length > 1) {
               listHealthRecord
                   .sort((a, b) => b.dateCreated.compareTo(a.dateCreated));
+            }
+
+            for (var item in listHealthRecord) {
+              if (item.contractId == null) {
+                listHealthRecordOld.add(item);
+              } else {
+                listHealthRecordSystem.add(item);
+              }
             }
           }
 
@@ -228,38 +240,82 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                     child: Text('Kiểm tra lại đường truyền kết nối mạng'),
                   ),
                 )
-              : ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: state.listHealthRecord.length,
-                  itemBuilder: (BuildContext buildContext, int index) {
-                    if (_valueFilter != null) {
-                      if (_valueFilter.value == 0) {
-                        if (state.listHealthRecord[index].contractId != null) {
-                          return _itemHealthRecord(
-                              state.listHealthRecord[index]);
-                        }
-                      }
-                      if (_valueFilter.value == 1) {
-                        if (state.listHealthRecord[index].contractId == null) {
-                          return _itemHealthRecord(
-                              state.listHealthRecord[index]);
-                        }
-                      }
-                      if (_valueFilter.value == 2) {
-                        return _itemHealthRecord(state.listHealthRecord[index]);
-                      }
-                    } else {
-                      return _itemHealthRecord(state.listHealthRecord[index]);
-                    }
-                  });
-          //
+              : checkListRender();
+
+          // ListView.builder(
+          //     shrinkWrap: true,
+          //     physics: NeverScrollableScrollPhysics(),
+          //     itemCount: listHealthRecord.length,
+          //     itemBuilder: (BuildContext buildContext, int index) {
+          // if (_valueFilter != null) {
+          //   if (_valueFilter.value == 0) {
+          //     if (listHealthRecord[index].contractId != null) {
+          //       return _itemHealthRecord(listHealthRecord[index]);
+          //     }
+          //   }
+          //   if (_valueFilter.value == 1) {
+          //     if (listHealthRecord[index].contractId == null) {
+          //       return _itemHealthRecord(listHealthRecord[index]);
+          //     }
+          //   }
+          //   if (_valueFilter.value == 2) {
+          //     return _itemHealthRecord(listHealthRecord[index]);
+          //   }
+          // } else {
+          //   return _itemHealthRecord(listHealthRecord[index]);
+          // }
+          //     });
+
         }
         return Container(
             width: MediaQuery.of(context).size.width,
             child: Center(child: Text('Không thể tải danh sách hồ sơ')));
       },
     );
+  }
+
+  checkListRender() {
+    if (_valueFilter != null) {
+      if (_valueFilter.value == 0) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: listHealthRecordSystem.length,
+          itemBuilder: (BuildContext buildContext, int index) {
+            return _itemHealthRecord(listHealthRecordSystem[index]);
+          },
+        );
+      }
+      if (_valueFilter.value == 1) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: listHealthRecordOld.length,
+          itemBuilder: (BuildContext buildContext, int index) {
+            return _itemHealthRecord(listHealthRecordOld[index]);
+          },
+        );
+      }
+      if (_valueFilter.value == 2) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: listHealthRecord.length,
+          itemBuilder: (BuildContext buildContext, int index) {
+            return _itemHealthRecord(listHealthRecord[index]);
+          },
+        );
+      }
+    } else {
+      return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: listHealthRecord.length,
+        itemBuilder: (BuildContext buildContext, int index) {
+          return _itemHealthRecord(listHealthRecord[index]);
+        },
+      );
+    }
   }
 
   Widget _itemHealthRecord(HealthRecordDTO dto) {
@@ -325,19 +381,19 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
-                  Positioned(
-                    width: 35,
-                    height: 35,
-                    top: -10,
-                    right: 0,
-                    child: ButtonHDr(
-                      style: BtnStyle.BUTTON_IMAGE,
-                      image: Image.asset('assets/images/ic-more.png'),
-                      onTap: () {
-                        _showMorePopup(dto.healthRecordId, dto.contractId);
-                      },
-                    ),
-                  ),
+                  // Positioned(
+                  //   width: 35,
+                  //   height: 35,
+                  //   top: -10,
+                  //   right: 0,
+                  //   child: ButtonHDr(
+                  //     style: BtnStyle.BUTTON_IMAGE,
+                  //     image: Image.asset('assets/images/ic-more.png'),
+                  //     onTap: () {
+                  //       _showMorePopup(dto.healthRecordId, dto.contractId);
+                  //     },
+                  //   ),
+                  // ),
                 ],
               ),
             ),

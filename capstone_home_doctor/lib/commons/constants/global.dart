@@ -29,3 +29,8 @@ List<TypeFilter> listFilter = [
   TypeFilter(label: 'Cũ', value: 1),
   TypeFilter(label: 'Tất cả', value: 2),
 ];
+int MORNING = 6;
+int NOON = 11;
+int AFTERNOON = 16;
+int NIGHT = 21;
+int MINUTES = 00;
