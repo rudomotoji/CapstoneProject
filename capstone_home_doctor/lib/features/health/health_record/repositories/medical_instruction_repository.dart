@@ -122,9 +122,6 @@ class MedicalInstructionRepository extends BaseApiClient {
                 str_list.toString().replaceAll(" ", "").toString(),
                 strCompare.replaceAll(" ", "").toString().toUpperCase());
 
-            // RegExp regExp = new RegExp(
-            //     r'[AÁẢÀÃẠÂẤẨẦẪẬĂẮẲẰẴẶBCDĐEÉẺÈẼẸÊẾỂỀỄỆFGHIÍỈÌĨỊJKLMNOÓỎÒÕỌƠỚỞỜỠỢÔỐỔỒỖỘPQTUÚỦÙŨỤƯỨỬỪỮỰVYWZ]');
-
             for (var itemString in str_list) {
               if (strSymptom != null && strSymptom != '') {
                 if (itemString.contains('-') && itemString.contains('/')) {

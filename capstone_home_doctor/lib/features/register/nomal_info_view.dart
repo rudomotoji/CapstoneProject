@@ -176,23 +176,41 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
-          TextFieldHDr(
-            style: TFStyle.BORDERED,
-            label: 'Chiều cao (*):',
-            placeHolder: '175',
-            inputType: TFInputType.TF_NUMBER,
-            controller: widget.heightController,
-            keyboardAction: TextInputAction.done,
-            onChange: (text) {},
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                width: MediaQuery.of(context).size.width - 100,
+                child: TextFieldHDr(
+                  style: TFStyle.BORDERED,
+                  label: 'Chiều cao (*):',
+                  placeHolder: '175',
+                  inputType: TFInputType.TF_NUMBER,
+                  controller: widget.heightController,
+                  keyboardAction: TextInputAction.done,
+                  onChange: (text) {},
+                ),
+              ),
+              Text('cm'),
+            ],
           ),
-          TextFieldHDr(
-            style: TFStyle.BORDERED,
-            label: 'Cân nặng (*):',
-            placeHolder: '59',
-            inputType: TFInputType.TF_NUMBER,
-            controller: widget.weightController,
-            keyboardAction: TextInputAction.done,
-            onChange: (text) {},
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                width: MediaQuery.of(context).size.width - 100,
+                child: TextFieldHDr(
+                  style: TFStyle.BORDERED,
+                  label: 'Cân nặng (*):',
+                  placeHolder: '59',
+                  inputType: TFInputType.TF_NUMBER,
+                  controller: widget.weightController,
+                  keyboardAction: TextInputAction.done,
+                  onChange: (text) {},
+                ),
+              ),
+              Text('kg'),
+            ],
           ),
         ],
       ),

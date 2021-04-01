@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -14,9 +15,9 @@ import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:capstone_home_doctor/commons/constants/global.dart' as globals;
 
 class ProfileTab extends StatefulWidget {
   @override
@@ -36,7 +37,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   HealthRecordListBloc _healthRecordListBloc;
   HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
 
-  List<TypeFilter> _listFilter = globals.listFilter;
+  List<TypeFilter> _listFilter = [];
   TypeFilter _valueFilter;
   int _patientId = 0;
   TabController controller;
@@ -49,11 +50,21 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     _healthRecordListBloc = BlocProvider.of(context);
     _scrollController = ScrollController(initialScrollOffset: 0.0);
 
-    setState(() {
-      _valueFilter = _listFilter[2];
-    });
+    getDataFromJSONFile();
+
     _getPatientId();
     refreshListHR();
+  }
+
+  Future<void> getDataFromJSONFile() async {
+    final String response = await rootBundle.loadString('assets/global.json');
+
+    if (response.contains('listFilter')) {
+      final data = await json.decode(response);
+      for (var item in data['listFilter']) {
+        _listFilter.add(TypeFilter.fromJson(item));
+      }
+    }
   }
 
   _getPatientId() async {
@@ -529,6 +540,10 @@ class TypeFilter {
   String label;
   int value;
   TypeFilter({this.label, this.value});
+  TypeFilter.fromJson(Map<String, dynamic> json) {
+    label = json['label'];
+    value = json['value'];
+  }
 }
 
 final Shader _normalHealthColors = LinearGradient(
