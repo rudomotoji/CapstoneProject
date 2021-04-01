@@ -853,7 +853,8 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                               Navigator.of(context).pop();
                               hrHelper.setHealthReCordId(value);
                               Navigator.of(context)
-                                  .pushNamed(RoutesHDr.HEALTH_RECORD_DETAIL);
+                                  .pushNamed(RoutesHDr.HEALTH_RECORD_DETAIL)
+                                  .then((value) => Navigator.of(context).pop());
                             },
                           ),
                         ],

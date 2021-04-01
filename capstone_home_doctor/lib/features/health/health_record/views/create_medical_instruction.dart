@@ -40,7 +40,7 @@ class _CreateMedicalInstructionViewState
   String _selectedHRType = '';
   PickedFile _imgFile;
   String _note = '';
-  String titleCompare = '';
+  double titleCompare = 0;
   String _imgString = '';
   String nowDate = '${DateTime.now()}';
   List<MedicalInstructionTypeDTO> _listMedInsType = [];
@@ -353,7 +353,73 @@ class _CreateMedicalInstructionViewState
                                 ),
                               ),
                               onTap: () async {
-                                _showPicker(context);
+                                if (_selectedHRType != '') {
+                                  _showPicker(context);
+                                } else {
+                                  setState(() {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Center(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5)),
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 25, sigmaY: 25),
+                                              child: Container(
+                                                width: 200,
+                                                height: 200,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: DefaultTheme.WHITE
+                                                        .withOpacity(0.8)),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 100,
+                                                      height: 100,
+                                                      child: Image.asset(
+                                                          'assets/images/ic-failed.png'),
+                                                    ),
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        'Hãy chọn loại phiếu trước',
+                                                        style: TextStyle(
+                                                            color: DefaultTheme
+                                                                .GREY_TEXT,
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .none),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                    Future.delayed(const Duration(seconds: 2),
+                                        () {
+                                      Navigator.of(context).pop();
+                                    });
+                                  });
+                                }
                               },
                             ),
                             (_imgString == '')
@@ -448,13 +514,7 @@ class _CreateMedicalInstructionViewState
                                       );
                                     });
 
-                                    var percentCompare = _selectedHRType
-                                        .toLowerCase()
-                                        .similarityTo(
-                                            titleCompare.toLowerCase());
-
-                                    if (percentCompare < 0.7 ||
-                                        titleCompare == '') {
+                                    if (titleCompare < 0.7) {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
@@ -600,34 +660,19 @@ class _CreateMedicalInstructionViewState
   }
 
   checktitle() {
-    if (titleCompare != '') {
-      var percentCompare = _selectedHRType
-          .toLowerCase()
-          .similarityTo(titleCompare.toLowerCase());
-      if (percentCompare > 0.7) {
+    if (titleCompare > 0) {
+      if (titleCompare > 0.7) {
         return Container();
       } else {
-        if (_selectedHRType == "") {
-          return Container(
-            child: Text(
-              'Bạn chưa chọn loại phiếu',
-              style: TextStyle(
-                color: DefaultTheme.RED_TEXT,
-                fontSize: 16,
-              ),
+        return Container(
+          child: Text(
+            'Hãy chắc chắn rằng đây là $_selectedHRType',
+            style: TextStyle(
+              color: DefaultTheme.RED_TEXT,
+              fontSize: 14,
             ),
-          );
-        } else {
-          return Container(
-            child: Text(
-              'Hãy chắc chắn rằng đây là $_selectedHRType',
-              style: TextStyle(
-                color: DefaultTheme.RED_TEXT,
-                fontSize: 14,
-              ),
-            ),
-          );
-        }
+          ),
+        );
       }
     } else {
       return Container(
@@ -732,13 +777,13 @@ class _CreateMedicalInstructionViewState
           );
 
           await _medicalInstructionRepository
-              .getTextFromImage(_imgFile.path)
+              .getTextFromImage(_imgFile.path, _selectedHRType)
               .then((value) {
             Navigator.of(context).pop();
             if (value != null) {
               setState(() {
                 _dianoseController.text = value.symptom;
-                titleCompare = value.title;
+                titleCompare = value.titleCompare;
               });
             }
           });
