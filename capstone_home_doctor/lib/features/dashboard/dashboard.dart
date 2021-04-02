@@ -25,6 +25,7 @@ import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/token_device_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
@@ -39,6 +40,7 @@ import 'package:intl/intl.dart';
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final MobileDeviceHelper _mobileDeviceHelper = MobileDeviceHelper();
 final VitalSignHelper vitalSignHelper = VitalSignHelper();
+final ContractHelper contractHelper = ContractHelper();
 
 //
 final Shader _normalHealthColors = LinearGradient(
@@ -110,6 +112,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       _vitalSignBloc
           .add(VitalSignEventGetList(type: vitalType, patientId: _patientId));
     }
+    _updateAvailableContract();
     _updateTokenDevice();
     // _getHeartRateValue();
   }
@@ -150,6 +153,10 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         _tokenDeviceBloc.add(TokenDeviceEventUpdate(dto: _tokenDeviceDTO));
       }
     }
+  }
+
+  _updateAvailableContract() async {
+    await contractHelper.updateAvailableDay('');
   }
 
   _getPatientId() async {

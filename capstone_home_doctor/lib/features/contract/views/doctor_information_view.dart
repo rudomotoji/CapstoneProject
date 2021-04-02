@@ -103,14 +103,14 @@ class _DoctorInformation extends State<DoctorInformation>
                   style: BtnStyle.BUTTON_BLACK,
                   label: 'Yêu cầu hợp đồng',
                   onTap: () {
-                    // _checkContractAvailable();
+                    _checkContractAvailable(arguments);
 
                     ///
                     ///
                     ///
                     // Navigator.of(context).pop();
-                    Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
-                        arguments: arguments);
+                    // Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
+                    //     arguments: arguments);
                   },
                 ),
               )
@@ -509,7 +509,7 @@ class _DoctorInformation extends State<DoctorInformation>
   }
 
   //
-  _checkContractAvailable() {
+  _checkContractAvailable(String arg) {
     setState(() {
       //
       showDialog(
@@ -523,7 +523,7 @@ class _DoctorInformation extends State<DoctorInformation>
                   child: Container(
                     padding: EdgeInsets.all(10),
                     width: 250,
-                    height: 150,
+                    height: 160,
                     decoration: BoxDecoration(
                       color: DefaultTheme.WHITE.withOpacity(0.7),
                     ),
@@ -572,78 +572,186 @@ class _DoctorInformation extends State<DoctorInformation>
               String msg = '';
               _contractHelper.getMsgCheckingContract().then((value) async {
                 msg = value;
-              });
-              Navigator.of(context).pop();
-              return showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                        child: Container(
-                          padding:
-                              EdgeInsets.only(left: 10, top: 10, right: 10),
-                          width: 250,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            color: DefaultTheme.WHITE.withOpacity(0.7),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                padding: EdgeInsets.only(bottom: 10, top: 10),
-                                child: Text(
-                                  'Gửi yêu cầu thất bại',
-                                  style: TextStyle(
-                                    decoration: TextDecoration.none,
-                                    color: DefaultTheme.BLACK,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 18,
-                                  ),
-                                ),
+                if (msg.contains('đang có hợp đồng chờ') ||
+                    msg.contains('chờ bạn chấp thuận') ||
+                    msg.contains('Kiểm tra lại kết nối mạng')) {
+                  Navigator.of(context).pop();
+                  return showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                            child: Container(
+                              padding:
+                                  EdgeInsets.only(left: 10, top: 10, right: 10),
+                              width: 250,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                color: DefaultTheme.WHITE.withOpacity(0.7),
                               ),
-                              Container(
-                                padding: EdgeInsets.only(left: 20, right: 20),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    '$msg',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      decoration: TextDecoration.none,
-                                      color: DefaultTheme.GREY_TEXT,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 13,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(bottom: 10, top: 10),
+                                    child: Text(
+                                      'Gửi yêu cầu thất bại',
+                                      style: TextStyle(
+                                        decoration: TextDecoration.none,
+                                        color: DefaultTheme.BLACK,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 18,
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '$msg',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.GREY_TEXT,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Divider(
+                                    height: 1,
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  ),
+                                  ButtonHDr(
+                                    height: 40,
+                                    style: BtnStyle.BUTTON_TRANSPARENT,
+                                    label: 'OK',
+                                    labelColor: DefaultTheme.BLUE_TEXT,
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
                               ),
-                              Spacer(),
-                              Divider(
-                                height: 1,
-                                color: DefaultTheme.GREY_TOP_TAB_BAR,
-                              ),
-                              ButtonHDr(
-                                height: 40,
-                                style: BtnStyle.BUTTON_TRANSPARENT,
-                                label: 'OK',
-                                labelColor: DefaultTheme.BLUE_TEXT,
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   );
-                },
-              );
+                } else {
+                  Navigator.of(context).pop();
+                  return showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                            child: Container(
+                              padding:
+                                  EdgeInsets.only(left: 10, top: 10, right: 10),
+                              width: 250,
+                              height: 185,
+                              decoration: BoxDecoration(
+                                color: DefaultTheme.WHITE.withOpacity(0.7),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(bottom: 10, top: 10),
+                                    child: Text(
+                                      'Lưu ý',
+                                      style: TextStyle(
+                                        decoration: TextDecoration.none,
+                                        color: DefaultTheme.BLACK,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '$msg',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.GREY_TEXT,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Divider(
+                                    height: 1,
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      FlatButton(
+                                        height: 40,
+                                        minWidth: 250 / 2 - 10.5,
+                                        child: Text('Đóng',
+                                            style: TextStyle(
+                                                color: DefaultTheme.BLUE_TEXT)),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      Container(
+                                        height: 40,
+                                        width: 0.5,
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                      ),
+                                      FlatButton(
+                                        height: 40,
+                                        minWidth: 250 / 2 - 10.5,
+                                        child: Text('Tiếp tục',
+                                            style: TextStyle(
+                                                color: DefaultTheme.BLUE_TEXT)),
+                                        onPressed: () {
+                                          //
+                                          Navigator.of(context).pop();
+                                          Navigator.pushNamed(context,
+                                              RoutesHDr.CONTRACT_SHARE_VIEW,
+                                              arguments: arg);
+                                          //////
+                                          //////
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              });
             }
           });
         });

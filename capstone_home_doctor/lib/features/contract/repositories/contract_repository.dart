@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/models/contract_detail_dto.dart';
 import 'package:capstone_home_doctor/models/contract_full_dto.dart';
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 final ContractHelper _contractHelper = ContractHelper();
+final DateValidator _dateValidator = DateValidator();
 
 class ContractRepository extends BaseApiClient {
   final http.Client httpClient;
@@ -144,18 +146,86 @@ class ContractRepository extends BaseApiClient {
         } else if (response.contains('APPROVED')) {
           _contractHelper.updateContractCheckingStatus(
               false, 'Bác sĩ đã xác nhận hợp đồng và chờ bạn chấp thuận.');
-        } else if (response == 'ACTIVE') {
-          _contractHelper.updateContractCheckingStatus(
-              false, 'Bạn đang có hợp đồng đang hiện  hành với bác sĩ.');
+        } else if (response == null) {
+          _contractHelper.updateContractCheckingStatus(true, 'OK');
         } else {
-          //
-          _contractHelper.updateContractCheckingStatus(
-              false, 'Kiểm tra lại kết nối mạng.');
+          _contractHelper.updateContractCheckingStatus(false,
+              'Bạn đang có hợp đồng với bác sỹ này. Ngày kết thúc là ngày ${response}. Bạn có muốn tiếp tục?');
+          _contractHelper.updateAvailableDay(response);
         }
       } else {
         //
         _contractHelper.updateContractCheckingStatus(
             false, 'Kiểm tra lại kết nối mạng');
+        return false;
+      }
+    } catch (e) {
+      print('ERROR AT CHECK CONTRACT TO CREATE ${e}');
+    }
+  }
+
+  //check contract to create
+  Future<bool> checkContractToCreate2(
+      int doctorId, int patientId, String date) async {
+    final url =
+        '/Contracts/CheckContractToCreate?doctorId=${doctorId}&patientId=${patientId}&dateStart=${date}';
+    try {
+      //
+      final request = await getApi(url, null);
+      print('request this: $request');
+      print(
+          'go into check contract date. status code is ${request.statusCode}');
+
+      print('go into check contract date. body code is ${request.body}');
+      if (request.statusCode == 200) {
+        // // //
+        // // _contractHelper.updateContractCheckingStatus(
+        // //     false, 'Bạn đã có hợp đồng với bác sĩ này');
+        // // return false;
+        final response = request.body;
+        if (response != null || response.isNotEmpty || response != '') {
+          DateTime timeReponse = DateTime(
+              int.tryParse(response.split('/')[0]),
+              int.tryParse(response.split('/')[1]),
+              int.tryParse(response.split('/')[2]));
+          DateTime timeGet = DateTime(
+              int.tryParse(date.split('-')[0]),
+              int.tryParse(date.split('-')[1]),
+              int.tryParse(date.split('-')[2]));
+          if (timeReponse.isBefore(timeGet)) {
+            print('GO INTO IS BEFORE?');
+            _contractHelper.updateContractCheckingStatus(
+                false, 'Vui lòng gửi yêu cầu sau ngày ${response}');
+            return false;
+          } else {
+            _contractHelper.updateContractCheckingStatus(true, 'OK');
+            return true;
+          }
+        } else {
+          _contractHelper.updateContractCheckingStatus(true, 'OK');
+          return true;
+        }
+
+        // if (response.contains('PENDING')) {
+        //   _contractHelper.updateContractCheckingStatus(
+        //       false, 'Bạn đang có hợp đồng chờ bác sĩ này xét duyệt.');
+        // } else if (response.contains('APPROVED')) {
+        //   _contractHelper.updateContractCheckingStatus(
+        //       false, 'Bác sĩ đã xác nhận hợp đồng và chờ bạn chấp thuận.');
+        // } else {
+        //   _contractHelper.updateContractCheckingStatus(false,
+        //       'Bạn đang có hợp đồng với bác sỹ này. Ngày kết thúc là ngày ${response}. Bạn có muốn tiếp tục?');
+        //   _contractHelper.updateAvailableDay(response);
+
+        // }
+
+      } else if (request.statusCode == 204) {
+        _contractHelper.updateContractCheckingStatus(true, 'OK');
+        return true;
+      } else {
+        //
+        _contractHelper.updateContractCheckingStatus(
+            false, 'Kiểm tra kết nối mạng');
         return false;
       }
     } catch (e) {

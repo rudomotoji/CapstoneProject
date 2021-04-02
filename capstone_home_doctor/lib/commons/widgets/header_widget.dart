@@ -12,6 +12,7 @@ import 'package:capstone_home_doctor/features/information/states/patient_state.d
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
 import 'package:capstone_home_doctor/models/patient_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
@@ -26,6 +27,7 @@ final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final VitalSignHelper _vitalSignHelper = VitalSignHelper();
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
 final PeripheralRepository _peripheralRepository = PeripheralRepository();
+final ContractHelper _contractHelper = ContractHelper();
 
 //
 final ArrayValidator _arrayValidator = ArrayValidator();
@@ -261,8 +263,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                     children: [
                       Align(
                         alignment: Alignment.centerRight,
-                        child:
-                        Text('${_patientDTO.fullName}',
+                        child: Text('${_patientDTO.fullName}',
                             // (_patientDTO.fullName.split(' ').length >= 2)
                             //     ? '${_patientDTO.fullName.split(' ').first} ${_patientDTO.fullName.split(' ').last}'
                             //     : '${_patientDTO.fullName}',
@@ -411,6 +412,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                             await _vitalSignHelper.updateCheckToNormal(false);
                             await _vitalSignHelper.updateCountToNormal(0);
                             await _sqfLiteHelper.deleteVitalSignSchedule();
+                            await _contractHelper.updateAvailableDay('');
                             //
                             Navigator.pushNamedAndRemoveUntil(
                                 context,

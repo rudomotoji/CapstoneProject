@@ -137,4 +137,28 @@ class ContractHelper {
     }
     return prefs.getInt('CONTRACT_ID');
   }
+
+  //FOR SAVE AVAILABLE DAY
+  Future<void> initialAvailableDay() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('AVAILABLE_DAY_CONTRACT', '');
+  }
+
+  Future<void> updateAvailableDay(String day) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('AVAILABLE_DAY_CONTRACT') ||
+        prefs.getString('AVAILABLE_DAY_CONTRACT') == null) {
+      initialAvailableDay();
+    }
+    prefs.setString('AVAILABLE_DAY_CONTRACT', day);
+  }
+
+  Future<String> getAvailableDay() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('AVAILABLE_DAY_CONTRACT') ||
+        prefs.getString('AVAILABLE_DAY_CONTRACT') == null) {
+      initialAvailableDay();
+    }
+    return prefs.getString('AVAILABLE_DAY_CONTRACT');
+  }
 }

@@ -747,6 +747,7 @@ class _ContractShareView extends State<ContractShareView>
                                                             .BLUE_TEXT)),
                                                 onPressed: () {
                                                   //
+                                                  Navigator.of(context).pop();
                                                   Navigator.of(context).pushNamed(
                                                       RoutesHDr
                                                           .CONTRACT_REASON_VIEW,

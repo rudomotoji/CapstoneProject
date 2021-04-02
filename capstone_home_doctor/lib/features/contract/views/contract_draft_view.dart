@@ -17,6 +17,7 @@ import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dar
 import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
+import 'package:capstone_home_doctor/main.dart';
 import 'package:capstone_home_doctor/models/doctor_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
@@ -789,7 +790,7 @@ class _ContractDraftView extends State<ContractDraftView>
                           child: ButtonHDr(
                               label: 'Gửi yêu cầu',
                               style: BtnStyle.BUTTON_BLACK,
-                              onTap: () {
+                              onTap: () async {
                                 if (_isAccept2) {
                                   if (_requestContract.doctorId != 0 ||
                                       _requestContract.doctorId != null) {
@@ -797,7 +798,10 @@ class _ContractDraftView extends State<ContractDraftView>
                                         _requestContract.patientId != 0) {
                                       _requestContract.dateStarted = dateStart;
                                       _requestContract.note = note;
-                                      _sendRequestContract(_requestContract);
+                                      await contractHelper
+                                          .updateAvailableDay('');
+                                      await _sendRequestContract(
+                                          _requestContract);
                                     }
                                   } else {
                                     return showDialog(

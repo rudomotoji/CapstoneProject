@@ -11,7 +11,7 @@ import 'package:capstone_home_doctor/features/contract/blocs/contract_checking_b
 import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
-
+import 'package:flutter/cupertino.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_update_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/disease_list_bloc.dart';
@@ -1236,6 +1236,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     if (!prefs.containsKey('COUNT_TO_NORMAL')) {
       _vitalSignHelper.initialCountToNormal();
     }
+    if (!prefs.containsKey('AVAILABLE_DAY_CONTRACT')) {
+      contractHelper.initialAvailableDay();
+    }
   }
 
   @override
@@ -1467,6 +1470,17 @@ class _HomeDoctorState extends State<HomeDoctor> {
             ],
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
+              // localizationsDelegates: [
+              //   // ... app-specific localization delegate[s] here
+              //   // GlobalMaterialLocalizations.delegate,
+              //   // GlobalWidgetsLocalizations.delegate,
+              //   DefaultCupertinoLocalizations.delegate,
+              // ],
+              // supportedLocales: [
+              //   const Locale('en', 'US'), // English
+              //   const Locale('vi', 'VI'),
+              //   // ... other locales the app supports
+              // ],
               // theme: ThemeData(fontFamily: 'SFPro'),
               initialRoute: RoutesHDr.INITIAL_ROUTE,
               routes: {
