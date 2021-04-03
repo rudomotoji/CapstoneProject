@@ -24,6 +24,7 @@ import 'package:capstone_home_doctor/models/setting_background_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
@@ -72,6 +73,8 @@ class _MainHomeState extends State<MainHome> {
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
+  Stream<ReceiveNotification> _notificationsStream;
+
   @override
   void initState() {
     super.initState();
@@ -87,6 +90,11 @@ class _MainHomeState extends State<MainHome> {
       print(payload);
       var navigate = jsonDecode(payload);
       await Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
+    });
+
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((notification) {
+      _getAccountId();
     });
 
     //check wifi/mobile or offline connection

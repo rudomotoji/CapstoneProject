@@ -11,6 +11,8 @@ import 'package:capstone_home_doctor/features/contract/blocs/contract_checking_b
 import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
+import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_update_bloc.dart';
@@ -166,7 +168,6 @@ VitalSignRepository _vitalSignRepository = VitalSignRepository();
 VitalSignScheduleDTO _vitalSignScheduleDTO = VitalSignScheduleDTO();
 
 void _handleGeneralMessage(Map<String, dynamic> message) async {
-  print('message android: $message');
   String payload;
   ReceiveNotification receiveNotification;
   if (message.containsKey('data')) {
@@ -192,7 +193,6 @@ void _handleGeneralMessage(Map<String, dynamic> message) async {
 void _handleIOSGeneralMessage(Map<String, dynamic> message) async {
   String payload = jsonEncode(message);
   ReceiveNotification receiveNotification;
-  print('payload ios: $payload');
   final dynamic notification = message['aps']['alert'];
 
   receiveNotification = ReceiveNotification(
@@ -233,11 +233,13 @@ void checkNotifiMedical() async {
 
   if (hour == MORNING && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('morning').then((value) {
-      for (var schedule in value) {
-        if (!body.contains(schedule.medicationName)) {
-          body += schedule.medicationName + ', ';
-          if (value.length == 1) {
-            body = schedule.medicationName;
+      if (value.length > 0) {
+        for (var schedule in value) {
+          if (!body.contains(schedule.medicationName)) {
+            body += schedule.medicationName + ', ';
+            if (value.length == 1) {
+              body = schedule.medicationName;
+            }
           }
         }
       }
@@ -245,11 +247,13 @@ void checkNotifiMedical() async {
   }
   if (hour == NOON && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('noon').then((value) {
-      for (var schedule in value) {
-        if (!body.contains(schedule.medicationName)) {
-          body += schedule.medicationName + ', ';
-          if (value.length == 1) {
-            body = schedule.medicationName;
+      if (value.length > 0) {
+        for (var schedule in value) {
+          if (!body.contains(schedule.medicationName)) {
+            body += schedule.medicationName + ', ';
+            if (value.length == 1) {
+              body = schedule.medicationName;
+            }
           }
         }
       }
@@ -257,11 +261,13 @@ void checkNotifiMedical() async {
   }
   if (hour == AFTERNOON && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('afterNoon').then((value) {
-      for (var schedule in value) {
-        if (!body.contains(schedule.medicationName)) {
-          body += schedule.medicationName + ', ';
-          if (value.length == 1) {
-            body = schedule.medicationName;
+      if (value.length > 0) {
+        for (var schedule in value) {
+          if (!body.contains(schedule.medicationName)) {
+            body += schedule.medicationName + ', ';
+            if (value.length == 1) {
+              body = schedule.medicationName;
+            }
           }
         }
       }
@@ -269,18 +275,21 @@ void checkNotifiMedical() async {
   }
   if (hour == NIGHT && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('night').then((value) {
-      for (var schedule in value) {
-        if (!body.contains(schedule.medicationName)) {
-          body += schedule.medicationName + ', ';
-          if (value.length == 1) {
-            body = schedule.medicationName;
+      if (value.length > 0) {
+        for (var schedule in value) {
+          if (!body.contains(schedule.medicationName)) {
+            body += schedule.medicationName + ', ';
+            if (value.length == 1) {
+              body = schedule.medicationName;
+            }
           }
         }
       }
     });
   }
   if ((hour == MORNING || hour == NOON || hour == AFTERNOON || hour == NIGHT) &&
-      minute == MINUTES) {
+      minute == MINUTES &&
+      body != null) {
     var message = {
       "notification": {"title": "Nhắc nhở uống thuốc", "body": body},
       "data": {
@@ -1280,7 +1289,6 @@ class _HomeDoctorState extends State<HomeDoctor> {
         Platform.isIOS
             ? _handleIOSGeneralMessage(message)
             : _handleGeneralMessage(message);
-        print('Whats on OnMessage?');
       },
       // onBackgroundMessage: (Map<String, dynamic> message) async {
       //   print('onBackgroundMessage: $message');
@@ -1330,6 +1338,33 @@ class _HomeDoctorState extends State<HomeDoctor> {
 
   onNotificationReceive(message) {
     print('message: $message');
+    String payload = jsonEncode(message);
+    ReceiveNotification notiData;
+
+    if (Platform.isIOS) {
+      final dynamic notification = message['aps']['alert'];
+      notiData = ReceiveNotification(
+          id: 0,
+          title: notification["title"],
+          body: notification["body"],
+          payload: payload);
+
+      NotificationsBloc.instance.newNotification(notiData);
+    }
+    if (Platform.isAndroid) {
+      if (message.containsKey('data')) {
+        final dynamic data = message['data'];
+        payload = jsonEncode(data);
+      }
+      final dynamic notification = message['notification'];
+      notiData = ReceiveNotification(
+          id: 0,
+          title: notification["title"],
+          body: notification["body"],
+          payload: payload);
+
+      NotificationsBloc.instance.newNotification(notiData);
+    }
   }
 
   @override

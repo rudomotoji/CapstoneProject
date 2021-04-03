@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -27,6 +29,8 @@ import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
@@ -99,6 +103,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   List<MedicalInstructionDTO> listPrescription = [];
   List<AppointmentDTO> _listAppointment = [];
 
+  Stream<ReceiveNotification> _notificationsStream;
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -115,6 +121,16 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     _updateAvailableContract();
     _updateTokenDevice();
     // _getHeartRateValue();
+
+    selectNotificationSubject.stream.listen((String payload) async {
+      await _getPatientId();
+    });
+
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((notification) {
+      print('Notification: $notification');
+      _getPatientId();
+    });
   }
 
   @override

@@ -729,7 +729,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
           return _selectBoxInsOtherDissease();
         }
         if (state is DiseaseHeartListStateSuccess) {
-          if(state.listDiseaseContract!=null){
+          if (state.listDiseaseContract != null) {
             _listDiseaseForHeart = state.listDiseaseContract;
           }
           return _selectBoxInsHeart();

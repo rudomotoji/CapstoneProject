@@ -6,6 +6,8 @@ import 'package:capstone_home_doctor/features/vital_sign/events/vital_schedule_e
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_schedule_state.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,12 +27,20 @@ class _OverviewTabState extends State<OverviewTab> {
   VitalScheduleBloc _vitalScheduleBloc;
   int _patientId = 0;
   var uuid = Uuid();
+
+  Stream<ReceiveNotification> _notificationsStream;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _getPatientId();
     _vitalScheduleBloc = BlocProvider.of(context);
+
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((notification) {
+      _getPatientId();
+    });
   }
 
   _getPatientId() async {

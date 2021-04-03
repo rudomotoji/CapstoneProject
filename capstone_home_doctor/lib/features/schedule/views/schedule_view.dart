@@ -16,6 +16,8 @@ import 'package:capstone_home_doctor/models/appointment_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/services/appointment_helper.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -59,11 +61,12 @@ class _ScheduleView extends State<ScheduleView>
   CalendarController _calendarController;
   AppointmentBloc _appointmentBloc;
 
+  Stream<ReceiveNotification> _notificationsStream;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getPatientId();
     _prescriptionListBloc = BlocProvider.of(context);
     _appointmentBloc = BlocProvider.of(context);
 
@@ -73,6 +76,12 @@ class _ScheduleView extends State<ScheduleView>
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
+    _getPatientId();
+
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((notification) {
+      _getPatientId();
+    });
 
     _animationController.forward();
   }

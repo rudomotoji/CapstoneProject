@@ -16,6 +16,8 @@ import 'package:capstone_home_doctor/features/contract/states/contract_list_stat
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -68,11 +70,18 @@ class _ManageContract extends State<ManageContract> {
   int _patientId = 0;
   int _contractId = 0;
 
+  Stream<ReceiveNotification> _notificationsStream;
+
   @override
   void initState() {
     super.initState();
     _getPatientId();
     _contractListBloc = BlocProvider.of(context);
+
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((notification) {
+      _getPatientId();
+    });
   }
 
   _getPatientId() async {
