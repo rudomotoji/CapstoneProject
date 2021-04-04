@@ -21,9 +21,11 @@ class NomalInfoView extends StatefulWidget {
 
   List gender;
   String select, dateOfBirth;
+  bool verified = false;
 
   void Function(String) birthday;
   void Function(String) choiceGender;
+  void Function(bool) setVerify;
 
   NomalInfoView({
     Key key,
@@ -39,6 +41,8 @@ class NomalInfoView extends StatefulWidget {
     this.birthday,
     this.dateOfBirth,
     this.choiceGender,
+    this.setVerify,
+    this.verified,
   }) : super(key: key);
 
   @override
@@ -50,6 +54,15 @@ class _NomalInfoViewState extends State<NomalInfoView> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _verificationId;
   TextEditingController _smsController = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      verified = widget.verified;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +90,9 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             children: [
               Container(
                 margin: EdgeInsets.only(right: 10),
-                width: MediaQuery.of(context).size.width - 150,
+                width: verified
+                    ? (MediaQuery.of(context).size.width - 100)
+                    : (MediaQuery.of(context).size.width - 150),
                 child: TextFieldHDr(
                   style: TFStyle.BORDERED,
                   label: 'SĐT(*):',
@@ -85,42 +100,36 @@ class _NomalInfoViewState extends State<NomalInfoView> {
                   inputType: TFInputType.TF_PHONE,
                   controller: widget.phoneController,
                   keyboardAction: TextInputAction.done,
-                  onChange: (text) {},
+                  onChange: (text) {
+                    widget.setVerify(false);
+                    setState(() {
+                      verified = false;
+                    });
+                  },
                 ),
               ),
               (verified)
                   ? Container(
-                      child: Text(
-                        'Đã xác thực',
-                        style: TextStyle(color: DefaultTheme.BLUE_TEXT),
+                      // child: Text(
+                      //   'Đã xác thực',
+                      //   style: TextStyle(color: DefaultTheme.BLUE_TEXT),
+                      // ),
+                      //
+                      height: 20,
+                      width: 20,
+                      child: Image.asset(
+                        'assets/images/ic-checked.png',
+                        // height: MediaQuery.of(context).size.height * 0.20,
                       ),
                     )
                   : Container(
                       child: InkWell(
                         onTap: () async {
-                          // await FirebaseAuth.instance.verifyPhoneNumber(
-                          //   phoneNumber: '+84773770198',
-                          //   verificationCompleted:
-                          //       (PhoneAuthCredential credential) {
-                          //     print('verificationCompleted');
-                          //     setState(() {
-                          //       verified = true;
-                          //     });
-                          //   },
-                          //   verificationFailed: (FirebaseAuthException e) {
-                          //     print('FirebaseAuthException: $e');
-                          //   },
-                          //   codeSent: (String verificationId, int resendToken) {
-                          //     print(
-                          //         'codeSent: verificationId($verificationId), resendToken($resendToken)');
-                          //   },
-                          //   codeAutoRetrievalTimeout: (String verificationId) {
-                          //     print(
-                          //         'codeAutoRetrievalTimeout: $verificationId');
-                          //   },
-                          // );
-                          _verifyPhoneNumber();
-                          _showPopUpIDDoctor();
+                          String phoneNum =
+                              widget.phoneController.text.substring(1);
+
+                          _verifyPhoneNumber('+84$phoneNum');
+                          _showPopInputOTP();
                         },
                         child: Text(
                           'Xác thực ngay',
@@ -239,7 +248,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
   }
 
   // Code of how to verify phone number
-  Future<void> _verifyPhoneNumber() async {
+  Future<void> _verifyPhoneNumber(String phoneNum) async {
     PhoneVerificationCompleted verificationCompleted =
         (PhoneAuthCredential phoneAuthCredential) async {
       await _auth.signInWithCredential(phoneAuthCredential).then((value) {
@@ -247,12 +256,16 @@ class _NomalInfoViewState extends State<NomalInfoView> {
           setState(() {
             verified = true;
           });
+          _smsController.text = '';
+          widget.setVerify(true);
           Navigator.pop(context);
         } else {
           print("Error");
+          widget.setVerify(false);
         }
       }).catchError((onError) {
         print('_verifyPhoneNumber: $onError');
+        widget.setVerify(false);
       });
       print(
           'Phone number automatically verified and user signed in: $phoneAuthCredential');
@@ -277,7 +290,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
 
     try {
       await _auth.verifyPhoneNumber(
-          phoneNumber: widget.phoneController.text,
+          phoneNumber: phoneNum,
           timeout: const Duration(seconds: 60),
           verificationCompleted: verificationCompleted,
           verificationFailed: verificationFailed,
@@ -295,25 +308,29 @@ class _NomalInfoViewState extends State<NomalInfoView> {
         verificationId: _verificationId,
         smsCode: _smsController.text,
       );
-      UserCredential result =
-          await _auth.signInWithCredential(credential).then((value) {
+      await _auth.signInWithCredential(credential).then((value) {
         if (value.user != null) {
           setState(() {
             verified = true;
           });
+          _smsController.text = '';
+          widget.setVerify(true);
           Navigator.pop(context);
         } else {
           print("Error");
+          widget.setVerify(false);
         }
       }).catchError((onError) {
         print('_signInWithPhoneNumber: $onError');
+        widget.setVerify(false);
       });
     } catch (e) {
       print('Failed to sign in: $e');
+      widget.setVerify(false);
     }
   }
 
-  void _showPopUpIDDoctor() {
+  void _showPopInputOTP() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -425,69 +442,6 @@ class _NomalInfoViewState extends State<NomalInfoView> {
         ),
         Text(title)
       ],
-    );
-  }
-
-  void _showDatePickerStart() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(15)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width - 20,
-                height: MediaQuery.of(context).size.height * 0.5,
-                decoration: BoxDecoration(
-                  color: DefaultTheme.WHITE.withOpacity(0.6),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Ngày sinh(*):',
-                          style: TextStyle(
-                            fontSize: 25,
-                            color: DefaultTheme.BLACK,
-                            decoration: TextDecoration.none,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: CupertinoDatePicker(
-                          mode: CupertinoDatePickerMode.date,
-                          initialDateTime:
-                              DateTime.now().add(Duration(days: 5)),
-                          onDateTimeChanged: (dateTime) {
-                            widget.birthday(dateTime.toString());
-                            setState(() {
-                              widget.dateOfBirth = dateTime.toString();
-                            });
-                          }),
-                    ),
-                    ButtonHDr(
-                      style: BtnStyle.BUTTON_BLACK,
-                      label: 'Chọn',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

@@ -41,6 +41,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
   List gender = ["Nam", "Nữ"];
   String selectGender = 'Nam';
   String birthday;
+  bool verified = false;
 
   //page 2
   TextEditingController familyController = TextEditingController();
@@ -122,6 +123,8 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                             birthday: setBirthday,
                             dateOfBirth: birthday,
                             choiceGender: setGender,
+                            setVerify: setVerify,
+                            verified: verified,
                           );
                         } else if (i == 0) {
                           return RegisterPage1(
@@ -211,19 +214,19 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                         : 'Tiếp tục',
                     onTap: () async {
                       bool checkError = false;
-                      // if (_currentPage == 0) {
-                      //   if (usernameController.text == '' ||
-                      //       passwordController.text == '' ||
-                      //       passwordConfirmController.text == '') {
-                      //     alertError(
-                      //         'Vui lòng điền đầy đủ thông tin có dấu (*)');
-                      //   } else if (passwordController.text !=
-                      //       passwordConfirmController.text) {
-                      //     alertError('2 mật khẩu chưa trùng khớp');
-                      //   } else {
-                      checkError = true;
-                      //   }
-                      // }
+                      if (_currentPage == 0) {
+                        if (usernameController.text == '' ||
+                            passwordController.text == '' ||
+                            passwordConfirmController.text == '') {
+                          alertError(
+                              'Vui lòng điền đầy đủ thông tin có dấu (*)');
+                        } else if (passwordController.text !=
+                            passwordConfirmController.text) {
+                          alertError('2 mật khẩu chưa trùng khớp');
+                        } else {
+                          checkError = true;
+                        }
+                      }
                       if (_currentPage == 1) {
                         if (_fullNameController.text == '' ||
                             _phoneController.text == '' ||
@@ -233,6 +236,8 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                             birthday == null) {
                           alertError(
                               'Vui lòng điền đầy đủ thông tin có dấu (*)');
+                        } else if (!verified) {
+                          alertError('Vui lòng xác thực số điện thoại');
                         } else if (_validator
                                 .phoneNumberValidator(_phoneController.text) !=
                             null) {
@@ -486,6 +491,12 @@ class _Register extends State<Register> with WidgetsBindingObserver {
   setGender(String select) {
     setState(() {
       selectGender = select;
+    });
+  }
+
+  setVerify(bool res) {
+    setState(() {
+      verified = res;
     });
   }
 
