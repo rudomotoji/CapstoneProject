@@ -211,19 +211,19 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                         : 'Tiếp tục',
                     onTap: () async {
                       bool checkError = false;
-                      if (_currentPage == 0) {
-                        if (usernameController.text == '' ||
-                            passwordController.text == '' ||
-                            passwordConfirmController.text == '') {
-                          alertError(
-                              'Vui lòng điền đầy đủ thông tin có dấu (*)');
-                        } else if (passwordController.text !=
-                            passwordConfirmController.text) {
-                          alertError('2 mật khẩu chưa trùng khớp');
-                        } else {
-                          checkError = true;
-                        }
-                      }
+                      // if (_currentPage == 0) {
+                      //   if (usernameController.text == '' ||
+                      //       passwordController.text == '' ||
+                      //       passwordConfirmController.text == '') {
+                      //     alertError(
+                      //         'Vui lòng điền đầy đủ thông tin có dấu (*)');
+                      //   } else if (passwordController.text !=
+                      //       passwordConfirmController.text) {
+                      //     alertError('2 mật khẩu chưa trùng khớp');
+                      //   } else {
+                      checkError = true;
+                      //   }
+                      // }
                       if (_currentPage == 1) {
                         if (_fullNameController.text == '' ||
                             _phoneController.text == '' ||

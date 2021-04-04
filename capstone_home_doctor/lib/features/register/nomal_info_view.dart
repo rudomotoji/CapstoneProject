@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NomalInfoView extends StatefulWidget {
   TextEditingController fullNameController = TextEditingController();
@@ -19,6 +21,7 @@ class NomalInfoView extends StatefulWidget {
 
   List gender;
   String select, dateOfBirth;
+
   void Function(String) birthday;
   void Function(String) choiceGender;
 
@@ -43,6 +46,11 @@ class NomalInfoView extends StatefulWidget {
 }
 
 class _NomalInfoViewState extends State<NomalInfoView> {
+  bool verified = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _verificationId;
+  TextEditingController _smsController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -65,14 +73,62 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
-          TextFieldHDr(
-            style: TFStyle.BORDERED,
-            label: 'SĐT(*):',
-            placeHolder: '123456789',
-            inputType: TFInputType.TF_PHONE,
-            controller: widget.phoneController,
-            keyboardAction: TextInputAction.done,
-            onChange: (text) {},
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                width: MediaQuery.of(context).size.width - 150,
+                child: TextFieldHDr(
+                  style: TFStyle.BORDERED,
+                  label: 'SĐT(*):',
+                  placeHolder: '123456789',
+                  inputType: TFInputType.TF_PHONE,
+                  controller: widget.phoneController,
+                  keyboardAction: TextInputAction.done,
+                  onChange: (text) {},
+                ),
+              ),
+              (verified)
+                  ? Container(
+                      child: Text(
+                        'Đã xác thực',
+                        style: TextStyle(color: DefaultTheme.BLUE_TEXT),
+                      ),
+                    )
+                  : Container(
+                      child: InkWell(
+                        onTap: () async {
+                          // await FirebaseAuth.instance.verifyPhoneNumber(
+                          //   phoneNumber: '+84773770198',
+                          //   verificationCompleted:
+                          //       (PhoneAuthCredential credential) {
+                          //     print('verificationCompleted');
+                          //     setState(() {
+                          //       verified = true;
+                          //     });
+                          //   },
+                          //   verificationFailed: (FirebaseAuthException e) {
+                          //     print('FirebaseAuthException: $e');
+                          //   },
+                          //   codeSent: (String verificationId, int resendToken) {
+                          //     print(
+                          //         'codeSent: verificationId($verificationId), resendToken($resendToken)');
+                          //   },
+                          //   codeAutoRetrievalTimeout: (String verificationId) {
+                          //     print(
+                          //         'codeAutoRetrievalTimeout: $verificationId');
+                          //   },
+                          // );
+                          _verifyPhoneNumber();
+                          _showPopUpIDDoctor();
+                        },
+                        child: Text(
+                          'Xác thực ngay',
+                          style: TextStyle(color: DefaultTheme.RED_TEXT),
+                        ),
+                      ),
+                    ),
+            ],
           ),
           Row(
             children: [
@@ -85,41 +141,6 @@ class _NomalInfoViewState extends State<NomalInfoView> {
               ),
             ],
           ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 20, right: 20),
-          //   decoration: BoxDecoration(
-          //       borderRadius: BorderRadius.circular(6),
-          //       color: DefaultTheme.GREY_BUTTON),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.start,
-          //     crossAxisAlignment: CrossAxisAlignment.center,
-          //     children: <Widget>[
-          //       Padding(
-          //         padding: EdgeInsets.only(left: 20),
-          //       ),
-          //       Text(
-          //         widget.dateOfBirth == null ? '' : widget.dateOfBirth,
-          //         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-          //       ),
-          //       Spacer(),
-          //       ButtonHDr(
-          //         label: 'Chọn',
-          //         style: BtnStyle.BUTTON_FULL,
-          //         image: Image.asset('assets/images/ic-choose-date.png'),
-          //         width: 30,
-          //         height: 40,
-          //         labelColor: DefaultTheme.BLUE_DARK,
-          //         bgColor: DefaultTheme.TRANSPARENT,
-          //         onTap: () {
-          //           _showDatePickerStart();
-          //         },
-          //       ),
-          //       Padding(
-          //         padding: EdgeInsets.only(right: 10),
-          //       )
-          //     ],
-          //   ),
-          // ),
           Row(
             children: [
               Text('Ngày sinh (*):'),
@@ -214,6 +235,176 @@ class _NomalInfoViewState extends State<NomalInfoView> {
           ),
         ],
       ),
+    );
+  }
+
+  // Code of how to verify phone number
+  Future<void> _verifyPhoneNumber() async {
+    PhoneVerificationCompleted verificationCompleted =
+        (PhoneAuthCredential phoneAuthCredential) async {
+      await _auth.signInWithCredential(phoneAuthCredential).then((value) {
+        if (value.user != null) {
+          setState(() {
+            verified = true;
+          });
+          Navigator.pop(context);
+        } else {
+          print("Error");
+        }
+      }).catchError((onError) {
+        print('_verifyPhoneNumber: $onError');
+      });
+      print(
+          'Phone number automatically verified and user signed in: $phoneAuthCredential');
+    };
+
+    PhoneVerificationFailed verificationFailed =
+        (FirebaseAuthException authException) {
+      print(
+          'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
+    };
+
+    PhoneCodeSent codeSent =
+        (String verificationId, [int forceResendingToken]) async {
+      print('Please check your phone for the verification code.');
+      _verificationId = verificationId;
+    };
+
+    PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+        (String verificationId) {
+      _verificationId = verificationId;
+    };
+
+    try {
+      await _auth.verifyPhoneNumber(
+          phoneNumber: widget.phoneController.text,
+          timeout: const Duration(seconds: 60),
+          verificationCompleted: verificationCompleted,
+          verificationFailed: verificationFailed,
+          codeSent: codeSent,
+          codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+    } catch (e) {
+      print('Failed to Verify Phone Number: $e');
+    }
+  }
+
+  // Code of how to sign in with phone.
+  Future<void> _signInWithPhoneNumber() async {
+    try {
+      final AuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId,
+        smsCode: _smsController.text,
+      );
+      UserCredential result =
+          await _auth.signInWithCredential(credential).then((value) {
+        if (value.user != null) {
+          setState(() {
+            verified = true;
+          });
+          Navigator.pop(context);
+        } else {
+          print("Error");
+        }
+      }).catchError((onError) {
+        print('_signInWithPhoneNumber: $onError');
+      });
+    } catch (e) {
+      print('Failed to sign in: $e');
+    }
+  }
+
+  void _showPopUpIDDoctor() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+              child: Container(
+                padding: EdgeInsets.all(10),
+                width: MediaQuery.of(context).size.width - 20,
+                height: MediaQuery.of(context).size.height * 0.35,
+                decoration: BoxDecoration(
+                  color: DefaultTheme.WHITE.withOpacity(0.6),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 20),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 20),
+                        ),
+                        Text(
+                          'OTP',
+                          style: TextStyle(
+                            fontSize: 30,
+                            decoration: TextDecoration.none,
+                            color: DefaultTheme.BLACK,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 20, right: 20, top: 20, bottom: 20),
+                            child: Text(
+                              'Mã xác thực đã được gửi về số điện thoại của bạn',
+                              style: TextStyle(
+                                fontSize: 16,
+                                decoration: TextDecoration.none,
+                                color: DefaultTheme.GREY_TEXT,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                          Divider(
+                            color: DefaultTheme.GREY_TEXT,
+                            height: 0.25,
+                          ),
+                          Flexible(
+                            child: TextFieldHDr(
+                              style: TFStyle.NO_BORDER,
+                              label: 'Mã:',
+                              controller: _smsController,
+                              keyboardAction: TextInputAction.done,
+                              onChange: (text) {},
+                            ),
+                          ),
+                          Divider(
+                            color: DefaultTheme.GREY_TEXT,
+                            height: 0.25,
+                          ),
+                        ],
+                      ),
+                    ),
+                    ButtonHDr(
+                      style: BtnStyle.BUTTON_BLACK,
+                      label: 'Xác thực',
+                      onTap: () {
+                        _signInWithPhoneNumber();
+                      },
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 15),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
