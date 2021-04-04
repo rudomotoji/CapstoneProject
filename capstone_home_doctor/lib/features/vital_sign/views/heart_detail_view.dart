@@ -167,7 +167,8 @@ class _HeartDetailView extends State<HeartDetailView>
                           if (null != listSortedDateTime) {
                             listSortedDateTime.sort(
                                 (a, b) => a.dateTime.compareTo(b.dateTime));
-                            _lastValueVitalSign = listSortedValue.last.value1;
+                            _lastValueVitalSign =
+                                listSortedDateTime.last.value1;
                           }
 
                           for (int z = 0; z < listSortedDateTime.length; z++) {

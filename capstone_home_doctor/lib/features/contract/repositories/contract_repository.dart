@@ -32,7 +32,6 @@ class ContractRepository extends BaseApiClient {
           //     fullNameDoctor: dto['fullNameDoctor'],
           //     daysOfTracking: dto['daysOfTracking'],
           //     status: dto['status'],
-          //     dateCreated: dto['dateCreated'],
           //     dateStarted: dto['dateStarted'],
           //     dateFinished: dto['dateFinished']);
           return ContractListDTO.fromJson(dto);

@@ -41,7 +41,7 @@
         "noon": 11,
         "afternoon": 16,
         "night": 22,
-        "minutes": 11
+        "minutes": 0
     },
     "listType": [
         "Bệnh tim",

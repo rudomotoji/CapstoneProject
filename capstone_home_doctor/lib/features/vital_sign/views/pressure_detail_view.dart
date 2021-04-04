@@ -7,12 +7,16 @@ import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/home/home.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
+import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 final AuthenticateHelper authenHelper = AuthenticateHelper();
 final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
@@ -30,17 +34,36 @@ class PressureDetailView extends StatefulWidget {
 class _PressureDetailView extends State<PressureDetailView> {
   int _patientId = 0;
   var uuid = Uuid();
+  DateTime dateNow;
+  VitalSignBloc _vitalSignBloc;
+  String vital_type = 'PRESSURE';
+  List<VitalSignDTO> listSortedDateTime = [];
+  int _lastValue1VitalSign = 0;
+  int _lastValue2VitalSign = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _vitalSignBloc = BlocProvider.of(context);
     _getPatientId();
   }
 
   _getPatientId() async {
     await authenHelper.getPatientId().then((value) {
-      _patientId = value;
+      setState(() {
+        _patientId = value;
+      });
+      if (_patientId != 0) {
+        _vitalSignBloc.add(
+            VitalSignEventGetList(type: vital_type, patientId: _patientId));
+      }
+    });
+  }
+
+  _getDateTimeNow() {
+    setState(() {
+      dateNow = DateTime.now();
     });
   }
 
@@ -77,14 +100,83 @@ class _PressureDetailView extends State<PressureDetailView> {
                       style: BtnStyle.BUTTON_BLACK,
                       label: 'Thêm dữ liệu',
                       onTap: () {
-                        _onButtonShowModelSheet(DateTime.now());
+                        _onButtonShowModelSheet();
                       },
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(bottom: 20),
                   ),
-                  // _lineChartBloodPressure(),
+                  BlocBuilder<VitalSignBloc, VitalSignState>(
+                      builder: (context, state) {
+                    //
+                    if (state is VitalSignStateLoading) {
+                      return Container(
+                        width: 200,
+                        height: 200,
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                      );
+                    }
+                    if (state is VitalSignStateFailure) {
+                      return Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 200,
+                          child: Center(
+                            child: Text('Không thể tải biểu đồ'),
+                          ));
+                    }
+                    if (state is VitalSignStateGetListSuccess) {
+                      if (null == state.list) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: Image.asset(
+                                      'assets/images/ic-blood-pressure.png'),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 30),
+                                ),
+                                Text(
+                                  'Không có dữ liệu cho biểu đồ huyết áp',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      } else if (state.list.isNotEmpty || state.list != null) {
+                        //
+                        listSortedDateTime = state.list;
+                        if (null != listSortedDateTime) {
+                          listSortedDateTime
+                              .sort((a, b) => a.dateTime.compareTo(b.dateTime));
+                          _lastValue1VitalSign = listSortedDateTime.last.value1;
+                          _lastValue2VitalSign = listSortedDateTime.last.value2;
+                          return Column(
+                            children: <Widget>[
+                              //
+                              Text('Lần đo gần đây: '),
+                              Text('Tâm thu: ${_lastValue1VitalSign}'),
+                              Text('Tâm trương: ${_lastValue2VitalSign}'),
+                              Text('Lúc: ${listSortedDateTime.last.dateTime}'),
+                            ],
+                          );
+                        }
+                      }
+                    }
+                    return Container();
+                  }),
                 ],
               ),
             ),
@@ -94,7 +186,8 @@ class _PressureDetailView extends State<PressureDetailView> {
     );
   }
 
-  void _onButtonShowModelSheet(DateTime dateNow) {
+  void _onButtonShowModelSheet() {
+    _getDateTimeNow();
     final _tamThuController = TextEditingController();
     final _tamTruongController = TextEditingController();
     showModalBottomSheet(
@@ -246,27 +339,29 @@ class _PressureDetailView extends State<PressureDetailView> {
                               label: 'Thêm',
                               onTap: () async {
                                 //
-                                // if (_arrayValidator
-                                //         .isNumeric(_tamThuController.text) &&
-                                //     _arrayValidator
-                                //         .isNumeric(_tamTruongController.text)) {
-                                //   //
-                                //   if (_patientId != 0) {
-                                //     //
-                                //     VitalSignDTO vitalSignDTO = VitalSignDTO(
-                                //       id: uuid.v1(),
-                                //       patientId: _patientId,
-                                //       valueType: 'PRESSURE',
-                                //       value1:
-                                //           int.tryParse(_tamThuController.text),
-                                //       value2: int.tryParse(
-                                //           _tamTruongController.text),
-                                //       dateTime: DateTime.now().toString(),
-                                //     );
-                                //     await _sqfLiteHelper
-                                //         .insertVitalSign(vitalSignDTO);
-                                //   }
-                                // }
+                                if (_arrayValidator.isNumeric(
+                                        _tamThuController.text.trim()) &&
+                                    _arrayValidator.isNumeric(
+                                        _tamTruongController.text.trim())) {
+                                  //
+                                  if (_patientId != 0) {
+                                    //
+                                    VitalSignDTO vitalSignDTO = VitalSignDTO(
+                                      id: uuid.v1(),
+                                      patientId: _patientId,
+                                      valueType: 'PRESSURE',
+                                      value1:
+                                          int.tryParse(_tamThuController.text),
+                                      value2: int.tryParse(
+                                          _tamTruongController.text),
+                                      dateTime: dateNow.toString(),
+                                    );
+                                    await _sqfLiteHelper
+                                        .insertVitalSign(vitalSignDTO);
+                                    print(
+                                        'vital sign DTO:\n\n id: ${vitalSignDTO.id} - patientId: ${vitalSignDTO.patientId} - value type: ${vitalSignDTO.valueType} - value1: ${vitalSignDTO.value1} - value2 : ${vitalSignDTO.value2} - date time: ${vitalSignDTO.dateTime}');
+                                  }
+                                }
                               },
                             ),
                           ),
