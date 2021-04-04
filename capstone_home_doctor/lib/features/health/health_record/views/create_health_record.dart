@@ -729,7 +729,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
           return _selectBoxInsOtherDissease();
         }
         if (state is DiseaseHeartListStateSuccess) {
-          if(state.listDiseaseContract!=null){
+          if (state.listDiseaseContract != null) {
             _listDiseaseForHeart = state.listDiseaseContract;
           }
           return _selectBoxInsHeart();
@@ -872,6 +872,18 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                           new FlatButton(
                             child: new Text("Có"),
                             onPressed: () {
+                              //refresh data
+                              setState(() {
+                                _listDiseaseSelected = [];
+                                // _listDisease = [];
+                                _diseaseIds = [];
+                                // _listDiseaseForHeart = [];
+                                _listLv3Selected = [];
+                                _listLv3IdSelected = [];
+                                _listDiseaseForHeartForSearch = [];
+                                _placeController.text = '';
+                              });
+                              //navigate to health record detail
                               Navigator.of(context).pop();
                               hrHelper.setHealthReCordId(value);
                               Navigator.of(context)
@@ -971,6 +983,14 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
             }
           } else {
             if (item.diseaseLevelTwoId
+                .toLowerCase()
+                .contains(val.toLowerCase())) {
+              filteredItems.add(item);
+            }
+          }
+        } else {
+          for (var itemLV3 in item.diseaseLeverThrees) {
+            if (itemLV3.diseaseLeverThreeName
                 .toLowerCase()
                 .contains(val.toLowerCase())) {
               filteredItems.add(item);

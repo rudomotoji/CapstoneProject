@@ -14,6 +14,8 @@ import 'package:capstone_home_doctor/features/health/health_record/views/create_
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -43,6 +45,8 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   TabController controller;
   ScrollController _scrollController;
 
+  Stream<ReceiveNotification> _notificationsStream;
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -51,6 +55,11 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     _scrollController = ScrollController(initialScrollOffset: 0.0);
 
     getDataFromJSONFile();
+
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((notification) {
+      refreshListHR();
+    });
 
     _getPatientId();
     refreshListHR();
