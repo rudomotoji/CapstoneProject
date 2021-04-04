@@ -49,7 +49,7 @@ class _PressureDetailView extends State<PressureDetailView> {
     _getPatientId();
   }
 
-  _getPatientId() async {
+  Future _getPatientId() async {
     await authenHelper.getPatientId().then((value) {
       setState(() {
         _patientId = value;
@@ -86,98 +86,105 @@ class _PressureDetailView extends State<PressureDetailView> {
               buttonHeaderType: ButtonHeaderType.BACK_HOME,
             ),
             Expanded(
-              child: ListView(
-                children: <Widget>[
-                  //
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 20, right: 20),
-                    width: MediaQuery.of(context).size.width,
-                    height: 45,
-                    child: ButtonHDr(
-                      style: BtnStyle.BUTTON_BLACK,
-                      label: 'Thêm dữ liệu',
-                      onTap: () {
-                        _onButtonShowModelSheet();
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                  ),
-                  BlocBuilder<VitalSignBloc, VitalSignState>(
-                      builder: (context, state) {
+              child: RefreshIndicator(
+                onRefresh: _getPatientId,
+                child: ListView(
+                  children: <Widget>[
                     //
-                    if (state is VitalSignStateLoading) {
-                      return Container(
-                        width: 200,
-                        height: 200,
-                        child: SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Image.asset('assets/images/loading.gif'),
-                        ),
-                      );
-                    }
-                    if (state is VitalSignStateFailure) {
-                      return Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 200,
-                          child: Center(
-                            child: Text('Không thể tải biểu đồ'),
-                          ));
-                    }
-                    if (state is VitalSignStateGetListSuccess) {
-                      if (null == state.list) {
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(left: 20, right: 20),
+                      width: MediaQuery.of(context).size.width,
+                      height: 45,
+                      child: ButtonHDr(
+                        style: BtnStyle.BUTTON_BLACK,
+                        label: 'Thêm dữ liệu',
+                        onTap: () {
+                          _onButtonShowModelSheet();
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                    ),
+                    BlocBuilder<VitalSignBloc, VitalSignState>(
+                        builder: (context, state) {
+                      //
+                      if (state is VitalSignStateLoading) {
                         return Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child: Image.asset(
-                                      'assets/images/ic-blood-pressure.png'),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 30),
-                                ),
-                                Text(
-                                  'Không có dữ liệu cho biểu đồ huyết áp',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
+                          width: 200,
+                          height: 200,
+                          child: SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: Image.asset('assets/images/loading.gif'),
                           ),
                         );
-                      } else if (state.list.isNotEmpty || state.list != null) {
-                        //
-                        listSortedDateTime = state.list;
-                        if (null != listSortedDateTime) {
-                          listSortedDateTime
-                              .sort((a, b) => a.dateTime.compareTo(b.dateTime));
-                          _lastValue1VitalSign = listSortedDateTime.last.value1;
-                          _lastValue2VitalSign = listSortedDateTime.last.value2;
-                          return Column(
-                            children: <Widget>[
-                              //
-                              Text('Lần đo gần đây: '),
-                              Text('Tâm thu: ${_lastValue1VitalSign}'),
-                              Text('Tâm trương: ${_lastValue2VitalSign}'),
-                              Text('Lúc: ${listSortedDateTime.last.dateTime}'),
-                            ],
+                      }
+                      if (state is VitalSignStateFailure) {
+                        return Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 200,
+                            child: Center(
+                              child: Text('Không thể tải biểu đồ'),
+                            ));
+                      }
+                      if (state is VitalSignStateGetListSuccess) {
+                        if (null == state.list) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * 0.5,
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 50,
+                                    height: 50,
+                                    child: Image.asset(
+                                        'assets/images/ic-blood-pressure.png'),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 30),
+                                  ),
+                                  Text(
+                                    'Không có dữ liệu cho biểu đồ huyết áp',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            ),
                           );
+                        } else if (state.list.isNotEmpty ||
+                            state.list != null) {
+                          //
+                          listSortedDateTime = state.list;
+                          if (null != listSortedDateTime) {
+                            listSortedDateTime.sort(
+                                (a, b) => a.dateTime.compareTo(b.dateTime));
+                            _lastValue1VitalSign =
+                                listSortedDateTime.last.value1;
+                            _lastValue2VitalSign =
+                                listSortedDateTime.last.value2;
+                            return Column(
+                              children: <Widget>[
+                                //
+                                Text('Lần đo gần đây: '),
+                                Text('Tâm thu: ${_lastValue1VitalSign}'),
+                                Text('Tâm trương: ${_lastValue2VitalSign}'),
+                                Text(
+                                    'Lúc: ${listSortedDateTime.last.dateTime}'),
+                              ],
+                            );
+                          }
                         }
                       }
-                    }
-                    return Container();
-                  }),
-                ],
+                      return Container();
+                    }),
+                  ],
+                ),
               ),
             ),
           ],

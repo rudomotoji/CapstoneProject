@@ -1492,7 +1492,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.INTRO_CONNECT_PERIPHERAL: (context) =>
                     IntroConnectDevice(),
                 RoutesHDr.CONNECT_PERIPHERAL: (context) => ConnectPeripheral(),
-                RoutesHDr.CHAT: (context) => ChatScreen(),
+                // RoutesHDr.CHAT: (context) => ChatScreen(),
                 RoutesHDr.MANAGE_CONTRACT: (context) => ManageContract(),
                 RoutesHDr.PERIPHERAL_SERVICE: (context) => PeripheralService(),
                 // RoutesHDr.CONFIRM_CONTRACT_VIEW: (context) => ConfirmContract(),

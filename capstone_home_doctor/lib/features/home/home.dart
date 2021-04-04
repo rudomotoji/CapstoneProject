@@ -164,7 +164,7 @@ class _MainHomeState extends State<MainHome> {
     final List<Widget> _widgetOptions = [
       DashboardPage(),
       HealthPage(),
-      MessagePage(),
+      // MessagePage(),
       NotificationPage(),
     ];
 
@@ -233,22 +233,22 @@ class _MainHomeState extends State<MainHome> {
                         style: TextStyle(color: DefaultTheme.GREY_TEXT),
                       ),
                     ),
-                    BottomNavigationBarItem(
-                      icon: new Image.asset(
-                        'assets/images/ic-msg.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      activeIcon: new Image.asset(
-                        'assets/images/ic-msg-selected.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      title: Text(
-                        'Tin nhắn',
-                        style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                      ),
-                    ),
+                    // BottomNavigationBarItem(
+                    //   icon: new Image.asset(
+                    //     'assets/images/ic-msg.png',
+                    //     height: 30,
+                    //     width: 30,
+                    //   ),
+                    //   activeIcon: new Image.asset(
+                    //     'assets/images/ic-msg-selected.png',
+                    //     height: 30,
+                    //     width: 30,
+                    //   ),
+                    //   title: Text(
+                    //     'Tin nhắn',
+                    //     style: TextStyle(color: DefaultTheme.GREY_TEXT),
+                    //   ),
+                    // ),
                     BottomNavigationBarItem(
                       icon: Container(
                         child: Stack(
@@ -367,22 +367,22 @@ class _MainHomeState extends State<MainHome> {
                     style: TextStyle(color: DefaultTheme.GREY_TEXT),
                   ),
                 ),
-                BottomNavigationBarItem(
-                  icon: new Image.asset(
-                    'assets/images/ic-msg.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  activeIcon: new Image.asset(
-                    'assets/images/ic-msg-selected.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  title: Text(
-                    'Tin nhắn',
-                    style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                  ),
-                ),
+                // BottomNavigationBarItem(
+                //   icon: new Image.asset(
+                //     'assets/images/ic-msg.png',
+                //     height: 30,
+                //     width: 30,
+                //   ),
+                //   activeIcon: new Image.asset(
+                //     'assets/images/ic-msg-selected.png',
+                //     height: 30,
+                //     width: 30,
+                //   ),
+                //   title: Text(
+                //     'Tin nhắn',
+                //     style: TextStyle(color: DefaultTheme.GREY_TEXT),
+                //   ),
+                // ),
                 BottomNavigationBarItem(
                   icon: Container(
                     child: Stack(

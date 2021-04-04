@@ -259,7 +259,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                       )),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 20),
+                  padding: EdgeInsets.only(top: 20, bottom: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -282,14 +282,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                         ),
                       ),
                       Spacer(),
-                      ButtonHDr(
-                        style: BtnStyle.BUTTON_TRANSPARENT,
-                        label: 'Xem tổng quan',
-                        isUnderline: true,
-                        labelColor: DefaultTheme.BLACK_BUTTON.withOpacity(0.8),
-                        width: 40,
-                        onTap: () {},
-                      ),
                     ],
                   ),
                 ),
