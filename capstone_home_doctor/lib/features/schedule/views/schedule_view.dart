@@ -549,6 +549,7 @@ class _ScheduleView extends State<ScheduleView>
                                 onTap: () async {
                                   setState(() {
                                     showDialog(
+                                      barrierDismissible: false,
                                       context: context,
                                       builder: (BuildContext context) {
                                         return Center(
@@ -672,6 +673,7 @@ class _ScheduleView extends State<ScheduleView>
 
   _showDialogSuccess() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Center(
@@ -719,6 +721,7 @@ class _ScheduleView extends State<ScheduleView>
 
   _showDialogFailed(String title) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Center(

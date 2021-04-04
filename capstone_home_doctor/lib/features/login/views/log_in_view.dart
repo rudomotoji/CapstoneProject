@@ -135,6 +135,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                   await _checkLogin(accountDTO);
                 } else {
                   return showDialog(
+                      barrierDismissible: false,
                       context: context,
                       builder: (BuildContext context) {
                         return Center(
@@ -253,6 +254,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
   _checkLogin(AccountDTO dto) async {
     setState(() {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
             return Center(
@@ -309,6 +311,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
             } else {
               Navigator.of(context).pop();
               return showDialog(
+                  barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
                     return Center(
@@ -407,6 +410,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
   //     },
   //     codeSent: (String verificationId, [int forceResendingToken]) {
   //       // showDialog(
+  // barrierDismissible: false,
   //       //     context: context,
   //       //     barrierDismissible: false,
   //       //     builder: (context) {

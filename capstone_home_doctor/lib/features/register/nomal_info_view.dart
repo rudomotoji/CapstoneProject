@@ -239,6 +239,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
 
   void _showDatePickerStart() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Center(

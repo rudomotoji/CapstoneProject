@@ -339,6 +339,7 @@ class __MultiSelectDialogFieldViewState<V>
   /// Calls showDialog() and renders a MultiSelectDialog.
   _showDialog(BuildContext ctx) async {
     await showDialog(
+      barrierDismissible: false,
       barrierColor: widget.barrierColor,
       context: context,
       builder: (ctx) {

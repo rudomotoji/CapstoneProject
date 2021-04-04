@@ -16,4 +16,8 @@ class PrescriptionListEventsetPatientId extends PrescriptionListEvent {
   List<Object> get props => [patientId];
 }
 
-//
+class PrescriptionListEventInitial extends PrescriptionListEvent {
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}

@@ -116,105 +116,115 @@ class _CreateMedicalInstructionViewState
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(top: 40, left: 0),
-                              child: Text(
-                                'Chọn loại phiếu',
-                                style: TextStyle(
-                                  color: DefaultTheme.BLACK,
-                                  fontSize: 18,
-                                ),
+                        Container(
+                          margin: EdgeInsets.only(top: 40),
+                          height: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: DefaultTheme.GREY_VIEW),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 20),
                               ),
-                            ),
-                            Spacer(),
-                            Container(
-                              margin: EdgeInsets.only(left: 0, top: 40),
-                              height: 40,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: DefaultTheme.GREY_VIEW),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 20),
-                                  ),
 
-                                  BlocBuilder<MedInsTypeListBloc,
-                                      MedInsTypeState>(
-                                    builder: (context, state) {
-                                      if (state is MedInsTypeStateLoading) {
-                                        return Container(
-                                          width: 40,
-                                          height: 40,
-                                          child: SizedBox(
-                                            width: 40,
-                                            height: 40,
-                                            child: Image.asset(
-                                                'assets/images/loading.gif'),
+                              BlocBuilder<MedInsTypeListBloc, MedInsTypeState>(
+                                builder: (context, state) {
+                                  if (state is MedInsTypeStateLoading) {
+                                    return Container(
+                                      width: 40,
+                                      height: 40,
+                                      child: SizedBox(
+                                        width: 40,
+                                        height: 40,
+                                        child: Image.asset(
+                                            'assets/images/loading.gif'),
+                                      ),
+                                    );
+                                  }
+                                  if (state is MedInsTypeStateFailure) {
+                                    return Container(
+                                      width: 30,
+                                      child: Text('Lỗi'),
+                                    );
+                                  }
+                                  if (state is MedInsTypeStateSuccess) {
+                                    _listMedInsType = state.listMedInsType;
+                                    return Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          80,
+                                      child: DropdownButton<
+                                          MedicalInstructionTypeDTO>(
+                                        items: _listMedInsType.map(
+                                            (MedicalInstructionTypeDTO value) {
+                                          return new DropdownMenuItem<
+                                              MedicalInstructionTypeDTO>(
+                                            value: value,
+                                            child: new Text(value.name),
+                                          );
+                                        }).toList(),
+                                        hint: Text(
+                                          (_selectedHRType == '')
+                                              ? 'Chọn loại phiếu'
+                                              : '${_selectedHRType}',
+                                          style: TextStyle(
+                                            color: DefaultTheme.BLUE_REFERENCE,
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                        );
-                                      }
-                                      if (state is MedInsTypeStateFailure) {
-                                        return Container(
-                                          width: 30,
-                                          child: Text('Lỗi'),
-                                        );
-                                      }
-                                      if (state is MedInsTypeStateSuccess) {
-                                        _listMedInsType = state.listMedInsType;
-                                        return DropdownButton<
-                                            MedicalInstructionTypeDTO>(
-                                          items: _listMedInsType.map(
-                                              (MedicalInstructionTypeDTO
-                                                  value) {
-                                            return new DropdownMenuItem<
-                                                MedicalInstructionTypeDTO>(
-                                              value: value,
-                                              child: new Text(value.name),
-                                            );
-                                          }).toList(),
-                                          hint: Text('Chọn'),
-                                          underline: Container(
-                                            width: 0,
-                                          ),
-                                          isExpanded: false,
-                                          onChanged: (_) {
-                                            setState(() {
-                                              titleCompare = null;
-                                              _imgString = '';
-                                              _imgFile = null;
-                                              _dianoseController.text = '';
-                                              _medInsTypeId =
-                                                  _.medicalInstructionTypeId;
-                                              _selectedHRType = _.name;
-                                              print('${_selectedHRType}');
-                                            });
-                                          },
-                                        );
-                                        //
-                                      }
-                                      return Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Center(child: Text('Lỗi')));
-                                    },
-                                  ),
-
-                                  //
-                                  Padding(
-                                    padding: EdgeInsets.only(right: 10),
-                                  )
-                                ],
+                                        ),
+                                        underline: Container(
+                                          width: 0,
+                                        ),
+                                        isExpanded: true,
+                                        onChanged: (_) {
+                                          setState(() {
+                                            titleCompare = null;
+                                            _imgString = '';
+                                            _imgFile = null;
+                                            _dianoseController.text = '';
+                                            _medInsTypeId =
+                                                _.medicalInstructionTypeId;
+                                            _selectedHRType = _.name;
+                                            print('${_selectedHRType}');
+                                          });
+                                        },
+                                      ),
+                                    );
+                                    //
+                                  }
+                                  return Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Center(child: Text('Lỗi')));
+                                },
                               ),
-                            ),
-                          ],
+
+                              //
+                              Padding(
+                                padding: EdgeInsets.only(right: 10),
+                              )
+                            ],
+                          ),
                         ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   crossAxisAlignment: CrossAxisAlignment.center,
+                        //   children: [
+                        //     Padding(
+                        //       padding: EdgeInsets.only(top: 40, left: 0),
+                        //       child: Text(
+                        //         'Chọn loại phiếu',
+                        //         style: TextStyle(
+                        //           color: DefaultTheme.BLACK,
+                        //           fontSize: 18,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     Spacer(),
+
+                        //   ],
+                        // ),
                         (_selectedHRType == '')
                             ? Container()
                             : Column(
@@ -321,6 +331,7 @@ class _CreateMedicalInstructionViewState
                                 } else {
                                   setState(() {
                                     showDialog(
+                                      barrierDismissible: false,
                                       context: context,
                                       builder: (BuildContext context) {
                                         return Center(
@@ -385,7 +396,9 @@ class _CreateMedicalInstructionViewState
                                 }
                               },
                             ),
-                            Padding(padding: EdgeInsets.only(right: 10),),
+                            Padding(
+                              padding: EdgeInsets.only(right: 10),
+                            ),
                             (_imgString == '')
                                 ? Container()
                                 : ClipRRect(
@@ -402,9 +415,7 @@ class _CreateMedicalInstructionViewState
                         Padding(
                           padding: EdgeInsets.only(bottom: 25),
                         ),
-                        (_dianoseController.text == '' ||
-                                _imgString == '' ||
-                                _selectedHRType == '')
+                        (_dianoseController.text == '' || _imgString == '')
                             ? Container()
                             : ButtonHDr(
                                 width: MediaQuery.of(context).size.width - 40,
@@ -424,6 +435,7 @@ class _CreateMedicalInstructionViewState
 
                                     setState(() {
                                       showDialog(
+                                        barrierDismissible: false,
                                         context: context,
                                         builder: (BuildContext context) {
                                           return Center(
@@ -480,6 +492,7 @@ class _CreateMedicalInstructionViewState
 
                                     if (titleCompare < percenntCompare) {
                                       showDialog(
+                                        barrierDismissible: false,
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
@@ -542,6 +555,7 @@ class _CreateMedicalInstructionViewState
             setState(() {
               if (value) {
                 showDialog(
+                  barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
                     return Center(
@@ -587,6 +601,7 @@ class _CreateMedicalInstructionViewState
                 });
               } else {
                 showDialog(
+                  barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
                     return Center(
@@ -715,6 +730,7 @@ class _CreateMedicalInstructionViewState
         });
         if (_imgFile.path != null || _imgFile.path != '') {
           showDialog(
+            barrierDismissible: false,
             context: context,
             builder: (BuildContext context) {
               return Center(
@@ -766,6 +782,7 @@ class _CreateMedicalInstructionViewState
               if (titleCompare < percenntCompare) {
                 setState(() {
                   showDialog(
+                    barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(

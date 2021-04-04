@@ -768,6 +768,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
   _showFullImageDescription(String img, String miName, String dateCreate) {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           //

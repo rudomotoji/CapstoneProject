@@ -74,6 +74,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   //
   _showFullImageDescription(String img, String miName, String dateCreate) {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           //
@@ -714,6 +715,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   _checkingShare(int _contractId, List<int> _listMedIns) {
     setState(() {
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
             return Center(
@@ -764,6 +766,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
           _medicalShareHelper.isMedicalShared().then((value) {
             if (value == true) {
               showDialog(
+                barrierDismissible: false,
                 context: context,
                 builder: (BuildContext context) {
                   return Center(
@@ -821,6 +824,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
 
   _alertError(String title) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Center(

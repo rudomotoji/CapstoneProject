@@ -10,6 +10,8 @@ import 'package:capstone_home_doctor/features/information/events/patient_event.d
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
+import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
+import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/models/patient_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
@@ -73,6 +75,7 @@ class _HeaderWidget extends State<HeaderWidget> {
   SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   PatientBloc _patientBloc;
   PatientDTO _patientDTO = PatientDTO(fullName: 'User Full Name');
+  PrescriptionListBloc _prescriptionListBloc;
 
   @override
   _HeaderWidget(
@@ -87,6 +90,7 @@ class _HeaderWidget extends State<HeaderWidget> {
     super.initState();
     _getPatientId();
     _patientBloc = BlocProvider.of(context);
+    _prescriptionListBloc = BlocProvider.of(context);
   }
 
   @override
@@ -300,6 +304,7 @@ class _HeaderWidget extends State<HeaderWidget> {
 
   _signOut() async {
     return showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Center(
@@ -378,47 +383,57 @@ class _HeaderWidget extends State<HeaderWidget> {
                             Navigator.of(context).pop();
                             //
 
-                            await _sqfLiteHelper.cleanDatabase();
-                            //
-                            //disconnect
-                            await _peripheralHelper
-                                .getPeripheralId()
-                                .then((peripheralId) async {
-                              //
-                              if (peripheralId != '' ||
-                                  peripheralId != 'NOTHING') {
+                            await _sqfLiteHelper
+                                .cleanDatabase()
+                                .then((valueDelete) async {
+                              if (valueDelete) {
+                                _prescriptionListBloc
+                                    .add(PrescriptionListEventInitial());
                                 //
-                                await _peripheralRepository
-                                    .findScanResultById(peripheralId)
-                                    .then((device) async {
+                                //disconnect
+                                await _peripheralHelper
+                                    .getPeripheralId()
+                                    .then((peripheralId) async {
                                   //
-                                  if (device != null) {
+                                  if (peripheralId != '' ||
+                                      peripheralId != 'NOTHING') {
+                                    //
                                     await _peripheralRepository
-                                        .disconnectDevice(device);
+                                        .findScanResultById(peripheralId)
+                                        .then((device) async {
+                                      //
+                                      if (device != null) {
+                                        await _peripheralRepository
+                                            .disconnectDevice(device);
+                                      }
+                                    });
                                   }
                                 });
+                                //
+                                //remove all shared preference
+                                await _authenticateHelper.updateAuth(
+                                    false, null, null);
+                                await _peripheralHelper
+                                    .updatePeripheralChecking(false, '');
+                                await _vitalSignHelper
+                                    .updateCountDownDangerous(0);
+                                await _vitalSignHelper
+                                    .updateCountInBackground(0);
+                                await _vitalSignHelper.updateCountingHR(0);
+                                await _vitalSignHelper.updateHeartValue(0);
+                                await _vitalSignHelper
+                                    .updateCheckToNormal(false);
+                                await _vitalSignHelper.updateCountToNormal(0);
+                                await _sqfLiteHelper.deleteVitalSignSchedule();
+                                await _contractHelper.updateAvailableDay('');
+                                //
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    RoutesHDr.LOG_IN,
+                                    (Route<dynamic> route) => false);
+                                //
                               }
                             });
-                            //
-                            //remove all shared preference
-                            await _authenticateHelper.updateAuth(
-                                false, null, null);
-                            await _peripheralHelper.updatePeripheralChecking(
-                                false, '');
-                            await _vitalSignHelper.updateCountDownDangerous(0);
-                            await _vitalSignHelper.updateCountInBackground(0);
-                            await _vitalSignHelper.updateCountingHR(0);
-                            await _vitalSignHelper.updateHeartValue(0);
-                            await _vitalSignHelper.updateCheckToNormal(false);
-                            await _vitalSignHelper.updateCountToNormal(0);
-                            await _sqfLiteHelper.deleteVitalSignSchedule();
-                            await _contractHelper.updateAvailableDay('');
-                            //
-                            Navigator.pushNamedAndRemoveUntil(
-                                context,
-                                RoutesHDr.LOG_IN,
-                                (Route<dynamic> route) => false);
-                            //
                           },
                         ),
                       ],

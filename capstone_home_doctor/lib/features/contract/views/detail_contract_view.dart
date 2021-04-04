@@ -415,6 +415,7 @@ class _DetailContractView extends State<DetailContractView>
                                       status: 'ACTIVE',
                                     );
                                     return showDialog(
+                                      barrierDismissible: false,
                                       context: context,
                                       builder: (BuildContext context) {
                                         return Center(
@@ -1554,6 +1555,7 @@ class _DetailContractView extends State<DetailContractView>
                                         );
                                         //
                                         return showDialog(
+                                          barrierDismissible: false,
                                           context: context,
                                           builder: (BuildContext context) {
                                             return Center(
@@ -2765,6 +2767,7 @@ class _DetailContractView extends State<DetailContractView>
   //
   _showFullImageDescription(MedicalInstructions dto, String nameMedIns) {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           //

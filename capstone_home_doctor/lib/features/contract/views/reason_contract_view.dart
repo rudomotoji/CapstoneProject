@@ -493,6 +493,7 @@ class _ReasonContractView extends State<ReasonContractView>
 
   void _showDatePickerStart(RequestContractDTO dto) {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Center(
@@ -558,6 +559,7 @@ class _ReasonContractView extends State<ReasonContractView>
     setState(() {
       //
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
             return Center(
@@ -626,6 +628,7 @@ class _ReasonContractView extends State<ReasonContractView>
                 if (msg.contains('Vui lòng gửi yêu cầu sau ngày')) {
                   Navigator.of(context).pop();
                   return showDialog(
+                    barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
                       return Center(
@@ -713,6 +716,7 @@ class _ReasonContractView extends State<ReasonContractView>
 
   void _showDatePickerStart2() {
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return Center(
@@ -779,6 +783,7 @@ class _ReasonContractView extends State<ReasonContractView>
     setState(() {
       //
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
             return Center(
@@ -827,6 +832,7 @@ class _ReasonContractView extends State<ReasonContractView>
         if (checkDate.isBefore(currentTime)) {
           Navigator.of(context).pop();
           return showDialog(
+            barrierDismissible: false,
             context: context,
             builder: (BuildContext context) {
               return Center(

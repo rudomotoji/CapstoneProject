@@ -656,6 +656,7 @@ class _ContractShareView extends State<ContractShareView>
                         if (medicalInstructions1.length == 0 ||
                             medicalInstructions2.length == 0) {
                           return showDialog(
+                            barrierDismissible: false,
                             context: context,
                             builder: (BuildContext context) {
                               return Center(
@@ -1581,6 +1582,7 @@ class _ContractShareView extends State<ContractShareView>
   _showFullImageDescription(
       String img, String miName, String dateCreate, String dianose) {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           //
