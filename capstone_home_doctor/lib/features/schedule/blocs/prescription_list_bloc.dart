@@ -29,5 +29,9 @@ class PrescriptionListBloc
         yield PrescriptionListStateFailure();
       }
     }
+
+    if (event is PrescriptionListEventInitial) {
+      yield PrescriptionListStateInitial();
+    }
   }
 }

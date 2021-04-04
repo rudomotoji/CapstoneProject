@@ -37,6 +37,7 @@ class SQFLiteHelper {
   initDatabase() async {
     io.Directory documentDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentDirectory.path, DATABASE_NAME);
+    print('path DB: $path');
     var database = await openDatabase(path, version: 2, onCreate: _onCreate);
     return database;
   }
@@ -72,18 +73,35 @@ class SQFLiteHelper {
     dbClient.close();
   }
 
-  Future<void> cleanDatabase() async {
+  Future<bool> cleanDatabase() async {
+    // try {
+    //   final db = await database;
+    //   await db.transaction((txn) async {
+    //     var batch = txn.batch();
+    //     // batch.delete(MEDICAL_INSTRUCTION_TABLE);
+    //     batch.delete(MEDICAL_RESPONSE_TABLE);
+    //     batch.delete(MEDICAL_SCHEDULE_TABLE);
+    //     await batch.commit();
+    //   });
+    // } catch (error) {
+    //   throw Exception('DbBase.cleanDatabase: ' + error.toString());
+    // }
+    //
     try {
-      final db = await database;
-      await db.transaction((txn) async {
-        var batch = txn.batch();
-        // batch.delete(MEDICAL_INSTRUCTION_TABLE);
-        batch.delete(MEDICAL_RESPONSE_TABLE);
-        batch.delete(MEDICAL_SCHEDULE_TABLE);
-        await batch.commit();
-      });
-    } catch (error) {
-      throw Exception('DbBase.cleanDatabase: ' + error.toString());
+      var deleteMedSche = await deleteAllMedicalSchedule();
+      if (deleteMedSche) {
+        var deleteMedRes = await deleteMedicalResponse();
+        if (deleteMedRes) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('cleanDatabase: $e');
+      return false;
     }
   }
 
@@ -131,9 +149,15 @@ class SQFLiteHelper {
     return responseData;
   }
 
-  Future<int> deleteMedicalResponse() async {
+  Future<bool> deleteMedicalResponse() async {
     var dbClient = await database;
-    return await dbClient.delete(MEDICAL_RESPONSE_TABLE);
+    try {
+      await dbClient.delete(MEDICAL_RESPONSE_TABLE);
+      return true;
+    } catch (e) {
+      print('$e');
+      return false;
+    }
   }
 
   Future<void> deleteMedicalResponseByID(String id) async {
@@ -218,9 +242,15 @@ class SQFLiteHelper {
     return responseData;
   }
 
-  Future<int> deleteAllMedicalSchedule() async {
+  Future<bool> deleteAllMedicalSchedule() async {
     var dbClient = await database;
-    return await dbClient.delete(MEDICAL_SCHEDULE_TABLE);
+    try {
+      await dbClient.delete(MEDICAL_SCHEDULE_TABLE);
+      return true;
+    } catch (e) {
+      print('$e');
+      return false;
+    }
   }
 
   Future<void> deleteMedicalScheduleByID(String id) async {

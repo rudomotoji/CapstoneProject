@@ -807,6 +807,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
     } else {
       setState(() {
         showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
             return Center(
@@ -855,6 +856,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                 Navigator.of(context).pop();
                 if (value > 0) {
                   showDialog(
+                    barrierDismissible: false,
                     context: context,
                     builder: (context) {
                       return AlertDialog(
@@ -886,6 +888,8 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                 _listDiseaseForHeartForSearch = [];
                                 _placeController.text = '';
                               });
+
+                              _diseaseListBloc.add(DiseaseEventSetInitial());
                               //navigate to health record detail
                               Navigator.of(context).pop();
                               hrHelper.setHealthReCordId(value);
@@ -915,6 +919,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
   alertError(String title) {
     setState(() {
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return Center(

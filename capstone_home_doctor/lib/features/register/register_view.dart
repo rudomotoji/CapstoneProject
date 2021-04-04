@@ -285,6 +285,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                           setState(
                             () {
                               showDialog(
+                                barrierDismissible: false,
                                 context: context,
                                 builder: (BuildContext context) {
                                   return Center(
@@ -342,6 +343,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                               Navigator.pop(context);
                               if (value) {
                                 showDialog(
+                                  barrierDismissible: false,
                                   context: context,
                                   builder: (BuildContext context) {
                                     return Center(
@@ -396,6 +398,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                                 });
                               } else {
                                 showDialog(
+                                  barrierDismissible: false,
                                   context: context,
                                   builder: (BuildContext context) {
                                     return Center(
@@ -495,6 +498,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
   alertError(String title) {
     setState(() {
       showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return Center(

@@ -805,6 +805,7 @@ class _ContractDraftView extends State<ContractDraftView>
                                     }
                                   } else {
                                     return showDialog(
+                                        barrierDismissible: false,
                                         context: context,
                                         builder: (BuildContext context) {
                                           return Center(
@@ -1384,6 +1385,7 @@ class _ContractDraftView extends State<ContractDraftView>
     setState(() {
       //
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
             return Center(
@@ -1441,6 +1443,7 @@ class _ContractDraftView extends State<ContractDraftView>
               Navigator.of(context).pop();
               Future.delayed(const Duration(seconds: 1), () {
                 return showDialog(
+                    barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
                       return Center(
@@ -1744,6 +1747,7 @@ class _ContractDraftView extends State<ContractDraftView>
               });
               Navigator.of(context).pop();
               return showDialog(
+                  barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
                     return Center(
