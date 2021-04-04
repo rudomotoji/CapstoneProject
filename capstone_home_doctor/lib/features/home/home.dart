@@ -8,6 +8,7 @@ import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
 import 'package:capstone_home_doctor/features/dashboard/dashboard.dart';
 import 'package:capstone_home_doctor/features/health/health.dart';
+import 'package:capstone_home_doctor/features/health/health_record/views/profile.dart';
 import 'package:capstone_home_doctor/features/message/message.dart';
 import 'package:capstone_home_doctor/features/notification/blocs/notification_list_bloc.dart';
 import 'package:capstone_home_doctor/features/notification/events/notification_list_event.dart';
@@ -24,6 +25,7 @@ import 'package:capstone_home_doctor/models/setting_background_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
@@ -49,6 +51,9 @@ final BackgroundRepository _backgroundRepository =
 final VitalSignServerRepository _vitalSignServerRepository =
     VitalSignServerRepository(httpClient: http.Client());
 
+final MedicalInstructionHelper _medicalInstructionHelper =
+    MedicalInstructionHelper();
+
 // //
 // final FirebaseMessaging _fcm = FirebaseMessaging();
 //
@@ -67,7 +72,9 @@ class _MainHomeState extends State<MainHome> {
   VitalSignBloc _vitalSignBloc;
   int countNoti = 0;
   int _patientId = 0;
+  int arguments = 0;
 
+  int count = 0;
   //for check connection
   String _connectionStatus = 'Unknown';
   final Connectivity _connectivity = Connectivity();
@@ -84,7 +91,7 @@ class _MainHomeState extends State<MainHome> {
     _vitalSignBloc = BlocProvider.of(context);
     _getPatientId();
     _getAccountId();
-
+    _setToCreateHROrList();
     //
     selectNotificationSubject.stream.listen((String payload) async {
       print(payload);
@@ -101,6 +108,10 @@ class _MainHomeState extends State<MainHome> {
     initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  _setToCreateHROrList() async {
+    await _medicalInstructionHelper.updateCheckToCreateOrList(false);
   }
 
   //handle local notification for danger heart rate
@@ -169,15 +180,23 @@ class _MainHomeState extends State<MainHome> {
 
   @override
   Widget build(BuildContext context) {
-    int arguments = ModalRoute.of(context).settings.arguments;
-    if (arguments != null) {
-      _currentIndex = arguments;
+    if (count == 0) {
+      setState(() {
+        arguments = ModalRoute.of(context).settings.arguments;
+        if (arguments != null) {
+          _currentIndex = arguments;
+        } else {}
+      });
+      count++;
+    } else {
+      arguments = null;
     }
-    arguments = null;
+
     final List<Widget> _widgetOptions = [
       DashboardPage(),
       HealthPage(),
       // MessagePage(),
+      ProfileTab(),
       NotificationPage(),
     ];
 
@@ -246,22 +265,22 @@ class _MainHomeState extends State<MainHome> {
                         style: TextStyle(color: DefaultTheme.GREY_TEXT),
                       ),
                     ),
-                    // BottomNavigationBarItem(
-                    //   icon: new Image.asset(
-                    //     'assets/images/ic-msg.png',
-                    //     height: 30,
-                    //     width: 30,
-                    //   ),
-                    //   activeIcon: new Image.asset(
-                    //     'assets/images/ic-msg-selected.png',
-                    //     height: 30,
-                    //     width: 30,
-                    //   ),
-                    //   title: Text(
-                    //     'Tin nhắn',
-                    //     style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                    //   ),
-                    // ),
+                    BottomNavigationBarItem(
+                      icon: new Image.asset(
+                        'assets/images/ic-msg.png',
+                        height: 30,
+                        width: 30,
+                      ),
+                      activeIcon: new Image.asset(
+                        'assets/images/ic-msg-selected.png',
+                        height: 30,
+                        width: 30,
+                      ),
+                      title: Text(
+                        'Tin nhắn',
+                        style: TextStyle(color: DefaultTheme.GREY_TEXT),
+                      ),
+                    ),
                     BottomNavigationBarItem(
                       icon: Container(
                         child: Stack(
@@ -330,6 +349,7 @@ class _MainHomeState extends State<MainHome> {
                   onTap: (index) {
                     setState(() {
                       print('index: $index');
+                      arguments = null;
                       _currentIndex = 0;
                       _currentIndex = index;
                     });
@@ -382,22 +402,22 @@ class _MainHomeState extends State<MainHome> {
                     style: TextStyle(color: DefaultTheme.GREY_TEXT),
                   ),
                 ),
-                // BottomNavigationBarItem(
-                //   icon: new Image.asset(
-                //     'assets/images/ic-msg.png',
-                //     height: 30,
-                //     width: 30,
-                //   ),
-                //   activeIcon: new Image.asset(
-                //     'assets/images/ic-msg-selected.png',
-                //     height: 30,
-                //     width: 30,
-                //   ),
-                //   title: Text(
-                //     'Tin nhắn',
-                //     style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                //   ),
-                // ),
+                BottomNavigationBarItem(
+                  icon: new Image.asset(
+                    'assets/images/ic-msg.png',
+                    height: 30,
+                    width: 30,
+                  ),
+                  activeIcon: new Image.asset(
+                    'assets/images/ic-msg-selected.png',
+                    height: 30,
+                    width: 30,
+                  ),
+                  title: Text(
+                    'Tin nhắn',
+                    style: TextStyle(color: DefaultTheme.GREY_TEXT),
+                  ),
+                ),
                 BottomNavigationBarItem(
                   icon: Container(
                     child: Stack(
@@ -430,6 +450,7 @@ class _MainHomeState extends State<MainHome> {
               onTap: (index) {
                 _getAccountId();
                 setState(() {
+                  arguments = null;
                   _currentIndex = index;
                 });
               },

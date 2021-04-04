@@ -112,104 +112,130 @@ class _HeaderWidget extends State<HeaderWidget> {
               onTap: () {
                 if (_title.contains('Chi tiết hồ sơ')) {
                   print('go to this');
-                  return showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                            child: Container(
-                              padding:
-                                  EdgeInsets.only(left: 10, top: 10, right: 10),
-                              width: 250,
-                              height: 160,
-                              decoration: BoxDecoration(
-                                color: DefaultTheme.WHITE.withOpacity(0.7),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(bottom: 20, top: 10),
-                                    child: Text(
-                                      'Lưu ý',
-                                      style: TextStyle(
-                                        decoration: TextDecoration.none,
-                                        color: DefaultTheme.BLACK,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                      ),
-                                    ),
+                  _medicalInstructionHelper
+                      .getCheckToCreateOrList()
+                      .then((check) async {
+                    //
+                    if (check) {
+                      return showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Center(
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                              child: BackdropFilter(
+                                filter:
+                                    ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                      left: 10, top: 10, right: 10),
+                                  width: 250,
+                                  height: 160,
+                                  decoration: BoxDecoration(
+                                    color: DefaultTheme.WHITE.withOpacity(0.7),
                                   ),
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(left: 20, right: 20),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Bạn có muốn tạo thêm hồ sơ sức khoẻ khác không?',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          decoration: TextDecoration.none,
-                                          color: DefaultTheme.GREY_TEXT,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 13,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            bottom: 20, top: 10),
+                                        child: Text(
+                                          'Lưu ý',
+                                          style: TextStyle(
+                                            decoration: TextDecoration.none,
+                                            color: DefaultTheme.BLACK,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Divider(
-                                    height: 1,
-                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      FlatButton(
-                                        height: 40,
-                                        minWidth: 250 / 2 - 10.5,
-                                        child: Text('Không',
-                                            style: TextStyle(
-                                                color: DefaultTheme.BLUE_TEXT)),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
                                       Container(
-                                        height: 40,
-                                        width: 0.5,
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Bạn có muốn tạo thêm hồ sơ sức khoẻ khác không?',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              decoration: TextDecoration.none,
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Divider(
+                                        height: 1,
                                         color: DefaultTheme.GREY_TOP_TAB_BAR,
                                       ),
-                                      FlatButton(
-                                        height: 40,
-                                        minWidth: 250 / 2 - 10.5,
-                                        child: Text('Có',
-                                            style: TextStyle(
-                                                color: DefaultTheme.BLUE_TEXT)),
-                                        onPressed: () {
-                                          //
-                                          Navigator.of(context).pop();
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          FlatButton(
+                                            height: 40,
+                                            minWidth: 250 / 2 - 10.5,
+                                            child: Text('Không',
+                                                style: TextStyle(
+                                                    color: DefaultTheme
+                                                        .BLUE_TEXT)),
+                                            onPressed: () async {
+                                              Navigator.of(context).pop();
 
-                                          //////
-                                          //////
-                                        },
+                                              ///CODE HERE FOR NAVIGATE
+                                              ///
+
+                                              ///
+                                              await _medicalInstructionHelper
+                                                  .updateCheckToCreateOrList(
+                                                      false);
+                                            },
+                                          ),
+                                          Container(
+                                            height: 40,
+                                            width: 0.5,
+                                            color:
+                                                DefaultTheme.GREY_TOP_TAB_BAR,
+                                          ),
+                                          FlatButton(
+                                            height: 40,
+                                            minWidth: 250 / 2 - 10.5,
+                                            child: Text('Có',
+                                                style: TextStyle(
+                                                    color: DefaultTheme
+                                                        .BLUE_TEXT)),
+                                            onPressed: () {
+                                              //
+                                              Navigator.of(context).pop();
+
+                                              //////
+                                              //////
+                                            },
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       );
-                    },
-                  );
+                    } else {
+                      Navigator.pop(context);
+                      await _medicalInstructionHelper
+                          .updateCheckToCreateOrList(false);
+                    }
+                  });
                 } else {
                   Navigator.pop(context);
                 }
@@ -531,6 +557,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                                 await _vitalSignHelper.updateCountToNormal(0);
                                 await _sqfLiteHelper.deleteVitalSignSchedule();
                                 await _contractHelper.updateAvailableDay('');
+                                await _medicalInstructionHelper
+                                    .updateCheckToCreateOrList(false);
                                 //
                                 Navigator.pushNamedAndRemoveUntil(
                                     context,
@@ -555,7 +583,8 @@ class _HeaderWidget extends State<HeaderWidget> {
     //
   }
 
-  void _backToHome() {
+  _backToHome() async {
+    await _medicalInstructionHelper.updateCheckToCreateOrList(false);
     Navigator.of(context).pushNamedAndRemoveUntil(
         RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
   }

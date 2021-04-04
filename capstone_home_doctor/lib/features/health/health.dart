@@ -29,13 +29,11 @@ class _HealthState extends State<HealthPage> {
       0: Text('Tổng quan'), //overview
       1: Text('Timeline'), //timeline
       2: Text('Sinh hiệu'), //vitalsign
-      3: Text('Hồ sơ'), //profile
     };
     final List<Widget> childrenWidget = [
       OverviewTab(),
       TimelineTab(),
       VitalSignTab(),
-      ProfileTab(),
     ];
     return CupertinoPageScaffold(
       child: DefaultTextStyle(

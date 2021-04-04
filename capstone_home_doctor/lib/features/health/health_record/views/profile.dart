@@ -6,6 +6,7 @@ import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/artboard_button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
+import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/hr_list_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
@@ -95,16 +96,29 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.7,
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            buildSliverToBoxAdapterHeader(),
-            buildSliverAppBarCollepse(),
-            buildTabbarViewHasContract(),
-          ],
-        ),
+      child: Column(
+        // height: MediaQuery.of(context).size.height * 0.7,
+
+        children: <Widget>[
+          HeaderWidget(
+            title: 'Hồ sơ',
+            isMainView: true,
+            buttonHeaderType: ButtonHeaderType.AVATAR,
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+          ),
+          Expanded(
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                buildSliverToBoxAdapterHeader(),
+                buildSliverAppBarCollepse(),
+                buildTabbarViewHasContract(),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -115,9 +129,6 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: 10, left: 20, right: 20),
-          ),
           ButtonArtBoard(
             title: 'Tạo hồ sơ sức khỏe',
             description: 'Một hồ sơ sức khoẻ bao gồm nhiều y lệnh',
@@ -228,18 +239,25 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
               for (var item in listHealthRecord) {
                 if (item.contractId == null) {
                   listHealthRecordOld.add(item);
+                  print(
+                      'THIS IS LENGTH OF OLD RECORD: ${listHealthRecordOld.length}');
                 } else {
                   listHealthRecordSystem.add(item);
+                  print(
+                      'THIS IS LENGTH OF SYSTEM RECORD: ${listHealthRecordSystem.length}');
                 }
               }
             }
 
-            return TabBarView(
-              controller: controller,
-              children: <Widget>[
-                listOldHealthRecord(),
-                listSystemHealthRecord(),
-              ],
+            return Container(
+              margin: EdgeInsets.only(bottom: 20),
+              child: TabBarView(
+                controller: controller,
+                children: <Widget>[
+                  listOldHealthRecord(),
+                  listSystemHealthRecord(),
+                ],
+              ),
             );
           }
           return Container(
@@ -252,13 +270,16 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
 
   listOldHealthRecord() {
     if (listHealthRecordOld.length > 0) {
-      return ListView.builder(
-        shrinkWrap: true,
-        // physics: NeverScrollableScrollPhysics(),
-        itemCount: listHealthRecordOld.length,
-        itemBuilder: (BuildContext buildContext, int index) {
-          return _itemHealthRecord(listHealthRecordOld[index]);
-        },
+      return Container(
+        // margin: EdgeInsets.only(bottom: 50),
+        child: ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: listHealthRecordOld.length,
+          itemBuilder: (BuildContext buildContext, int index) {
+            return _itemHealthRecord(listHealthRecordOld[index]);
+          },
+        ),
       );
     } else {
       return Container(
@@ -285,13 +306,16 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
 
   listSystemHealthRecord() {
     if (listHealthRecordSystem.length > 0) {
-      return ListView.builder(
-        shrinkWrap: true,
-        // physics: NeverScrollableScrollPhysics(),
-        itemCount: listHealthRecordSystem.length,
-        itemBuilder: (BuildContext buildContext, int index) {
-          return _itemHealthRecord(listHealthRecordSystem[index]);
-        },
+      return Container(
+        // padding: EdgeInsets.only(bottom: 50),
+        child: ListView.builder(
+          // shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: listHealthRecordSystem.length,
+          itemBuilder: (BuildContext buildContext, int index) {
+            return _itemHealthRecord(listHealthRecordSystem[index]);
+          },
+        ),
       );
     } else {
       return Container(
@@ -318,8 +342,8 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
 
   Widget _itemHealthRecord(HealthRecordDTO dto) {
     return Container(
-      margin: EdgeInsets.only(left: 20, right: 10),
-      padding: EdgeInsets.only(left: 0, right: 10, top: 10, bottom: 10),
+      margin: EdgeInsets.only(left: 20, right: 10, bottom: 10),
+      padding: EdgeInsets.only(left: 0, right: 10, top: 10, bottom: 20),
       child: InkWell(
         onTap: () {
           _healthRecordHelper.setHealthReCordId(dto.healthRecordId);
