@@ -268,6 +268,12 @@ class _NotificationState extends State<NotificationPage> {
                                       } else if (i.notificationType == 7) {
                                         //Navigate Lịch sinh hiệu
                                         //
+                                        int currentIndex = 1;
+                                        Navigator.of(context)
+                                            .pushNamedAndRemoveUntil(
+                                                RoutesHDr.MAIN_HOME,
+                                                (Route<dynamic> route) => false,
+                                                arguments: currentIndex);
                                       } else if (i.notificationType == 6) {
                                         //Navigate thuốc detail
                                         //

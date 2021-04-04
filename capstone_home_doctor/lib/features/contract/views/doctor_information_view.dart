@@ -512,7 +512,9 @@ class _DoctorInformation extends State<DoctorInformation>
   _checkContractAvailable(String arg) {
     setState(() {
       //
+
       showDialog(
+          barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
             return Center(
@@ -554,6 +556,8 @@ class _DoctorInformation extends State<DoctorInformation>
               ),
             );
           });
+
+      ///
       if (_patientId != 0 && _idDoctor != 0) {
         //
         _checkingContractBloc.add(CheckingtContractEventSend(
@@ -577,6 +581,7 @@ class _DoctorInformation extends State<DoctorInformation>
                     msg.contains('Kiểm tra lại kết nối mạng')) {
                   Navigator.of(context).pop();
                   return showDialog(
+                    barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
                       return Center(
@@ -651,6 +656,7 @@ class _DoctorInformation extends State<DoctorInformation>
                 } else {
                   Navigator.of(context).pop();
                   return showDialog(
+                    barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
                       return Center(

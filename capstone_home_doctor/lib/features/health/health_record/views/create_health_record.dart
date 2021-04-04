@@ -19,6 +19,7 @@ import 'package:capstone_home_doctor/features/health/health_record/blocs/health_
 import 'package:capstone_home_doctor/features/health/health_record/events/hr_create_event.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
+import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
 import 'package:expandable_group/expandable_group_widget.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 
@@ -32,6 +33,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+final MedicalInstructionHelper _medicalInstructionHelper =
+    MedicalInstructionHelper();
 
 class CreateHealthRecord extends StatefulWidget {
   final Function refresh;
@@ -871,7 +874,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                           ),
                           new FlatButton(
                             child: new Text("Có"),
-                            onPressed: () {
+                            onPressed: () async {
                               //refresh data
                               setState(() {
                                 _listDiseaseSelected = [];
@@ -886,6 +889,9 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                               //navigate to health record detail
                               Navigator.of(context).pop();
                               hrHelper.setHealthReCordId(value);
+                              //
+                              await _medicalInstructionHelper
+                                  .updateCheckToCreateOrList(true);
                               Navigator.of(context)
                                   .pushNamed(RoutesHDr.HEALTH_RECORD_DETAIL)
                                   .then((value) => Navigator.of(context).pop());

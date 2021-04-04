@@ -169,6 +169,11 @@ class _MainHomeState extends State<MainHome> {
 
   @override
   Widget build(BuildContext context) {
+    int arguments = ModalRoute.of(context).settings.arguments;
+    if (arguments != null) {
+      _currentIndex = arguments;
+    }
+    arguments = null;
     final List<Widget> _widgetOptions = [
       DashboardPage(),
       HealthPage(),
@@ -324,6 +329,8 @@ class _MainHomeState extends State<MainHome> {
                   ],
                   onTap: (index) {
                     setState(() {
+                      print('index: $index');
+                      _currentIndex = 0;
                       _currentIndex = index;
                     });
                   },

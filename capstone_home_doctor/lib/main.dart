@@ -1248,6 +1248,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     if (!prefs.containsKey('AVAILABLE_DAY_CONTRACT')) {
       contractHelper.initialAvailableDay();
     }
+    if (!prefs.containsKey('CHECK_TO_CREATE_OR_LIST')) {
+      _medicalInstructionHelper.initialCheckToCreateOrList();
+    }
   }
 
   @override
@@ -1365,6 +1368,12 @@ class _HomeDoctorState extends State<HomeDoctor> {
 
       NotificationsBloc.instance.newNotification(notiData);
     }
+    if (notiData.body.contains('Bạn có một lịch đo sinh hiệu mới')) {
+      _saveVitalSignScheduleOffline();
+      print('CATCHED THIS NOTI TO DOWNLOAD NEW SCHEDULE');
+    }
+    //
+    //
   }
 
   @override
