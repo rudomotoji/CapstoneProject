@@ -25,6 +25,8 @@ import 'package:capstone_home_doctor/models/contract_update_dto.dart';
 import 'package:capstone_home_doctor/models/doctor_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -72,6 +74,8 @@ class _DetailContractView extends State<DetailContractView>
       PatientRepository(httpClient: http.Client());
   //
 
+  Stream<ReceiveNotification> _notificationsStream;
+
   //
   @override
   void initState() {
@@ -81,8 +85,13 @@ class _DetailContractView extends State<DetailContractView>
     _getPatientId();
     _contractIdNowBloc = BlocProvider.of(context);
     _contractFullBloc = BlocProvider.of(context);
-    _refreshData();
     _contractUpdateBloc = BlocProvider.of(context);
+    _refreshData();
+
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((notification) {
+      _refreshData();
+    });
   }
 
   _getPatientId() async {
@@ -1681,9 +1690,13 @@ class _DetailContractView extends State<DetailContractView>
                                                                         seconds:
                                                                             1),
                                                                     () {
-                                                                //
-                                                                Navigator.of(context).pushNamedAndRemoveUntil(
-        RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+                                                                  //
+                                                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                                                      RoutesHDr
+                                                                          .MAIN_HOME,
+                                                                      (Route<dynamic>
+                                                                              route) =>
+                                                                          false);
                                                                 });
                                                               },
                                                             ),

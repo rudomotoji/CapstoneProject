@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -98,36 +99,6 @@ class NotiHelper {
       payload: receiveNotification.payload,
     );
   }
-
-  // static Future<void> init(Function onDidReceiveLocalNotification,
-  //     Function onSelectNotification) async {
-  //   var initializationSettingsAndroid = AndroidInitializationSettings("@mipmap/ic_launcher");
-  //   var initializationSettingsIOS = IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
-  //   const MacOSInitializationSettings initializationSettingsMacOS =
-  //   MacOSInitializationSettings(
-  //       requestAlertPermission: false,
-  //       requestBadgePermission: false,
-  //       requestSoundPermission: false);
-  //
-  //   final InitializationSettings initializationSettings = InitializationSettings(
-  //       android: initializationSettingsAndroid,
-  //       iOS: initializationSettingsIOS,
-  //       macOS: initializationSettingsMacOS);
-  //   await _plugin.initialize(initializationSettings,onSelectNotification: onSelectNotification);
-  // }
-  //
-  // static Future<void> show(
-  //     {@required String title, @required String body, String payload}) {
-  //   const AndroidNotificationDetails androidPlatformChannelSpecifics =
-  //   AndroidNotificationDetails(
-  //       'your channel id', 'your channel name', 'your channel description',
-  //       importance: Importance.max,
-  //       priority: Priority.high,
-  //       showWhen: false);
-  //   const NotificationDetails platformChannelSpecifics =
-  //   NotificationDetails(android: androidPlatformChannelSpecifics);
-  //   return _plugin.show(0, title, body, platformChannelSpecifics, payload: payload);
-  // }
 }
 
 NotiHelper localNotifyManager = NotiHelper.init();
