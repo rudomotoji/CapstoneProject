@@ -592,10 +592,10 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                             //     itemMedi
                                                             //         .medicalInstructionId);
                                                             //
-                                                            Navigator.pushNamed(
-                                                                context,
-                                                                RoutesHDr
-                                                                    .VITAL_SIGN_CHART_DETAIL);
+                                                            // Navigator.pushNamed(
+                                                            //     context,
+                                                            //     RoutesHDr
+                                                            //         .VITAL_SIGN_CHART_DETAIL);
                                                           } else {
                                                             _showFullImageDescription(
                                                                 itemMedi.image,

@@ -1396,6 +1396,9 @@ class _DetailContractView extends State<DetailContractView>
                                                                 .medicalInstructions[
                                                                     index]
                                                                 .medicalInstructionId);
+                                                      } else {
+                                                        //
+                                                        //
                                                       }
                                                     } else {
                                                       _showFullImageDescription(

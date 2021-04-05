@@ -229,6 +229,12 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                       width: MediaQuery.of(context).size.width,
                       height: 400,
                     ),
+                    Text('Biểu đồ nhịp tim'.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: DefaultTheme.ORANGE_TEXT,
+                        )),
                   ],
                 ),
               )
