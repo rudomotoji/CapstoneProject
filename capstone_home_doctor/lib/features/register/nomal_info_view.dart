@@ -1,12 +1,15 @@
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class NomalInfoView extends StatefulWidget {
   TextEditingController fullNameController = TextEditingController();
@@ -19,8 +22,12 @@ class NomalInfoView extends StatefulWidget {
 
   List gender;
   String select, dateOfBirth;
+  bool verified = false;
+
   void Function(String) birthday;
   void Function(String) choiceGender;
+  void Function(String) alertError;
+  void Function(bool) setVerify;
 
   NomalInfoView({
     Key key,
@@ -36,6 +43,9 @@ class NomalInfoView extends StatefulWidget {
     this.birthday,
     this.dateOfBirth,
     this.choiceGender,
+    this.setVerify,
+    this.verified,
+    this.alertError,
   }) : super(key: key);
 
   @override
@@ -43,6 +53,21 @@ class NomalInfoView extends StatefulWidget {
 }
 
 class _NomalInfoViewState extends State<NomalInfoView> {
+  bool verified = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  String _verificationId;
+  TextEditingController _smsController = TextEditingController();
+  ArrayValidator _validator = ArrayValidator();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setState(() {
+      verified = widget.verified;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -65,14 +90,74 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             keyboardAction: TextInputAction.done,
             onChange: (text) {},
           ),
-          TextFieldHDr(
-            style: TFStyle.BORDERED,
-            label: 'SĐT(*):',
-            placeHolder: '123456789',
-            inputType: TFInputType.TF_PHONE,
-            controller: widget.phoneController,
-            keyboardAction: TextInputAction.done,
-            onChange: (text) {},
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                width: verified
+                    ? (MediaQuery.of(context).size.width - 100)
+                    : (MediaQuery.of(context).size.width - 160),
+                child: TextFieldHDr(
+                  style: TFStyle.BORDERED,
+                  label: 'SĐT(*):',
+                  placeHolder: '123456789',
+                  inputType: TFInputType.TF_PHONE,
+                  controller: widget.phoneController,
+                  keyboardAction: TextInputAction.done,
+                  onChange: (text) {
+                    widget.setVerify(false);
+                    setState(() {
+                      verified = false;
+                    });
+                  },
+                ),
+              ),
+              (verified)
+                  ? Container(
+                      height: 20,
+                      width: 20,
+                      child: Image.asset(
+                        'assets/images/ic-checked.png',
+                      ),
+                    )
+                  : Container(
+                      child: InkWell(
+                        onTap: () async {
+                          if (_validator.phoneNumberValidator(
+                                  widget.phoneController.text) ==
+                              null) {
+                            String phoneNum =
+                                widget.phoneController.text.substring(1);
+
+                            _verifyPhoneNumber('+84$phoneNum');
+                            _showPopInputOTP();
+                          } else {
+                            widget.alertError(_validator.phoneNumberValidator(
+                                widget.phoneController.text));
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 255, 120, 75),
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                          ),
+                          height: 48,
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          child: Center(
+                            child: Text(
+                              'Xác thực ngay',
+                              style: TextStyle(
+                                  color: DefaultTheme.WHITE,
+                                  fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+            ],
           ),
           Row(
             children: [
@@ -85,41 +170,6 @@ class _NomalInfoViewState extends State<NomalInfoView> {
               ),
             ],
           ),
-          // Container(
-          //   margin: EdgeInsets.only(left: 20, right: 20),
-          //   decoration: BoxDecoration(
-          //       borderRadius: BorderRadius.circular(6),
-          //       color: DefaultTheme.GREY_BUTTON),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.start,
-          //     crossAxisAlignment: CrossAxisAlignment.center,
-          //     children: <Widget>[
-          //       Padding(
-          //         padding: EdgeInsets.only(left: 20),
-          //       ),
-          //       Text(
-          //         widget.dateOfBirth == null ? '' : widget.dateOfBirth,
-          //         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-          //       ),
-          //       Spacer(),
-          //       ButtonHDr(
-          //         label: 'Chọn',
-          //         style: BtnStyle.BUTTON_FULL,
-          //         image: Image.asset('assets/images/ic-choose-date.png'),
-          //         width: 30,
-          //         height: 40,
-          //         labelColor: DefaultTheme.BLUE_DARK,
-          //         bgColor: DefaultTheme.TRANSPARENT,
-          //         onTap: () {
-          //           _showDatePickerStart();
-          //         },
-          //       ),
-          //       Padding(
-          //         padding: EdgeInsets.only(right: 10),
-          //       )
-          //     ],
-          //   ),
-          // ),
           Row(
             children: [
               Text('Ngày sinh (*):'),
@@ -217,6 +267,188 @@ class _NomalInfoViewState extends State<NomalInfoView> {
     );
   }
 
+  // Code of how to verify phone number
+  Future<void> _verifyPhoneNumber(String phoneNum) async {
+    PhoneVerificationCompleted verificationCompleted =
+        (PhoneAuthCredential phoneAuthCredential) async {
+      await _auth.signInWithCredential(phoneAuthCredential).then((value) {
+        if (value.user != null) {
+          setState(() {
+            verified = true;
+          });
+          _smsController.text = '';
+          widget.setVerify(true);
+          Navigator.pop(context);
+        } else {
+          print("Error");
+          widget.setVerify(false);
+        }
+      }).catchError((onError) {
+        print('_verifyPhoneNumber: $onError');
+        widget.setVerify(false);
+      });
+    };
+
+    PhoneVerificationFailed verificationFailed =
+        (FirebaseAuthException authException) {
+      widget.alertError('Vui lòng kiểm tra lại số điện thoại');
+      Navigator.pop(context);
+      print(
+          'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
+    };
+
+    PhoneCodeSent codeSent =
+        (String verificationId, [int forceResendingToken]) async {
+      print('Please check your phone for the verification code.');
+      _verificationId = verificationId;
+    };
+
+    PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+        (String verificationId) {
+      _verificationId = verificationId;
+    };
+
+    try {
+      await _auth.verifyPhoneNumber(
+          phoneNumber: phoneNum,
+          timeout: const Duration(seconds: 60),
+          verificationCompleted: verificationCompleted,
+          verificationFailed: verificationFailed,
+          codeSent: codeSent,
+          codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+    } catch (e) {
+      print('Failed to Verify Phone Number: $e');
+
+      widget.alertError('Vui lòng kiểm tra lại số điện thoại');
+      Navigator.pop(context);
+    }
+  }
+
+  // Code of how to sign in with phone.
+  Future<void> _signInWithPhoneNumber() async {
+    try {
+      final AuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId,
+        smsCode: _smsController.text,
+      );
+      await _auth.signInWithCredential(credential).then((value) {
+        if (value.user != null) {
+          setState(() {
+            verified = true;
+          });
+          _smsController.text = '';
+          widget.setVerify(true);
+          Navigator.pop(context);
+        } else {
+          widget.alertError('Mã OTP không chính xác');
+          widget.setVerify(false);
+        }
+      }).catchError((onError) {
+        print('_signInWithPhoneNumber: $onError');
+        widget.alertError('Mã OTP không chính xác');
+        widget.setVerify(false);
+      });
+    } catch (e) {
+      print('Failed to sign in: $e');
+      widget.setVerify(false);
+    }
+  }
+
+  void _showPopInputOTP() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+              child: Container(
+                padding: EdgeInsets.all(10),
+                width: MediaQuery.of(context).size.width - 20,
+                height: MediaQuery.of(context).size.height * 0.35,
+                decoration: BoxDecoration(
+                  color: DefaultTheme.WHITE.withOpacity(0.6),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 20),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 20),
+                        ),
+                        Text(
+                          'OTP',
+                          style: TextStyle(
+                            fontSize: 30,
+                            decoration: TextDecoration.none,
+                            color: DefaultTheme.BLACK,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 20, right: 20, top: 20, bottom: 20),
+                            child: Text(
+                              'Mã xác thực đã được gửi về số điện thoại của bạn',
+                              style: TextStyle(
+                                fontSize: 16,
+                                decoration: TextDecoration.none,
+                                color: DefaultTheme.GREY_TEXT,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                          Divider(
+                            color: DefaultTheme.GREY_TEXT,
+                            height: 0.25,
+                          ),
+                          Flexible(
+                            child: TextFieldHDr(
+                              style: TFStyle.NO_BORDER,
+                              label: 'Mã:',
+                              controller: _smsController,
+                              keyboardAction: TextInputAction.done,
+                              onChange: (text) {},
+                            ),
+                          ),
+                          Divider(
+                            color: DefaultTheme.GREY_TEXT,
+                            height: 0.25,
+                          ),
+                        ],
+                      ),
+                    ),
+                    ButtonHDr(
+                      style: BtnStyle.BUTTON_BLACK,
+                      label: 'Xác thực',
+                      onTap: () {
+                        _signInWithPhoneNumber();
+                      },
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 15),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Row addRadioButton(int btnValue, String title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -234,69 +466,6 @@ class _NomalInfoViewState extends State<NomalInfoView> {
         ),
         Text(title)
       ],
-    );
-  }
-
-  void _showDatePickerStart() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(15)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width - 20,
-                height: MediaQuery.of(context).size.height * 0.5,
-                decoration: BoxDecoration(
-                  color: DefaultTheme.WHITE.withOpacity(0.6),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Ngày sinh(*):',
-                          style: TextStyle(
-                            fontSize: 25,
-                            color: DefaultTheme.BLACK,
-                            decoration: TextDecoration.none,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: CupertinoDatePicker(
-                          mode: CupertinoDatePickerMode.date,
-                          initialDateTime:
-                              DateTime.now().add(Duration(days: 5)),
-                          onDateTimeChanged: (dateTime) {
-                            widget.birthday(dateTime.toString());
-                            setState(() {
-                              widget.dateOfBirth = dateTime.toString();
-                            });
-                          }),
-                    ),
-                    ButtonHDr(
-                      style: BtnStyle.BUTTON_BLACK,
-                      label: 'Chọn',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

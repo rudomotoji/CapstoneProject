@@ -41,6 +41,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
   List gender = ["Nam", "Nữ"];
   String selectGender = 'Nam';
   String birthday;
+  bool verified = false;
 
   //page 2
   TextEditingController familyController = TextEditingController();
@@ -122,6 +123,9 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                             birthday: setBirthday,
                             dateOfBirth: birthday,
                             choiceGender: setGender,
+                            setVerify: setVerify,
+                            verified: verified,
+                            alertError: alertError,
                           );
                         } else if (i == 0) {
                           return RegisterPage1(
@@ -233,6 +237,8 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                             birthday == null) {
                           alertError(
                               'Vui lòng điền đầy đủ thông tin có dấu (*)');
+                        } else if (!verified) {
+                          alertError('Vui lòng xác thực số điện thoại');
                         } else if (_validator
                                 .phoneNumberValidator(_phoneController.text) !=
                             null) {
@@ -486,6 +492,12 @@ class _Register extends State<Register> with WidgetsBindingObserver {
   setGender(String select) {
     setState(() {
       selectGender = select;
+    });
+  }
+
+  setVerify(bool res) {
+    setState(() {
+      verified = res;
     });
   }
 
