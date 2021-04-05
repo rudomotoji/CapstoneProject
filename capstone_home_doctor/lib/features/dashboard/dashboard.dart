@@ -917,22 +917,17 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
             ),
           ),
           Positioned(
-            child: ClipRRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                child: Center(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 200,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.white.withOpacity(0.6),
-                    ),
-
-                    // child: Text('Sinh hiệu bất thường'),
-                  ),
+            child: Center(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: 200,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white.withOpacity(0.6),
                 ),
+
+                // child: Text('Sinh hiệu bất thường'),
               ),
             ),
           ),
