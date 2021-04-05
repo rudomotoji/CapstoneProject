@@ -48,7 +48,8 @@ class SQFLiteHelper {
     await db.execute(
         "CREATE TABLE ${MEDICAL_INSTRUCTION_TABLE} (medical_instruction_id PRIMARYKEY TEXT, description TEXT, image TEXT, dianose TEXT, date_start TEXT, date_finish TEXT, medical_instruction_type_id TEXT, health_record_id TEXT)");
     await db.execute(
-        'CREATE TABLE ${MEDICAL_RESPONSE_TABLE}(medical_response_id PRIMARYKEY TEXT, date_start TEXT, date_finish TEXT)');
+        'CREATE TABLE ${MEDICAL_RESPONSE_TABLE}(medical_response_id PRIMARYKEY INTEGER, date_start TEXT, date_finish TEXT, place_health_record TEXT)');
+
     await db.execute(
         """CREATE TABLE ${MEDICAL_SCHEDULE_TABLE} (medical_schedule_id PRIMARYKEY TEXT, 
         medication_name TEXT, 
@@ -59,7 +60,7 @@ class SQFLiteHelper {
         noon INTEGER, 
         afterNoon INTEGER, 
         night INTEGER,
-        medical_response_id TEXT,
+        medical_response_id INTEGER,
         FOREIGN KEY (medical_response_id) REFERENCES $MEDICAL_RESPONSE_TABLE (medical_response_id) ON DELETE NO ACTION ON UPDATE NO ACTION
         )""");
     await db.execute(
@@ -105,48 +106,37 @@ class SQFLiteHelper {
     }
   }
 
-  // Future<bool> deleteDb() async {
-  //   bool databaseDeleted = false;
-
-  //   try {
-  //     io.Directory documentDirectory = await getApplicationDocumentsDirectory();
-  //     String path = join(documentDirectory.path, DATABASE_NAME);
-  //     await deleteDatabase(path).whenComplete(() {
-  //       databaseDeleted = true;
-  //     }).catchError((onError) {
-  //       databaseDeleted = false;
-  //     });
-  //   } on DatabaseException catch (error) {
-  //     print(error);
-  //   } catch (error) {
-  //     print(error);
-  //   }
-
-  //   return databaseDeleted;
-  // }
-
   //Medical response
   Future<String> insertMedicalResponse(PrescriptionDTO medicalResponse) async {
-    String uuid = Uuid().v1();
-    medicalResponse.medicalResponseID = uuid;
+    // String uuid = Uuid().v1();
+    // medicalResponse.medicalResponseID = uuid;
     var dbClient = await database;
-    await dbClient.insert(MEDICAL_RESPONSE_TABLE, medicalResponse.toMap());
-    return uuid;
+    try {
+      await dbClient.insert(MEDICAL_RESPONSE_TABLE, medicalResponse.toMap());
+    } catch (e) {
+      print('insertMedicalResponse: $e');
+    }
+    // return uuid;
   }
 
   Future<List<PrescriptionDTO>> getMedicationsRespone() async {
     var dbClient = await database;
     // PrescriptionDTO medicationsRespone = PrescriptionDTO();
     List<PrescriptionDTO> responseData = [];
-    List<Map> maps = await dbClient.query(MEDICAL_RESPONSE_TABLE,
-        columns: ['medical_response_id', 'date_start', 'date_finish']);
-    if (maps.length > 0) {
-      for (var prescription in maps) {
-        responseData.add(PrescriptionDTO.fromMap(prescription));
+    try {
+      List<Map> maps = await dbClient.query(MEDICAL_RESPONSE_TABLE,
+          columns: ['medical_response_id', 'date_start', 'date_finish']);
+      if (maps.length > 0) {
+        for (var prescription in maps) {
+          responseData.add(PrescriptionDTO.fromMap(prescription));
+        }
       }
+      // medicationsRespone = PrescriptionDTO.fromMap(maps.first);
+      return responseData;
+    } catch (e) {
+      print('getMedicationsRespone: $e');
+      return responseData;
     }
-    // medicationsRespone = PrescriptionDTO.fromMap(maps.first);
-    return responseData;
   }
 
   Future<bool> deleteMedicalResponse() async {
@@ -160,51 +150,36 @@ class SQFLiteHelper {
     }
   }
 
-  Future<void> deleteMedicalResponseByID(String id) async {
+  Future<void> deleteMedicalResponseByID(int id) async {
     var dbClient = await database;
-    await dbClient.rawDelete(
-        'DELETE FROM $MEDICAL_RESPONSE_TABLE WHERE medical_response_id = ?',
-        [id]);
+    try {
+      await dbClient.rawDelete(
+          'DELETE FROM $MEDICAL_RESPONSE_TABLE WHERE medical_response_id = ?',
+          [id]);
+    } catch (e) {
+      print('deleteMedicalResponseByID: $e');
+    }
   }
 
   //Medical schedule
   Future<bool> insertMedicalSchedule(
       MedicationSchedules medicalScheduleDTO) async {
     var dbClient = await database;
-    String uuid = Uuid().v1();
-    medicalScheduleDTO.medicalScheduleId = uuid;
-    await dbClient.insert(MEDICAL_SCHEDULE_TABLE, medicalScheduleDTO.toMap());
+    try {
+      String uuid = Uuid().v1();
+      medicalScheduleDTO.medicalScheduleId = uuid;
+      await dbClient.insert(MEDICAL_SCHEDULE_TABLE, medicalScheduleDTO.toMap());
+    } catch (e) {
+      print('insertMedicalSchedule: $e');
+    }
   }
 
   Future<List<MedicationSchedules>> getAll() async {
     var dbClient = await database;
-    List<Map> maps = await dbClient.query(
-      MEDICAL_SCHEDULE_TABLE,
-      columns: [
-        'medical_schedule_id',
-        'medication_name',
-        'content',
-        'useTime',
-        'unit',
-        'morning',
-        'noon',
-        'afterNoon',
-        'night',
-        'medical_response_id'
-      ],
-    );
     List<MedicationSchedules> responseData = [];
-    if (maps.length > 0) {
-      for (var medicationSchedule in maps) {
-        responseData.add(MedicationSchedules.fromMap(medicationSchedule));
-      }
-    }
-    return responseData;
-  }
-
-  Future<List<MedicationSchedules>> getAllBy(String session) async {
-    var dbClient = await database;
-    List<Map> maps = await dbClient.query(MEDICAL_SCHEDULE_TABLE,
+    try {
+      List<Map> maps = await dbClient.query(
+        MEDICAL_SCHEDULE_TABLE,
         columns: [
           'medical_schedule_id',
           'medication_name',
@@ -217,29 +192,67 @@ class SQFLiteHelper {
           'night',
           'medical_response_id'
         ],
-        where: '$session > 0');
-    List<MedicationSchedules> responseData = [];
-    if (maps.length > 0) {
-      for (var medicationSchedule in maps) {
-        responseData.add(MedicationSchedules.fromMap(medicationSchedule));
+      );
+      if (maps.length > 0) {
+        for (var medicationSchedule in maps) {
+          responseData.add(MedicationSchedules.fromMap(medicationSchedule));
+        }
       }
+      return responseData;
+    } catch (e) {
+      print('Future<List<MedicationSchedules>> getAll(): $e');
+      return responseData;
     }
-    return responseData;
+  }
+
+  Future<List<MedicationSchedules>> getAllBy(String session) async {
+    var dbClient = await database;
+    List<MedicationSchedules> responseData = [];
+    try {
+      List<Map> maps = await dbClient.query(MEDICAL_SCHEDULE_TABLE,
+          columns: [
+            'medical_schedule_id',
+            'medication_name',
+            'content',
+            'useTime',
+            'unit',
+            'morning',
+            'noon',
+            'afterNoon',
+            'night',
+            'medical_response_id'
+          ],
+          where: '$session > 0');
+      if (maps.length > 0) {
+        for (var medicationSchedule in maps) {
+          responseData.add(MedicationSchedules.fromMap(medicationSchedule));
+        }
+      }
+      return responseData;
+    } catch (e) {
+      print('Future<List<MedicationSchedules>> getAll(): $e');
+      return responseData;
+    }
   }
 
   Future<List<MedicationSchedules>> getAllByMedicalResponseID(
-      String medicalResponseID) async {
+      int medicalResponseID) async {
     var dbClient = await database;
-    List<Map> maps = await dbClient.rawQuery(
-        'SELECT * FROM $MEDICAL_SCHEDULE_TABLE WHERE medical_response_id = ?',
-        [medicalResponseID]);
     List<MedicationSchedules> responseData = [];
-    if (maps.length > 0) {
-      for (var medicationSchedule in maps) {
-        responseData.add(MedicationSchedules.fromMap(medicationSchedule));
+    try {
+      List<Map> maps = await dbClient.rawQuery(
+          'SELECT * FROM $MEDICAL_SCHEDULE_TABLE WHERE medical_response_id = ?',
+          [medicalResponseID]);
+      if (maps.length > 0) {
+        for (var medicationSchedule in maps) {
+          responseData.add(MedicationSchedules.fromMap(medicationSchedule));
+        }
       }
+      return responseData;
+    } catch (e) {
+      print('getAllByMedicalResponseID: $e');
+      return responseData;
     }
-    return responseData;
   }
 
   Future<bool> deleteAllMedicalSchedule() async {
@@ -253,11 +266,15 @@ class SQFLiteHelper {
     }
   }
 
-  Future<void> deleteMedicalScheduleByID(String id) async {
+  Future<void> deleteMedicalScheduleByID(int id) async {
     var dbClient = await database;
-    await dbClient.rawDelete(
-        'DELETE FROM $MEDICAL_SCHEDULE_TABLE WHERE medical_response_id = ?',
-        [id]);
+    try {
+      await dbClient.rawDelete(
+          'DELETE FROM $MEDICAL_SCHEDULE_TABLE WHERE medical_response_id = ?',
+          [id]);
+    } catch (e) {
+      print('deleteMedicalScheduleByID: $e');
+    }
   }
 
   //VITAL_SIGN_TABLE

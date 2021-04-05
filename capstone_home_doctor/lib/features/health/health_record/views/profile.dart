@@ -184,7 +184,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
               child: Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Hồ sơ cũ',
+                  'Hồ sơ ngoài',
                 ),
               ),
             ),

@@ -99,7 +99,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
       .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
 
-  List<MedicationSchedules> listSchedule = [];
+  // List<MedicationSchedules> listSchedule = [];
   List<AppointmentDTO> listAppointment = [];
   List<MedicalInstructionDTO> listPrescription = [];
   List<AppointmentDTO> _listAppointment = [];
@@ -1143,7 +1143,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         });
   }
 
-  Widget _medicalScheduleNotNull() {
+  Widget _medicalScheduleNotNull(List<MedicationSchedules> listSchedule) {
     return Column(
       children: <Widget>[
         Padding(
@@ -1493,7 +1493,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         }
         if (contextPrescription is PrescriptionListStateSuccess) {
           listPrescription = contextPrescription.listPrescription;
-
           if (contextPrescription.listPrescription != null) {
             listPrescription.sort((a, b) =>
                 b.medicalInstructionId.compareTo(a.medicalInstructionId));
@@ -1505,30 +1504,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           } else {
             getLocalStorage();
           }
-          // _getCalendar();
-          return SizedBox(
-            height: 280,
-            width: MediaQuery.of(context).size.width,
-            child: PageView.builder(
-              itemCount: listPrescription.length,
-              controller: PageController(viewportFraction: 0.9),
-              onPageChanged: (int index) => setState(() => _index = index),
-              itemBuilder: (_, i) {
-                return Transform.scale(
-                  scale: i == _index ? 1 : 0.9,
-                  alignment: Alignment.centerLeft,
-                  child: Card(
-                    elevation: 0,
-                    shadowColor: DefaultTheme.GREY_TEXT,
-                    color: DefaultTheme.GREY_VIEW,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Container(),
-                  ),
-                );
-              },
-            ),
-          );
+          return _getCalendar();
         }
         return Container(
           width: MediaQuery.of(context).size.width,
@@ -1541,12 +1517,29 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   }
 
   Widget _getCalendar() {
-    return Container(
-      child: (listSchedule == null || listSchedule.length <= 0)
-          ? Center(
-              child: Text('Hiện chưa có lịch dùng thuốc'),
-            )
-          : _medicalScheduleNotNull(),
+    return SizedBox(
+      height: 280,
+      width: MediaQuery.of(context).size.width,
+      child: PageView.builder(
+        itemCount: listPrescription.length,
+        controller: PageController(viewportFraction: 0.9),
+        onPageChanged: (int index) => setState(() => _index = index),
+        itemBuilder: (_, i) {
+          return Transform.scale(
+            scale: i == _index ? 1 : 0.9,
+            alignment: Alignment.centerLeft,
+            child: Card(
+              elevation: 0,
+              shadowColor: DefaultTheme.GREY_TEXT,
+              color: DefaultTheme.GREY_VIEW,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              child: _medicalScheduleNotNull(
+                  listPrescription[i].medicationsRespone.medicationSchedules),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -1591,8 +1584,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   handlingMEdicalResponse() async {
     await _sqfLiteHelper.cleanDatabase();
-    List<MedicationSchedules> lists = [];
-
     for (var schedule in listPrescription) {
       if (schedule.medicationsRespone.dateFinished != null) {
         DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
@@ -1600,33 +1591,25 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         if (tempDate2.millisecondsSinceEpoch >=
                 curentDateNow.millisecondsSinceEpoch &&
             schedule.medicationsRespone.status.contains('ACTIVE')) {
-          String responseID = await _sqfLiteHelper
+          schedule.medicationsRespone.medicalResponseID =
+              schedule.medicalInstructionId;
+          await _sqfLiteHelper
               .insertMedicalResponse(schedule.medicationsRespone);
 
           for (var item in schedule.medicationsRespone.medicationSchedules) {
-            lists.add(item);
-            item.medicalResponseID = responseID;
+            item.medicalResponseID = schedule.medicalInstructionId;
             await _sqfLiteHelper.insertMedicalSchedule(item);
           }
         }
       }
     }
-
-    // List<MedicationSchedules> prescript = await _sqfLiteHelper.getAll();
-    // print('list prescript: ${prescript.length}');
-    // List<PrescriptionDTO> data = await _sqfLiteHelper.getMedicationsRespone();
-    // print('list data: ${data.length}');
-    // print('get html: ${lists.length}');
-    setState(() {
-      listSchedule = lists;
-    });
   }
 
   getLocalStorage() async {
     List<PrescriptionDTO> data = await _sqfLiteHelper.getMedicationsRespone();
-    // print('list data: ${data.length}');
-    List<MedicationSchedules> lists = [];
+    List<MedicalInstructionDTO> _listPrescription = [];
     for (var itemPrescription in data) {
+      MedicalInstructionDTO _prescription = MedicalInstructionDTO();
       DateTime dateFinished =
           new DateFormat("yyyy-MM-dd").parse(itemPrescription.dateFinished);
       //nếu ngày kết thúc lớn hơn ngày hiện tại thì lấy lịch uống thuốc
@@ -1634,11 +1617,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           curentDateNow.millisecondsSinceEpoch) {
         List<MedicationSchedules> listMedical = await _sqfLiteHelper
             .getAllByMedicalResponseID(itemPrescription.medicalResponseID);
-        if (listMedical.length > 0) {
-          for (var medical in listMedical) {
-            lists.add(medical);
-          }
-        }
+        itemPrescription.medicationSchedules = listMedical;
+        _prescription.medicationsRespone = itemPrescription;
+        _listPrescription.add(_prescription);
       } else {
         // nếu ngày kết thúc nhỏ hơn ngày hiện tại thì xóa data trong local
         await _sqfLiteHelper
@@ -1647,9 +1628,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
             .deleteMedicalResponseByID(itemPrescription.medicalResponseID);
       }
     }
-    // print('getLocalStorage: ${lists.length}');
+
     setState(() {
-      listSchedule = lists;
+      listPrescription = _listPrescription;
     });
   }
 
