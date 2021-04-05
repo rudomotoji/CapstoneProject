@@ -2,23 +2,20 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
-import 'package:capstone_home_doctor/commons/routes/routes.dart';
-import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
-import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
-import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
@@ -30,8 +27,6 @@ class VitalSignChartDetail extends StatefulWidget {
   }
 }
 
-final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
-
 class _VitalSignChartDetail extends State<VitalSignChartDetail>
     with WidgetsBindingObserver {
   //
@@ -40,6 +35,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
   List<int> listValueMap = [];
   List<String> listTimeXAxis = [];
   int _patientId = 0;
+  String dateTime = '';
 
   int minVitalSignValue = 0;
   int maxVitalSignValue = 0;
@@ -47,41 +43,19 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
   int _lastValueVitalSign = 0;
 
   VitalSignDetailDTO _vitalSignDetailDTO = VitalSignDetailDTO();
+  DateValidator _dateValidator = DateValidator();
+
+  VitalSignDetailBloc _vitalSignDetailBloc;
+  int healthRecordId = 0;
+  String timeStart = '';
+  String timeCanceled = '';
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _vitalSignDetailBloc = BlocProvider.of(context);
     _getPatientId();
-    _vitalSignBloc = BlocProvider.of(context);
-
-    getDataFromJSONFile();
-  }
-
-  Future<void> getDataFromJSONFile() async {
-    final String response = await rootBundle.loadString('assets/global.json');
-
-    if (response.contains('vitalSign')) {
-      final data = await json.decode(response);
-      _vitalSignDetailDTO = VitalSignDetailDTO.fromJson(data['vitalSign']);
-
-      // minVitalSignValue = _vitalSignDetailDTO.vitalSigns.first.numberMin;
-      // maxVitalSignValue = _vitalSignDetailDTO.vitalSigns.first.numberMax;
-      //
-      minVitalSignValue = 70;
-      maxVitalSignValue = 90;
-      //
-      var listTime =
-          _vitalSignDetailDTO.vitalSignValues.heartBeatTimeValue.split(',');
-      var listValue =
-          _vitalSignDetailDTO.vitalSignValues.heartBeatNumberValue.split(',');
-
-      listTime.removeLast();
-      listValue.removeLast();
-
-      listValueMap = listValue.map((data) => int.parse(data)).toList();
-      listTimeXAxis = listTime.map((e) => '${e}');
-    }
   }
 
   Future _getPatientId() async {
@@ -90,14 +64,26 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
         _patientId = value;
       });
       if (_patientId != 0) {
-        _vitalSignBloc.add(
-            VitalSignEventGetList(type: vital_type, patientId: _patientId));
+        _vitalSignDetailBloc.add(VitalSignEventGetDetail(
+            dateTime: _dateValidator.convertDateCreate(
+                dateTime, 'yyyy-MM-dd', 'yyyy-MM-dd'),
+            patientId: _patientId,
+            healthRecordId: healthRecordId));
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> arguments = ModalRoute.of(context).settings.arguments;
+    if (arguments != null) {
+      healthRecordId = arguments['healthRecordId'];
+      timeStart = arguments['timeStared'];
+      timeCanceled = arguments['timeCanceled'];
+      if (dateTime == '') {
+        dateTime = timeCanceled;
+      }
+    }
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -117,7 +103,111 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                     Padding(
                       padding: EdgeInsets.only(bottom: 20),
                     ),
-                    heartChart(),
+                    Row(
+                      children: [
+                        Text('Ngày:'),
+                        FlatButton(
+                          child: Text(
+                            _dateValidator.convertDateCreate(
+                                dateTime, 'dd/MM/yyyy', 'yyyy-MM-dd'),
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onPressed: () async {
+                            DateTime newDateTime = await showRoundedDatePicker(
+                                context: context,
+                                initialDate: DateTime.parse(timeStart),
+                                firstDate: DateTime.parse(timeCanceled),
+                                lastDate: DateTime.now(),
+                                borderRadius: 16,
+                                theme: ThemeData.dark());
+                            if (newDateTime != null) {
+                              setState(() {
+                                dateTime = newDateTime.toString();
+                              });
+                              _vitalSignDetailBloc.add(VitalSignEventGetDetail(
+                                  dateTime: _dateValidator.convertDateCreate(
+                                      dateTime, 'yyyy-MM-dd', 'yyyy-MM-dd'),
+                                  patientId: _patientId,
+                                  healthRecordId: healthRecordId));
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    BlocBuilder<VitalSignDetailBloc, VitalSignState>(
+                        builder: (context, state) {
+                      if (state is VitalSignStateLoading) {
+                        print('VitalSignStateLoading');
+                        return Container(
+                          margin: EdgeInsets.only(left: 20, right: 20),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: DefaultTheme.GREY_BUTTON),
+                          child: Center(
+                            child: SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: Image.asset('assets/images/loading.gif'),
+                            ),
+                          ),
+                        );
+                      }
+                      if (state is VitalSignStateFailure) {
+                        print('VitalSignStateFailure');
+                        return Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Text('Không có dữ liệu'),
+                        );
+                      }
+                      if (state is VitalSignGetDetailSuccess) {
+                        print('VitalSignGetDetailSuccess');
+                        if (state.vitalSignDetailDTO != null &&
+                            state.vitalSignDetailDTO.vitalSignValues != null) {
+                          if (state.vitalSignDetailDTO.vitalSignValues.length >
+                              0) {
+                            _vitalSignDetailDTO = state.vitalSignDetailDTO;
+                            if (_vitalSignDetailDTO.vitalSigns != null) {
+                              minVitalSignValue = _vitalSignDetailDTO
+                                  .vitalSigns.first.numberMin;
+                              maxVitalSignValue = _vitalSignDetailDTO
+                                  .vitalSigns.first.numberMax;
+                            }
+
+                            var listTime = _vitalSignDetailDTO
+                                .vitalSignValues.first.timeValue
+                                .split(',');
+                            var listValue = _vitalSignDetailDTO
+                                .vitalSignValues.first.numberValue
+                                .split(',');
+
+                            listTime.removeLast();
+                            listValue.removeLast();
+
+                            listValueMap = listValue
+                                .map((data) => int.parse(data))
+                                .toList();
+                            listTimeXAxis =
+                                listTime.map((e) => '"${e}"').toList();
+
+                            return heartChart();
+                          } else {
+                            return Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Text('Không có dữ liệu 1'),
+                            );
+                          }
+                        } else {
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Text('Không có dữ liệu 2'),
+                          );
+                        }
+                      }
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Text('Vui lòng kiểm tra lại kết nối'),
+                      );
+                    }),
                   ],
                 ),
               ),

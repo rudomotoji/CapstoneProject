@@ -1,6 +1,7 @@
 import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
+import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
@@ -69,6 +70,29 @@ class VitalSignDangerousBloc extends Bloc<VitalSignEvent, VitalSignState> {
             await sqfLiteHelper.getListDangerousVitalSign(
                 event.min, event.max, event.patientId, event.valueType);
         yield VitalSignGetListDangerousSuccess(list: list);
+      } catch (e) {
+        yield VitalSignStateFailure();
+      }
+    }
+  }
+}
+
+class VitalSignDetailBloc extends Bloc<VitalSignEvent, VitalSignState> {
+  final VitalSignServerRepository vitalSignServerRepository;
+  VitalSignDetailBloc({@required this.vitalSignServerRepository})
+      : assert(vitalSignServerRepository != null),
+        super(VitalSignStateInitial());
+//
+  @override
+  Stream<VitalSignState> mapEventToState(VitalSignEvent event) async* {
+    //
+    if (event is VitalSignEventGetDetail) {
+      yield VitalSignStateLoading();
+      try {
+        final VitalSignDetailDTO data =
+            await vitalSignServerRepository.getVitalSign(
+                event.patientId, event.healthRecordId, event.dateTime);
+        yield VitalSignGetDetailSuccess(vitalSignDetailDTO: data);
       } catch (e) {
         yield VitalSignStateFailure();
       }

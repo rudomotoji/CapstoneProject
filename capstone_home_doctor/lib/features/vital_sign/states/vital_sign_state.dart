@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -46,4 +47,13 @@ class VitalSignGetListDangerousSuccess extends VitalSignState {
   @override
   // TODO: implement props
   List<Object> get props => [list];
+}
+
+class VitalSignGetDetailSuccess extends VitalSignState {
+  final VitalSignDetailDTO vitalSignDetailDTO;
+  const VitalSignGetDetailSuccess({@required this.vitalSignDetailDTO});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [vitalSignDetailDTO];
 }

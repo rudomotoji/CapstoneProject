@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:expandable_group/expandable_group_widget.dart';
@@ -42,9 +43,6 @@ class ContractShareView extends StatefulWidget {
 
 class _ContractShareView extends State<ContractShareView>
     with WidgetsBindingObserver {
-  //
-  DiseaseRepository diseaseRepository =
-      DiseaseRepository(httpClient: http.Client());
   int _idDoctor = 0;
   int _medInsTypeId = 0;
 
@@ -62,6 +60,10 @@ class _ContractShareView extends State<ContractShareView>
       HealthRecordRepository(httpClient: http.Client());
   MedicalInstructionRepository medicalInstructionRepository =
       MedicalInstructionRepository(httpClient: http.Client());
+  DiseaseRepository diseaseRepository =
+      DiseaseRepository(httpClient: http.Client());
+
+  final DateValidator _dateValidator = DateValidator();
 
   MedicalShareBloc _medicalShareBloc;
   MedInsTypeListBloc _medInsTypeListBloc;
@@ -2797,19 +2799,19 @@ class _ContractShareView extends State<ContractShareView>
         .then((value) {
       Navigator.pop(context);
       if (value != null) {
-        // var dateStarted = new DateFormat('dd/MM/yyyy').format(
-        //     new DateFormat("yyyy-MM-dd")
-        //         .parse(value.vitalSignResponse.dateStarted));
-        // var dateFinished = new DateFormat('dd/MM/yyyy').format(
-        //     new DateFormat("yyyy-MM-dd")
-        //         .parse(value.vitalSignResponse.dateFinished));
-        var dateStarted = '';
-        var dateFinished = '';
-
         if (value.medicationsRespone != null) {
           Navigator.pushNamed(context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
               arguments: value.medicalInstructionId);
         } else {
+          var dateStarted = _dateValidator.convertDateCreate(
+              value.vitalSignScheduleRespone.timeStared,
+              'dd/MM/yyyy',
+              "yyyy-MM-dd");
+          var dateFinished = _dateValidator.convertDateCreate(
+              value.vitalSignScheduleRespone.timeCanceled,
+              'dd/MM/yyyy',
+              "yyyy-MM-dd");
+
           setState(() {
             showDialog(
               context: context,
@@ -2822,7 +2824,7 @@ class _ContractShareView extends State<ContractShareView>
                       child: Container(
                         padding: EdgeInsets.all(10),
                         width: MediaQuery.of(context).size.width - 20,
-                        height: MediaQuery.of(context).size.height * 0.35,
+                        height: MediaQuery.of(context).size.height * 0.4,
                         decoration: BoxDecoration(
                           color: DefaultTheme.WHITE.withOpacity(0.6),
                         ),
@@ -2858,37 +2860,113 @@ class _ContractShareView extends State<ContractShareView>
                                     color: DefaultTheme.GREY_TEXT,
                                     height: 0.25,
                                   ),
+                                  Padding(padding: EdgeInsets.only(top: 5)),
                                   Text(
                                     'Người đặt: ${value.placeHealthRecord}',
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 18,
                                       decoration: TextDecoration.none,
                                       color: DefaultTheme.GREY_TEXT,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
-                                  Text(
-                                    'Ngày bắt đầu: ${dateStarted}',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      decoration: TextDecoration.none,
-                                      color: DefaultTheme.GREY_TEXT,
-                                      fontWeight: FontWeight.w400,
+                                  Padding(padding: EdgeInsets.only(top: 10)),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: value.vitalSignScheduleRespone
+                                          .vitalSigns.length,
+                                      itemBuilder: (context, index) {
+                                        var item = value
+                                            .vitalSignScheduleRespone
+                                            .vitalSigns[index];
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Divider(
+                                              color: DefaultTheme.GREY_TEXT,
+                                              height: 0.25,
+                                            ),
+                                            Text(
+                                              '${value.vitalSignScheduleRespone.vitalSigns[0].vitalSignType}',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Chỉ số an toàn:',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    decoration:
+                                                        TextDecoration.none,
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${value.vitalSignScheduleRespone.vitalSigns[0].numberMin} - ${value.vitalSignScheduleRespone.vitalSigns[0].numberMax}',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    decoration:
+                                                        TextDecoration.none,
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Text(
+                                              'Ngày bắt đầu: ${dateStarted}',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Ngày bắt đầu: ${dateFinished}',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
                                     ),
                                   ),
-                                  Text(
-                                    'Ngày bắt đầu: ${dateFinished}',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      decoration: TextDecoration.none,
-                                      color: DefaultTheme.GREY_TEXT,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                                  ButtonHDr(
+                                    style: BtnStyle.BUTTON_BLACK,
+                                    label: 'Chi tiết',
+                                    onTap: () {
+                                      Map<String, dynamic> arguments = {
+                                        'healthRecordId': 0,
+                                        "timeStared": value
+                                            .vitalSignScheduleRespone
+                                            .timeStared,
+                                        "timeCanceled": value
+                                            .vitalSignScheduleRespone
+                                            .timeCanceled,
+                                      };
+                                      Navigator.pushNamed(context,
+                                          RoutesHDr.VITAL_SIGN_CHART_DETAIL,
+                                          arguments: arguments);
+                                    },
                                   ),
-                                  // Divider(
-                                  //   color: DefaultTheme.GREY_TEXT,
-                                  //   height: 0.25,
-                                  // ),
                                 ],
                               ),
                             ),
