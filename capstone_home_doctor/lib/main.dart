@@ -12,6 +12,7 @@ import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.
 import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/views/vital_sign_chart_detail.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
@@ -1678,6 +1679,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
                     VitalSignScheduleView(),
                 RoutesHDr.CREATE_MEDICAL_INSTRUCTION: (context) =>
                     CreateMedicalInstructionView(),
+                RoutesHDr.VITAL_SIGN_CHART_DETAIL: (context) =>
+                    VitalSignChartDetail(),
               },
               home: _startScreen,
             ),

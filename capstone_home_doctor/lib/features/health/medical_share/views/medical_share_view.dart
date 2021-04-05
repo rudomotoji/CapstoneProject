@@ -588,9 +588,14 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                                   null &&
                                                               itemMedi.medicalInstructionTypeId ==
                                                                   8) {
-                                                            _showDetailVitalSign(
-                                                                itemMedi
-                                                                    .medicalInstructionId);
+                                                            // _showDetailVitalSign(
+                                                            //     itemMedi
+                                                            //         .medicalInstructionId);
+                                                            //
+                                                            Navigator.pushNamed(
+                                                                context,
+                                                                RoutesHDr
+                                                                    .VITAL_SIGN_CHART_DETAIL);
                                                           } else {
                                                             _showFullImageDescription(
                                                                 itemMedi.image,
