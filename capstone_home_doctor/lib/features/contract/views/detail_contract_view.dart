@@ -1377,91 +1377,92 @@ class _DetailContractView extends State<DetailContractView>
                                                 width: 150,
                                                 margin:
                                                     EdgeInsets.only(left: 10),
-                                                child: (x
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    if (x
                                                             .medicalInstructions[
                                                                 index]
-                                                            .image !=
-                                                        null)
-                                                    ? InkWell(
-                                                        onTap: () {
-                                                          _showFullImageDescription(
-                                                              x.medicalInstructions[
-                                                                  index],
-                                                              x.medicalInstructionTypeName);
-                                                        },
-                                                        child: Stack(
-                                                          children: [
-                                                            //
-                                                            SizedBox(
-                                                              width: 150,
-                                                              height: 200,
-                                                              child: Image.network(
-                                                                  'http://45.76.186.233:8000/api/v1/Images?pathImage=${x.medicalInstructions[index].image}'),
+                                                            .image ==
+                                                        null) {
+                                                      if (x
+                                                          .medicalInstructionTypeName
+                                                          .contains(
+                                                              'Đơn thuốc')) {
+                                                        Navigator.pushNamed(
+                                                            context,
+                                                            RoutesHDr
+                                                                .MEDICAL_HISTORY_DETAIL,
+                                                            arguments: x
+                                                                .medicalInstructions[
+                                                                    index]
+                                                                .medicalInstructionId);
+                                                      } else {
+                                                        //
+                                                        //
+                                                      }
+                                                    } else {
+                                                      _showFullImageDescription(
+                                                          x.medicalInstructions[
+                                                              index],
+                                                          x.medicalInstructionTypeName);
+                                                    }
+                                                  },
+                                                  child: Stack(
+                                                    children: [
+                                                      //
+                                                      // SizedBox(
+                                                      //   width: 150,
+                                                      //   height: 200,
+                                                      //   child: Image.network(
+                                                      //       'http://45.76.186.233:8000/api/v1/Images?pathImage=${x.medicalInstructions[index].image}'),
+                                                      // ),
+                                                      checkTypeMedIns(
+                                                          x.medicalInstructions[
+                                                              index],
+                                                          x.medicalInstructionTypeName),
+                                                      Positioned(
+                                                        bottom: 0,
+                                                        child: Container(
+                                                          width: 150,
+                                                          height: 100,
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 10),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            gradient: LinearGradient(
+                                                                begin: Alignment
+                                                                    .topCenter,
+                                                                end: Alignment
+                                                                    .bottomCenter,
+                                                                colors: [
+                                                                  DefaultTheme
+                                                                      .TRANSPARENT,
+                                                                  DefaultTheme
+                                                                      .BLACK
+                                                                      .withOpacity(
+                                                                          0.9),
+                                                                ]),
+                                                          ),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .bottomCenter,
+                                                            child: Text(
+                                                              '${x.medicalInstructionTypeName}',
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .WHITE,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500),
                                                             ),
-                                                            Positioned(
-                                                              bottom: 0,
-                                                              child: Container(
-                                                                width: 150,
-                                                                height: 100,
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        bottom:
-                                                                            10),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  gradient: LinearGradient(
-                                                                      begin: Alignment
-                                                                          .topCenter,
-                                                                      end: Alignment
-                                                                          .bottomCenter,
-                                                                      colors: [
-                                                                        DefaultTheme
-                                                                            .TRANSPARENT,
-                                                                        DefaultTheme
-                                                                            .BLACK
-                                                                            .withOpacity(0.9),
-                                                                      ]),
-                                                                ),
-                                                                child: Align(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .bottomCenter,
-                                                                  child: Text(
-                                                                    '${x.medicalInstructionTypeName}',
-                                                                    style: TextStyle(
-                                                                        color: DefaultTheme
-                                                                            .WHITE,
-                                                                        fontWeight:
-                                                                            FontWeight.w500),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    : Container(
-                                                        width: 150,
-                                                        height: 200,
-                                                        color: DefaultTheme
-                                                            .GREY_TOP_TAB_BAR
-                                                            .withOpacity(0.8),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: <Widget>[
-                                                            //
-                                                            SizedBox(
-                                                              width: 25,
-                                                              height: 25,
-                                                              child: Image.asset(
-                                                                  'assets/images/ic-medicine.png'),
-                                                            ),
-                                                            Text('Đơn thuốc'),
-                                                          ],
+                                                          ),
                                                         ),
                                                       ),
+                                                    ],
+                                                  ),
+                                                ),
                                               );
                                             },
                                           ),
@@ -1747,7 +1748,54 @@ class _DetailContractView extends State<DetailContractView>
       ),
     );
   }
-  //
+
+//hiển thị y lệnh
+  checkTypeMedIns(MedicalInstructions medicalInstructions,
+      String medicalInstructionTypeName) {
+    if (medicalInstructions.image != null) {
+      return SizedBox(
+        width: 150,
+        height: 200,
+        child: Image.network(
+            'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions.image}'),
+      );
+    } else {
+      if (medicalInstructionTypeName.contains('Đơn thuốc')) {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset('assets/images/ic-medicine.png'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              //
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset(''),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
 
   _showContractDocument(ContractUpdateDTO dto, bool isSigned) {
     //

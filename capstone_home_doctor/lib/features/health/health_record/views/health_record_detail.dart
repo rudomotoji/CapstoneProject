@@ -687,7 +687,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     return (listMedicalIns.length != 0)
         ? ListView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            // physics: NeverScrollableScrollPhysics(),
             itemCount: listMedicalIns.length,
             itemBuilder: (BuildContext buildContext, int index) {
               return _itemRow(listMedicalIns[index]);
@@ -708,7 +708,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         ? ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            // physics: NeverScrollableScrollPhysics(),
             itemCount: listMedicalInsShared.length,
             itemBuilder: (BuildContext context, int index) {
               print(index);
@@ -752,16 +752,20 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                           children: [
                             InkWell(
                               onTap: () {
-                                if (dto.medicationsRespone != null) {
-                                  Navigator.pushNamed(
-                                      context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
-                                      arguments: dto.medicalInstructionId);
-                                }
                                 if (dto?.image != null) {
                                   _showFullImageDescription(
                                       dto?.image,
                                       dto.medicalInstructionType,
                                       '${DateFormat('dd/MM/yyyy').format(dateCreated)}');
+                                } else {
+                                  if (dto.medicationsRespone != null) {
+                                    Navigator.pushNamed(context,
+                                        RoutesHDr.MEDICAL_HISTORY_DETAIL,
+                                        arguments: dto.medicalInstructionId);
+                                  } else {
+                                    //
+                                    //
+                                  }
                                 }
                               },
                               child: Container(

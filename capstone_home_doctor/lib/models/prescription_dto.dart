@@ -57,8 +57,12 @@ class PrescriptionDTO {
   String dateStarted;
   String dateFinished;
   List<MedicationSchedules> medicationSchedules;
-  String medicalResponseID;
+  int medicalResponseID;
   String status;
+
+  //for save local
+  //
+  String placeHealthRecord;
 
   PrescriptionDTO({
     this.dateStarted,
@@ -66,6 +70,7 @@ class PrescriptionDTO {
     this.medicationSchedules,
     this.medicalResponseID,
     this.status,
+    this.placeHealthRecord,
   });
 
   PrescriptionDTO.fromJson(Map<String, dynamic> json) {
@@ -96,6 +101,7 @@ class PrescriptionDTO {
       'medical_response_id': medicalResponseID,
       'date_start': dateStarted,
       'date_finish': dateFinished,
+      'place_health_record': placeHealthRecord,
     };
     return map;
   }
@@ -104,6 +110,7 @@ class PrescriptionDTO {
     medicalResponseID = map['medical_response_id'];
     dateStarted = map['date_start'];
     dateFinished = map['date_finish'];
+    placeHealthRecord = map['place_health_record'];
   }
 }
 
@@ -117,7 +124,7 @@ class MedicationSchedules {
   int afterNoon;
   int night;
   String medicalScheduleId;
-  String medicalResponseID;
+  int medicalResponseID;
 
   MedicationSchedules(
       {this.medicationName,

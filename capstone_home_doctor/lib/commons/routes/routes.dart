@@ -34,4 +34,5 @@ class RoutesHDr {
   static const String CREATE_MEDICAL_INSTRUCTION = '/CeateMedIns';
   static const String ACTIVITY_VIEW = '/ActivityView';
   static const String ACTIVITY_TIME_VIEW = '/ActivityTimeView';
+  static const String VITAL_SIGN_CHART_DETAIL = '/VitalSignChartDetail';
 }
