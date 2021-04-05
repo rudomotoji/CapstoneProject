@@ -1342,7 +1342,7 @@ class _DetailContractView extends State<DetailContractView>
                                         padding: EdgeInsets.only(left: 10),
                                       ),
                                       Text(
-                                        'Phiếu y lệnh đã chia sẻ',
+                                        'Phiếu y lệnh đã chia sẻ trong hợp đồng',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                             fontSize: 15,

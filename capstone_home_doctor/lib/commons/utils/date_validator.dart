@@ -39,6 +39,21 @@ class DateValidator {
     return result;
   }
 
+  String parseToDateView4(String dateString) {
+    String result = '';
+    String day, month, year;
+    if (dateString != null) {
+      day = dateString.split('/')[0];
+      month = dateString.split('/')[1];
+      year = dateString.split('/')[2];
+      result = '${day} tháng ${month}, ${year}';
+    } else {
+      result = dateString;
+    }
+
+    return result;
+  }
+
   String getHourAndMinute(String dateString) {
     String result = '';
     if (dateString.contains(' ')) {

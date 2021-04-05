@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
+import 'package:capstone_home_doctor/features/activity/view/activity_view.dart';
 import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
 import 'package:capstone_home_doctor/features/dashboard/dashboard.dart';
 import 'package:capstone_home_doctor/features/health/health.dart';
@@ -198,6 +199,7 @@ class _MainHomeState extends State<MainHome> {
       HealthPage(),
       // MessagePage(),
       ProfileTab(),
+      ActivityView(),
       NotificationPage(),
     ];
 
@@ -279,6 +281,22 @@ class _MainHomeState extends State<MainHome> {
                       ),
                       title: Text(
                         'Hồ sơ',
+                        style: TextStyle(color: DefaultTheme.GREY_TEXT),
+                      ),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: new Image.asset(
+                        'assets/images/ic-msg.png',
+                        height: 30,
+                        width: 30,
+                      ),
+                      activeIcon: new Image.asset(
+                        'assets/images/ic-msg-selected.png',
+                        height: 30,
+                        width: 30,
+                      ),
+                      title: Text(
+                        'Hoạt động',
                         style: TextStyle(color: DefaultTheme.GREY_TEXT),
                       ),
                     ),
@@ -416,6 +434,22 @@ class _MainHomeState extends State<MainHome> {
                   ),
                   title: Text(
                     'Hồ sơ',
+                    style: TextStyle(color: DefaultTheme.GREY_TEXT),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  icon: new Image.asset(
+                    'assets/images/ic-msg.png',
+                    height: 30,
+                    width: 30,
+                  ),
+                  activeIcon: new Image.asset(
+                    'assets/images/ic-msg-selected.png',
+                    height: 30,
+                    width: 30,
+                  ),
+                  title: Text(
+                    'Hoạt động',
                     style: TextStyle(color: DefaultTheme.GREY_TEXT),
                   ),
                 ),

@@ -1,30 +1,23 @@
 class VitalSignPushDTO {
-  int vitalSignScheduleId;
+  int patientId;
   int vitalSignTypeId;
-  String currentDate;
   String timeValue;
   String numberValue;
 
   VitalSignPushDTO(
-      {this.vitalSignScheduleId,
-      this.vitalSignTypeId,
-      this.currentDate,
-      this.timeValue,
-      this.numberValue});
+      {this.patientId, this.vitalSignTypeId, this.timeValue, this.numberValue});
 
   VitalSignPushDTO.fromJson(Map<String, dynamic> json) {
-    vitalSignScheduleId = json['vitalSignScheduleId'];
+    patientId = json['patientId'];
     vitalSignTypeId = json['vitalSignTypeId'];
-    currentDate = json['currentDate'];
     timeValue = json['timeValue'];
     numberValue = json['numberValue'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['vitalSignScheduleId'] = this.vitalSignScheduleId;
+    data['patientId'] = this.patientId;
     data['vitalSignTypeId'] = this.vitalSignTypeId;
-    data['currentDate'] = this.currentDate;
     data['timeValue'] = this.timeValue;
     data['numberValue'] = this.numberValue;
     return data;

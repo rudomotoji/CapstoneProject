@@ -5,6 +5,11 @@ import 'dart:typed_data';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/features/activity/blocs/activity_bloc.dart';
+import 'package:capstone_home_doctor/features/activity/blocs/doctor_list_bloc.dart';
+import 'package:capstone_home_doctor/features/activity/repository/activity_repository.dart';
+import 'package:capstone_home_doctor/features/activity/view/activity_time.dart';
+import 'package:capstone_home_doctor/features/activity/view/activity_view.dart';
 import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
 import 'package:capstone_home_doctor/features/chat/chat.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_checking_bloc.dart';
@@ -12,6 +17,7 @@ import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.
 import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
+import 'package:capstone_home_doctor/services/doctor_helper.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
@@ -115,6 +121,11 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+//
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 //helper
 final AuthenticateHelper authenHelper = AuthenticateHelper();
 final PeripheralHelper peripheralHelper = PeripheralHelper();
@@ -126,6 +137,7 @@ final VitalSignHelper _vitalSignHelper = VitalSignHelper();
 final AppointmentHelper _appointmentHelper = AppointmentHelper();
 final MedicalInstructionHelper _medicalInstructionHelper =
     MedicalInstructionHelper();
+final DoctorHelper _doctorHelper = DoctorHelper();
 //
 /////////////////////
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
@@ -161,6 +173,8 @@ AppointmentRepository _appointmentRepository =
 SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 PeripheralRepository _peripheralRepository = PeripheralRepository();
 VitalSignRepository _vitalSignRepository = VitalSignRepository();
+ActivityRepository _activityRepository =
+    ActivityRepository(httpClient: http.Client());
 
 //AccountBloc
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
@@ -461,6 +475,8 @@ void main() async {
                                                   _vitalSignScheduleDTO
                                                       .doctorAccountId,
                                               senderAccountId: _accountId);
+                                      print(
+                                          'CHECK TO OBJECT NOTIFICATION: !!!!!!!!!!!!senderAccountId: ${_accountId}');
                                       //PUSH NOTI
                                       if (isSuccess) {
                                         await notificationRepository
@@ -563,16 +579,13 @@ void main() async {
                           print('list value: $listValue');
                           print('list time: $listTime');
                           VitalSignPushDTO vitalSignPush = VitalSignPushDTO(
-                            vitalSignScheduleId:
-                                heartRateSchedule.vitalSignScheduleId,
-                            currentDate:
-                                DateTime.now().toString().split(' ')[0],
+                            patientId: _patientId,
                             vitalSignTypeId: 1,
                             numberValue: listValue,
                             timeValue: listTime,
                           );
-                          print(
-                              'DTO HEREEE: \n vitalSignScheduleId: ${vitalSignPush.vitalSignScheduleId}\ncurrentDate: ${vitalSignPush.currentDate}\nnumberValue: ${vitalSignPush.numberValue}\ntimeValue: ${vitalSignPush.timeValue}');
+                          // print(
+                          //     'DTO HEREEE: \n vitalSignScheduleId: ${vitalSignPush.vitalSignScheduleId}\ncurrentDate: ${vitalSignPush.currentDate}\nnumberValue: ${vitalSignPush.numberValue}\ntimeValue: ${vitalSignPush.timeValue}');
 
                           print(
                               '\n\nJSON OBJECT: \n\n ${vitalSignPush.toJson().toString()}\n\n');
@@ -1052,16 +1065,17 @@ _connectInBackground(int timeInsert) async {
                           print('list value: $listValue');
                           print('list time: $listTime');
                           VitalSignPushDTO vitalSignPush = VitalSignPushDTO(
-                            vitalSignScheduleId:
-                                heartRateSchedule.vitalSignScheduleId,
-                            currentDate:
-                                DateTime.now().toString().split(' ')[0],
+                            // vitalSignScheduleId:
+                            //     heartRateSchedule.vitalSignScheduleId,
+                            // currentDate:
+                            //     DateTime.now().toString().split(' ')[0],
+                            patientId: _patientId,
                             vitalSignTypeId: 1,
                             numberValue: listValue,
                             timeValue: listTime,
                           );
                           print(
-                              'DTO HEREEE: \n vitalSignScheduleId: ${vitalSignPush.vitalSignScheduleId}\ncurrentDate: ${vitalSignPush.currentDate}\nnumberValue: ${vitalSignPush.numberValue}\ntimeValue: ${vitalSignPush.timeValue}');
+                              'DTO HEREEE: \nnumberValue: ${vitalSignPush.numberValue}\ntimeValue: ${vitalSignPush.timeValue}');
 
                           print(
                               '\n\nJSON OBJECT: \n\n ${vitalSignPush.toJson().toString()}\n\n');
@@ -1095,6 +1109,8 @@ _connectInBackground(int timeInsert) async {
                                     senderAccountId: _accountId);
                             await notificationRepository
                                 .pushNotification(notiPushDTO);
+                            print(
+                                'CHECK TO OBJECT NOTIFICATION: !!!!!!!!!!!!senderAccountId: ${_accountId}');
                             //KICK VARIABLE CHECK DANGER TO NORMAL
                             await _vitalSignHelper.updateCheckToNormal(true);
                             print('update people to danger successful');
@@ -1226,6 +1242,8 @@ _connectInBackground(int timeInsert) async {
                                     recipientAccountId:
                                         _vitalSignScheduleDTO.doctorAccountId,
                                     senderAccountId: _accountId);
+                            print(
+                                'CHECK TO OBJECT NOTIFICATION: !!!!!!!!!!!!senderAccountId: ${_accountId}');
                             //
                             //PUSH NOTI
                             await notificationRepository
@@ -1357,6 +1375,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('CHECK_CREATE_FROM_LIST')) {
       _medicalInstructionHelper.initialCreateHRFromDetail();
+    }
+    if (!prefs.containsKey('DOCTOR_ACCOUNT_ID')) {
+      _doctorHelper.initialDoctor();
     }
   }
 
@@ -1598,9 +1619,21 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 vitalSignRepository: _vitalSignRepository,
                 sqfLiteHelper: _sqfLiteHelper),
           ),
+          BlocProvider<VitalSignDangerousBloc>(
+            create: (BuildContext context) =>
+                VitalSignDangerousBloc(sqfLiteHelper: _sqfLiteHelper),
+          ),
           BlocProvider<VitalScheduleBloc>(
             create: (BuildContext context) => VitalScheduleBloc(
                 vitalSignServerRepository: _vitalSignServerRepository),
+          ),
+          BlocProvider<DoctorListBloc>(
+            create: (BuildContext context) =>
+                DoctorListBloc(doctorrepository: _doctorRepository),
+          ),
+          BlocProvider<ActivityBloc>(
+            create: (BuildContext context) =>
+                ActivityBloc(activityRepository: _activityRepository),
           ),
         ],
         child: GestureDetector(
@@ -1678,7 +1711,19 @@ class _HomeDoctorState extends State<HomeDoctor> {
                     VitalSignScheduleView(),
                 RoutesHDr.CREATE_MEDICAL_INSTRUCTION: (context) =>
                     CreateMedicalInstructionView(),
+                RoutesHDr.ACTIVITY_VIEW: (context) => ActivityView(),
+                RoutesHDr.ACTIVITY_TIME_VIEW: (context) => ActivityTimeView(),
               },
+              localizationsDelegates: [
+                // ... app-specific localization delegate[s] here
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: [
+                const Locale('en'), // English
+                const Locale('vi'), // Vietnamese
+              ],
               home: _startScreen,
             ),
           ),

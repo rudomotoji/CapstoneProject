@@ -50,3 +50,28 @@ class VitalSignBloc extends Bloc<VitalSignEvent, VitalSignState> {
     }
   }
 }
+
+class VitalSignDangerousBloc extends Bloc<VitalSignEvent, VitalSignState> {
+  final SQFLiteHelper sqfLiteHelper;
+  VitalSignDangerousBloc({@required this.sqfLiteHelper})
+      : assert(sqfLiteHelper != null),
+        super(VitalSignStateInitial());
+//
+  @override
+  Stream<VitalSignState> mapEventToState(VitalSignEvent event) async* {
+    //
+    if (event is VitalSignGetListdangerous) {
+      yield VitalSignStateLoading();
+      try {
+        //
+        print('go into bloc dangerous list');
+        final List<VitalSignDTO> list =
+            await sqfLiteHelper.getListDangerousVitalSign(
+                event.min, event.max, event.patientId, event.valueType);
+        yield VitalSignGetListDangerousSuccess(list: list);
+      } catch (e) {
+        yield VitalSignStateFailure();
+      }
+    }
+  }
+}

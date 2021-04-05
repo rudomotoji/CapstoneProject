@@ -161,6 +161,12 @@ flutter:
     - assets/images/ic-mi-band.png
     - assets/images/ic-unknown-device.png
     - assets/images/ic-reload.png
+    - assets/images/ic-heart-dangerous.gif
+    - assets/images/ic-heart-u.png
+    - assets/images/ic-spo2-u.png
+    - assets/images/ic-temp-u.png
+    - assets/images/ic-pressure-u.png
+    - assets/images/ic-filter.png
 
 
   

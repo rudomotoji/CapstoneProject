@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 
 import 'overview.dart';
 import 'health_record/views/profile.dart';
-import 'timeline.dart';
 import 'vitalsign.dart';
 
 class HealthPage extends StatefulWidget {
@@ -27,12 +26,10 @@ class _HealthState extends State<HealthPage> {
     final segmentedControlMaxWidth = MediaQuery.of(context).size.width - 40;
     final children = <int, Widget>{
       0: Text('Tổng quan'), //overview
-      1: Text('Timeline'), //timeline
-      2: Text('Sinh hiệu'), //vitalsign
+      1: Text('Sinh hiệu'), //vitalsign
     };
     final List<Widget> childrenWidget = [
       OverviewTab(),
-      TimelineTab(),
       VitalSignTab(),
     ];
     return CupertinoPageScaffold(

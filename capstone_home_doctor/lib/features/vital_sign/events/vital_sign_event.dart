@@ -43,3 +43,21 @@ class VitalSignEventDelete extends VitalSignEvent {
   // TODO: implement props
   List<Object> get props => [valueType, patientId];
 }
+
+class VitalSignGetListdangerous extends VitalSignEvent {
+  final int min;
+  final int max;
+  final int patientId;
+  final String valueType;
+
+  const VitalSignGetListdangerous(
+      {@required this.min,
+      @required this.max,
+      @required this.patientId,
+      @required this.valueType});
+
+  @override
+  // TODO: implement props
+  List<Object> get props =>
+      [this.min, this.max, this.patientId, this.valueType];
+}

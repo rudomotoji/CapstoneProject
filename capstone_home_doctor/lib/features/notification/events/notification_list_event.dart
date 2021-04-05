@@ -47,3 +47,18 @@ class NotiChangePeopleStatusEvent extends NotificationListEvent {
   // TODO: implement props
   List<Object> get props => [patientId, status];
 }
+
+class TimeLineGetEvent extends NotificationListEvent {
+  final int patientAccountId;
+  final int doctorAccountId;
+  final String dateTime;
+
+  const TimeLineGetEvent(
+      {@required this.patientAccountId,
+      @required this.doctorAccountId,
+      @required this.dateTime});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [patientAccountId, doctorAccountId, dateTime];
+}

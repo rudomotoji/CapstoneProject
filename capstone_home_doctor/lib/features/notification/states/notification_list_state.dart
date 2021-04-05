@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/models/activity_dto.dart';
 import 'package:capstone_home_doctor/models/notification_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +23,15 @@ class NotificationListStateSuccess extends NotificationListState {
   @override
   // TODO: implement props
   List<Object> get props => [listNotification];
+}
+
+class TimeLineStateSuccess extends NotificationListState {
+  final ActivityDTO dto;
+  const TimeLineStateSuccess({@required this.dto});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [dto];
 }
 
 //push noti success

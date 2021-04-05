@@ -38,10 +38,30 @@ class PeripheralRepository {
   //connect device first time
   Future<bool> connectDevice1stTime(ScanResult scanResult) async {
     BluetoothDevice device = scanResult.device;
-    await device.connect();
-    await _peripheralHelper.updatePeripheralChecking(
-        true, device.id.toString());
-    return true;
+    try {
+      await device.connect();
+      await _peripheralHelper.updatePeripheralChecking(
+          true, device.id.toString());
+      return true;
+    } catch (e) {
+      if (e.toString().contains(
+          'PlatformException(already_connected, connection with device already exists, null, null)')) {
+        device.disconnect();
+        await device.connect();
+        await _peripheralHelper.updatePeripheralChecking(
+            true, device.id.toString());
+        return true;
+      }
+      if (e.toString().contains(
+          'Unhandled Exception: Exception: Another scan is already in progress')) {
+        stopScanning();
+        device.disconnect();
+        await device.connect();
+        await _peripheralHelper.updatePeripheralChecking(
+            true, device.id.toString());
+        return true;
+      }
+    }
   }
 
   //find device by id

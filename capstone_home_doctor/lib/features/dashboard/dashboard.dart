@@ -91,9 +91,15 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   AppointmentBloc _appointmentBloc;
   TokenDeviceBloc _tokenDeviceBloc;
   VitalSignBloc _vitalSignBloc;
+  VitalSignDangerousBloc _vitalSignDangerousBloc;
+
   //
   String vitalType = 'HEART_RATE';
+  String vitalBPType = 'PRESSURE';
   VitalSignDTO lastMeasurement = VitalSignDTO();
+
+  //
+  List<VitalSignDTO> listVitalSignDangerous = [];
 
   SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
@@ -117,9 +123,13 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
     _vitalSignBloc = BlocProvider.of(context);
+    _vitalSignDangerousBloc = BlocProvider.of(context);
+
     if (_patientId != 0) {
       _vitalSignBloc
           .add(VitalSignEventGetList(type: vitalType, patientId: _patientId));
+      _vitalSignDangerousBloc.add(VitalSignGetListdangerous(
+          min: 0, max: 100, patientId: _patientId, valueType: vitalType));
     }
     _updateAvailableContract();
     _updateTokenDevice();
@@ -127,8 +137,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
     selectNotificationSubject.stream.listen((String payload) async {
       await _getPatientId();
-      const oneSec = const Duration(seconds: 1);
-      new Timer.periodic(oneSec, (Timer t) => _changeDangerView());
     });
 
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
@@ -136,13 +144,20 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       print('Notification: $notification');
       _getPatientId();
     });
+    _changeDangerView();
   }
 
   _changeDangerView() {
-    //
-    setState(() {
-      dangerKickedOn = !dangerKickedOn;
+    const oneSec = const Duration(milliseconds: 500);
+    Timer.periodic(oneSec, (Timer t) {
+      //
+
+      if (!mounted) return;
+      setState(() {
+        dangerKickedOn = !dangerKickedOn;
+      });
     });
+    //
   }
 
   @override
@@ -313,15 +328,16 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     ],
                   ),
                 ),
+
                 _showStatusOverview(),
                 //
-
                 _showLastHeartRateMeasure(),
+
                 // Padding(
                 //   padding: EdgeInsets.only(bottom: 20),
                 // ),
                 // _showLastBloodPressureMeasure(),
-                //
+                // //
                 _showSuggestionDashboard(),
 
                 //_showLastMeasurement(),
@@ -901,33 +917,108 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     end: Alignment.bottomLeft,
                     colors: (dangerKickedOn)
                         ? [
-                            DefaultTheme.GRADIENT_5,
-                            DefaultTheme.GRADIENT_4,
-                            DefaultTheme.GRADIENT_3
-                          ]
-                        : [
+                            DefaultTheme.GRADIENT_3,
                             DefaultTheme.GRADIENT_3,
                             DefaultTheme.GRADIENT_4,
-                            DefaultTheme.GRADIENT_5
+                            DefaultTheme.GRADIENT_5,
+                          ]
+                        : [
+                            DefaultTheme.GRADIENT_5,
+                            DefaultTheme.GRADIENT_5,
+                            DefaultTheme.GRADIENT_5,
+                            DefaultTheme.GRADIENT_5,
                           ]),
               ),
               duration: const Duration(seconds: 1),
-              curve: Curves.fastOutSlowIn,
+              curve: Curves.easeInOutBack,
               // child: Text('Sinh hiệu bất thường'),
             ),
           ),
           Positioned(
-            child: Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: 200,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.white.withOpacity(0.6),
-                ),
-
-                // child: Text('Sinh hiệu bất thường'),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 200,
+              padding: EdgeInsets.only(left: 20, right: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.black.withOpacity(0.3),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  //
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 15,
+                    ),
+                  ),
+                  Text(
+                    'Sinh hiệu bất thường',
+                    style: TextStyle(
+                      color: DefaultTheme.WHITE,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 5,
+                    ),
+                  ),
+                  Divider(
+                    color: DefaultTheme.GREY_VIEW,
+                    height: 1,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                  ),
+                  BlocBuilder<VitalSignDangerousBloc, VitalSignState>(
+                      builder: (context, state) {
+                    if (state is VitalSignStateLoading) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 80,
+                        child: SizedBox(
+                          width: 80,
+                          height: 80,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                      );
+                    }
+                    if (state is VitalSignStateFailure) {
+                      return Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 80,
+                          child: Center(
+                            child: Text('Không thể tải'),
+                          ));
+                    }
+                    if (state is VitalSignGetListDangerousSuccess) {
+                      if (null == state.list) {
+                        return Container();
+                      } else {
+                        // lastMeasurement = state.list.last;
+                        listVitalSignDangerous = state.list;
+                      }
+                    }
+                    return Container(
+                        child: Column(
+                      children: <Widget>[
+                        //
+                        Text(
+                          'Hệ thống ghi nhận nhịp tim của bạn bất thường.',
+                          style: TextStyle(
+                            color: DefaultTheme.WHITE,
+                          ),
+                        ),
+                        (listVitalSignDangerous != null)
+                            ? Text('${listVitalSignDangerous.length}')
+                            : Container(),
+                      ],
+                    ));
+                  }),
+                ],
               ),
             ),
           ),

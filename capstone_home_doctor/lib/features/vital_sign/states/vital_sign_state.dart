@@ -38,3 +38,12 @@ class VitalSignStateGetListSuccess extends VitalSignState {
 }
 
 class VitalSignDeleteSuccess extends VitalSignState {}
+
+class VitalSignGetListDangerousSuccess extends VitalSignState {
+  final List<VitalSignDTO> list;
+  const VitalSignGetListDangerousSuccess({@required this.list});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [list];
+}

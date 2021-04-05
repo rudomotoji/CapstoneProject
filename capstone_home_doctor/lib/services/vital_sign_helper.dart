@@ -136,5 +136,25 @@ class VitalSignHelper {
   }
 
   ///CHECK PEOPLE STATUS IS DANGER OR NORMAL
+  Future<void> initialPeopleStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('STATUS_PEOPLE', '');
+  }
 
+  Future<void> updatePeopleStatus(String status) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('STATUS_PEOPLE')) {
+      initialPeopleStatus();
+    }
+    prefs.setString('STATUS_PEOPLE', status);
+  }
+
+  Future<String> getPeopleStatus() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('STATUS_PEOPLE')) {
+      initialPeopleStatus();
+    }
+    return prefs.getString('STATUS_PEOPLE');
+  }
+  //
 }
