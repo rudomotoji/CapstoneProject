@@ -82,6 +82,8 @@ class _ContractShareView extends State<ContractShareView>
 
   //
   String nameOther = '';
+  MedicalInstructionRepository _medicalInstructionRepository =
+      MedicalInstructionRepository(httpClient: http.Client());
 
   bool isChecked = false;
   //
@@ -1515,11 +1517,16 @@ class _ContractShareView extends State<ContractShareView>
                       child: InkWell(
                         onTap: () {
                           print('tap');
-                          _showFullImageDescription(
-                              medicalInstructions3[index].image,
-                              'Phiếu khác',
-                              '${medicalInstructions3[index].dateCreate}',
-                              '${medicalInstructions3[index].diagnose}');
+                          if (medicalInstructions3[index].image == null) {
+                            _showDetailVitalSign(medicalInstructions3[index]
+                                .medicalInstructionId);
+                          } else {
+                            _showFullImageDescription(
+                                medicalInstructions3[index].image,
+                                'Phiếu khác',
+                                '${medicalInstructions3[index].dateCreate}',
+                                '${medicalInstructions3[index].diagnose}');
+                          }
                         },
                         child: Stack(
                           children: [
@@ -2736,5 +2743,169 @@ class _ContractShareView extends State<ContractShareView>
             },
           );
         });
+  }
+
+  void _showDetailVitalSign(int medicalInstructionId) {
+    setState(() {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    width: 250,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.7),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 130,
+                          // height: 100,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                        // Spacer(),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Vui lòng chờ chút',
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.GREY_TEXT,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
+    });
+
+    _medicalInstructionRepository
+        .getMedicalInstructionById(medicalInstructionId)
+        .then((value) {
+      Navigator.pop(context);
+      if (value != null) {
+        // var dateStarted = new DateFormat('dd/MM/yyyy').format(
+        //     new DateFormat("yyyy-MM-dd")
+        //         .parse(value.vitalSignResponse.dateStarted));
+        // var dateFinished = new DateFormat('dd/MM/yyyy').format(
+        //     new DateFormat("yyyy-MM-dd")
+        //         .parse(value.vitalSignResponse.dateFinished));
+        var dateStarted = '';
+        var dateFinished = '';
+
+        if (value.medicationsRespone != null) {
+          Navigator.pushNamed(context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
+              arguments: value.medicalInstructionId);
+        } else {
+          setState(() {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width - 20,
+                        height: MediaQuery.of(context).size.height * 0.35,
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE.withOpacity(0.6),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(top: 20),
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                ),
+                                Text(
+                                  '${value.medicalInstructionType}',
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    decoration: TextDecoration.none,
+                                    color: DefaultTheme.BLACK,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    height: 0.25,
+                                  ),
+                                  Text(
+                                    'Người đặt: ${value.placeHealthRecord}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      decoration: TextDecoration.none,
+                                      color: DefaultTheme.GREY_TEXT,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Ngày bắt đầu: ${dateStarted}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      decoration: TextDecoration.none,
+                                      color: DefaultTheme.GREY_TEXT,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Ngày bắt đầu: ${dateFinished}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      decoration: TextDecoration.none,
+                                      color: DefaultTheme.GREY_TEXT,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  // Divider(
+                                  //   color: DefaultTheme.GREY_TEXT,
+                                  //   height: 0.25,
+                                  // ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 15),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          });
+        }
+      }
+    });
   }
 }
