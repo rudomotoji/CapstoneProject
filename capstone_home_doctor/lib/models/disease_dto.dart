@@ -1,6 +1,7 @@
 class DiseaseDTO {
   String diseaseId;
   String name;
+  String strDiseaseID;
   String status;
   String code;
   int number;
@@ -9,15 +10,17 @@ class DiseaseDTO {
   Null contracts;
   Null healthRecords;
 
-  DiseaseDTO(
-      {this.diseaseId,
-      this.code,
-      this.number,
-      this.start,
-      this.end,
-      this.name,
-      this.contracts,
-      this.healthRecords});
+  DiseaseDTO({
+    this.diseaseId,
+    this.code,
+    this.number,
+    this.start,
+    this.end,
+    this.name,
+    this.contracts,
+    this.healthRecords,
+    this.strDiseaseID,
+  });
 
   @override
   String toString() {

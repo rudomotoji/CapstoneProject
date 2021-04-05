@@ -52,34 +52,10 @@ class MultiSelectActions<V> {
       List<MultiSelectItem<V>> filteredItems = [];
       for (var item in allItems) {
         DiseaseDTO dto = item.value as DiseaseDTO;
-        if (dto.name.toLowerCase().contains(val.toLowerCase()) &&
+        if ((dto.name.toLowerCase().contains(val.toLowerCase()) ||
+                dto.strDiseaseID.toLowerCase().contains(val.toLowerCase())) &&
             !filteredItems.contains(item)) {
           filteredItems.add(item);
-        } else {
-          if (dto.diseaseId.toLowerCase().contains(val[0].toLowerCase())) {
-            var listDiseases = dto.diseaseId.split('-');
-            if (listDiseases.length > 1) {
-              int num1 = int.parse(listDiseases[0].substring(1));
-              int num2 = int.parse(listDiseases[1].substring(1));
-              if (val.substring(1) != '') {
-                if (num1 <= int.parse(val.substring(1)) &&
-                    int.parse(val.substring(1)) <= num2 &&
-                    !filteredItems.contains(item)) {
-                  filteredItems.add(item);
-                }
-              } else {
-                if (dto.diseaseId.toLowerCase().contains(val.toLowerCase()) &&
-                    !filteredItems.contains(item)) {
-                  filteredItems.add(item);
-                }
-              }
-            } else {
-              if (dto.diseaseId.toLowerCase().contains(val.toLowerCase()) &&
-                  !filteredItems.contains(item)) {
-                filteredItems.add(item);
-              }
-            }
-          }
         }
       }
 

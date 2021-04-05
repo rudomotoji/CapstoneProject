@@ -161,7 +161,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                     child: Padding(
                       padding: EdgeInsets.only(top: 5, left: 10, right: 20),
                       child: Text(
-                        'Chọn mã bệnh chính xác được ghi trên hồ sơ bệnh án của bạn',
+                        'Chọn loại bệnh chính xác được ghi trên hồ sơ bệnh án của bạn',
                         style: TextStyle(
                             color: DefaultTheme.GREY_TEXT,
                             fontSize: 15,
@@ -325,11 +325,11 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
         listType: MultiSelectListType.CHIP,
         searchable: true,
         buttonText: Text(
-          "Chọn mã bệnh(*)",
+          "Chọn loại bệnh(*)",
           style: TextStyle(color: Colors.black, fontSize: 16),
         ),
         title: Text(
-          "Chọn mã bệnh",
+          "Chọn loại bệnh",
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
         ),
         items: _itemsView,
@@ -727,7 +727,21 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
         }
         if (state is DiseaseListStateSuccess) {
           if (state.listDisease != null) {
-            _listDisease = state.listDisease;
+            _listDisease = [];
+            for (var item in state.listDisease) {
+              String alpha = item.diseaseId[0];
+              String strDisID = '';
+              var listDiseasesID = item.diseaseId.split('-');
+              int num1 = int.parse(listDiseasesID[0].substring(1));
+              int num2 = int.parse(listDiseasesID[1].substring(1));
+              for (var num = num1; num <= num2; num++) {
+                strDisID += '$alpha$num';
+              }
+              item.strDiseaseID = strDisID;
+              _listDisease.add(item);
+            }
+
+            // _listDisease = state.listDisease;
           }
           return _selectBoxInsOtherDissease();
         }
