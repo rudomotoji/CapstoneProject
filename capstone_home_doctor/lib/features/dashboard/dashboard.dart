@@ -1408,15 +1408,12 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   Widget _appointmentNotNull() {
     List _listDetail = _appointmentDTO.appointments.map((e) {
-      DateTime timeEx =
-          new DateFormat("yyyy-MM-ddThh:mm").parse(e.dateExamination);
-      var dateAppointment =
-          new DateFormat('dd/MM/yyyy, hh:mm a').format(timeEx);
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Bác sĩ: ${e.fullNameDoctor}'),
-          Text('Thời gian: ${dateAppointment}'),
+          Text(
+              'Thời gian: ${_dateValidator.convertDateCreate(e.dateExamination, 'dd/MM/yyyy, hh:mm a', 'yyyy-MM-ddThh:mm')}'),
           Text('Ghi chú: ${e.note}'),
           // Container(height: 20),
         ],
@@ -1477,124 +1474,69 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   }
 
   Widget _sizeBoxCard() {
-    return SizedBox(
-      height: 280,
-      width: MediaQuery.of(context).size.width,
-      child: PageView.builder(
-        itemCount: 2,
-        controller: PageController(viewportFraction: 0.9),
-        onPageChanged: (int index) => setState(() => _index = index),
-        itemBuilder: (_, i) {
-          return Transform.scale(
-            scale: i == _index ? 1 : 0.9,
-            alignment: Alignment.centerLeft,
-            child: Card(
-              elevation: 0,
-              shadowColor: DefaultTheme.GREY_TEXT,
-              color: DefaultTheme.GREY_VIEW,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              child: (i == 0)
-                  ? BlocBuilder<PrescriptionListBloc, PrescriptionListState>(
-                      builder: (context, contextPrescription) {
-                        if (contextPrescription
-                            is PrescriptionListStateLoading) {
-                          return Container(
-                            width: 200,
-                            height: 200,
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/images/loading.gif'),
-                            ),
-                          );
-                        }
-                        if (contextPrescription
-                            is PrescriptionListStateFailure) {
-                          getLocalStorage();
-                          return _getCalendar();
-                        }
-                        if (contextPrescription
-                            is PrescriptionListStateSuccess) {
-                          listPrescription =
-                              contextPrescription.listPrescription;
-
-                          if (contextPrescription.listPrescription != null) {
-                            listPrescription.sort((a, b) => b
-                                .medicalInstructionId
-                                .compareTo(a.medicalInstructionId));
-                            listPrescription.sort((a, b) => b
-                                .medicationsRespone.dateFinished
-                                .compareTo(a.medicationsRespone.dateFinished));
-                          }
-                          if (contextPrescription.listPrescription.length > 0) {
-                            handlingMEdicalResponse();
-                          } else {
-                            getLocalStorage();
-                          }
-                          return _getCalendar();
-                        }
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Center(
-                            child: Text('Không thể lấy dữ liệu'),
-                          ),
-                        );
-                      },
-                    )
-                  : BlocBuilder<AppointmentBloc, AppointmentState>(
-                      builder: (context, stateAppointment) {
-                        if (stateAppointment is AppointmentStateLoading) {
-                          return Container(
-                            width: 200,
-                            height: 200,
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/images/loading.gif'),
-                            ),
-                          );
-                        }
-                        if (stateAppointment is AppointmentStateFailure) {
-                          return Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: Center(
-                                  child: Text(
-                                      'Kiểm tra lại đường truyền kết nối mạng')));
-                        }
-                        if (stateAppointment is AppointmentStateSuccess) {
-                          listAppointment = stateAppointment.listAppointment;
-                          if (stateAppointment.listAppointment != null) {
-                            DateTime curentDateNow =
-                                new DateFormat('dd/MM/yyyy').parse(
-                                    DateFormat('dd/MM/yyyy')
-                                        .format(DateTime.now()));
-                            for (var appointment
-                                in stateAppointment.listAppointment) {
-                              DateTime dateAppointment =
-                                  new DateFormat("dd/MM/yyyy")
-                                      .parse(appointment.dateExamination);
-                              if (dateAppointment.millisecondsSinceEpoch ==
-                                  curentDateNow.millisecondsSinceEpoch) {
-                                _appointmentDTO = appointment;
-                              }
-                              // _appointmentDTO = appointment;
-                            }
-                          }
-                          return _getAppointment();
-                        }
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Center(
-                            child: Text('Không thể lấy dữ liệu'),
-                          ),
-                        );
-                      },
-                    ),
+    return BlocBuilder<PrescriptionListBloc, PrescriptionListState>(
+      builder: (context, contextPrescription) {
+        if (contextPrescription is PrescriptionListStateLoading) {
+          return Container(
+            width: 200,
+            height: 200,
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: Image.asset('assets/images/loading.gif'),
             ),
           );
-        },
-      ),
+        }
+        if (contextPrescription is PrescriptionListStateFailure) {
+          getLocalStorage();
+          return _getCalendar();
+        }
+        if (contextPrescription is PrescriptionListStateSuccess) {
+          listPrescription = contextPrescription.listPrescription;
+
+          if (contextPrescription.listPrescription != null) {
+            listPrescription.sort((a, b) =>
+                b.medicalInstructionId.compareTo(a.medicalInstructionId));
+            listPrescription.sort((a, b) => b.medicationsRespone.dateFinished
+                .compareTo(a.medicationsRespone.dateFinished));
+          }
+          if (contextPrescription.listPrescription.length > 0) {
+            handlingMEdicalResponse();
+          } else {
+            getLocalStorage();
+          }
+          // _getCalendar();
+          return SizedBox(
+            height: 280,
+            width: MediaQuery.of(context).size.width,
+            child: PageView.builder(
+              itemCount: listPrescription.length,
+              controller: PageController(viewportFraction: 0.9),
+              onPageChanged: (int index) => setState(() => _index = index),
+              itemBuilder: (_, i) {
+                return Transform.scale(
+                  scale: i == _index ? 1 : 0.9,
+                  alignment: Alignment.centerLeft,
+                  child: Card(
+                    elevation: 0,
+                    shadowColor: DefaultTheme.GREY_TEXT,
+                    color: DefaultTheme.GREY_VIEW,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Container(),
+                  ),
+                );
+              },
+            ),
+          );
+        }
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          child: Center(
+            child: Text('Không thể lấy dữ liệu'),
+          ),
+        );
+      },
     );
   }
 

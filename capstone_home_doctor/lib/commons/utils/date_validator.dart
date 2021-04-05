@@ -221,4 +221,9 @@ class DateValidator {
     String _view = '${_dateInWeek}, ngày ${_day} tháng ${_month}, ${_year}';
     return _view;
   }
+
+  String convertDateCreate(String date, String formatTo, String formatFrom) {
+    DateTime timeEx = new DateFormat(formatFrom).parse(date);
+    return new DateFormat(formatTo).format(timeEx);
+  }
 }

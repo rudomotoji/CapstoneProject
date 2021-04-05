@@ -752,16 +752,17 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                           children: [
                             InkWell(
                               onTap: () {
-                                if (dto.medicationsRespone != null) {
-                                  Navigator.pushNamed(
-                                      context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
-                                      arguments: dto.medicalInstructionId);
-                                }
                                 if (dto?.image != null) {
                                   _showFullImageDescription(
                                       dto?.image,
                                       dto.medicalInstructionType,
                                       '${DateFormat('dd/MM/yyyy').format(dateCreated)}');
+                                } else {
+                                  if (dto.medicationsRespone != null) {
+                                    Navigator.pushNamed(context,
+                                        RoutesHDr.MEDICAL_HISTORY_DETAIL,
+                                        arguments: dto.medicalInstructionId);
+                                  } else {}
                                 }
                               },
                               child: Container(

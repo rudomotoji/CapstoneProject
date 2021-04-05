@@ -177,13 +177,20 @@ class MedicalInstructions {
   String image;
   String diagnose;
   String description;
+  int medicalInstructionId;
 
-  MedicalInstructions({this.image, this.diagnose, this.description});
+  MedicalInstructions({
+    this.image,
+    this.diagnose,
+    this.description,
+    this.medicalInstructionId,
+  });
 
   MedicalInstructions.fromJson(Map<String, dynamic> json) {
     image = json['image'];
     diagnose = json['diagnose'];
     description = json['description'];
+    medicalInstructionId = json['medicalInstructionId'];
   }
 
   Map<String, dynamic> toJson() {
@@ -191,6 +198,7 @@ class MedicalInstructions {
     data['image'] = this.image;
     data['diagnose'] = this.diagnose;
     data['description'] = this.description;
+    data['medicalInstructionId'] = this.medicalInstructionId;
     return data;
   }
 }

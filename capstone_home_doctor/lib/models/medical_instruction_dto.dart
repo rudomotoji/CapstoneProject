@@ -124,23 +124,27 @@ class MedicalInstructionDTO {
   String dateCreate;
   int patientId;
   PickedFile imageFile;
+  //vitalsign
+  PrescriptionDTO vitalSignResponse;
 
-  MedicalInstructionDTO(
-      {this.medicalInstructionType,
-      this.medicalInstructionId,
-      this.image,
-      this.description,
-      this.diagnose,
-      this.placeHealthRecord,
-      // this.dateStarted,
-      // this.dateFinished,
-      this.dateCreate,
-      this.medicalInstructionTypeId,
-      this.healthRecordId,
-      this.patientId,
-      this.imageFile,
-      this.patientFullName,
-      this.status});
+  MedicalInstructionDTO({
+    this.medicalInstructionType,
+    this.medicalInstructionId,
+    this.image,
+    this.description,
+    this.diagnose,
+    this.placeHealthRecord,
+    // this.dateStarted,
+    // this.dateFinished,
+    this.dateCreate,
+    this.medicalInstructionTypeId,
+    this.healthRecordId,
+    this.patientId,
+    this.imageFile,
+    this.patientFullName,
+    this.status,
+    this.vitalSignResponse,
+  });
 
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
     medicalInstructionId = json['medicalInstructionId'];
@@ -156,6 +160,10 @@ class MedicalInstructionDTO {
     status = json['status'];
     medicationsRespone = json['prescriptionRespone'] != null
         ? new PrescriptionDTO.fromJson(json['prescriptionRespone'])
+        : null;
+
+    vitalSignResponse = json['vitalSignResponse'] != null
+        ? new PrescriptionDTO.fromJson(json['vitalSignResponse'])
         : null;
   }
 

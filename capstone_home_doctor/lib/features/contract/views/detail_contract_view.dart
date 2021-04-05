@@ -1440,26 +1440,38 @@ class _DetailContractView extends State<DetailContractView>
                                                           ],
                                                         ),
                                                       )
-                                                    : Container(
-                                                        width: 150,
-                                                        height: 200,
-                                                        color: DefaultTheme
-                                                            .GREY_TOP_TAB_BAR
-                                                            .withOpacity(0.8),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: <Widget>[
-                                                            //
-                                                            SizedBox(
-                                                              width: 25,
-                                                              height: 25,
-                                                              child: Image.asset(
-                                                                  'assets/images/ic-medicine.png'),
-                                                            ),
-                                                            Text('Đơn thuốc'),
-                                                          ],
+                                                    : InkWell(
+                                                        onTap: () {
+                                                          Navigator.pushNamed(
+                                                              context,
+                                                              RoutesHDr
+                                                                  .MEDICAL_HISTORY_DETAIL,
+                                                              arguments: x
+                                                                  .medicalInstructions[
+                                                                      index]
+                                                                  .medicalInstructionId);
+                                                        },
+                                                        child: Container(
+                                                          width: 150,
+                                                          height: 200,
+                                                          color: DefaultTheme
+                                                              .GREY_TOP_TAB_BAR
+                                                              .withOpacity(0.8),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: <Widget>[
+                                                              //
+                                                              SizedBox(
+                                                                width: 25,
+                                                                height: 25,
+                                                                child: Image.asset(
+                                                                    'assets/images/ic-medicine.png'),
+                                                              ),
+                                                              Text('Đơn thuốc'),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                               );

@@ -93,7 +93,6 @@ class HealthRecordRepository extends BaseApiClient {
       int patientID, int contractID, int healthRecordId) async {
     final String url =
         '/MedicalInstructions/GetMedicalInstructionsToShare?patientId=${patientID}&healthRecordId=${healthRecordId}&contractId=${contractID}';
-    // '/MedicalInstructions/GetMedicalInstructionToShare?patientId=${patientID}&contractId=${contractID}';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {

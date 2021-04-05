@@ -884,6 +884,7 @@ class _ScheduleView extends State<ScheduleView>
   }
 
   Widget _itemSchedule(MedicalInstructionDTO medicalInstructionDTO) {
+    print(medicalInstructionDTO.placeHealthRecord);
     return Container(
       padding: EdgeInsets.only(top: 30, bottom: 10),
       width: MediaQuery.of(context).size.width - 40,
@@ -894,6 +895,46 @@ class _ScheduleView extends State<ScheduleView>
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 20),
+                width: 140,
+                child: Text(
+                  'Bác sĩ:',
+                  style: TextStyle(
+                    color: DefaultTheme.GREY_TEXT,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 10),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width - (40 + 120 + 20 + 30),
+                child: Text(
+                  '${medicalInstructionDTO.placeHealthRecord}',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 5),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
+            child: Divider(
+              color: DefaultTheme.GREY_TEXT,
+              height: 0.1,
+            ),
+          ),
           Row(
             children: [
               Container(

@@ -2,13 +2,17 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/events/medical_share_event.dart';
 import 'package:capstone_home_doctor/features/contract/states/medical_share_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/hr_list_event.dart';
+import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_get_by_id_event.dart';
+import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_list_state.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/events/medical_Share_event.dart';
@@ -48,6 +52,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
 
   MedicalShareInsRepository _medicalShareInsRepository =
       MedicalShareInsRepository(httpClient: http.Client());
+  MedicalInstructionRepository _medicalInstructionRepository =
+      MedicalInstructionRepository(httpClient: http.Client());
 
   List<MedInsByDiseaseDTO> listMedicalInsShare;
   //
@@ -566,14 +572,24 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                       InkWell(
                                                         onTap: () {
                                                           if (itemMedi.image ==
-                                                                  null ||
+                                                                  null &&
                                                               itemMedi.medicalInstructionTypeId ==
                                                                   1) {
+                                                            print(itemMedi
+                                                                .medicalInstructionId);
                                                             Navigator.pushNamed(
                                                                 context,
                                                                 RoutesHDr
                                                                     .MEDICAL_HISTORY_DETAIL,
                                                                 arguments: itemMedi
+                                                                    .medicalInstructionId);
+                                                          } else if (itemMedi
+                                                                      .image ==
+                                                                  null &&
+                                                              itemMedi.medicalInstructionTypeId ==
+                                                                  8) {
+                                                            _showDetailVitalSign(
+                                                                itemMedi
                                                                     .medicalInstructionId);
                                                           } else {
                                                             _showFullImageDescription(
@@ -616,8 +632,20 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                         padding:
                                                             EdgeInsets.only(
                                                                 left: 20),
-                                                        child: Text(
-                                                            '${element.medicalInstructionTypes[indexType].miTypeName}'),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                                '${element.medicalInstructionTypes[indexType].miTypeName}'),
+                                                            Text(
+                                                                '${itemMedi.dateCreate.trim()}',
+                                                                style: TextStyle(
+                                                                    color: DefaultTheme
+                                                                        .GREY_TEXT)),
+                                                          ],
+                                                        ),
                                                       ),
                                                       Spacer(),
                                                       ClipRRect(
@@ -888,6 +916,165 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
               HRListEventSetPersonalHRId(personalHealthRecordId: _patientId));
         }
       });
+    });
+  }
+
+  void _showDetailVitalSign(int medicalInstructionId) {
+    setState(() {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    width: 250,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.7),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 130,
+                          // height: 100,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                        // Spacer(),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Vui lòng chờ chút',
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.GREY_TEXT,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
+    });
+
+    _medicalInstructionRepository
+        .getMedicalInstructionById(medicalInstructionId)
+        .then((value) {
+      Navigator.pop(context);
+      if (value != null) {
+        // var dateStarted = new DateFormat('dd/MM/yyyy').format(
+        //     new DateFormat("yyyy-MM-dd")
+        //         .parse(value.vitalSignResponse.dateStarted));
+        // var dateFinished = new DateFormat('dd/MM/yyyy').format(
+        //     new DateFormat("yyyy-MM-dd")
+        //         .parse(value.vitalSignResponse.dateFinished));
+        var dateStarted = '';
+        var dateFinished = '';
+
+        setState(() {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      width: MediaQuery.of(context).size.width - 20,
+                      height: MediaQuery.of(context).size.height * 0.35,
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.WHITE.withOpacity(0.6),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(top: 20),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(left: 20),
+                              ),
+                              Text(
+                                '${value.medicalInstructionType}',
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  decoration: TextDecoration.none,
+                                  color: DefaultTheme.BLACK,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Divider(
+                                  color: DefaultTheme.GREY_TEXT,
+                                  height: 0.25,
+                                ),
+                                Text(
+                                  'Người đặt: ${value.placeHealthRecord}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    decoration: TextDecoration.none,
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Text(
+                                  'Ngày bắt đầu: ${dateStarted}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    decoration: TextDecoration.none,
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Text(
+                                  'Ngày bắt đầu: ${dateFinished}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    decoration: TextDecoration.none,
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                // Divider(
+                                //   color: DefaultTheme.GREY_TEXT,
+                                //   height: 0.25,
+                                // ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 15),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        });
+      }
     });
   }
 }
