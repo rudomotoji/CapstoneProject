@@ -72,7 +72,7 @@ class ArrayValidator {
   }
 
   String phoneNumberValidator(String value) {
-    Pattern pattern = r'^(?:[+84])?[0-9]{10}$';
+    Pattern pattern = r'^0[0-9]{9}$';
     RegExp regex = new RegExp(pattern);
     if (!regex.hasMatch(value))
       return 'SĐT không đúng với cấu trúc (0123456789)';

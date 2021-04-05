@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class NomalInfoView extends StatefulWidget {
 
   void Function(String) birthday;
   void Function(String) choiceGender;
+  void Function(String) alertError;
   void Function(bool) setVerify;
 
   NomalInfoView({
@@ -43,6 +45,7 @@ class NomalInfoView extends StatefulWidget {
     this.choiceGender,
     this.setVerify,
     this.verified,
+    this.alertError,
   }) : super(key: key);
 
   @override
@@ -54,6 +57,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _verificationId;
   TextEditingController _smsController = TextEditingController();
+  ArrayValidator _validator = ArrayValidator();
 
   @override
   void initState() {
@@ -87,12 +91,14 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             onChange: (text) {},
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 margin: EdgeInsets.only(right: 10),
                 width: verified
                     ? (MediaQuery.of(context).size.width - 100)
-                    : (MediaQuery.of(context).size.width - 150),
+                    : (MediaQuery.of(context).size.width - 160),
                 child: TextFieldHDr(
                   style: TFStyle.BORDERED,
                   label: 'SĐT(*):',
@@ -110,30 +116,44 @@ class _NomalInfoViewState extends State<NomalInfoView> {
               ),
               (verified)
                   ? Container(
-                      // child: Text(
-                      //   'Đã xác thực',
-                      //   style: TextStyle(color: DefaultTheme.BLUE_TEXT),
-                      // ),
-                      //
                       height: 20,
                       width: 20,
                       child: Image.asset(
                         'assets/images/ic-checked.png',
-                        // height: MediaQuery.of(context).size.height * 0.20,
                       ),
                     )
                   : Container(
                       child: InkWell(
                         onTap: () async {
-                          String phoneNum =
-                              widget.phoneController.text.substring(1);
+                          if (_validator.phoneNumberValidator(
+                                  widget.phoneController.text) ==
+                              null) {
+                            String phoneNum =
+                                widget.phoneController.text.substring(1);
 
-                          _verifyPhoneNumber('+84$phoneNum');
-                          _showPopInputOTP();
+                            _verifyPhoneNumber('+84$phoneNum');
+                            _showPopInputOTP();
+                          } else {
+                            widget.alertError(_validator.phoneNumberValidator(
+                                widget.phoneController.text));
+                          }
                         },
-                        child: Text(
-                          'Xác thực ngay',
-                          style: TextStyle(color: DefaultTheme.RED_TEXT),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 255, 120, 75),
+                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                          ),
+                          height: 48,
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          child: Center(
+                            child: Text(
+                              'Xác thực ngay',
+                              style: TextStyle(
+                                  color: DefaultTheme.WHITE,
+                                  fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -267,12 +287,12 @@ class _NomalInfoViewState extends State<NomalInfoView> {
         print('_verifyPhoneNumber: $onError');
         widget.setVerify(false);
       });
-      print(
-          'Phone number automatically verified and user signed in: $phoneAuthCredential');
     };
 
     PhoneVerificationFailed verificationFailed =
         (FirebaseAuthException authException) {
+      widget.alertError('Vui lòng kiểm tra lại số điện thoại');
+      Navigator.pop(context);
       print(
           'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
     };
@@ -298,6 +318,9 @@ class _NomalInfoViewState extends State<NomalInfoView> {
           codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
     } catch (e) {
       print('Failed to Verify Phone Number: $e');
+
+      widget.alertError('Vui lòng kiểm tra lại số điện thoại');
+      Navigator.pop(context);
     }
   }
 
@@ -317,11 +340,12 @@ class _NomalInfoViewState extends State<NomalInfoView> {
           widget.setVerify(true);
           Navigator.pop(context);
         } else {
-          print("Error");
+          widget.alertError('Mã OTP không chính xác');
           widget.setVerify(false);
         }
       }).catchError((onError) {
         print('_signInWithPhoneNumber: $onError');
+        widget.alertError('Mã OTP không chính xác');
         widget.setVerify(false);
       });
     } catch (e) {

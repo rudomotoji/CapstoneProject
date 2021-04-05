@@ -125,6 +125,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                             choiceGender: setGender,
                             setVerify: setVerify,
                             verified: verified,
+                            alertError: alertError,
                           );
                         } else if (i == 0) {
                           return RegisterPage1(
