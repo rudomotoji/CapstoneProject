@@ -109,136 +109,179 @@ class _HeaderWidget extends State<HeaderWidget> {
             (InkWell(
               splashColor: DefaultTheme.TRANSPARENT,
               highlightColor: DefaultTheme.TRANSPARENT,
-              onTap: () {
-                if (_title.contains('Chi tiết hồ sơ')) {
-                  print('go to this');
-                  _medicalInstructionHelper
-                      .getCheckToCreateOrList()
-                      .then((check) async {
-                    //
-                    if (check) {
-                      return showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Center(
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15)),
-                              child: BackdropFilter(
-                                filter:
-                                    ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                      left: 10, top: 10, right: 10),
-                                  width: 250,
-                                  height: 160,
-                                  decoration: BoxDecoration(
-                                    color: DefaultTheme.WHITE.withOpacity(0.7),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                            bottom: 20, top: 10),
-                                        child: Text(
-                                          'Lưu ý',
-                                          style: TextStyle(
-                                            decoration: TextDecoration.none,
-                                            color: DefaultTheme.BLACK,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                            left: 20, right: 20),
-                                        child: Align(
-                                          alignment: Alignment.center,
+              onTap: () async {
+                Future.delayed(const Duration(milliseconds: 100), () async {
+                  if (_title.contains('Tạo hồ sơ sức khỏe'.trim())) {
+                    await _medicalInstructionHelper
+                        .getCreateHRFromDetail()
+                        .then((check) async {
+                      if (check) {
+                        await _medicalInstructionHelper
+                            .updateCreateHRFromDetail(false);
+
+                        ///
+                        await _medicalInstructionHelper
+                            .updateCheckToCreateOrList(false);
+                        int currentIndex = 2;
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            RoutesHDr.MAIN_HOME,
+                            (Route<dynamic> route) => false,
+                            arguments: currentIndex);
+                      } else {
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  } else if (_title.contains('Chi tiết hồ sơ')) {
+                    print('go to this');
+                    _medicalInstructionHelper
+                        .getCheckToCreateOrList()
+                        .then((check) async {
+                      //
+                      if (check) {
+                        return showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Center(
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                                child: BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                                  child: Container(
+                                    padding: EdgeInsets.only(
+                                        left: 10, top: 10, right: 10),
+                                    width: 250,
+                                    height: 160,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          DefaultTheme.WHITE.withOpacity(0.7),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Container(
+                                          padding: EdgeInsets.only(
+                                              bottom: 20, top: 10),
                                           child: Text(
-                                            'Bạn có muốn tạo thêm hồ sơ sức khoẻ khác không?',
-                                            textAlign: TextAlign.center,
+                                            'Lưu ý',
                                             style: TextStyle(
                                               decoration: TextDecoration.none,
-                                              color: DefaultTheme.GREY_TEXT,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 13,
+                                              color: DefaultTheme.BLACK,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 18,
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Spacer(),
-                                      Divider(
-                                        height: 1,
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          FlatButton(
-                                            height: 40,
-                                            minWidth: 250 / 2 - 10.5,
-                                            child: Text('Không',
-                                                style: TextStyle(
-                                                    color: DefaultTheme
-                                                        .BLUE_TEXT)),
-                                            onPressed: () async {
-                                              Navigator.of(context).pop();
-
-                                              ///CODE HERE FOR NAVIGATE
-                                              ///
-
-                                              ///
-                                              await _medicalInstructionHelper
-                                                  .updateCheckToCreateOrList(
-                                                      false);
-                                            },
+                                        Container(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'Bạn có muốn tạo thêm hồ sơ sức khoẻ khác không?',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 13,
+                                              ),
+                                            ),
                                           ),
-                                          Container(
-                                            height: 40,
-                                            width: 0.5,
-                                            color:
-                                                DefaultTheme.GREY_TOP_TAB_BAR,
-                                          ),
-                                          FlatButton(
-                                            height: 40,
-                                            minWidth: 250 / 2 - 10.5,
-                                            child: Text('Có',
-                                                style: TextStyle(
-                                                    color: DefaultTheme
-                                                        .BLUE_TEXT)),
-                                            onPressed: () {
-                                              //
-                                              Navigator.of(context).pop();
+                                        ),
+                                        Spacer(),
+                                        Divider(
+                                          height: 1,
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            FlatButton(
+                                              height: 40,
+                                              minWidth: 250 / 2 - 10.5,
+                                              child: Text('Không',
+                                                  style: TextStyle(
+                                                      color: DefaultTheme
+                                                          .BLUE_TEXT)),
+                                              onPressed: () async {
+                                                Navigator.of(context).pop();
 
-                                              //////
-                                              //////
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                                ///CODE HERE FOR NAVIGATE
+                                                ///
+                                                int currentIndex = 2;
+                                                Navigator.of(context)
+                                                    .pushNamedAndRemoveUntil(
+                                                        RoutesHDr.MAIN_HOME,
+                                                        (Route<dynamic>
+                                                                route) =>
+                                                            false,
+                                                        arguments:
+                                                            currentIndex);
+                                                await _medicalInstructionHelper
+                                                    .updateCreateHRFromDetail(
+                                                        false);
+
+                                                ///
+                                                await _medicalInstructionHelper
+                                                    .updateCheckToCreateOrList(
+                                                        false);
+                                              },
+                                            ),
+                                            Container(
+                                              height: 40,
+                                              width: 0.5,
+                                              color:
+                                                  DefaultTheme.GREY_TOP_TAB_BAR,
+                                            ),
+                                            FlatButton(
+                                              height: 40,
+                                              minWidth: 250 / 2 - 10.5,
+                                              child: Text('Có',
+                                                  style: TextStyle(
+                                                      color: DefaultTheme
+                                                          .BLUE_TEXT)),
+                                              onPressed: () async {
+                                                //
+                                                await _medicalInstructionHelper
+                                                    .updateCreateHRFromDetail(
+                                                        true);
+                                                Navigator.of(context).pop();
+                                                Navigator.of(context).pushNamed(
+                                                    RoutesHDr
+                                                        .CREATE_HEALTH_RECORD);
+                                                //////
+                                                //////
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    } else {
-                      Navigator.pop(context);
-                      await _medicalInstructionHelper
-                          .updateCheckToCreateOrList(false);
-                    }
-                  });
-                } else {
-                  Navigator.pop(context);
-                }
+                            );
+                          },
+                        );
+                      } else {
+                        Navigator.pop(context);
+                        await _medicalInstructionHelper
+                            .updateCheckToCreateOrList(false);
+                        await _medicalInstructionHelper
+                            .updateCreateHRFromDetail(false);
+                      }
+                    });
+                  } else {
+                    Navigator.pop(context);
+                  }
+                });
               },
               child: Image.asset(
                 'assets/images/ic-pop.png',
@@ -291,8 +334,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                     onTap: _backToHome,
                     child: Image.asset(
                       'assets/images/ic-back-home.png',
-                      width: 40,
-                      height: 40,
+                      width: 35,
+                      height: 35,
                     ),
                   ),
                 ],
@@ -541,30 +584,42 @@ class _HeaderWidget extends State<HeaderWidget> {
                                   }
                                 });
                                 //
-                                //remove all shared preference
-                                await _authenticateHelper.updateAuth(
-                                    false, null, null);
-                                await _peripheralHelper
-                                    .updatePeripheralChecking(false, '');
-                                await _vitalSignHelper
-                                    .updateCountDownDangerous(0);
-                                await _vitalSignHelper
-                                    .updateCountInBackground(0);
-                                await _vitalSignHelper.updateCountingHR(0);
-                                await _vitalSignHelper.updateHeartValue(0);
-                                await _vitalSignHelper
-                                    .updateCheckToNormal(false);
-                                await _vitalSignHelper.updateCountToNormal(0);
-                                await _sqfLiteHelper.deleteVitalSignSchedule();
-                                await _contractHelper.updateAvailableDay('');
-                                await _medicalInstructionHelper
-                                    .updateCheckToCreateOrList(false);
-                                //
-                                Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    RoutesHDr.LOG_IN,
-                                    (Route<dynamic> route) => false);
-                                //
+
+                                await _sqfLiteHelper
+                                    .deleteVitalSignSchedule()
+                                    .then((isDeleted) async {
+                                  //
+                                  //
+                                  if (isDeleted) {
+                                    //remove all shared preference
+                                    await _authenticateHelper.updateAuth(
+                                        false, null, null);
+                                    await _peripheralHelper
+                                        .updatePeripheralChecking(false, '');
+                                    await _vitalSignHelper
+                                        .updateCountDownDangerous(0);
+                                    await _vitalSignHelper
+                                        .updateCountInBackground(0);
+                                    await _vitalSignHelper.updateCountingHR(0);
+                                    await _vitalSignHelper.updateHeartValue(0);
+                                    await _vitalSignHelper
+                                        .updateCheckToNormal(false);
+                                    await _vitalSignHelper
+                                        .updateCountToNormal(0);
+                                    await _contractHelper
+                                        .updateAvailableDay('');
+                                    await _medicalInstructionHelper
+                                        .updateCheckToCreateOrList(false);
+                                    await _medicalInstructionHelper
+                                        .updateCreateHRFromDetail(false);
+                                    //
+                                    Navigator.pushNamedAndRemoveUntil(
+                                        context,
+                                        RoutesHDr.LOG_IN,
+                                        (Route<dynamic> route) => false);
+                                    //
+                                  }
+                                });
                               }
                             });
                           },
@@ -585,6 +640,7 @@ class _HeaderWidget extends State<HeaderWidget> {
 
   _backToHome() async {
     await _medicalInstructionHelper.updateCheckToCreateOrList(false);
+    await _medicalInstructionHelper.updateCreateHRFromDetail(false);
     Navigator.of(context).pushNamedAndRemoveUntil(
         RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
   }

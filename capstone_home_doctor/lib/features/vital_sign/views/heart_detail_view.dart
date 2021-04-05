@@ -458,8 +458,9 @@ class _HeartDetailView extends State<HeartDetailView>
                                       //
                                       new Echarts(
                                     option: '''
-   {
-     
+   
+option = {
+
                                       color: '#FF784B',
                                       tooltip: {
                                         trigger: "axis",
@@ -467,6 +468,7 @@ class _HeartDetailView extends State<HeartDetailView>
                                           type: "shadow"
                                       },
                                       formatter: function (params)  {
+   
             var tar = params[0];
            
             return 'Nhịp tim lúc ' + (tar.value[0]+1) + 'giờ' + '<br/>' + 'Khoảng ' + tar.value[1] + '-' + tar.value[2] + ' BPM';
@@ -483,13 +485,15 @@ class _HeartDetailView extends State<HeartDetailView>
                                       },
        data: function () {
             var list = [];
-            for (var i = 1; i <= 12; i++) {
+            for (var i = 1; i <= 24; i++) {
                 list.push(i + ':00');
             }
             return list;
         }()
     },
     yAxis: {
+        max:150,
+        min:0,
            name: 'BPM',
                                       nameTextStyle: {
                                       verticalAlign: "middle",
@@ -510,17 +514,11 @@ class _HeartDetailView extends State<HeartDetailView>
                                       
                                
     },
-    series: [{
+    series: [
+
+        {
         type: 'k',
-         itemStyle: {
-                emphasis: {
-                    barBorderRadius: [50, 50]
-                },
-                normal: {
-                    barBorderRadius: [50, 50, 0 ,0 ]
-                }
-            },
-          color: '#FF784B',
+  
         data: [
             [0,30,30,30],
             [30,35,35,35],
@@ -533,10 +531,40 @@ class _HeartDetailView extends State<HeartDetailView>
             [20,30,30,30],
             [30,35,35,35],
             [20,40,40,40],
+            [50,70,70,70],
+              [0,30,30,30],
+            [30,35,35,35],
+            [20,40,40,40],
+            [50,70,70,70],
+            [20,30,30,30],
+            [0,0,0,0],
+            [20,40,40,40],
+            [50,70,70,70],
+            [20,30,30,30],
+            [30,35,35,35],
+            [20,40,40,40],
             [50,70,70,70]
-        ]
+        ],
+         markLine: {
+                silent: true,
+                lineStyle: {
+                    color: '#FF784B',
+                     type: 'solid',
+                  
+                },
+   
+                data: [
+                 
+                    {
+                    yAxis: 125,
+                   
+                }, {
+                    yAxis: 45,
+                }]
+            }
+    
     }]
-}
+                        }
                                   ''',
                                   ),
                                   width: MediaQuery.of(context).size.width,

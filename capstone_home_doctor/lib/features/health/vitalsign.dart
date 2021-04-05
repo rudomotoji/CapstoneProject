@@ -171,21 +171,20 @@ class _VitalSignTabState extends State<VitalSignTab> {
                 ),
                 ButtonHDr(
                   style: BtnStyle.BUTTON_IN_LIST,
-                  label: 'Oxy trong máu',
+                  label: 'Cholesterol',
                   image: Image.asset('assets/images/ic-spo2.png'),
                   onTap: () {
-                    // startPhoneAuth();
-                    Navigator.of(context).pushNamed(RoutesHDr.OXY_CHART_VIEW);
+                    //
                   },
                 ),
-                ButtonHDr(
-                  style: BtnStyle.BUTTON_IN_LIST,
-                  label: 'Tần số hô hấp',
-                  image: Image.asset('assets/images/ic-oxy.png'),
-                  onTap: () {
-                    // startPhoneAuth();
-                  },
-                ),
+                // ButtonHDr(
+                //   style: BtnStyle.BUTTON_IN_LIST,
+                //   label: 'Tần số hô hấp',
+                //   image: Image.asset('assets/images/ic-oxy.png'),
+                //   onTap: () {
+                //     // startPhoneAuth();
+                //   },
+                // ),
                 ButtonHDr(
                   style: BtnStyle.BUTTON_IN_LIST,
                   label: 'Nhiệt độ cơ thể',

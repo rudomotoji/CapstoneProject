@@ -52,3 +52,22 @@ class SafeScopeHeartRateDTO {
     return data;
   }
 }
+
+class SummarySettingDTO {
+  String id;
+  String timeSum;
+
+  SummarySettingDTO({this.id, this.timeSum});
+
+  SummarySettingDTO.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    timeSum = json['timeSum'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['timeSum'] = this.timeSum;
+    return data;
+  }
+}

@@ -58,4 +58,34 @@ class MedicalInstructionHelper {
 
     return prefs.getBool('CHECK_TO_CREATE_OR_LIST');
   }
+
+  //Kiểm tra tạo HR từ HR detail hay từ list
+  //
+  Future<void> initialCreateHRFromDetail() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('CHECK_CREATE_FROM_LIST', false);
+  }
+
+  Future<void> updateCreateHRFromDetail(bool check) async {
+    //
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('CHECK_CREATE_FROM_LIST') ||
+        prefs.getBool('CHECK_CREATE_FROM_LIST') == null) {
+      //
+      initialCreateHRFromDetail();
+    }
+
+    prefs.setBool('CHECK_CREATE_FROM_LIST', check);
+  }
+
+  Future<bool> getCreateHRFromDetail() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('CHECK_CREATE_FROM_LIST') ||
+        prefs.getBool('CHECK_CREATE_FROM_LIST') == null) {
+      //
+      initialCreateHRFromDetail();
+    }
+
+    return prefs.getBool('CHECK_CREATE_FROM_LIST');
+  }
 }

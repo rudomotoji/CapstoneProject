@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
@@ -105,6 +106,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   Stream<ReceiveNotification> _notificationsStream;
 
+  bool dangerKickedOn = false;
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -124,12 +127,21 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
     selectNotificationSubject.stream.listen((String payload) async {
       await _getPatientId();
+      const oneSec = const Duration(seconds: 1);
+      new Timer.periodic(oneSec, (Timer t) => _changeDangerView());
     });
 
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((notification) {
       print('Notification: $notification');
       _getPatientId();
+    });
+  }
+
+  _changeDangerView() {
+    //
+    setState(() {
+      dangerKickedOn = !dangerKickedOn;
     });
   }
 
@@ -874,59 +886,58 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   _showStatusOverview() {
     //change color and text color if else status patient and call it
-    return SizedBox(
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: DefaultTheme.GREY_BUTTON,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 20),
+    return ClipRRect(
+      child: Stack(
+        children: [
+          Center(
+            child: AnimatedContainer(
+              width: MediaQuery.of(context).size.width,
+              height: 200,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: (dangerKickedOn)
+                        ? [
+                            DefaultTheme.GRADIENT_5,
+                            DefaultTheme.GRADIENT_4,
+                            DefaultTheme.GRADIENT_3
+                          ]
+                        : [
+                            DefaultTheme.GRADIENT_3,
+                            DefaultTheme.GRADIENT_4,
+                            DefaultTheme.GRADIENT_5
+                          ]),
+              ),
+              duration: const Duration(seconds: 1),
+              curve: Curves.fastOutSlowIn,
+              // child: Text('Sinh hiệu bất thường'),
             ),
-            Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                  child: Text(
-                    'Sinh hiệu bình thường',
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        foreground: Paint()..shader = _normalHealthColors),
+          ),
+          Positioned(
+            child: ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 200,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.white.withOpacity(0.6),
+                    ),
+
+                    // child: Text('Sinh hiệu bất thường'),
                   ),
                 ),
-              ],
-            ),
-            //
-            Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 5),
-              child: Divider(
-                color: DefaultTheme.GREY_TOP_TAB_BAR,
-                height: 0.1,
               ),
             ),
-            Container(
-              height: 100,
-              child: Center(
-                child: Text(
-                  'Chưa có dữ liệu',
-                  style: TextStyle(
-                    color: DefaultTheme.GREY_TEXT,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-            ),
-            //
-            Padding(
-              padding: EdgeInsets.only(bottom: 20),
-            ),
-          ],
-        ),
+          ),
+          //
+        ],
       ),
     );
   }

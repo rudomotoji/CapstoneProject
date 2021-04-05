@@ -339,6 +339,7 @@ void main() async {
       ///FOR HEART RATE PROCESSING
       int countConnectBg = 0;
       int countDangerousLosingBluetooth = 0;
+      int countSummary = 0;
       await authenHelper.getPatientId().then((pIdCron) async {
         _patientId = pIdCron;
         if (_patientId != 0) {
@@ -507,10 +508,113 @@ void main() async {
             });
             countConnectBg++;
           }
+
+          //
+          ///SUMMARY EVERY END OF DATE
+          if (countSummary == 0) {
+            //
+            await _backgroundRepository
+                .getSummarySetting()
+                .then((summarySettingDTO) async {
+              //
+              if (summarySettingDTO != null) {
+                print(
+                    'CHECK BACKGROUND SUMMARY END DATE at ${summarySettingDTO.timeSum}');
+
+                int hour =
+                    int.tryParse(summarySettingDTO.timeSum.split(':')[0]);
+                int minute =
+                    int.tryParse(summarySettingDTO.timeSum.split(':')[1]);
+                String now = DateTime.now().toString();
+                String timeNow = now.split(' ')[1];
+                int hourNow = int.tryParse(timeNow.split(':')[0]);
+                int minuteNow =
+                    int.tryParse(timeNow.split(':')[1].split('.')[0]);
+                int countTIME = 0;
+                if (countTIME == 0) {
+                  if (hour == hourNow && minute == minuteNow) {
+                    //
+                    print('DO SUMMARY VALUE TO SERVER');
+                    await _sqfLiteHelper
+                        .getVitalSignScheduleOffline()
+                        .then((sOffline) async {
+                      if (sOffline.isNotEmpty) {
+                        //
+                        VitalSigns heartRateSchedule = sOffline
+                            .where((item) => item.vitalSignType == 'Nhịp tim')
+                            .first;
+
+                        ///PUSH VITAL SIGN INTO SERVER
+                        ///
+                        String listValue = '';
+                        String listTime = '';
+                        int countGetList = 0;
+                        _sqfLiteHelper
+                            .getListVitalSign('HEART_RATE', _patientId)
+                            .then((listHeartRate) async {
+                          if (countGetList == 0) {
+                            for (VitalSignDTO dto in listHeartRate) {
+                              listValue += dto.value1.toString() + ',';
+                              listTime += dto.toDatePush() + ',';
+                            }
+                          }
+                          //
+                          countGetList++;
+                          print('list value: $listValue');
+                          print('list time: $listTime');
+                          VitalSignPushDTO vitalSignPush = VitalSignPushDTO(
+                            vitalSignScheduleId:
+                                heartRateSchedule.vitalSignScheduleId,
+                            currentDate:
+                                DateTime.now().toString().split(' ')[0],
+                            vitalSignTypeId: 1,
+                            numberValue: listValue,
+                            timeValue: listTime,
+                          );
+                          print(
+                              'DTO HEREEE: \n vitalSignScheduleId: ${vitalSignPush.vitalSignScheduleId}\ncurrentDate: ${vitalSignPush.currentDate}\nnumberValue: ${vitalSignPush.numberValue}\ntimeValue: ${vitalSignPush.timeValue}');
+
+                          print(
+                              '\n\nJSON OBJECT: \n\n ${vitalSignPush.toJson().toString()}\n\n');
+                          await _vitalSignServerRepository
+                              .pushVitalSign(vitalSignPush)
+                              .then((isSuccess) async {
+                            if (isSuccess) {
+                              print('SUCCESSFUL PUSH DATA HEART RATE');
+                              await _sqfLiteHelper
+                                  .deleteVitalSignSchedule()
+                                  .then((isDeleted) async {
+                                //
+                                if (isDeleted) {
+                                  print(
+                                      'DELETE HEART RATE VALUE END DATE SUCCESSFUL');
+                                } else {
+                                  //
+                                }
+                              });
+                            } else {
+                              print('FAILED TO PUSH DATA HEART RATE');
+                            }
+                          });
+                        });
+                      } else {
+                        //HAVING NO SCHEDULE CALENDAR
+                        //SHOULD I DELETE AFTER DAY OR KEEP ALL VALUE ULTIL HAVING SCHEDULE ???
+                      }
+                    });
+                  }
+                  countTIME++;
+                }
+              }
+            });
+            countSummary++;
+          }
         } else {
           print('user has logged out of system');
         }
       });
+
+      ///
       ///////-----------------------------------------------
       ///FOR ANOTHER VITAL SIGN EXCEPT HEART RATE
       int countNotiSchedule = 0;
@@ -1250,6 +1354,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('CHECK_TO_CREATE_OR_LIST')) {
       _medicalInstructionHelper.initialCheckToCreateOrList();
+    }
+    if (!prefs.containsKey('CHECK_CREATE_FROM_LIST')) {
+      _medicalInstructionHelper.initialCreateHRFromDetail();
     }
   }
 

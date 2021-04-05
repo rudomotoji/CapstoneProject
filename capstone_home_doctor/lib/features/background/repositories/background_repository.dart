@@ -45,4 +45,21 @@ class BackgroundRepository extends BaseApiClient {
       print('ERROR AT getSafeScopeHeartRate ${e}');
     }
   }
+
+  Future<SummarySettingDTO> getSummarySetting() async {
+    String url = '/VitalSignSummary';
+    try {
+      //
+      final response = await getApiMockup(url, null);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as List;
+        List<SummarySettingDTO> list = data.map((dto) {
+          return SummarySettingDTO.fromJson(dto);
+        }).toList();
+        return list[0];
+      }
+    } catch (e) {
+      print('ERROR AT getSummarySetting: ${e}');
+    }
+  }
 }

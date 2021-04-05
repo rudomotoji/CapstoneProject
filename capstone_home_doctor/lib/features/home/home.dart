@@ -112,6 +112,7 @@ class _MainHomeState extends State<MainHome> {
 
   _setToCreateHROrList() async {
     await _medicalInstructionHelper.updateCheckToCreateOrList(false);
+    await _medicalInstructionHelper.updateCreateHRFromDetail(false);
   }
 
   //handle local notification for danger heart rate
@@ -277,7 +278,7 @@ class _MainHomeState extends State<MainHome> {
                         width: 30,
                       ),
                       title: Text(
-                        'Tin nhắn',
+                        'Hồ sơ',
                         style: TextStyle(color: DefaultTheme.GREY_TEXT),
                       ),
                     ),
@@ -414,7 +415,7 @@ class _MainHomeState extends State<MainHome> {
                     width: 30,
                   ),
                   title: Text(
-                    'Tin nhắn',
+                    'Hồ sơ',
                     style: TextStyle(color: DefaultTheme.GREY_TEXT),
                   ),
                 ),

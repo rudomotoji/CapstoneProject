@@ -134,7 +134,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
             HeaderWidget(
               title: 'Tạo hồ sơ sức khỏe',
               isMainView: false,
-              buttonHeaderType: ButtonHeaderType.NONE,
+              buttonHeaderType: ButtonHeaderType.BACK_HOME,
             ),
             Padding(
               padding: EdgeInsets.only(left: 30, bottom: 10),

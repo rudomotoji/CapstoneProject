@@ -134,4 +134,7 @@ class VitalSignHelper {
     }
     return prefs.getInt('COUNT_TO_NORMAL');
   }
+
+  ///CHECK PEOPLE STATUS IS DANGER OR NORMAL
+
 }

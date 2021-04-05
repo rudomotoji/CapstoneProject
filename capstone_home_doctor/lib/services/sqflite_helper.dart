@@ -338,13 +338,15 @@ class SQFLiteHelper {
     }
   }
 
-  Future<void> deleteVitalSignSchedule() async {
+  Future<bool> deleteVitalSignSchedule() async {
     var dbClient = await database;
     try {
       await dbClient.delete(VITAL_SIGN_SCHEDULE);
       print('DELETE VITAL SIGN SCHEDULE OFFLINE SUCCESSFUL');
+      return true;
     } catch (e) {
       print('ERROR at delete heart rate by patientId ${e}');
+      return false;
     }
   }
 }
