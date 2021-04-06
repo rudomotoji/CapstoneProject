@@ -119,6 +119,10 @@ class PeripheralRepository {
       return check;
     } catch (e) {
       print('error connect background: $e');
+      if (e.toString().contains('Another scan is already in progress')) {
+        stopScanning();
+        await connectDeviceInBackground(peripheralId);
+      }
     }
   }
 
