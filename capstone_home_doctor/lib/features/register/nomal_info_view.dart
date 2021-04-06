@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -5,6 +6,7 @@ import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -53,10 +55,12 @@ class NomalInfoView extends StatefulWidget {
 
 class _NomalInfoViewState extends State<NomalInfoView> {
   bool verified = false;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   String _verificationId;
-  TextEditingController _smsController = TextEditingController();
+  int ageRequest = 18;
   ArrayValidator _validator = ArrayValidator();
+
+  TextEditingController _smsController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -65,6 +69,18 @@ class _NomalInfoViewState extends State<NomalInfoView> {
     setState(() {
       verified = widget.verified;
     });
+    getDataFromJSONFile();
+  }
+
+  Future<void> getDataFromJSONFile() async {
+    final String response = await rootBundle.loadString('assets/global.json');
+
+    if (response.contains('ageReq')) {
+      final data = await json.decode(response);
+      setState(() {
+        ageRequest = data['ageReq'];
+      });
+    }
   }
 
   @override
@@ -178,15 +194,14 @@ class _NomalInfoViewState extends State<NomalInfoView> {
                       ? 'Chọn ngày sinh'
                       : DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd')
                           .parse(widget.dateOfBirth.toString())),
-                  // : widget.birthday.toString(),
                   style: TextStyle(color: Colors.black),
                 ),
                 onPressed: () async {
                   DateTime newDateTime = await showRoundedDatePicker(
                       context: context,
-                      initialDate: DateTime.now(),
+                      initialDate: DateTime(DateTime.now().year - ageRequest),
                       firstDate: DateTime(DateTime.now().year - 100),
-                      lastDate: DateTime.now(),
+                      lastDate: DateTime(DateTime.now().year - ageRequest),
                       borderRadius: 16,
                       theme: ThemeData.dark());
                   if (newDateTime != null) {
