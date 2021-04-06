@@ -121,7 +121,10 @@ class PeripheralRepository {
       print('error connect background: $e');
       if (e.toString().contains('Another scan is already in progress')) {
         stopScanning();
-        await connectDeviceInBackground(peripheralId);
+        Future.delayed(const Duration(seconds: 2), () async {
+          //
+          await connectDeviceInBackground(peripheralId);
+        });
       }
     }
   }
