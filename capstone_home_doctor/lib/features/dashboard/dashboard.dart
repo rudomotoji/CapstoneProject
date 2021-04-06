@@ -316,18 +316,66 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 280,
-                  child: OverflowBox(
-                      // alignment: Alignment.centerRight,
-                      minWidth: MediaQuery.of(context).size.width,
-                      maxWidth: MediaQuery.of(context).size.width,
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 0),
-                        child: _sizeBoxCard(),
-                      )),
-                ),
+                (listPrescription.length > 0)
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 280,
+                        child: OverflowBox(
+                            // alignment: Alignment.centerRight,
+                            minWidth: MediaQuery.of(context).size.width,
+                            maxWidth: MediaQuery.of(context).size.width,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 0),
+                              child: _sizeBoxCard(),
+                            )),
+                      )
+                    : Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        padding: EdgeInsets.only(left: 20, right: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: DefaultTheme.GREY_VIEW,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            //
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: 15,
+                              ),
+                            ),
+                            Text(
+                              'Lịch dùng thuốc',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 17,
+                                color: DefaultTheme.RED_CALENDAR,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: 5,
+                              ),
+                            ),
+                            Divider(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                              height: 1,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            Text(
+                              'Hiện tại bạn chưa có lịch uống thuốc nào từ bác sĩ.',
+                              style: TextStyle(
+                                color: DefaultTheme.BLACK,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                 Padding(
                   padding: EdgeInsets.only(top: 20, bottom: 10),
                   child: Row(
