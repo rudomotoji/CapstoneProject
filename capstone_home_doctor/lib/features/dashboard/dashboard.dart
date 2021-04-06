@@ -1747,8 +1747,11 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   }
 
   handlingMEdicalResponse() async {
+    List<MedicalInstructionDTO> _listPrescription = [];
+
     await _sqfLiteHelper.cleanDatabase();
     for (var schedule in listPrescription) {
+      MedicalInstructionDTO _prescription = MedicalInstructionDTO();
       if (schedule.medicationsRespone.dateFinished != null) {
         DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
             .parse(schedule.medicationsRespone.dateFinished);
@@ -1759,6 +1762,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
               schedule.medicalInstructionId;
           await _sqfLiteHelper
               .insertMedicalResponse(schedule.medicationsRespone);
+          _prescription = schedule;
+          _listPrescription.add(_prescription);
 
           for (var item in schedule.medicationsRespone.medicationSchedules) {
             item.medicalResponseID = schedule.medicalInstructionId;
@@ -1767,6 +1772,10 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         }
       }
     }
+
+    setState(() {
+      listPrescription = _listPrescription;
+    });
   }
 
   getLocalStorage() async {
