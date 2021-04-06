@@ -1652,6 +1652,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
             create: (BuildContext context) =>
                 ActivityBloc(activityRepository: _activityRepository),
           ),
+          BlocProvider<VitalSignDetailBloc>(
+            create: (BuildContext context) => VitalSignDetailBloc(
+                vitalSignServerRepository: _vitalSignServerRepository),
+          ),
         ],
         child: GestureDetector(
           onTap: () {

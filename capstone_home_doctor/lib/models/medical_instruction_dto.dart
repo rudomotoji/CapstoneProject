@@ -125,7 +125,7 @@ class MedicalInstructionDTO {
   int patientId;
   PickedFile imageFile;
   //vitalsign
-  PrescriptionDTO vitalSignResponse;
+  VitalSignScheduleRespone vitalSignScheduleRespone;
 
   MedicalInstructionDTO({
     this.medicalInstructionType,
@@ -143,7 +143,7 @@ class MedicalInstructionDTO {
     this.imageFile,
     this.patientFullName,
     this.status,
-    this.vitalSignResponse,
+    this.vitalSignScheduleRespone,
   });
 
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
@@ -162,8 +162,9 @@ class MedicalInstructionDTO {
         ? new PrescriptionDTO.fromJson(json['prescriptionRespone'])
         : null;
 
-    vitalSignResponse = json['vitalSignResponse'] != null
-        ? new PrescriptionDTO.fromJson(json['vitalSignResponse'])
+    vitalSignScheduleRespone = json['vitalSignScheduleRespone'] != null
+        ? new VitalSignScheduleRespone.fromJson(
+            json['vitalSignScheduleRespone'])
         : null;
   }
 
@@ -227,6 +228,81 @@ class MedicalInstructionsDTO {
     data['prescriptionRespone'] = this.prescriptionRespone;
     data['dateCreate'] = this.dateCreate;
     data['medicalInstructionTypeId'] = this.medicalInstructionTypeId;
+    return data;
+  }
+}
+
+class VitalSignScheduleRespone {
+  String timeStared;
+  String timeCanceled;
+  List<VitalSigns> vitalSigns;
+
+  VitalSignScheduleRespone(
+      {this.timeStared, this.timeCanceled, this.vitalSigns});
+
+  VitalSignScheduleRespone.fromJson(Map<String, dynamic> json) {
+    timeStared = json['timeStared'];
+    timeCanceled = json['timeCanceled'];
+    if (json['vitalSigns'] != null) {
+      vitalSigns = new List<VitalSigns>();
+      json['vitalSigns'].forEach((v) {
+        vitalSigns.add(new VitalSigns.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['timeStared'] = this.timeStared;
+    data['timeCanceled'] = this.timeCanceled;
+    if (this.vitalSigns != null) {
+      data['vitalSigns'] = this.vitalSigns.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class VitalSigns {
+  int vitalSignTypeId;
+  String vitalSignType;
+  int numberMax;
+  int numberMin;
+  int minuteDangerInterval;
+  int minuteNormalInterval;
+  String timeStart;
+  int minuteAgain;
+
+  VitalSigns(
+      {this.vitalSignTypeId,
+      this.vitalSignType,
+      this.numberMax,
+      this.numberMin,
+      this.minuteDangerInterval,
+      this.minuteNormalInterval,
+      this.timeStart,
+      this.minuteAgain});
+
+  VitalSigns.fromJson(Map<String, dynamic> json) {
+    vitalSignTypeId = json['vitalSignTypeId'];
+    vitalSignType = json['vitalSignType'];
+    numberMax = json['numberMax'];
+    numberMin = json['numberMin'];
+    minuteDangerInterval = json['minuteDangerInterval'];
+    minuteNormalInterval = json['minuteNormalInterval'];
+    timeStart = json['timeStart'];
+    minuteAgain = json['minuteAgain'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['vitalSignTypeId'] = this.vitalSignTypeId;
+    data['vitalSignType'] = this.vitalSignType;
+    data['numberMax'] = this.numberMax;
+    data['numberMin'] = this.numberMin;
+    data['minuteDangerInterval'] = this.minuteDangerInterval;
+    data['minuteNormalInterval'] = this.minuteNormalInterval;
+    data['timeStart'] = this.timeStart;
+    data['minuteAgain'] = this.minuteAgain;
     return data;
   }
 }

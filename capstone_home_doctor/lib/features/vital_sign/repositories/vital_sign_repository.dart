@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
+import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_push_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
@@ -109,6 +110,33 @@ class VitalSignServerRepository extends BaseApiClient {
       }
     } catch (e) {
       print('error at push vital sign: ${e}');
+    }
+  }
+
+  Future<VitalSignDetailDTO> getVitalSign(
+      int patientId, int healthRecordId, String dateTime) async {
+    String url = '';
+    if (healthRecordId > 0) {
+      url =
+          '/VitalSigns/GetVitalSignValueByHRId?patientId=$patientId&healthRecordId=$healthRecordId&dateTime=$dateTime';
+    } else {
+      url =
+          '/VitalSigns/GetVitalSignValueByHRId?patientId=$patientId&dateTime=$dateTime';
+    }
+
+    try {
+      //
+      print(url);
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        VitalSignDetailDTO dto =
+            VitalSignDetailDTO.fromJson(jsonDecode(response.body));
+        return dto;
+      }
+      return VitalSignDetailDTO();
+    } catch (e) {
+      print('Error at get vital sign ${e}');
+      return VitalSignDetailDTO();
     }
   }
 }

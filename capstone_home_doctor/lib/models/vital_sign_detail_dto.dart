@@ -1,7 +1,7 @@
 class VitalSignDetailDTO {
   String vitalSignValueDateCreated;
   List<VitalSigns> vitalSigns;
-  VitalSignValues vitalSignValues;
+  List<VitalSignValues> vitalSignValues;
 
   VitalSignDetailDTO(
       {this.vitalSignValueDateCreated, this.vitalSigns, this.vitalSignValues});
@@ -14,9 +14,12 @@ class VitalSignDetailDTO {
         vitalSigns.add(new VitalSigns.fromJson(v));
       });
     }
-    vitalSignValues = json['vitalSignValues'] != null
-        ? new VitalSignValues.fromJson(json['vitalSignValues'])
-        : null;
+    if (json['vitalSignValues'] != null) {
+      vitalSignValues = new List<VitalSignValues>();
+      json['vitalSignValues'].forEach((v) {
+        vitalSignValues.add(new VitalSignValues.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -26,7 +29,8 @@ class VitalSignDetailDTO {
       data['vitalSigns'] = this.vitalSigns.map((v) => v.toJson()).toList();
     }
     if (this.vitalSignValues != null) {
-      data['vitalSignValues'] = this.vitalSignValues.toJson();
+      data['vitalSignValues'] =
+          this.vitalSignValues.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -78,34 +82,30 @@ class VitalSigns {
 }
 
 class VitalSignValues {
+  int vitalSignTypeId;
   String dateCreated;
-  String heartBeatTimeValue;
-  String heartBeatNumberValue;
-  String bloodPressureTimeValue;
-  String bloodPressureNumberValue;
+  String timeValue;
+  String numberValue;
 
   VitalSignValues(
-      {this.dateCreated,
-      this.heartBeatTimeValue,
-      this.heartBeatNumberValue,
-      this.bloodPressureTimeValue,
-      this.bloodPressureNumberValue});
+      {this.vitalSignTypeId,
+      this.dateCreated,
+      this.timeValue,
+      this.numberValue});
 
   VitalSignValues.fromJson(Map<String, dynamic> json) {
+    vitalSignTypeId = json['vitalSignTypeId'];
     dateCreated = json['dateCreated'];
-    heartBeatTimeValue = json['heartBeatTimeValue'];
-    heartBeatNumberValue = json['heartBeatNumberValue'];
-    bloodPressureTimeValue = json['bloodPressureTimeValue'];
-    bloodPressureNumberValue = json['bloodPressureNumberValue'];
+    timeValue = json['timeValue'];
+    numberValue = json['numberValue'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['vitalSignTypeId'] = this.vitalSignTypeId;
     data['dateCreated'] = this.dateCreated;
-    data['heartBeatTimeValue'] = this.heartBeatTimeValue;
-    data['heartBeatNumberValue'] = this.heartBeatNumberValue;
-    data['bloodPressureTimeValue'] = this.bloodPressureTimeValue;
-    data['bloodPressureNumberValue'] = this.bloodPressureNumberValue;
+    data['timeValue'] = this.timeValue;
+    data['numberValue'] = this.numberValue;
     return data;
   }
 }
