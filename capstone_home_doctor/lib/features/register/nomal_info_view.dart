@@ -290,8 +290,15 @@ class _NomalInfoViewState extends State<NomalInfoView> {
 
     PhoneVerificationFailed verificationFailed =
         (FirebaseAuthException authException) {
-      widget.alertError('Vui lòng kiểm tra lại số điện thoại');
-      Navigator.pop(context);
+      // widget.alertError('Vui lòng kiểm tra lại số điện thoại');
+      // Navigator.pop(context);
+      if (authException.code.contains('too-many-requests')) {
+        widget.alertError('Số điện thoại đã gửi quá nhiều lần');
+      } else {
+        widget.alertError('Vui lòng kiểm tra lại số điện thoại');
+      }
+
+      // Navigator.pop(context);
       print(
           'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
     };
