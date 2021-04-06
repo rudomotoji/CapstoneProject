@@ -1684,30 +1684,39 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   }
 
   Widget _getCalendar() {
-    return SizedBox(
-      height: 280,
-      width: MediaQuery.of(context).size.width,
-      child: PageView.builder(
-        itemCount: listPrescription.length,
-        controller: PageController(viewportFraction: 0.9),
-        onPageChanged: (int index) => setState(() => _index = index),
-        itemBuilder: (_, i) {
-          return Transform.scale(
-            scale: i == _index ? 1 : 0.9,
-            alignment: Alignment.centerLeft,
-            child: Card(
-              elevation: 0,
-              shadowColor: DefaultTheme.GREY_TEXT,
-              color: DefaultTheme.GREY_VIEW,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              child: _medicalScheduleNotNull(
-                  listPrescription[i].medicationsRespone.medicationSchedules),
-            ),
-          );
-        },
-      ),
-    );
+    if (listPrescription.length > 0) {
+      return SizedBox(
+        height: 280,
+        width: MediaQuery.of(context).size.width,
+        child: PageView.builder(
+          itemCount: listPrescription.length,
+          controller: PageController(viewportFraction: 0.9),
+          onPageChanged: (int index) => setState(() => _index = index),
+          itemBuilder: (_, i) {
+            return Transform.scale(
+              scale: i == _index ? 1 : 0.9,
+              alignment: Alignment.centerLeft,
+              child: Card(
+                elevation: 0,
+                shadowColor: DefaultTheme.GREY_TEXT,
+                color: DefaultTheme.GREY_VIEW,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                child: _medicalScheduleNotNull(
+                    listPrescription[i].medicationsRespone.medicationSchedules),
+              ),
+            );
+          },
+        ),
+      );
+    } else {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: Text('Bạn không có lịch uống thuốc nào'),
+        ),
+      );
+    }
   }
 
   Widget _getAppointment() {
