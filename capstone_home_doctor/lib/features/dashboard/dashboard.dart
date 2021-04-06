@@ -157,8 +157,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         print('EVERY 1 MINUTES. CHECK STATUS PEOPLE LOCAL');
         print('people status is ${value}');
         if (value == 'DANGER') {
-          _getPeopleStatus();
           if (mounted) {
+            _changeDangerView();
             setState(() {
               checkPeopleStatusLocal = true;
             });
