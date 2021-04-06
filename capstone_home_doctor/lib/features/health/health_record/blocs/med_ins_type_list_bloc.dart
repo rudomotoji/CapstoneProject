@@ -26,5 +26,16 @@ class MedInsTypeListBloc extends Bloc<MedInsTypeEvent, MedInsTypeState> {
         yield MedInsTypeStateFailure();
       }
     }
+    if (event is MedInsTypeEventGetListToShare) {
+      try {
+        //
+        final List<MedicalInstructionTypeDTO> list =
+            await medicalInstructionRepository
+                .getMedicalInstructionTypeToShare(event.patientId);
+        yield MedInsTypeStateSuccess(listMedInsType: list);
+      } catch (e) {
+        yield MedInsTypeStateFailure();
+      }
+    }
   }
 }

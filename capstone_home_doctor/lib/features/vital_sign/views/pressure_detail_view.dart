@@ -9,19 +9,24 @@ import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/home/home.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_push_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 
 final AuthenticateHelper authenHelper = AuthenticateHelper();
 final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 final DateValidator _dateValidator = DateValidator();
 final ArrayValidator _arrayValidator = ArrayValidator();
+final VitalSignServerRepository _vitalSignServerRepository =
+    VitalSignServerRepository(httpClient: http.Client());
 
 class PressureDetailView extends StatefulWidget {
   @override
@@ -367,6 +372,36 @@ class _PressureDetailView extends State<PressureDetailView> {
                                         .insertVitalSign(vitalSignDTO);
                                     print(
                                         'vital sign DTO:\n\n id: ${vitalSignDTO.id} - patientId: ${vitalSignDTO.patientId} - value type: ${vitalSignDTO.valueType} - value1: ${vitalSignDTO.value1} - value2 : ${vitalSignDTO.value2} - date time: ${vitalSignDTO.dateTime}');
+                                    VitalSignPushDTO vitalSignPush =
+                                        VitalSignPushDTO(
+                                      patientId: _patientId,
+                                      vitalSignTypeId: 2,
+                                      numberValue:
+                                          '${_tamThuController.text.trim()}-${_tamTruongController.text.trim()}',
+                                      timeValue:
+                                          '${_dateValidator.getHourAndMinute(dateNow.toString())}',
+                                    );
+                                    // print(
+                                    //     'DTO HEREEE: \n vitalSignScheduleId: ${vitalSignPush.vitalSignScheduleId}\ncurrentDate: ${vitalSignPush.currentDate}\nnumberValue: ${vitalSignPush.numberValue}\ntimeValue: ${vitalSignPush.timeValue}');
+
+                                    print(
+                                        '\n\nJSON OBJECT: \n\n ${vitalSignPush.toJson().toString()}\n\n');
+                                    await _vitalSignServerRepository
+                                        .pushVitalSign(vitalSignPush)
+                                        .then((isSuccess) async {
+                                      if (isSuccess) {
+                                        print(
+                                            'SUCCESSFUL PUSH DATA BLOOD PRESSURE');
+                                      } else {
+                                        print('FAILED TO PUSH DATA HEART RATE');
+                                      }
+                                    });
+
+                                    Future.delayed(const Duration(seconds: 1),
+                                        () async {
+                                      await _getPatientId();
+                                    });
+                                    Navigator.of(context).pop();
                                   }
                                 }
                               },

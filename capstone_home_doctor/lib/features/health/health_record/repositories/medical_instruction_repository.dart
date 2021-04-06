@@ -82,6 +82,27 @@ class MedicalInstructionRepository extends BaseApiClient {
     }
   }
 
+  //medical instruction type to share
+  Future<List<MedicalInstructionTypeDTO>> getMedicalInstructionTypeToShare(
+      int patientId) async {
+    final String url =
+        '/MedicalInstructrionTypes/GetMITypeToShare?patientId=${patientId}';
+    try {
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body) as List;
+        List<MedicalInstructionTypeDTO> list = responseData.map((dto) {
+          return MedicalInstructionTypeDTO.fromJson(dto);
+        }).toList();
+        return list;
+      } else {
+        return List<MedicalInstructionTypeDTO>();
+      }
+    } catch (e) {
+      print('ERROR AT getMedicalInstructionType ${e.toString()}');
+    }
+  }
+
   //create medical instruction by multiple part
   Future<bool> createMedicalInstruction(MedicalInstructionDTO dto) async {
     var uri = Uri.parse(

@@ -1493,8 +1493,11 @@ class _ContractShareView extends State<ContractShareView>
                     ),
                   ),
                   onTap: () async {
-                    _medInsTypeListBloc
-                        .add(MedInsTypeEventGetList(status: 'active'));
+                    if (_patientId != 0) {
+                      _medInsTypeListBloc.add(
+                          MedInsTypeEventGetListToShare(patientId: _patientId));
+                    }
+
                     _showMedicalInstructionOptional();
                   }),
             ],

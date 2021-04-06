@@ -270,12 +270,12 @@ class _MainHomeState extends State<MainHome> {
                     ),
                     BottomNavigationBarItem(
                       icon: new Image.asset(
-                        'assets/images/ic-msg.png',
+                        'assets/images/ic-health-record-u.png',
                         height: 30,
                         width: 30,
                       ),
                       activeIcon: new Image.asset(
-                        'assets/images/ic-msg-selected.png',
+                        'assets/images/ic-health-record.png',
                         height: 30,
                         width: 30,
                       ),

@@ -39,6 +39,7 @@ class _ActivityTimeView extends State<ActivityTimeView>
   ActivityBloc _activityBloc;
   NotificationListBloc _notificationListBloc;
   bool kickViewOn = false;
+  bool isItemLeft = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -81,39 +82,80 @@ class _ActivityTimeView extends State<ActivityTimeView>
               buttonHeaderType: ButtonHeaderType.BACK_HOME,
             ),
             //
-            Padding(
-                padding:
-                    EdgeInsets.only(top: 5, left: 20, bottom: 15, right: 20),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(10),
-                  onTap: () {
-                    _showFilterForm();
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 40,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: DefaultTheme.BLUE_DARK.withOpacity(0.3)),
-                    child: Row(
-                      children: [
-                        Spacer(),
-                        SizedBox(
-                          width: 40,
-                          height: 40,
-                          child: Image.asset('assets/images/ic-filter.png'),
+            (kickViewOn == false)
+                ? Padding(
+                    padding: EdgeInsets.only(
+                        top: 5, left: 20, bottom: 15, right: 20),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () {
+                        _showFilterForm();
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width - 40,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: DefaultTheme.BLUE_DARK.withOpacity(0.3)),
+                        child: Row(
+                          children: [
+                            Spacer(),
+                            SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: Image.asset('assets/images/ic-filter.png'),
+                            ),
+                            Text(
+                              'Bộ lọc',
+                              style: TextStyle(
+                                  color: DefaultTheme.BLUE_DARK,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            Spacer(),
+                          ],
                         ),
-                        Text(
-                          'Bộ lọc',
-                          style: TextStyle(
-                              color: DefaultTheme.BLUE_DARK,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500),
+                      ),
+                    ))
+                : Padding(
+                    padding: EdgeInsets.only(
+                        top: 5, left: 20, bottom: 15, right: 20),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () {
+                        setState(() {
+                          kickViewOn = false;
+                        });
+                      },
+                      child: Container(
+                        height: 45,
+                        width: MediaQuery.of(context).size.width - 40,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: DefaultTheme.BLUE_DARK.withOpacity(0.3)),
+                        child: Row(
+                          children: [
+                            Spacer(),
+                            Text(
+                              'Ngày ${dateTimeChosen.split('-')[2]} tháng ${dateTimeChosen.split('-')[1]},${dateTimeChosen.split('-')[0]}',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: DefaultTheme.BLUE_DARK,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            Spacer(),
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: Image.asset('assets/images/ic-close.png'),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: 20),
+                            ),
+                          ],
                         ),
-                        Spacer(),
-                      ],
-                    ),
-                  ),
-                )),
+                      ),
+                    )),
 
             Expanded(
               child: ListView(
@@ -154,10 +196,251 @@ class _ActivityTimeView extends State<ActivityTimeView>
                                 itemCount: state.dto.notifications.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   //
+
                                   return Container(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                    child: Text(
-                                        '${state.dto.notifications[index].body}'),
+                                    margin: EdgeInsets.only(bottom: 15),
+                                    child: Stack(
+                                      children: <Widget>[
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              60,
+                                          margin: (state
+                                                          .dto
+                                                          .notifications[index]
+                                                          .notificationType ==
+                                                      1 ||
+                                                  state.dto.notifications[index]
+                                                          .notificationType ==
+                                                      2 ||
+                                                  state.dto.notifications[index]
+                                                          .notificationType ==
+                                                      3 ||
+                                                  state.dto.notifications[index]
+                                                          .notificationType ==
+                                                      9 ||
+                                                  state.dto.notifications[index]
+                                                          .notificationType ==
+                                                      10 ||
+                                                  state.dto.notifications[index]
+                                                          .notificationType ==
+                                                      14 ||
+                                                  state.dto.notifications[index]
+                                                          .notificationType ==
+                                                      15 ||
+                                                  state.dto.notifications[index]
+                                                          .notificationType ==
+                                                      16 ||
+                                                  state.dto.notifications[index]
+                                                          .notificationType ==
+                                                      17)
+                                              ? EdgeInsets.only(
+                                                  left: 50, right: 10)
+                                              : EdgeInsets.only(
+                                                  left: 10, right: 50),
+                                          padding: EdgeInsets.only(
+                                              bottom: 10,
+                                              left: 10,
+                                              top: 10,
+                                              right: 10),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                width: 1,
+                                                color: DefaultTheme
+                                                    .GREY_TOP_TAB_BAR),
+                                            color: DefaultTheme.GREY_VIEW,
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: ((state
+                                                            .dto
+                                                            .notifications[
+                                                                index]
+                                                            .notificationType ==
+                                                        1 ||
+                                                    state
+                                                            .dto
+                                                            .notifications[
+                                                                index]
+                                                            .notificationType ==
+                                                        2 ||
+                                                    state
+                                                            .dto
+                                                            .notifications[
+                                                                index]
+                                                            .notificationType ==
+                                                        3 ||
+                                                    state
+                                                            .dto
+                                                            .notifications[
+                                                                index]
+                                                            .notificationType ==
+                                                        9 ||
+                                                    state
+                                                            .dto
+                                                            .notifications[
+                                                                index]
+                                                            .notificationType ==
+                                                        10 ||
+                                                    state
+                                                            .dto
+                                                            .notifications[
+                                                                index]
+                                                            .notificationType ==
+                                                        14 ||
+                                                    state
+                                                            .dto
+                                                            .notifications[
+                                                                index]
+                                                            .notificationType ==
+                                                        15 ||
+                                                    state
+                                                            .dto
+                                                            .notifications[
+                                                                index]
+                                                            .notificationType ==
+                                                        16 ||
+                                                    state
+                                                            .dto
+                                                            .notifications[
+                                                                index]
+                                                            .notificationType ==
+                                                        17))
+                                                ? CrossAxisAlignment.end
+                                                : CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                '${state.dto.notifications[index].title}',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                                textAlign: (state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            1 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            2 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            3 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            9 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            10 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            14 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            15 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            16 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            17)
+                                                    ? TextAlign.right
+                                                    : TextAlign.left,
+                                              ),
+                                              Text(
+                                                '${state.dto.notifications[index].body}',
+                                                textAlign: (state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            1 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            2 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            3 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            9 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            10 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            14 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            15 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            16 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            17)
+                                                    ? TextAlign.right
+                                                    : TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 },
                               );

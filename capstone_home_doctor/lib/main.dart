@@ -453,6 +453,8 @@ void main() async {
                                             RoutesHDr.MAIN_HOME,
                                       }
                                     };
+                                    await _vitalSignHelper
+                                        .updatePeopleStatus('DANGER');
                                     _handleGeneralMessage(
                                         dangerousNotification);
                                     ////////////////////////
@@ -871,6 +873,8 @@ _connectInBackground(int timeInsert) async {
                               "NAVIGATE_TO_SCREEN": RoutesHDr.MAIN_HOME,
                             }
                           };
+                          await _vitalSignHelper.updatePeopleStatus('DANGER');
+
                           _handleGeneralMessage(dangerousNotification);
                           //
                           /////////////
@@ -917,6 +921,8 @@ _connectInBackground(int timeInsert) async {
                             if (countToNormal >= scopeHearRate.normalCount) {
                               print(
                                   'CHANGE DEFAULT normal people status successful!');
+                              await _vitalSignHelper
+                                  .updatePeopleStatus('NORMAL');
                               //UPDATE VARIABLE CHECK DANGEROUS TO NORMAL = FALSE
                               await _vitalSignHelper.updateCheckToNormal(false);
                             }
@@ -961,6 +967,7 @@ _connectInBackground(int timeInsert) async {
                             }
                           };
                           _handleGeneralMessage(dangerousNotification);
+                          await _vitalSignHelper.updatePeopleStatus('DANGER');
                         }
                         //
                       } else {
@@ -974,6 +981,8 @@ _connectInBackground(int timeInsert) async {
                                 () async {
                               //
                               await _connectFirstOpenApp();
+                              await _vitalSignHelper
+                                  .updatePeopleStatus('NORMAL');
                             });
                           }
                         });
@@ -1041,6 +1050,7 @@ _connectInBackground(int timeInsert) async {
                           }
                         };
                         _handleGeneralMessage(dangerousNotification);
+                        await _vitalSignHelper.updatePeopleStatus('DANGER');
                         ////////////////////////
                         //SERVER EXECUTE HERE
 
@@ -1167,6 +1177,8 @@ _connectInBackground(int timeInsert) async {
                                 .then((isSuccess) async {
                               //
                               if (isSuccess) {
+                                await _vitalSignHelper
+                                    .updatePeopleStatus('NORMAL');
                                 print(
                                     'Updated normal people status successful!');
                                 //UPDATE VARIABLE CHECK DANGEROUS TO NORMAL = FALSE
@@ -1229,6 +1241,7 @@ _connectInBackground(int timeInsert) async {
                           }
                         };
                         _handleGeneralMessage(dangerousNotification);
+                        await _vitalSignHelper.updatePeopleStatus('DANGER');
                         ////////////////////////
                         //SERVER EXECUTE HERE
                         //CHANGE STATUS PEOPLE
@@ -1379,6 +1392,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('DOCTOR_ACCOUNT_ID')) {
       _doctorHelper.initialDoctor();
+    }
+    if (!prefs.containsKey('STATUS_PEOPLE')) {
+      _vitalSignHelper.initialPeopleStatus();
     }
   }
 
