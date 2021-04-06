@@ -722,7 +722,15 @@ _saveVitalSignScheduleOffline() async {
 _connectFirstOpenApp() async {
   await _peripheralHelper.getPeripheralId().then((value) async {
     if (value != '') {
-      await _peripheralRepository.connectDeviceInBackground(value);
+      await _peripheralRepository
+          .connectDeviceInBackground(value)
+          .catchError((e) {
+        if (e.toString().contains(
+            'error at getHeartRateValueFromDevice PlatformException(set_notification_error, error when writing the descriptor, null, null)')) {
+          // //
+          _peripheralRepository.connectDeviceInBackground(value);
+        }
+      });
     }
   });
 }

@@ -6,12 +6,15 @@ import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral
 import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_push_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
+import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:http/http.dart' as http;
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
+
+final PeripheralHelper _peripheralHelper = PeripheralHelper();
 
 class VitalSignRepository {
   final flutterBlue = FlutterBlue.instance;
@@ -28,10 +31,10 @@ class VitalSignRepository {
 
   //get heart rate characteristic
   Future<int> getHeartRateValueFromDevice(String peripheralId) async {
+    int heartRateValue = 0;
+    BluetoothDevice device =
+        await peripheralRepository.findScanResultById(peripheralId);
     try {
-      int heartRateValue = 0;
-      BluetoothDevice device =
-          await peripheralRepository.findScanResultById(peripheralId);
       device.disconnect();
       await device.connect();
       BluetoothCharacteristic _characteristic;
@@ -65,7 +68,29 @@ class VitalSignRepository {
     } catch (e) {
       await vitalSignHelper.updateHeartValue(0);
       print('error at getHeartRateValueFromDevice ${e}');
+      if (e.toString().contains(
+          'PlatformException(already_connected, connection with device already exists, null, null)')) {
+        device.disconnect();
+        await device.connect();
+        await _peripheralHelper.updatePeripheralChecking(
+            true, device.id.toString());
+        await getHeartRateValueFromDevice(peripheralId);
+      }
+      if (e.toString().contains(
+          'Unhandled Exception: Exception: Another scan is already in progress')) {
+        stopScanning();
+        device.disconnect();
+        await device.connect();
+        await _peripheralHelper.updatePeripheralChecking(
+            true, device.id.toString());
+        await getHeartRateValueFromDevice(peripheralId);
+      }
     }
+  }
+
+  //stop scan device
+  Future<void> stopScanning() async {
+    flutterBlue.stopScan();
   }
 }
 

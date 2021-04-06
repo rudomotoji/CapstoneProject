@@ -69,6 +69,11 @@ class _HeartDetailView extends State<HeartDetailView>
       if (_patientId != 0) {
         _vitalSignBloc.add(
             VitalSignEventGetList(type: vital_type, patientId: _patientId));
+        // await _sqfLiteHelper
+        //                 .getVitalSignScheduleOffline()
+        //                 .then((sOffline) async {
+        //               scheduleOffline = sOffline;
+        //             });
       }
     });
   }

@@ -158,14 +158,17 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         print('people status is ${value}');
         if (value == 'DANGER') {
           _getPeopleStatus();
-          setState(() {
-            checkPeopleStatusLocal = true;
-          });
+          if (mounted) {
+            setState(() {
+              checkPeopleStatusLocal = true;
+            });
+          }
         } else {
-          //
-          setState(() {
-            checkPeopleStatusLocal = false;
-          });
+          if (mounted) {
+            setState(() {
+              checkPeopleStatusLocal = false;
+            });
+          }
         }
       });
     });
