@@ -36,6 +36,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   List<HealthRecordDTO> listHealthRecord = [];
   List<HealthRecordDTO> listHealthRecordOld = [];
   List<HealthRecordDTO> listHealthRecordSystem = [];
+  List<HealthRecordDTO> listHealthActived = [];
   DateValidator _dateValidator = DateValidator();
   HealthRecordListBloc _healthRecordListBloc;
   HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
@@ -95,10 +96,9 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Column(
         // height: MediaQuery.of(context).size.height * 0.7,
-
         children: <Widget>[
           HeaderWidget(
             title: 'Hồ sơ',
@@ -200,6 +200,17 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
               ),
             ),
           ),
+          Tab(
+            child: Container(
+              height: 25,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Hồ sơ đang hoạt động',
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -230,6 +241,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
             listHealthRecord = state.listHealthRecord;
             listHealthRecordOld = [];
             listHealthRecordSystem = [];
+            listHealthActived = [];
             if (null != listHealthRecord) {
               if (listHealthRecord.length > 1) {
                 listHealthRecord
@@ -237,6 +249,12 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
               }
 
               for (var item in listHealthRecord) {
+                if (item.status != null) {
+                  if (item.status == 'ACTIVE') {
+                    listHealthActived.add(item);
+                  }
+                }
+
                 if (item.contractId == null) {
                   listHealthRecordOld.add(item);
                   print(
@@ -256,6 +274,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                 children: <Widget>[
                   listOldHealthRecord(),
                   listSystemHealthRecord(),
+                  listHealthRecordActived(),
                 ],
               ),
             );
@@ -274,7 +293,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
         // margin: EdgeInsets.only(bottom: 50),
         child: ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          // physics: NeverScrollableScrollPhysics(),
           itemCount: listHealthRecordOld.length,
           itemBuilder: (BuildContext buildContext, int index) {
             return _itemHealthRecord(listHealthRecordOld[index]);
@@ -304,13 +323,48 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     }
   }
 
+  listHealthRecordActived() {
+    if (listHealthActived.length > 0) {
+      return Container(
+        child: ListView.builder(
+          shrinkWrap: true,
+          // physics: NeverScrollableScrollPhysics(),
+          itemCount: listHealthActived.length,
+          itemBuilder: (BuildContext buildContext, int index) {
+            return _itemHealthRecord(listHealthActived[index]);
+          },
+        ),
+      );
+    } else {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Image.asset('assets/images/ic-dashboard.png'),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 20),
+              ),
+              Text('Bạn chưa có hồ sơ nào đang hoạt động'),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
   listSystemHealthRecord() {
     if (listHealthRecordSystem.length > 0) {
       return Container(
         // padding: EdgeInsets.only(bottom: 50),
         child: ListView.builder(
           // shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          // physics: NeverScrollableScrollPhysics(),
           itemCount: listHealthRecordSystem.length,
           itemBuilder: (BuildContext buildContext, int index) {
             return _itemHealthRecord(listHealthRecordSystem[index]);
