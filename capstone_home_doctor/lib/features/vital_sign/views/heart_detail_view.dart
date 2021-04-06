@@ -12,6 +12,7 @@ import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/heart_rate_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:flutter/cupertino.dart';
@@ -53,12 +54,31 @@ class _HeartDetailView extends State<HeartDetailView>
   int everageVitalSignValue = 0;
   int _lastValueVitalSign = 0;
 
+  //
+  int minL = 0;
+  int maxL = 0;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _getPatientId();
     _vitalSignBloc = BlocProvider.of(context);
+    _getsOffline();
+  }
+
+  _getsOffline() async {
+    await _sqfLiteHelper.getVitalSignScheduleOffline().then((sOffline) async {
+      if (sOffline.isNotEmpty) {
+        //
+        VitalSigns heartRateSchedule =
+            sOffline.where((item) => item.vitalSignType == 'Nhịp tim').first;
+        setState(() {
+          minL = heartRateSchedule.numberMin;
+          maxL = heartRateSchedule.numberMax;
+        });
+      }
+    });
   }
 
   Future _getPatientId() async {
@@ -253,6 +273,8 @@ class _HeartDetailView extends State<HeartDetailView>
                                         }
                                     },
                                     yAxis: {
+                                       max:150,
+        min:0,
                                       name: 'BPM',
                                       nameTextStyle: {
                                       verticalAlign: "middle",
@@ -274,7 +296,24 @@ class _HeartDetailView extends State<HeartDetailView>
                                       series: [{
                                         name: 'Nhịp tim',
                                         data: [${listValueMap}],
-                                        type: 'line'
+                                        type: 'line',
+                                            markLine: {
+                silent: true,
+                lineStyle: {
+                    color: '#FF784B',
+                     type: 'solid',
+                  
+                },
+   
+                data: [
+                 
+                    {
+                    yAxis: ${maxL},
+                   
+                }, {
+                    yAxis: ${minL},
+                }]
+            }
                                       },]
                                     }
                                   ''',
