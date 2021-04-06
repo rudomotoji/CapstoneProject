@@ -146,7 +146,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       print('Notification: $notification');
       _getPatientId();
     });
-    _getPeopleStatus();
+    // _getPeopleStatus();
   }
 
   _getPeopleStatus() async {

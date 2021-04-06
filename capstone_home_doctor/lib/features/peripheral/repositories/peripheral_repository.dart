@@ -92,28 +92,34 @@ class PeripheralRepository {
 
   //connect device in background
   Future<bool> connectDeviceInBackground(String peripheralId) async {
-    bool check = false;
-    await FlutterBlue.instance.startScan(timeout: Duration(seconds: 5));
-    print('Scanning to connect in background');
-    FlutterBlue.instance.scanResults.listen((results) async {
-      for (ScanResult r in results) {
-        if (check == true) {
-          break;
+    try {
+      bool check = false;
+      await FlutterBlue.instance.startScan(timeout: Duration(seconds: 5));
+      print('Scanning to connect in background');
+      FlutterBlue.instance.scanResults.listen((results) async {
+        for (ScanResult r in results) {
+          if (check == true) {
+            break;
+          }
+          if (r.device.id.toString() == peripheralId) {
+            await connectDevice1stTime(r);
+            stopScanning();
+            print('Re-connect peripheral device successful');
+            await _peripheralHelper.updatePeripheralChecking(
+                true, peripheralId);
+            check = true;
+            return check;
+          } else {
+            await _peripheralHelper.updatePeripheralChecking(
+                false, peripheralId);
+            check = false;
+          }
         }
-        if (r.device.id.toString() == peripheralId) {
-          await connectDevice1stTime(r);
-          stopScanning();
-          print('Re-connect peripheral device successful');
-          await _peripheralHelper.updatePeripheralChecking(true, peripheralId);
-          check = true;
-          return check;
-        } else {
-          await _peripheralHelper.updatePeripheralChecking(false, peripheralId);
-          check = false;
-        }
-      }
-    });
-    return check;
+      });
+      return check;
+    } catch (e) {
+      print('error connect background: $e');
+    }
   }
 
   //...
