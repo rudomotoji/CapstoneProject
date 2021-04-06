@@ -436,6 +436,70 @@ class _ActivityTimeView extends State<ActivityTimeView>
                                                   fontSize: 13,
                                                 ),
                                               ),
+                                              //this
+                                              Text(
+                                                '${state.dto.notifications[index].dateCreated}',
+                                                textAlign: (state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            1 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            2 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            3 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            9 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            10 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            14 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            15 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            16 ||
+                                                        state
+                                                                .dto
+                                                                .notifications[
+                                                                    index]
+                                                                .notificationType ==
+                                                            17)
+                                                    ? TextAlign.right
+                                                    : TextAlign.left,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: DefaultTheme.GREY_TEXT,
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),

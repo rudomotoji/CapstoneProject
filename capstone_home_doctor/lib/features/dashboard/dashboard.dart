@@ -75,6 +75,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   String _idDoctor = '';
   DateValidator _dateValidator = DateValidator();
 
+  bool checkPeopleStatusLocal = false;
+
   int _patientId = 0;
   String _tokenDevice = '';
   int _accountId = 0;
@@ -144,7 +146,29 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       print('Notification: $notification');
       _getPatientId();
     });
-    _changeDangerView();
+    _getPeopleStatus();
+  }
+
+  _getPeopleStatus() async {
+    const oneSec = const Duration(seconds: 60);
+
+    Timer.periodic(oneSec, (Timer t) async {
+      await vitalSignHelper.getPeopleStatus().then((value) async {
+        print('EVERY 1 MINUTES. CHECK STATUS PEOPLE LOCAL');
+        print('people status is ${value}');
+        if (value == 'DANGER') {
+          _getPeopleStatus();
+          setState(() {
+            checkPeopleStatusLocal = true;
+          });
+        } else {
+          //
+          setState(() {
+            checkPeopleStatusLocal = false;
+          });
+        }
+      });
+    });
   }
 
   _changeDangerView() {
@@ -902,130 +926,184 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   _showStatusOverview() {
     //change color and text color if else status patient and call it
-    return ClipRRect(
-      child: Stack(
-        children: [
-          Center(
-            child: AnimatedContainer(
-              width: MediaQuery.of(context).size.width,
-              height: 200,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                    colors: (dangerKickedOn)
-                        ? [
-                            DefaultTheme.GRADIENT_3,
-                            DefaultTheme.GRADIENT_3,
-                            DefaultTheme.GRADIENT_4,
-                            DefaultTheme.GRADIENT_5,
-                          ]
-                        : [
-                            DefaultTheme.GRADIENT_5,
-                            DefaultTheme.GRADIENT_5,
-                            DefaultTheme.GRADIENT_5,
-                            DefaultTheme.GRADIENT_5,
-                          ]),
-              ),
-              duration: const Duration(seconds: 1),
-              curve: Curves.easeInOutBack,
-              // child: Text('Sinh hiệu bất thường'),
-            ),
-          ),
-          Positioned(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: 200,
-              padding: EdgeInsets.only(left: 20, right: 20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: Colors.black.withOpacity(0.3),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  //
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: 15,
+    return (checkPeopleStatusLocal)
+        ? ClipRRect(
+            child: Stack(
+              children: [
+                Center(
+                  child: AnimatedContainer(
+                    width: MediaQuery.of(context).size.width,
+                    height: 100,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                          colors: (dangerKickedOn)
+                              ? [
+                                  DefaultTheme.GRADIENT_3,
+                                  DefaultTheme.GRADIENT_3,
+                                  DefaultTheme.GRADIENT_4,
+                                  DefaultTheme.GRADIENT_5,
+                                ]
+                              : [
+                                  DefaultTheme.GRADIENT_5,
+                                  DefaultTheme.GRADIENT_5,
+                                  DefaultTheme.GRADIENT_5,
+                                  DefaultTheme.GRADIENT_5,
+                                ]),
                     ),
+                    duration: const Duration(seconds: 1),
+                    curve: Curves.easeInOutBack,
+                    // child: Text('Sinh hiệu bất thường'),
                   ),
-                  Text(
-                    'Sinh hiệu bất thường',
-                    style: TextStyle(
-                      color: DefaultTheme.WHITE,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                ),
+                Positioned(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 100,
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.black.withOpacity(0.3),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: 5,
-                    ),
-                  ),
-                  Divider(
-                    color: DefaultTheme.GREY_VIEW,
-                    height: 1,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                  ),
-                  BlocBuilder<VitalSignDangerousBloc, VitalSignState>(
-                      builder: (context, state) {
-                    if (state is VitalSignStateLoading) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 80,
-                        child: SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: Image.asset('assets/images/loading.gif'),
-                        ),
-                      );
-                    }
-                    if (state is VitalSignStateFailure) {
-                      return Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 80,
-                          child: Center(
-                            child: Text('Không thể tải'),
-                          ));
-                    }
-                    if (state is VitalSignGetListDangerousSuccess) {
-                      if (null == state.list) {
-                        return Container();
-                      } else {
-                        // lastMeasurement = state.list.last;
-                        listVitalSignDangerous = state.list;
-                      }
-                    }
-                    return Container(
-                        child: Column(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         //
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 15,
+                          ),
+                        ),
+                        Text(
+                          'Sinh hiệu bất thường',
+                          style: TextStyle(
+                            color: DefaultTheme.WHITE,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 5,
+                          ),
+                        ),
+                        Divider(
+                          color: DefaultTheme.GREY_VIEW,
+                          height: 1,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                        ),
                         Text(
                           'Hệ thống ghi nhận nhịp tim của bạn bất thường.',
                           style: TextStyle(
                             color: DefaultTheme.WHITE,
                           ),
                         ),
-                        (listVitalSignDangerous != null)
-                            ? Text('${listVitalSignDangerous.length}')
-                            : Container(),
+                        // BlocBuilder<VitalSignDangerousBloc, VitalSignState>(
+                        //     builder: (context, state) {
+                        //   if (state is VitalSignStateLoading) {
+                        //     return Container(
+                        //       width: MediaQuery.of(context).size.width,
+                        //       height: 80,
+                        //       child: SizedBox(
+                        //         width: 80,
+                        //         height: 80,
+                        //         child: Image.asset('assets/images/loading.gif'),
+                        //       ),
+                        //     );
+                        //   }
+                        //   if (state is VitalSignStateFailure) {
+                        //     return Container(
+                        //         width: MediaQuery.of(context).size.width,
+                        //         height: 80,
+                        //         child: Center(
+                        //           child: Text('Không thể tải'),
+                        //         ));
+                        //   }
+                        //   if (state is VitalSignGetListDangerousSuccess) {
+                        //     if (null == state.list) {
+                        //       return Container();
+                        //     } else {
+                        //       // lastMeasurement = state.list.last;
+                        //       listVitalSignDangerous = state.list;
+                        //     }
+                        //   }
+                        //   return Container(
+                        //       child: Column(
+                        //     children: <Widget>[
+                        //       //
+                        //       Text(
+                        //         'Hệ thống ghi nhận nhịp tim của bạn bất thường.',
+                        //         style: TextStyle(
+                        //           color: DefaultTheme.WHITE,
+                        //         ),
+                        //       ),
+                        //       (listVitalSignDangerous != null)
+                        //           ? Text('${listVitalSignDangerous.length}')
+                        //           : Container(),
+                        //     ],
+                        //   ));
+                        // }),
                       ],
-                    ));
-                  }),
-                ],
-              ),
+                    ),
+                  ),
+                ),
+                //
+              ],
             ),
-          ),
-          //
-        ],
-      ),
-    );
+          )
+        : Container(
+            width: MediaQuery.of(context).size.width,
+            height: 100,
+            padding: EdgeInsets.only(left: 20, right: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: DefaultTheme.GREY_VIEW,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                //
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 15,
+                  ),
+                ),
+                Text(
+                  'Sinh hiệu bình thường',
+                  style: TextStyle(
+                    color: DefaultTheme.BLACK,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 5,
+                  ),
+                ),
+                Divider(
+                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                  height: 1,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                ),
+                Text(
+                  'Hiện tại không có dấu hiệu bất thường về sinh hiệu của bạn.',
+                  style: TextStyle(
+                    color: DefaultTheme.BLACK,
+                  ),
+                ),
+              ],
+            ),
+          );
   }
 
   void _showPopUpIDDoctor() {
