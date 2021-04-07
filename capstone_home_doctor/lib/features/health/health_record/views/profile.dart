@@ -171,7 +171,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     return SliverAppBar(
       pinned: true,
       automaticallyImplyLeading: false,
-      backgroundColor: DefaultTheme.WHITE.withOpacity(0),
+      backgroundColor: DefaultTheme.GREY_VIEW,
       title: TabBar(
         labelStyle: TextStyle(
             fontSize: 18,
@@ -180,7 +180,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
         indicatorPadding: EdgeInsets.only(left: 20),
         unselectedLabelStyle:
             TextStyle(color: DefaultTheme.BLACK.withOpacity(0.6)),
-        indicatorColor: Colors.white.withOpacity(0.0),
+        indicatorColor: DefaultTheme.TRANSPARENT,
         controller: controller,
         tabs: [
           Tab(

@@ -183,6 +183,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
             ),
           ),
           floatingActionButton: FloatingActionButton.extended(
+            isExtended: false,
             label: Text('Y lệnh mới',
                 style: TextStyle(color: DefaultTheme.BLUE_DARK)),
             backgroundColor: DefaultTheme.GREY_VIEW,
@@ -194,8 +195,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
             onPressed: () {
               Navigator.of(context)
                   .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION)
-                  .then((value) {
-                _pullRefresh();
+                  .then((value) async {
+                await _pullRefresh();
               });
             },
           ),
@@ -567,7 +568,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     Padding(
                       padding: EdgeInsets.only(bottom: 20),
                     ),
-                    Text('Bạn chưa có thêm phiếu nào')
+                    Text('Bạn chưa có phiếu nào')
                   ],
                 ),
               ),
@@ -587,7 +588,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               Padding(
                 padding: EdgeInsets.only(bottom: 20),
               ),
-              Text('Bạn chưa có thêm phiếu nào')
+              Text('Bạn chưa có phiếu nào')
             ],
           ),
         ),
@@ -773,7 +774,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   }
 
   Future<void> _pullRefresh() async {
-    getHRId();
+    await getHRId();
   }
 
   void _showDetailVitalSign(int medicalInstructionId) {
@@ -1422,15 +1423,17 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   getHRId() async {
     await _healthRecordHelper.getHRId().then(
       (value) {
-        print('HR ID IN SHARED_PR ${value}');
+        print('HR ID NOW $_hrId');
+
         setState(() {
           _hrId = value;
+          if (_hrId != 0) {
+            print('HR ID NOW $_hrId');
+            _healthRecordDetailBloc.add(HealthRecordEventGetById(id: _hrId));
+            _medicalInstructionListBloc
+                .add(MedicalInstructionListEventGetList(hrId: _hrId));
+          }
         });
-        if (_hrId != 0) {
-          _healthRecordDetailBloc.add(HealthRecordEventGetById(id: _hrId));
-          _medicalInstructionListBloc
-              .add(MedicalInstructionListEventGetList(hrId: _hrId));
-        }
       },
     );
   }

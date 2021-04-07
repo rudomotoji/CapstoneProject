@@ -707,7 +707,7 @@ class _ContractShareView extends State<ContractShareView>
                                       padding: EdgeInsets.only(
                                           left: 10, top: 10, right: 10),
                                       width: 250,
-                                      height: 150,
+                                      height: 160,
                                       decoration: BoxDecoration(
                                         color:
                                             DefaultTheme.WHITE.withOpacity(0.7),
@@ -1279,7 +1279,7 @@ class _ContractShareView extends State<ContractShareView>
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
-                                        'Ngày tạo${medicalInstructions1[index].dateCreate}',
+                                        'Ngày tạo: ${medicalInstructions1[index].dateCreate}',
                                         style: TextStyle(
                                             color: DefaultTheme.WHITE,
                                             fontSize: 12),
@@ -1416,7 +1416,7 @@ class _ContractShareView extends State<ContractShareView>
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
-                                        'Ngày tạo${medicalInstructions2[index].dateCreate}',
+                                        'Ngày tạo: ${medicalInstructions2[index].dateCreate}',
                                         style: TextStyle(
                                             color: DefaultTheme.WHITE,
                                             fontSize: 12),
@@ -1512,8 +1512,8 @@ class _ContractShareView extends State<ContractShareView>
                             _showDetailVitalSign(medicalInstructions3[index]
                                 .medicalInstructionId);
                           } else {
-                            _showFullImageDescription(
-                                medicalInstructions3[index].images.first,
+                            showFullDetailComponent(
+                                medicalInstructions3[index].images,
                                 'Phiếu khác',
                                 '${medicalInstructions3[index].dateCreate}',
                                 '${medicalInstructions3[index].diagnose}');
@@ -1553,7 +1553,7 @@ class _ContractShareView extends State<ContractShareView>
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
-                                        'Ngày tạo${medicalInstructions3[index].dateCreate}',
+                                        'Ngày tạo: ${medicalInstructions3[index].dateCreate}',
                                         style: TextStyle(
                                             color: DefaultTheme.WHITE,
                                             fontSize: 12),
