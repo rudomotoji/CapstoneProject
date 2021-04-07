@@ -109,7 +109,7 @@ class MedicalInstructionByTypeDTO {
 class MedicalInstructionDTO {
   int medicalInstructionId;
   String medicalInstructionType;
-  String image;
+  List<String> image;
   String description;
   String diagnose;
   String placeHealthRecord;
@@ -149,7 +149,7 @@ class MedicalInstructionDTO {
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
     medicalInstructionId = json['medicalInstructionId'];
     medicalInstructionType = json['medicalInstructionType'];
-    image = json['image'];
+    image = json['images'].cast<String>();
     description = json['description'];
     diagnose = json['diagnose'];
     placeHealthRecord = json['placeHealthRecord'];
@@ -171,7 +171,7 @@ class MedicalInstructionDTO {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['medicalInstructionType'] = this.medicalInstructionType;
-    data['image'] = this.image;
+    data['images'] = this.image;
     data['description'] = this.description;
     data['diagnose'] = this.diagnose;
     data['placeHealthRecord'] = this.placeHealthRecord;
