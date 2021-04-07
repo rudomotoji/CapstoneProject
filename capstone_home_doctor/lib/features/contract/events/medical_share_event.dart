@@ -6,21 +6,16 @@ abstract class MedicalShareEvent extends Equatable {
 }
 
 class MedicalShareEventGet extends MedicalShareEvent {
-  final List<String> diseaseIds;
   final int patientId;
   final int medicalInstructionType;
 
   const MedicalShareEventGet(
-      {@required this.diseaseIds,
-      @required this.patientId,
-      @required this.medicalInstructionType})
-      : assert(diseaseIds != null &&
-            patientId != null &&
-            medicalInstructionType != null);
+      {@required this.patientId, @required this.medicalInstructionType})
+      : assert(patientId != null && medicalInstructionType != null);
 
   @override
   // TODO: implement props
-  List<Object> get props => [diseaseIds, patientId, medicalInstructionType];
+  List<Object> get props => [patientId, medicalInstructionType];
 }
 
 class MedicalShareEventGetMediIns extends MedicalShareEvent {

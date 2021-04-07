@@ -65,13 +65,13 @@ class HealthRecordRepository extends BaseApiClient {
   }
 
   //get medicalShare to Create contract
-  Future<List<MedicalShareDTO>> getListMedicalShare(List<String> diseaseIds,
+  Future<List<MedicalShareDTO>> getListMedicalShare(
       int patientId, int medicalInstructionType) async {
     final String url =
         '/MedicalInstructions/GetMedicalInstructionToCreateContract?patientId=${patientId}&medicalInstructionType=${medicalInstructionType}';
     try {
       //
-      final request = await postApi(url, null, diseaseIds);
+      final request = await postApi(url, null, null);
       print('${request.request}');
       print('${request.body}');
       if (request.statusCode == 200) {

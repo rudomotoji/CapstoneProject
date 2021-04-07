@@ -484,7 +484,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           Padding(
             padding: EdgeInsets.only(top: 20),
             child: Text(
-              'Lần đo hiện tại',
+              'Lần đo gần nhất',
               style: TextStyle(
                 color: DefaultTheme.BLACK,
                 fontSize: 20,
