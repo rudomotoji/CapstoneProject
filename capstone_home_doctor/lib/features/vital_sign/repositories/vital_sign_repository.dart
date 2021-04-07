@@ -11,6 +11,8 @@ import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
 
@@ -57,6 +59,10 @@ class VitalSignRepository {
           print('Heart rate recently at ${DateTime.now()} is ${value[1]}');
           heartRateValue = value[1];
           await vitalSignHelper.updateHeartValue(value[1]);
+          ReceiveNotification notiData = ReceiveNotification(
+              id: 0, title: "reload heart rate", body: "", payload: "");
+          HeartRefreshBloc.instance.newNotification(notiData);
+          //
           return value[1];
         } else {
           // heartRateValue = 0;

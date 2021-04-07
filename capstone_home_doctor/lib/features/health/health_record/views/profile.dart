@@ -95,30 +95,32 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 1,
-      child: Column(
-        // height: MediaQuery.of(context).size.height * 0.7,
-        children: <Widget>[
-          HeaderWidget(
-            title: 'Hồ sơ',
-            isMainView: true,
-            buttonHeaderType: ButtonHeaderType.AVATAR,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 10, left: 20, right: 20),
-          ),
-          Expanded(
-            child: CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                buildSliverToBoxAdapterHeader(),
-                buildSliverAppBarCollepse(),
-                buildTabbarViewHasContract(),
-              ],
+    return SafeArea(
+      child: DefaultTabController(
+        length: 1,
+        child: Column(
+          // height: MediaQuery.of(context).size.height * 0.7,
+          children: <Widget>[
+            HeaderWidget(
+              title: 'Hồ sơ',
+              isMainView: true,
+              buttonHeaderType: ButtonHeaderType.AVATAR,
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+            ),
+            Expanded(
+              child: CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  buildSliverToBoxAdapterHeader(),
+                  buildSliverAppBarCollepse(),
+                  buildTabbarViewHasContract(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -182,7 +184,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
             child: Container(
               height: 25,
               child: Align(
-                alignment: Alignment.center,
+                alignment: Alignment.centerLeft,
                 child: Text(
                   'Danh sách hồ sơ',
                 ),
@@ -310,7 +312,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
               SizedBox(
                 width: 50,
                 height: 50,
-                child: Image.asset('assets/images/ic-dashboard.png'),
+                child: Image.asset('assets/images/ic-health-record-u.png'),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: 20),

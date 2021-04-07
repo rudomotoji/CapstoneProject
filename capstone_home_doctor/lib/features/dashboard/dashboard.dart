@@ -12,6 +12,7 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/login/blocs/token_device_bloc.dart';
 import 'package:capstone_home_doctor/features/login/events/token_device_event.dart';
+import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/appointment_event.dart';
@@ -77,6 +78,10 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   bool checkPeopleStatusLocal = false;
 
+  //peripheral
+  bool _isConnectedWithPeripheral = false;
+  String _peripheralId = '';
+
   int _patientId = 0;
   String _tokenDevice = '';
   int _accountId = 0;
@@ -113,6 +118,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   List<AppointmentDTO> _listAppointment = [];
 
   Stream<ReceiveNotification> _notificationsStream;
+  Stream<ReceiveNotification> _refreshHeartRateStream;
 
   bool dangerKickedOn = false;
 
@@ -126,12 +132,10 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     _tokenDeviceBloc = BlocProvider.of(context);
     _vitalSignBloc = BlocProvider.of(context);
     _vitalSignDangerousBloc = BlocProvider.of(context);
-
+    _getPeripheralInfo();
     if (_patientId != 0) {
       _vitalSignBloc
           .add(VitalSignEventGetList(type: vitalType, patientId: _patientId));
-      _vitalSignDangerousBloc.add(VitalSignGetListdangerous(
-          min: 0, max: 100, patientId: _patientId, valueType: vitalType));
     }
     _updateAvailableContract();
     _updateTokenDevice();
@@ -146,7 +150,34 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       print('Notification: $notification');
       _getPatientId();
     });
+
+    //
+    _refreshHeartRateStream = HeartRefreshBloc.instance.notificationsStream;
+    _refreshHeartRateStream.listen((refresh) {
+      if (refresh.title.contains('reload heart rate')) {
+        if (_patientId != 0) {
+          _vitalSignBloc.add(
+              VitalSignEventGetList(type: vitalType, patientId: _patientId));
+        }
+      }
+    });
+
     // _getPeopleStatus();
+  }
+
+  _getPeripheralInfo() async {
+    await peripheralHelper.getPeripheralId().then((peripheralId) async {
+      if (peripheralId != '') {
+        await peripheralHelper
+            .isPeripheralConnected()
+            .then((isConnected) async {
+          setState(() {
+            _isConnectedWithPeripheral = isConnected;
+            _peripheralId = peripheralId;
+          });
+        });
+      }
+    });
   }
 
   _getPeopleStatus() async {
@@ -351,7 +382,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                               'Lịch dùng thuốc',
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
-                                fontSize: 17,
+                                fontSize: 18,
                                 color: DefaultTheme.RED_CALENDAR,
                               ),
                             ),
@@ -430,17 +461,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   _showLastHeartRateMeasure() {
     return BlocBuilder<VitalSignBloc, VitalSignState>(
         builder: (context, state) {
-      if (state is VitalSignStateLoading) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          height: 80,
-          child: SizedBox(
-            width: 80,
-            height: 80,
-            child: Image.asset('assets/images/loading.gif'),
-          ),
-        );
-      }
       if (state is VitalSignStateFailure) {
         return Container(
             width: MediaQuery.of(context).size.width,
@@ -464,7 +484,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           Padding(
             padding: EdgeInsets.only(top: 20),
             child: Text(
-              'Lần đo gần đây',
+              'Lần đo hiện tại',
               style: TextStyle(
                 color: DefaultTheme.BLACK,
                 fontSize: 20,
@@ -561,58 +581,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                           ),
                                         ))
                                     : Container(),
-                                (lastMeasurement.value1 == null)
-                                    ? Container()
-                                    : (lastMeasurement.value1 == 0)
-                                        ? Text('-',
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                                color:
-                                                    DefaultTheme.RED_CALENDAR,
-                                                fontWeight: FontWeight.w500))
-                                        : (lastMeasurement.value1 < 55 &&
-                                                lastMeasurement.value1 > 0)
-                                            ? Text('Thấp',
-                                                textAlign: TextAlign.right,
-                                                style: TextStyle(
-                                                    color: DefaultTheme
-                                                        .RED_CALENDAR,
-                                                    fontWeight:
-                                                        FontWeight.w500))
-                                            : (lastMeasurement.value1 >= 55 &&
-                                                    lastMeasurement.value1 <
-                                                        120)
-                                                ? Text('Bình thường',
-                                                    textAlign: TextAlign.right,
-                                                    style: TextStyle(
-                                                        color: DefaultTheme
-                                                            .SUCCESS_STATUS,
-                                                        fontWeight:
-                                                            FontWeight.w500))
-                                                : (lastMeasurement.value1 >=
-                                                        120)
-                                                    ? Text('Cao',
-                                                        textAlign:
-                                                            TextAlign.right,
-                                                        style: TextStyle(
-                                                            color: DefaultTheme
-                                                                .CHIP_BLUE,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500))
-                                                    : (lastMeasurement.value1 >
-                                                            150)
-                                                        ? Text('Cao bất thường',
-                                                            textAlign:
-                                                                TextAlign.right,
-                                                            style: TextStyle(
-                                                                color:
-                                                                    DefaultTheme
-                                                                        .RED_TEXT,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500))
-                                                        : Container()
                               ],
                             ),
                             Padding(
@@ -963,14 +931,17 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         Padding(
           padding: EdgeInsets.only(bottom: 20),
         ),
-        ButtonArtBoard(
-          title: 'Kết nối thiết bị',
-          description: 'Dữ liệu được đồng bộ qua thiết bị đeo',
-          imageAsset: 'assets/images/ic-connect-p.png',
-          onTap: () {
-            Navigator.pushNamed(context, RoutesHDr.INTRO_CONNECT_PERIPHERAL);
-          },
-        ),
+        (_isConnectedWithPeripheral == false && _peripheralId == '')
+            ? ButtonArtBoard(
+                title: 'Kết nối thiết bị',
+                description: 'Dữ liệu được đồng bộ qua thiết bị đeo',
+                imageAsset: 'assets/images/ic-connect-p.png',
+                onTap: () {
+                  Navigator.pushNamed(
+                      context, RoutesHDr.INTRO_CONNECT_PERIPHERAL);
+                },
+              )
+            : Container(),
       ],
     );
   }
@@ -1129,9 +1100,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                 Text(
                   'Sinh hiệu bình thường',
                   style: TextStyle(
-                    color: DefaultTheme.BLACK,
+                    color: DefaultTheme.BLUE_TEXT,
                     fontSize: 18,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
                 Padding(

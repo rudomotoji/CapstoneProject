@@ -92,7 +92,7 @@ class _MainHomeState extends State<MainHome> {
     _vitalSignBloc = BlocProvider.of(context);
     _getPatientId();
     _getAccountId();
-    _setToCreateHROrList();
+
     //
     selectNotificationSubject.stream.listen((String payload) async {
       print(payload);
@@ -109,11 +109,6 @@ class _MainHomeState extends State<MainHome> {
     initConnectivity();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-  }
-
-  _setToCreateHROrList() async {
-    await _medicalInstructionHelper.updateCheckToCreateOrList(false);
-    await _medicalInstructionHelper.updateCreateHRFromDetail(false);
   }
 
   //handle local notification for danger heart rate
