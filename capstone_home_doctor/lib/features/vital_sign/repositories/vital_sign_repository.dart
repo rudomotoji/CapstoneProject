@@ -67,6 +67,9 @@ class VitalSignRepository {
         } else {
           // heartRateValue = 0;
           // await vitalSignHelper.updateHeartValue(0);
+          ReceiveNotification notiData = ReceiveNotification(
+              id: 0, title: "reload heart rate", body: "", payload: "");
+          HeartRefreshBloc.instance.newNotification(notiData);
           print('Empty heart rate');
         }
       });
@@ -90,6 +93,13 @@ class VitalSignRepository {
         await _peripheralHelper.updatePeripheralChecking(
             true, device.id.toString());
         await getHeartRateValueFromDevice(peripheralId);
+      }
+      if (e.toString().contains('could not find callback wrapper')) {
+        stopScanning();
+        Future.delayed(const Duration(seconds: 2), () async {
+          //
+          await getHeartRateValueFromDevice(peripheralId);
+        });
       }
     }
   }

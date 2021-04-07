@@ -203,9 +203,9 @@ class _ContractShareView extends State<ContractShareView>
                   child: SizedBox(
                     width: (30 * 1.5),
                     height: (40 * 1.5),
-                    child: (e.image != null)
+                    child: (e.images != null || e.images.isNotEmpty)
                         ? Image.network(
-                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${e.image}',
+                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${e.images.first}',
                             fit: BoxFit.fill,
                           )
                         : Container(
@@ -330,10 +330,36 @@ class _ContractShareView extends State<ContractShareView>
                   child: SizedBox(
                     width: (30 * 1.5),
                     height: (40 * 1.5),
-                    child: (e.image != null)
-                        ? Image.network(
-                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${e.image}',
-                            fit: BoxFit.fill,
+                    child: (e.images != null || e.images.isNotEmpty)
+                        ? Stack(
+                            children: [
+                              Container(
+                                width: (30 * 1.5),
+                                height: (40 * 1.5),
+                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                child: Image.network(
+                                  'http://45.76.186.233:8000/api/v1/Images?pathImage=${e.images.first}',
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                child: Container(
+                                    width: (30 * 1.5),
+                                    height: (40 * 1.5),
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR
+                                        .withOpacity(0.2),
+                                    child: Center(
+                                      child: Text(
+                                        (e.images.length > 1)
+                                            ? '${e.images.length}+'
+                                            : '',
+                                        style: TextStyle(
+                                            color: DefaultTheme.WHITE),
+                                      ),
+                                    )),
+                              ),
+                            ],
                           )
                         : Container(
                             width: (30 * 1.5),
@@ -522,7 +548,6 @@ class _ContractShareView extends State<ContractShareView>
                       },
                     ),
                   ),
-                  //  _getDiseaseList(),
                   //
                   (_listLv3Selected.length != 0)
                       ? Padding(
@@ -588,7 +613,7 @@ class _ContractShareView extends State<ContractShareView>
                           ),
                         )
                       : Container(),
-                  // _getMedicalShare(),
+
                   (isLastRemove == false)
                       ? _showMedicalInstructionRequired()
                       : Container(),
@@ -648,8 +673,6 @@ class _ContractShareView extends State<ContractShareView>
                     ),
                   ),
 
-                  // (medicalInstructions1.length != 0 &&
-                  //         medicalInstructions2.length != 0)
                   Container(
                     margin: EdgeInsets.only(left: 20, top: 10, right: 20),
                     width: MediaQuery.of(context).size.width - 40,
@@ -948,12 +971,7 @@ class _ContractShareView extends State<ContractShareView>
                                                         ),
                                                       ),
                                                     ),
-                                                    onTap: () {
-                                                      //
-                                                      // Navigator.of(context)
-                                                      //     .pushNamed(RoutesHDr
-                                                      //         .CREATE_HEALTH_RECORD);
-                                                    },
+                                                    onTap: () {},
                                                   ),
                                                 ),
                                               ],
@@ -989,23 +1007,6 @@ class _ContractShareView extends State<ContractShareView>
                                                           .GREY_TEXT)),
                                             ),
 
-                                            // Padding(
-                                            //   padding: EdgeInsets.only(
-                                            //       bottom: 10, top: 10),
-                                            //   child: Container(
-                                            //     width: MediaQuery.of(context)
-                                            //         .size
-                                            //         .width,
-                                            //     height: 35,
-                                            //     decoration: BoxDecoration(
-                                            //       color: DefaultTheme
-                                            //           .GREY_TOP_TAB_BAR,
-                                            //       borderRadius:
-                                            //           BorderRadius.circular(20),
-                                            //     ),
-                                            //     child: Text('Tìm kiếm mã bệnh'),
-                                            //   ),
-                                            // ),
                                             Padding(
                                               padding:
                                                   EdgeInsets.only(bottom: 20),
@@ -1204,9 +1205,7 @@ class _ContractShareView extends State<ContractShareView>
                       if (_listLv3Selected != [] && _listLv3IdSelected != []) {
                         print('SHOW MED INS REQUIRED!');
                         await _medicalShareBloc.add(MedicalShareEventGet(
-                            diseaseIds: _listLv3IdSelected,
-                            patientId: _patientId,
-                            medicalInstructionType: 6));
+                            patientId: _patientId, medicalInstructionType: 6));
                         //
                         _showMedicalShare('điện tim');
                       }
@@ -1233,7 +1232,7 @@ class _ContractShareView extends State<ContractShareView>
                         onTap: () {
                           print('tap');
                           _showFullImageDescription(
-                              medicalInstructions1[index].image,
+                              medicalInstructions1[index].images.first,
                               'Phiếu điện tim',
                               '${medicalInstructions1[index].dateCreate}',
                               '${medicalInstructions1[index].diagnose}');
@@ -1244,7 +1243,7 @@ class _ContractShareView extends State<ContractShareView>
                               width: 150,
                               height: 200,
                               child: Image.network(
-                                  'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions1[index].image}'),
+                                  'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions1[index].images.first}'),
                             ),
                             Container(
                               width: 150,
@@ -1340,7 +1339,6 @@ class _ContractShareView extends State<ContractShareView>
                             _listLv3IdSelected != []) {
                           print('SHOW MED INS REQUIRED!');
                           await _medicalShareBloc.add(MedicalShareEventGet(
-                              diseaseIds: _listLv3IdSelected,
                               patientId: _patientId,
                               medicalInstructionType: 4));
                           //
@@ -1349,29 +1347,6 @@ class _ContractShareView extends State<ContractShareView>
                       }
                       ;
                     }),
-                // Container(
-                //   width: 60,
-                //   height: 40,
-                //   child: ButtonHDr(
-                //     style: BtnStyle.BUTTON_TRANSPARENT,
-                //     label: '+',
-                //     labelColor: DefaultTheme.BLUE_REFERENCE,
-                //     onTap: () async {
-                //       //
-                //       if (_patientId != 0 && _idDoctor != 0) {
-                //         if (_listDiseaseSelected != [] && _diseaseIds != []) {
-                //           print('SHOW MED INS REQUIRED!');
-                //           await _medicalShareBloc.add(MedicalShareEventGet(
-                //               diseaseIds: _diseaseIds,
-                //               patientId: _patientId,
-                //               medicalInstructionType: 4));
-                //           //
-                //           _showMedicalShare('X-Quang');
-                //         }
-                //       }
-                //     },
-                //   ),
-                // ),
               ],
             )),
         (medicalInstructions2.length != 0)
@@ -1392,7 +1367,7 @@ class _ContractShareView extends State<ContractShareView>
                         onTap: () {
                           print('tap');
                           _showFullImageDescription(
-                              medicalInstructions2[index].image,
+                              medicalInstructions2[index].images.first,
                               'Phiếu X-Quang',
                               '${medicalInstructions2[index].dateCreate}',
                               '${medicalInstructions2[index].diagnose}');
@@ -1403,7 +1378,7 @@ class _ContractShareView extends State<ContractShareView>
                               width: 150,
                               height: 200,
                               child: Image.network(
-                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions2[index].image}',
+                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions2[index].images.first}',
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -1522,12 +1497,13 @@ class _ContractShareView extends State<ContractShareView>
                       child: InkWell(
                         onTap: () {
                           print('tap');
-                          if (medicalInstructions3[index].image == null) {
+                          if (medicalInstructions3[index].images == null ||
+                              medicalInstructions3[index].images.isEmpty) {
                             _showDetailVitalSign(medicalInstructions3[index]
                                 .medicalInstructionId);
                           } else {
                             _showFullImageDescription(
-                                medicalInstructions3[index].image,
+                                medicalInstructions3[index].images.first,
                                 'Phiếu khác',
                                 '${medicalInstructions3[index].dateCreate}',
                                 '${medicalInstructions3[index].diagnose}');
@@ -1539,7 +1515,7 @@ class _ContractShareView extends State<ContractShareView>
                               width: 150,
                               height: 200,
                               child: Image.network(
-                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions3[index].image}',
+                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions3[index].images.first}',
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -1849,12 +1825,7 @@ class _ContractShareView extends State<ContractShareView>
                                                         ),
                                                       ),
                                                     ),
-                                                    onTap: () {
-                                                      //
-                                                      // Navigator.of(context)
-                                                      //     .pushNamed(RoutesHDr
-                                                      //         .CREATE_HEALTH_RECORD);
-                                                    },
+                                                    onTap: () {},
                                                   ),
                                                 ),
                                               ],
@@ -1989,259 +1960,241 @@ class _ContractShareView extends State<ContractShareView>
                                                 ],
                                               ),
                                             ),
-                                            // Expanded(
-                                            //   child: Column(
-                                            //     mainAxisAlignment:
-                                            //         MainAxisAlignment.start,
-                                            //     children: [
-                                            //       for (MedicalShareDTO i
-                                            //           in state.listMedicalShare)
-                                            //         Container(
-                                            //           child: Column(
-                                            //             mainAxisAlignment:
-                                            //                 MainAxisAlignment
-                                            //                     .start,
-                                            //             crossAxisAlignment:
-                                            //                 CrossAxisAlignment
-                                            //                     .start,
-                                            //             children: <Widget>[
-                                            //               //
-                                            //               Padding(
-                                            //                 padding:
-                                            //                     EdgeInsets.only(
-                                            //                         top: 20),
-                                            //               ),
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  for (MedicalShareDTO i
+                                                      in state.listMedicalShare)
+                                                    Container(
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: <Widget>[
+                                                          //
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 20),
+                                                          ),
 
-                                            //               Container(
-                                            //                 width:
-                                            //                     MediaQuery.of(
-                                            //                             context)
-                                            //                         .size
-                                            //                         .width,
-                                            //                 child: Row(
-                                            //                   children: <
-                                            //                       Widget>[
-                                            //                     SizedBox(
-                                            //                       width: 20,
-                                            //                       height: 20,
-                                            //                       child: Image
-                                            //                           .asset(
-                                            //                               'assets/images/ic-health-record.png'),
-                                            //                     ),
-                                            //                     Padding(
-                                            //                       padding: EdgeInsets
-                                            //                           .only(
-                                            //                               left:
-                                            //                                   20),
-                                            //                     ),
-                                            //                     //
-                                            //                     Container(
-                                            //                       width: MediaQuery.of(
-                                            //                                   context)
-                                            //                               .size
-                                            //                               .width -
-                                            //                           80,
-                                            //                       child: Text(
-                                            //                         'Hồ sơ ${i.healthRecordPlace}',
-                                            //                         style: TextStyle(
-                                            //                             color: DefaultTheme
-                                            //                                 .BLACK,
-                                            //                             fontSize:
-                                            //                                 15,
-                                            //                             fontWeight:
-                                            //                                 FontWeight.w500),
-                                            //                         overflow:
-                                            //                             TextOverflow
-                                            //                                 .ellipsis,
-                                            //                         maxLines: 3,
-                                            //                       ),
-                                            //                     ),
-                                            //                   ],
-                                            //                 ),
-                                            //               ),
+                                                          Container(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            child: Row(
+                                                              children: <
+                                                                  Widget>[
+                                                                SizedBox(
+                                                                  width: 20,
+                                                                  height: 20,
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/images/ic-health-record.png'),
+                                                                ),
+                                                                Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              20),
+                                                                ),
+                                                                //
+                                                                Container(
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width -
+                                                                      80,
+                                                                  child: Text(
+                                                                    'Hồ sơ ${i.healthRecordPlace}',
+                                                                    style: TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLACK,
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w500),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 3,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
 
-                                            //               Padding(
-                                            //                 padding:
-                                            //                     EdgeInsets.only(
-                                            //                         bottom: 20),
-                                            //               ),
-                                            //               (i.medicalInstructions
-                                            //                           .length !=
-                                            //                       0)
-                                            //                   ? ListView
-                                            //                       .builder(
-                                            //                       physics:
-                                            //                           NeverScrollableScrollPhysics(),
-                                            //                       shrinkWrap:
-                                            //                           true,
-                                            //                       itemCount: i
-                                            //                           .medicalInstructions
-                                            //                           .length,
-                                            //                       itemBuilder:
-                                            //                           (BuildContext
-                                            //                                   context,
-                                            //                               int index) {
-                                            //                         //
-                                            //                         bool
-                                            //                             checkTemp =
-                                            //                             false;
-                                            //                         if (medicalInstructionIdsSelected.contains(i
-                                            //                             .medicalInstructions[
-                                            //                                 index]
-                                            //                             .medicalInstructionId)) {
-                                            //                           checkTemp =
-                                            //                               true;
-                                            //                         }
-                                            //                         return Container(
-                                            //                             // height: 200,
-                                            //                             margin: EdgeInsets
-                                            //                                 .only(
-                                            //                               // left:
-                                            //                               //     20,
-                                            //                               // right:
-                                            //                               //     20,
-                                            //                               bottom:
-                                            //                                   10,
-                                            //                             ),
-                                            //                             padding: EdgeInsets.only(
-                                            //                                 left:
-                                            //                                     10,
-                                            //                                 right:
-                                            //                                     10),
-                                            //                             decoration:
-                                            //                                 BoxDecoration(
-                                            //                               // color: DefaultTheme
-                                            //                               //     .WHITE,
-                                            //                               borderRadius:
-                                            //                                   BorderRadius.circular(5),
-                                            //                             ),
-                                            //                             width: MediaQuery.of(context)
-                                            //                                 .size
-                                            //                                 .width,
-                                            //                             child:
-                                            //                                 Column(
-                                            //                               mainAxisAlignment:
-                                            //                                   MainAxisAlignment.start,
-                                            //                               children: <
-                                            //                                   Widget>[
-                                            //                                 //
-                                            //                                 Row(
-                                            //                                   children: <Widget>[
-                                            //                                     ClipRRect(
-                                            //                                       borderRadius: BorderRadius.circular(6),
-                                            //                                       child: SizedBox(
-                                            //                                         width: (30 * 1.5),
-                                            //                                         height: (40 * 1.5),
-                                            //                                         child: (i.medicalInstructions[index].image != null)
-                                            //                                             ? Image.network(
-                                            //                                                 'http://45.76.186.233:8000/api/v1/Images?pathImage=${i.medicalInstructions[index].image}',
-                                            //                                                 fit: BoxFit.fill,
-                                            //                                               )
-                                            //                                             : Container(
-                                            //                                                 width: (30 * 1.5),
-                                            //                                                 height: (40 * 1.5),
-                                            //                                                 color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                            //                                               ),
-                                            //                                       ),
-                                            //                                     ),
-                                            //                                     Container(
-                                            //                                       padding: EdgeInsets.only(left: 20),
-                                            //                                       child: (nameOfList.contains('điện tim')) ? Text('Phiếu điện tim') : (nameOfList.contains('X-Quang') ? Text('Phiếu X-Quang') : Container()),
-                                            //                                     ),
-                                            //                                     Spacer(),
-                                            //                                     ClipRRect(
-                                            //                                       borderRadius: BorderRadius.circular(6),
-                                            //                                       child: Container(
-                                            //                                         width: 25,
-                                            //                                         height: 25,
-                                            //                                         decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
-                                            //                                         child: Checkbox(
-                                            //                                           checkColor: DefaultTheme.BLUE_REFERENCE,
-                                            //                                           activeColor: DefaultTheme.GREY_VIEW,
-                                            //                                           hoverColor: DefaultTheme.GREY_VIEW,
-                                            //                                           value: checkTemp,
-                                            //                                           onChanged: (_) {
-                                            //                                             setModalState(() {
-                                            //                                               //  i.medicalInstructions[index].isChecked = !i.medicalInstructions[index].isChecked;
-                                            //                                               //
-                                            //                                               checkTemp = !checkTemp;
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    bottom: 20),
+                                                          ),
+                                                          (i.medicalInstructions
+                                                                      .length !=
+                                                                  0)
+                                                              ? ListView
+                                                                  .builder(
+                                                                  physics:
+                                                                      NeverScrollableScrollPhysics(),
+                                                                  shrinkWrap:
+                                                                      true,
+                                                                  itemCount: i
+                                                                      .medicalInstructions
+                                                                      .length,
+                                                                  itemBuilder:
+                                                                      (BuildContext
+                                                                              context,
+                                                                          int index) {
+                                                                    //
+                                                                    bool
+                                                                        checkTemp =
+                                                                        false;
+                                                                    if (medicalInstructionIdsSelected.contains(i
+                                                                        .medicalInstructions[
+                                                                            index]
+                                                                        .medicalInstructionId)) {
+                                                                      checkTemp =
+                                                                          true;
+                                                                    }
+                                                                    return Container(
+                                                                        // height: 200,
+                                                                        margin: EdgeInsets
+                                                                            .only(
+                                                                          // left:
+                                                                          //     20,
+                                                                          // right:
+                                                                          //     20,
+                                                                          bottom:
+                                                                              10,
+                                                                        ),
+                                                                        padding: EdgeInsets.only(
+                                                                            left:
+                                                                                10,
+                                                                            right:
+                                                                                10),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          // color: DefaultTheme
+                                                                          //     .WHITE,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(5),
+                                                                        ),
+                                                                        width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width,
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.start,
+                                                                          children: <
+                                                                              Widget>[
+                                                                            //
+                                                                            Row(
+                                                                              children: <Widget>[
+                                                                                ClipRRect(
+                                                                                  borderRadius: BorderRadius.circular(6),
+                                                                                  child: SizedBox(
+                                                                                    width: (30 * 1.5),
+                                                                                    height: (40 * 1.5),
+                                                                                    child: (i.medicalInstructions[index].images != null || i.medicalInstructions[index].images.isNotEmpty)
+                                                                                        ? Image.network(
+                                                                                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${i.medicalInstructions[index].images.first}',
+                                                                                            fit: BoxFit.fill,
+                                                                                          )
+                                                                                        : Container(
+                                                                                            width: (30 * 1.5),
+                                                                                            height: (40 * 1.5),
+                                                                                            color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                                                                          ),
+                                                                                  ),
+                                                                                ),
+                                                                                Container(
+                                                                                  padding: EdgeInsets.only(left: 20),
+                                                                                  child: (nameOfList.contains('điện tim')) ? Text('Phiếu điện tim') : (nameOfList.contains('X-Quang') ? Text('Phiếu X-Quang') : Container()),
+                                                                                ),
+                                                                                Spacer(),
+                                                                                ClipRRect(
+                                                                                  borderRadius: BorderRadius.circular(6),
+                                                                                  child: Container(
+                                                                                    width: 25,
+                                                                                    height: 25,
+                                                                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                                                                                    child: Checkbox(
+                                                                                      checkColor: DefaultTheme.BLUE_REFERENCE,
+                                                                                      activeColor: DefaultTheme.GREY_VIEW,
+                                                                                      hoverColor: DefaultTheme.GREY_VIEW,
+                                                                                      value: checkTemp,
+                                                                                      onChanged: (_) {
+                                                                                        setModalState(() {
+                                                                                          //  i.medicalInstructions[index].isChecked = !i.medicalInstructions[index].isChecked;
+                                                                                          //
+                                                                                          checkTemp = !checkTemp;
 
-                                            //                                               setState(() {
-                                            //                                                 if (checkTemp == true) {
-                                            //                                                   if (nameOfList.contains('điện tim')) {
-                                            //                                                     medicalInstructions1.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
-                                            //                                                     medicalInstructions1.add(i.medicalInstructions[index]);
-                                            //                                                   } else if (nameOfList.contains('X-Quang')) {
-                                            //                                                     medicalInstructions2.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
-                                            //                                                     medicalInstructions2.add(i.medicalInstructions[index]);
-                                            //                                                   }
-                                            //                                                   medicalInstructionIdsSelected.removeWhere((item) => item == i.medicalInstructions[index].medicalInstructionId);
-                                            //                                                   medicalInstructionIdsSelected.add(i.medicalInstructions[index].medicalInstructionId);
-                                            //                                                   print('list medical ins selected: ${medicalInstructionIdsSelected}');
-                                            //                                                 } else {
-                                            //                                                   checkTemp = false;
-                                            //                                                   if (nameOfList.contains('điện tim')) {
-                                            //                                                     medicalInstructions1.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
-                                            //                                                   } else if (nameOfList.contains('X-Quang')) {
-                                            //                                                     medicalInstructions2.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
-                                            //                                                   }
-                                            //                                                   medicalInstructionIdsSelected.removeWhere((item) => item == i.medicalInstructions[index].medicalInstructionId);
-                                            //                                                 }
-                                            //                                               });
-                                            //                                               //
-                                            //                                             });
-                                            //                                           },
-                                            //                                         ),
-                                            //                                       ),
-                                            //                                     ),
-                                            //                                     //
-                                            //                                   ],
-                                            //                                 ),
-                                            //                                 Padding(
-                                            //                                   padding: EdgeInsets.only(bottom: 10, top: 5),
-                                            //                                   child: Divider(
-                                            //                                     color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                            //                                     height: 1,
-                                            //                                   ),
-                                            //                                 )
-                                            //                                 //
-                                            //                               ],
-                                            //                             ));
-                                            //                       },
-                                            //                     )
-                                            //                   : Container(
-                                            //                       height: 100,
-                                            //                       width: MediaQuery.of(
-                                            //                               context)
-                                            //                           .size
-                                            //                           .width,
-                                            //                       child: Text(
-                                            //                           'Không có phiếu y lệnh nào'),
-                                            //                     ),
-                                            //               // (i.medicalInstructions
-                                            //               //             .length !=
-                                            //               //         0)
-                                            //               //     ? Padding(
-                                            //               //         padding: EdgeInsets
-                                            //               //             .only(
-                                            //               //                 bottom:
-                                            //               //                     5,
-                                            //               //                 top:
-                                            //               //                     5),
-                                            //               //         child:
-                                            //               //             Divider(
-                                            //               //           color: DefaultTheme
-                                            //               //               .GREY_TOP_TAB_BAR,
-                                            //               //           height: 1,
-                                            //               //         ),
-                                            //               //       )
-                                            //               // : Container(),
-                                            //             ],
-                                            //           ),
-                                            //         ),
-                                            //     ],
-                                            //   ),
-                                            // ),
+                                                                                          setState(() {
+                                                                                            if (checkTemp == true) {
+                                                                                              if (nameOfList.contains('điện tim')) {
+                                                                                                medicalInstructions1.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
+                                                                                                medicalInstructions1.add(i.medicalInstructions[index]);
+                                                                                              } else if (nameOfList.contains('X-Quang')) {
+                                                                                                medicalInstructions2.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
+                                                                                                medicalInstructions2.add(i.medicalInstructions[index]);
+                                                                                              }
+                                                                                              medicalInstructionIdsSelected.removeWhere((item) => item == i.medicalInstructions[index].medicalInstructionId);
+                                                                                              medicalInstructionIdsSelected.add(i.medicalInstructions[index].medicalInstructionId);
+                                                                                              print('list medical ins selected: ${medicalInstructionIdsSelected}');
+                                                                                            } else {
+                                                                                              checkTemp = false;
+                                                                                              if (nameOfList.contains('điện tim')) {
+                                                                                                medicalInstructions1.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
+                                                                                              } else if (nameOfList.contains('X-Quang')) {
+                                                                                                medicalInstructions2.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
+                                                                                              }
+                                                                                              medicalInstructionIdsSelected.removeWhere((item) => item == i.medicalInstructions[index].medicalInstructionId);
+                                                                                            }
+                                                                                          });
+                                                                                          //
+                                                                                        });
+                                                                                      },
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                //
+                                                                              ],
+                                                                            ),
+                                                                            Padding(
+                                                                              padding: EdgeInsets.only(bottom: 10, top: 5),
+                                                                              child: Divider(
+                                                                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                                                                height: 1,
+                                                                              ),
+                                                                            )
+                                                                            //
+                                                                          ],
+                                                                        ));
+                                                                  },
+                                                                )
+                                                              : Container(
+                                                                  height: 100,
+                                                                  width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                                  child: Text(
+                                                                      'Không có phiếu y lệnh nào'),
+                                                                ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
 
                                             //
                                             Container(
@@ -2437,8 +2390,6 @@ class _ContractShareView extends State<ContractShareView>
                                               });
                                               _medicalShareBloc.add(
                                                   MedicalShareEventGet(
-                                                      diseaseIds:
-                                                          _listLv3IdSelected,
                                                       patientId: _patientId,
                                                       medicalInstructionType:
                                                           _medInsTypeId));
@@ -2628,8 +2579,8 @@ class _ContractShareView extends State<ContractShareView>
                                                                 .start,
                                                         children: [
                                                           SizedBox(
-                                                            width: 20,
-                                                            height: 20,
+                                                            width: 30,
+                                                            height: 30,
                                                             child: Image.asset(
                                                                 'assets/images/ic-health-record.png'),
                                                           ),
@@ -2639,6 +2590,12 @@ class _ContractShareView extends State<ContractShareView>
                                                                     left: 10),
                                                           ),
                                                           Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
                                                             children: [
                                                               //
                                                               Container(
@@ -2646,9 +2603,9 @@ class _ContractShareView extends State<ContractShareView>
                                                                             context)
                                                                         .size
                                                                         .width -
-                                                                    122,
+                                                                    132,
                                                                 child: Text(
-                                                                  'Hồ sơ ${group.healthRecordPlace}',
+                                                                  'Hồ sơ tại ${group.healthRecordPlace}',
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           13,
@@ -2661,12 +2618,18 @@ class _ContractShareView extends State<ContractShareView>
                                                                   maxLines: 2,
                                                                 ),
                                                               ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            5),
+                                                              ),
                                                               Container(
                                                                 width: MediaQuery.of(
                                                                             context)
                                                                         .size
                                                                         .width -
-                                                                    122,
+                                                                    132,
                                                                 child: Text(
                                                                   'Ngày tạo: ${group.dateCreate}',
                                                                   style:
@@ -2680,6 +2643,15 @@ class _ContractShareView extends State<ContractShareView>
                                                                   maxLines: 1,
                                                                 ),
                                                               ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            5),
+                                                              ),
+                                                              _genderDiseaseCheckBox(
+                                                                  group
+                                                                      .diseases),
                                                             ],
                                                           ),
                                                         ],
@@ -2748,6 +2720,32 @@ class _ContractShareView extends State<ContractShareView>
             },
           );
         });
+  }
+
+  Widget _genderDiseaseCheckBox(List<String> diseases) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (String disease in diseases)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              width: MediaQuery.of(context).size.width - 160,
+              padding: EdgeInsets.only(left: 10, right: 5, top: 5, bottom: 5),
+              margin: EdgeInsets.only(bottom: 5),
+              decoration: BoxDecoration(
+                color: DefaultTheme.BLUE_REFERENCE.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text('$disease',
+                  style: TextStyle(fontSize: 12, color: DefaultTheme.WHITE),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2),
+            ),
+          ),
+      ],
+    );
   }
 
   void _showDetailVitalSign(int medicalInstructionId) {

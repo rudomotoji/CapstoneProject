@@ -290,7 +290,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     ),
                     Padding(
                       padding: EdgeInsets.only(
-                        bottom: 5,
+                        bottom: 10,
                         top: 10,
                         left: 30,
                         right: 30,
@@ -335,7 +335,16 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.only(
+                        bottom: 10,
+                        top: 10,
+                        left: 30,
+                        right: 30,
+                      ),
+                      child: Divider(
+                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                        height: 1,
+                      ),
                     ),
                     (_healthRecordDTO.description != '')
                         ? Column(
@@ -364,11 +373,12 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width -
-                                              (155),
+                                              (155 + 50),
                                           child: Text(
                                             '${_healthRecordDTO.description}',
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 3,
+                                            textAlign: TextAlign.right,
                                             style: TextStyle(
                                               color: Colors.black,
                                               fontSize: 15,
@@ -393,7 +403,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               Align(
                 alignment: Alignment.centerLeft,
                 child: Container(
-                  padding: EdgeInsets.only(left: 20, bottom: 5, top: 5),
+                  padding: EdgeInsets.only(left: 30, bottom: 5, top: 5),
                   child: Text(
                     'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
                     maxLines: 2,

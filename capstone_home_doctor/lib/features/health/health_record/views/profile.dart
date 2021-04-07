@@ -159,6 +159,9 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
               Navigator.of(context).pushNamed(RoutesHDr.MEDICAL_SHARE);
             },
           ),
+          Padding(
+            padding: EdgeInsets.only(top: 10),
+          ),
         ],
       ),
     );
@@ -168,7 +171,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     return SliverAppBar(
       pinned: true,
       automaticallyImplyLeading: false,
-      backgroundColor: DefaultTheme.WHITE,
+      backgroundColor: DefaultTheme.WHITE.withOpacity(0),
       title: TabBar(
         labelStyle: TextStyle(
             fontSize: 18,

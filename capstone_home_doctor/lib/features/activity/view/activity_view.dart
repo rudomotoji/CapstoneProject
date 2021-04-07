@@ -95,9 +95,24 @@ class _ActivityView extends State<ActivityView> with WidgetsBindingObserver {
                     if (state.list == null) {
                       return Container(
                           width: MediaQuery.of(context).size.width,
-                          height: 80,
+                          height: 500,
                           child: Center(
-                            child: Text('Không thể tải'),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                //
+                                SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: Image.asset(
+                                      'assets/images/ic-acti-u.png'),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 10),
+                                ),
+                                Text('Bạn chưa có hoạt động nào')
+                              ],
+                            ),
                           ));
                     }
                     // return ListView.builder(

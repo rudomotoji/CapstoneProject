@@ -10,6 +10,7 @@ import 'package:capstone_home_doctor/features/information/events/patient_event.d
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
+import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/models/patient_dto.dart';
@@ -112,7 +113,12 @@ class _HeaderWidget extends State<HeaderWidget> {
               highlightColor: DefaultTheme.TRANSPARENT,
               onTap: () async {
                 Future.delayed(const Duration(milliseconds: 100), () async {
-                  if (_title.contains('Tạo hồ sơ sức khỏe'.trim())) {
+                  if (_title == '') {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      RoutesHDr.MAIN_HOME,
+                      (Route<dynamic> route) => false,
+                    );
+                  } else if (_title.contains('Tạo hồ sơ sức khỏe'.trim())) {
                     await _medicalInstructionHelper
                         .getCreateHRFromDetail()
                         .then((check) async {
@@ -800,10 +806,20 @@ class _HeaderWidget extends State<HeaderWidget> {
                         label: 'Thiết bị đeo',
                         image: Image.asset('assets/images/ic-device-list.png'),
                         imgHeight: 25,
-                        onTap: () {
+                        onTap: () async {
                           Navigator.of(context).pop();
-                          Navigator.of(context)
-                              .pushNamed(RoutesHDr.PERIPHERAL_SERVICE);
+                          await peripheralHelper
+                              .getPeripheralId()
+                              .then((peripheralId) {
+                            //
+                            Navigator.of(context)
+                                .pushNamed(RoutesHDr.INTRO_CONNECT_PERIPHERAL);
+                            if (peripheralId == '') {
+                            } else {
+                              Navigator.of(context)
+                                  .pushNamed(RoutesHDr.PERIPHERAL_SERVICE);
+                            }
+                          });
                         },
                       ),
                       Divider(

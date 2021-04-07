@@ -1,5 +1,6 @@
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
+import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:http/http.dart' as http;
@@ -35,6 +36,13 @@ class PeripheralRepository {
     device.disconnect();
   }
 
+  //disconnect fromId
+  Future<void> disconnectDeviceFromId(String peripheralId) async {
+    BluetoothDevice device = await findScanResultById(peripheralId);
+    await peripheralHelper.updatePeripheralChecking(false, '');
+    device.disconnect();
+  }
+
   //connect device first time
   Future<bool> connectDevice1stTime(ScanResult scanResult) async {
     BluetoothDevice device = scanResult.device;
@@ -54,6 +62,14 @@ class PeripheralRepository {
       }
       if (e.toString().contains(
           'Unhandled Exception: Exception: Another scan is already in progress')) {
+        stopScanning();
+        device.disconnect();
+        await device.connect();
+        await _peripheralHelper.updatePeripheralChecking(
+            true, device.id.toString());
+        return true;
+      }
+      if (e.toString().contains('could not find callback wrapper')) {
         stopScanning();
         device.disconnect();
         await device.connect();
@@ -120,6 +136,13 @@ class PeripheralRepository {
     } catch (e) {
       print('error connect background: $e');
       if (e.toString().contains('Another scan is already in progress')) {
+        stopScanning();
+        Future.delayed(const Duration(seconds: 2), () async {
+          //
+          await connectDeviceInBackground(peripheralId);
+        });
+      }
+      if (e.toString().contains('could not find callback wrapper')) {
         stopScanning();
         Future.delayed(const Duration(seconds: 2), () async {
           //

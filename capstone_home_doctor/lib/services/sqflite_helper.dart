@@ -305,8 +305,8 @@ class SQFLiteHelper {
         for (int i = 0; i < maps.length; i++) {
           listVitalSign.add(VitalSignDTO.fromMapSQL(maps[i]));
         }
-        print(
-            'GET LIST Vital Sign type ${value_type} successful at ${DateTime.now()}');
+        // print(
+        //     'GET LIST Vital Sign type ${value_type} successful at ${DateTime.now()}');
         return listVitalSign;
       }
     } catch (e) {
@@ -327,8 +327,8 @@ class SQFLiteHelper {
         for (int i = 0; i < maps.length; i++) {
           listVitalSign.add(VitalSignDTO.fromMapSQL(maps[i]));
         }
-        print(
-            'GET LIST Vital Sign type ${value_type} successful at ${DateTime.now()}');
+        // print(
+        //     'GET LIST Vital Sign type ${value_type} successful at ${DateTime.now()}');
         return listVitalSign;
       }
     } catch (e) {
