@@ -78,107 +78,196 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  //
-  _showFullImageDescription(String img, String miName, String dateCreate) {
-    showDialog(
+  showFullDetailComponent(
+      List<String> imgs, String miName, String dateCreate, String dianose) {
+    int positionImage = 0;
+    print('e img now: ${positionImage}');
+    return showDialog(
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           //
-          return Material(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: DefaultTheme.BLACK,
-              child: Stack(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  //
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: PhotoView(
-                      customSize: Size(MediaQuery.of(context).size.width,
-                          MediaQuery.of(context).size.height),
-                      imageProvider: NetworkImage(
-                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${img}'),
-                    ),
-                  ),
-                  Positioned(
-                    top: 20,
-                    right: 10,
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: Image.asset('assets/images/ic-close.png'),
-                        ),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    child: Container(
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+            return Material(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: DefaultTheme.BLACK,
+                child: Stack(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    //
+                    SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      padding: EdgeInsets.only(left: 30, right: 30),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              DefaultTheme.TRANSPARENT,
-                              DefaultTheme.BLACK.withOpacity(0.9),
-                            ]),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          //
-
-                          Text(
-                            '$miName',
-                            style: TextStyle(
-                                color: DefaultTheme.WHITE,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 5),
-                          ),
-                          Divider(
-                            color: DefaultTheme.WHITE,
-                            height: 1,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                          ),
-                          Text(
-                            'Ngày tạo $dateCreate',
-                            style: TextStyle(
-                                color: DefaultTheme.WHITE, fontSize: 15),
-                          ),
-
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 50),
-                          ),
-                        ],
+                      height: MediaQuery.of(context).size.height,
+                      child: PhotoView(
+                        customSize: Size(MediaQuery.of(context).size.width,
+                            MediaQuery.of(context).size.height),
+                        imageProvider: NetworkImage(
+                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
                       ),
                     ),
-                  ),
-                ],
+                    (imgs.length > 1)
+                        ? Positioned(
+                            right: 0,
+                            child: InkWell(
+                              onTap: () {
+                                //
+                                print('position img now: $positionImage');
+                                setModalState(() {
+                                  if (positionImage == imgs.length) {
+                                    positionImage = 0;
+                                  } else if (positionImage < imgs.length - 1) {
+                                    positionImage++;
+                                  } else {
+                                    positionImage = 0;
+                                  }
+                                });
+                              },
+                              child: Container(
+                                width: 50,
+                                height: MediaQuery.of(context).size.height,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.centerRight,
+                                      end: Alignment.centerLeft,
+                                      colors: [
+                                        DefaultTheme.BLACK.withOpacity(0.5),
+                                        DefaultTheme.TRANSPARENT,
+                                      ]),
+                                ),
+                                child: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child:
+                                      Image.asset('assets/images/ic-next.png'),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    (imgs.length > 1)
+                        ? Positioned(
+                            left: 0,
+                            child: InkWell(
+                              onTap: () {
+                                setModalState(() {
+                                  if (positionImage == 0) {
+                                    positionImage = imgs.length - 1;
+                                  } else {
+                                    positionImage--;
+                                  }
+                                });
+                              },
+                              child: Container(
+                                width: 50,
+                                height: MediaQuery.of(context).size.height,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        DefaultTheme.BLACK.withOpacity(0.5),
+                                        DefaultTheme.TRANSPARENT,
+                                      ]),
+                                ),
+                                child: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child:
+                                      Image.asset('assets/images/ic-prev.png'),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    Positioned(
+                      top: 20,
+                      right: 10,
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Image.asset('assets/images/ic-close.png'),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        padding: EdgeInsets.only(left: 30, right: 30),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                DefaultTheme.TRANSPARENT,
+                                DefaultTheme.BLACK.withOpacity(0.9),
+                              ]),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            //
+
+                            Text(
+                              '$miName',
+                              style: TextStyle(
+                                  color: DefaultTheme.WHITE,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 5),
+                            ),
+                            Divider(
+                              color: DefaultTheme.WHITE,
+                              height: 1,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            Text(
+                              'Chuẩn đoán $dianose',
+                              style: TextStyle(
+                                  color: DefaultTheme.WHITE, fontSize: 15),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 5,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            Text(
+                              'Ngày tạo $dateCreate',
+                              style: TextStyle(
+                                  color: DefaultTheme.WHITE, fontSize: 15),
+                            ),
+
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 50),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-          //
+            );
+            //
+          });
         });
   }
 
@@ -329,7 +418,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                         style: BtnStyle.BUTTON_BLACK,
                         label: 'Chia sẻ',
                         onTap: () {
-                          _checkingShare(dropdownValue.contractId,
+                          _checkingShare(dropdownValue.healthRecordId,
                               medicalInstructionIdsSelected);
                         },
                       ),
@@ -387,7 +476,6 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
             if (_patientId != 0 && dropdownValue.contractId != 0) {
               await _medicalShareBloc.add(MedicalShareEventGetMediIns(
                   patientID: _patientId,
-                  contractID: dropdownValue.contractId,
                   healthRecordId: dropdownValue.healthRecordId));
             }
           },
@@ -572,8 +660,9 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                     children: <Widget>[
                                                       InkWell(
                                                         onTap: () {
-                                                          if (itemMedi.image ==
-                                                                  null &&
+                                                          if (itemMedi.image
+                                                                      .length <=
+                                                                  0 &&
                                                               itemMedi.medicalInstructionTypeId ==
                                                                   1) {
                                                             print(itemMedi
@@ -585,22 +674,28 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                                 arguments: itemMedi
                                                                     .medicalInstructionId);
                                                           } else if (itemMedi
-                                                                      .image ==
-                                                                  null &&
+                                                                      .image
+                                                                      .length <=
+                                                                  0 &&
                                                               itemMedi.medicalInstructionTypeId ==
-                                                                  8) {
+                                                                  6) {
                                                             _showDetailVitalSign(
                                                                 itemMedi
                                                                     .medicalInstructionId);
-                                                          } else {
-                                                            _showFullImageDescription(
+                                                          } else if (itemMedi
+                                                                  .image
+                                                                  .length >
+                                                              0) {
+                                                            showFullDetailComponent(
                                                                 itemMedi.image,
                                                                 element
                                                                     .medicalInstructionTypes[
                                                                         indexType]
                                                                     .miTypeName,
                                                                 itemMedi
-                                                                    .dateCreate);
+                                                                    .dateCreate,
+                                                                itemMedi
+                                                                    .diagnose);
                                                           }
                                                         },
                                                         child: ClipRRect(
@@ -611,12 +706,40 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                             width: (30 * 1.5),
                                                             height: (40 * 1.5),
                                                             child: (itemMedi
-                                                                        .image !=
-                                                                    null)
-                                                                ? Image.network(
-                                                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${itemMedi.image}',
-                                                                    fit: BoxFit
-                                                                        .fill,
+                                                                        .image
+                                                                        .length >
+                                                                    0)
+                                                                ? Stack(
+                                                                    children: [
+                                                                      Container(
+                                                                        width: (30 *
+                                                                            1.5),
+                                                                        height: (40 *
+                                                                            1.5),
+                                                                        color: DefaultTheme
+                                                                            .GREY_TOP_TAB_BAR,
+                                                                        child: (itemMedi.image.length <=
+                                                                                0)
+                                                                            ? Container
+                                                                            : Image.network(
+                                                                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${itemMedi.image.first}',
+                                                                                fit: BoxFit.fill,
+                                                                              ),
+                                                                      ),
+                                                                      Positioned(
+                                                                        top: 0,
+                                                                        child: Container(
+                                                                            width: (30 * 1.5),
+                                                                            height: (40 * 1.5),
+                                                                            color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.2),
+                                                                            child: Center(
+                                                                              child: Text(
+                                                                                (itemMedi.image.length > 1) ? '${itemMedi.image.length}+' : '',
+                                                                                style: TextStyle(color: DefaultTheme.WHITE),
+                                                                              ),
+                                                                            )),
+                                                                      ),
+                                                                    ],
                                                                   )
                                                                 : Container(
                                                                     width: (30 *
@@ -741,7 +864,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
           );
   }
 
-  _checkingShare(int _contractId, List<int> _listMedIns) {
+  _checkingShare(int healthRecordId, List<int> _listMedIns) {
     setState(() {
       showDialog(
           barrierDismissible: false,
@@ -786,7 +909,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
               ),
             );
           });
-      if (_contractId != 0 && _listMedIns.length > 0) {
+      if (healthRecordId != 0 && _listMedIns.length > 0) {
         _medicalShareInsBloc.add(MedicalShareInsEventSend(
             healthRecordId: dropdownValue.healthRecordId,
             listMediIns: medicalInstructionIdsSelected));
@@ -973,12 +1096,6 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
       Navigator.pop(context);
       if (value != null) {
         if (value.vitalSignScheduleRespone != null) {
-          // var dateStarted = new DateFormat('dd/MM/yyyy').format(
-          //     new DateFormat("yyyy-MM-dd")
-          //         .parse(value.vitalSignResponse.dateStarted));
-          // var dateFinished = new DateFormat('dd/MM/yyyy').format(
-          //     new DateFormat("yyyy-MM-dd")
-          //         .parse(value.vitalSignResponse.dateFinished));
           var dateStarted = _dateValidator.convertDateCreate(
               value.vitalSignScheduleRespone.timeStared,
               'dd/MM/yyyy',

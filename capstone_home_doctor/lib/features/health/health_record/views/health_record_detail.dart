@@ -626,16 +626,14 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                           children: [
                             InkWell(
                               onTap: () {
-                                if (dto?.image != null) {
-                                  // _showFullImageDescription(
-                                  //     dto?.image,
-                                  //     dto.medicalInstructionType,
-                                  //     '${DateFormat('dd/MM/yyyy').format(dateCreated)}');
-                                  //
+                                if (dto?.image.length > 0) {
                                   showFullDetailComponent(
                                       dto.image,
                                       dto.medicalInstructionType,
-                                      dto.dateCreate,
+                                      _dateValidator.convertDateCreate(
+                                          dto.dateCreate,
+                                          'dd/MM/yyyy',
+                                          'yyyy-MM-ddThh:mm:ss'),
                                       dto.diagnose);
                                 } else {
                                   if (dto.medicationsRespone != null) {
@@ -659,16 +657,42 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     width: 0.5,
                                   ),
                                 ),
-                                child: (dto?.image == null)
+                                child: (dto?.image.length <= 0)
                                     ? Container()
-                                    : ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: SizedBox(
-                                          width: 70,
-                                          height: 70,
-                                          child: Image.network(
-                                              'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto?.image}'),
-                                        ),
+                                    : Stack(
+                                        children: [
+                                          Container(
+                                            width: (70 * 1.5),
+                                            height: (70 * 1.5),
+                                            color:
+                                                DefaultTheme.GREY_TOP_TAB_BAR,
+                                            child: (dto?.image == null)
+                                                ? Container
+                                                : Image.network(
+                                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto?.image.first}',
+                                                    fit: BoxFit.fill,
+                                                  ),
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            child: Container(
+                                                width: (70 * 1.5),
+                                                height: (70 * 1.5),
+                                                color: DefaultTheme
+                                                    .GREY_TOP_TAB_BAR
+                                                    .withOpacity(0.2),
+                                                child: Center(
+                                                  child: Text(
+                                                    (dto?.image.length > 1)
+                                                        ? '${dto?.image.length}+'
+                                                        : '',
+                                                    style: TextStyle(
+                                                        color:
+                                                            DefaultTheme.WHITE),
+                                                  ),
+                                                )),
+                                          ),
+                                        ],
                                       ),
                               ),
                             ),

@@ -189,7 +189,7 @@ class MedicalInstructionsDTO {
   int medicalInstructionId;
   String diagnose;
   String description;
-  String image;
+  List<String> image;
   String dateCreate;
   int medicalInstructionTypeId;
   PrescriptionDTO prescriptionRespone;
@@ -209,7 +209,7 @@ class MedicalInstructionsDTO {
     medicalInstructionId = json['medicalInstructionId'];
     diagnose = json['diagnose'];
     description = json['description'];
-    image = json['image'];
+    image = json['images'].cast<String>();
     dateCreate = json['dateCreate'];
     medicalInstructionTypeId = json['medicalInstructionTypeId'];
 
