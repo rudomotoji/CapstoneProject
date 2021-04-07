@@ -3,19 +3,16 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
-import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/img_util.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_type_list_bloc.dart';
-import 'package:capstone_home_doctor/features/health/health_record/blocs/medical_scan_image_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_create_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_type_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_type_list_state.dart';
-import 'package:capstone_home_doctor/features/health/health_record/states/medical_scan_image_state.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
@@ -24,7 +21,6 @@ import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:string_similarity/string_similarity.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -776,8 +772,11 @@ class _CreateMedicalInstructionViewState
             Navigator.of(context).pop();
             if (value != null) {
               setState(() {
-                _dianoseController.text = value.symptom;
-                titleCompare = value.titleCompare;
+                _dianoseController.text =
+                    _dianoseController.text + value.symptom;
+                if (titleCompare < value.titleCompare) {
+                  titleCompare = value.titleCompare;
+                }
               });
               if (titleCompare < percenntCompare) {
                 setState(() {

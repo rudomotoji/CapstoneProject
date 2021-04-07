@@ -504,7 +504,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                   ),
                                   //
                                   Text(
-                                    'Hồ sơ ${element.healthRecordPlace}',
+                                    'Hồ sơ tại ${element.healthRecordPlace}',
                                     style: TextStyle(
                                         color: DefaultTheme.BLACK,
                                         fontSize: 16,

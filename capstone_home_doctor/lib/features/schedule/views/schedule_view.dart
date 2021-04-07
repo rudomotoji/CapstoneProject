@@ -99,7 +99,7 @@ class _ScheduleView extends State<ScheduleView>
     // _listPrescription.sort((a, b) => b.startDate.compareTo(a.startDate));
     // _currentPrescription = _listPrescription[0];
     return DefaultTabController(
-      length: 3,
+      length: 2,
       initialIndex: 0,
       child: Scaffold(
         body: SafeArea(
@@ -155,18 +155,6 @@ class _ScheduleView extends State<ScheduleView>
                         ),
                       ),
                     ),
-                    Tab(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        height: 25,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Thời gian biểu',
-                          ),
-                        ),
-                      ),
-                    ),
                   ]),
               Padding(
                 padding: EdgeInsets.only(bottom: 5),
@@ -189,9 +177,6 @@ class _ScheduleView extends State<ScheduleView>
                           context,
                         )),
                       ],
-                    ),
-                    Container(
-                      child: Text('3'),
                     ),
                   ],
                 ),

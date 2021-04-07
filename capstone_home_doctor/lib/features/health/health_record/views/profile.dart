@@ -435,7 +435,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                               style: TextStyle(fontWeight: FontWeight.w500),
                             )
                           : Text(
-                              'Hồ sơ ${dto.place}',
+                              'Hồ sơ tại ${dto.place}',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -515,7 +515,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                     padding: EdgeInsets.only(
                                         top: 30, left: 10, right: 10),
                                     child: Text(
-                                      'Hồ sơ ${healthRecordId}',
+                                      'Hồ sơ tại ${healthRecordId}',
                                       style: TextStyle(
                                           color: DefaultTheme.GREY_TEXT),
                                       maxLines: 2,

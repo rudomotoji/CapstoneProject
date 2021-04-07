@@ -1942,7 +1942,7 @@ class _ContractShareView extends State<ContractShareView>
                                                                           .width -
                                                                       122,
                                                                   child: Text(
-                                                                    'Hồ sơ ${group.healthRecordPlace}',
+                                                                    'Hồ sơ tại ${group.healthRecordPlace}',
                                                                     style: TextStyle(
                                                                         fontSize:
                                                                             13,
