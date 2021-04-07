@@ -37,6 +37,7 @@ class _CreateMedicalInstructionViewState
   int _hrId = 0;
   int _patientId = 0;
   String _selectedHRType = '';
+  String strDiseaseDraft = '';
   PickedFile _imgFile;
   String _note = '';
   double titleCompare;
@@ -227,23 +228,23 @@ class _CreateMedicalInstructionViewState
 
                         //   ],
                         // ),
-                        (_selectedHRType == '')
-                            ? Container()
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(top: 10, left: 0),
-                                    child: Text(
-                                      '${_selectedHRType}',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                        // (_selectedHRType == '')
+                        //     ? Container()
+                        //     : Column(
+                        //         mainAxisAlignment: MainAxisAlignment.start,
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           Container(
+                        //             margin: EdgeInsets.only(top: 10, left: 0),
+                        //             child: Text(
+                        //               '${_selectedHRType}',
+                        //               style: TextStyle(
+                        //                   fontSize: 18,
+                        //                   fontWeight: FontWeight.w500),
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
                         Padding(
                           padding: EdgeInsets.only(top: 20),
                           child: Divider(
@@ -255,7 +256,7 @@ class _CreateMedicalInstructionViewState
                           padding: EdgeInsets.only(top: 10, bottom: 10),
                           child: Column(
                             children: [
-                              Text('Chẩn đoán*'),
+                              Text('Chẩn đoán(*)'),
                               Container(
                                 height: 200,
                                 child: TextFieldHDr(
@@ -263,6 +264,11 @@ class _CreateMedicalInstructionViewState
                                   placeHolder: 'Nhập tên bệnh lý',
                                   style: TFStyle.TEXT_AREA,
                                   keyboardAction: TextInputAction.done,
+                                  onChange: (value) {
+                                    setState(() {
+                                      strDiseaseDraft = value;
+                                    });
+                                  },
                                 ),
                               ),
                             ],
@@ -296,7 +302,7 @@ class _CreateMedicalInstructionViewState
                         Padding(
                           padding: EdgeInsets.only(bottom: 10),
                         ),
-                        (listImage.length > 0) ? Container() : checktitle(),
+                        (listImage.length <= 0) ? Container() : checktitle(),
                         (titleCompare != null)
                             ? Text('${f.format(titleCompare * 100)} %')
                             : Container(),
@@ -414,16 +420,48 @@ class _CreateMedicalInstructionViewState
                                         itemBuilder: (context, index) {
                                           return Container(
                                             margin: EdgeInsets.only(right: 10),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: SizedBox(
-                                                  width: 120,
-                                                  height: 120,
-                                                  child: ImageUltility
-                                                      .imageFromBase64String(
-                                                          listImage64Bit[
-                                                              index])),
+                                            child: Stack(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: SizedBox(
+                                                      width: 120,
+                                                      height: 120,
+                                                      child: ImageUltility
+                                                          .imageFromBase64String(
+                                                              listImage64Bit[
+                                                                  index])),
+                                                ),
+                                                Positioned(
+                                                  top: 0,
+                                                  right: 0,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        listImage
+                                                            .removeAt(index);
+                                                        listImage64Bit
+                                                            .removeAt(index);
+
+                                                        if (listImage.length ==
+                                                            0) {
+                                                          titleCompare = null;
+                                                          _dianoseController
+                                                                  .text =
+                                                              strDiseaseDraft;
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      width: 30,
+                                                      height: 30,
+                                                      child: Image.asset(
+                                                          'assets/images/ic-close.png'),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           );
                                         },
@@ -745,17 +783,22 @@ class _CreateMedicalInstructionViewState
       final pickedFile = await picker.getImage(
         source: source,
       );
+
+      bool load = false;
       if (pickedFile != null) {
+        String fileName = pickedFile.path.split("/").last;
+        print('fileName: $fileName');
         //
         setState(() {
           _imgFile = pickedFile;
-          listImage.add(pickedFile.path);
-          listImage64Bit.add(ImageUltility.base64String(
-              File(pickedFile.path).readAsBytesSync()));
-          // _imgString = ImageUltility.base64String(
-          //     File(pickedFile.path).readAsBytesSync());
+          if (!listImage.contains(fileName)) {
+            listImage.add(pickedFile.path);
+            listImage64Bit.add(ImageUltility.base64String(
+                File(pickedFile.path).readAsBytesSync()));
+            load = true;
+          }
         });
-        if (_imgFile.path != null || _imgFile.path != '') {
+        if (_imgFile.path != null && _imgFile.path != '' && load) {
           showDialog(
             barrierDismissible: false,
             context: context,
@@ -829,7 +872,14 @@ class _CreateMedicalInstructionViewState
                                 titleCompare = null;
                                 // _imgString = '';
                                 _imgFile = null;
-                                _dianoseController.text = '';
+                                _dianoseController.text = strDiseaseDraft;
+
+                                listImage.removeLast();
+                                listImage64Bit.removeLast();
+                                if (listImage.length == 0) {
+                                  titleCompare = null;
+                                  _dianoseController.text = strDiseaseDraft;
+                                }
                               });
                               Navigator.of(context).pop();
                             },
