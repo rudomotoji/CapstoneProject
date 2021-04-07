@@ -640,8 +640,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     Navigator.pushNamed(context,
                                         RoutesHDr.MEDICAL_HISTORY_DETAIL,
                                         arguments: dto.medicalInstructionId);
-                                  } else {
-                                    //
+                                  } else if (dto.vitalSignScheduleRespone !=
+                                      null) {
                                     _showDetailVitalSign(
                                         dto.medicalInstructionId);
                                   }
