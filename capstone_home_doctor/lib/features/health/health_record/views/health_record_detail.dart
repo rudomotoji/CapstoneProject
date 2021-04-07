@@ -103,116 +103,15 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         _medicalInstructionHelper.getCheckToCreateOrList().then((check) async {
           //
           if (check) {
-            return showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (BuildContext context) {
-                return Center(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                      child: Container(
-                        padding: EdgeInsets.only(left: 10, top: 10, right: 10),
-                        width: 250,
-                        height: 160,
-                        decoration: BoxDecoration(
-                          color: DefaultTheme.WHITE.withOpacity(0.7),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.only(bottom: 20, top: 10),
-                              child: Text(
-                                'Lưu ý',
-                                style: TextStyle(
-                                  decoration: TextDecoration.none,
-                                  color: DefaultTheme.BLACK,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 18,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 20, right: 20),
-                              child: Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'Bạn có muốn tạo thêm hồ sơ sức khoẻ khác không?',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    decoration: TextDecoration.none,
-                                    color: DefaultTheme.GREY_TEXT,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Spacer(),
-                            Divider(
-                              height: 1,
-                              color: DefaultTheme.GREY_TOP_TAB_BAR,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                FlatButton(
-                                  height: 40,
-                                  minWidth: 250 / 2 - 10.5,
-                                  child: Text('Không',
-                                      style: TextStyle(
-                                          color: DefaultTheme.BLUE_TEXT)),
-                                  onPressed: () async {
-                                    Navigator.of(context).pop();
+            ///CODE HERE FOR NAVIGATE
+            ///
+            int currentIndex = 2;
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false,
+                arguments: currentIndex);
 
-                                    ///CODE HERE FOR NAVIGATE
-                                    ///
-                                    int currentIndex = 2;
-                                    Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
-                                            RoutesHDr.MAIN_HOME,
-                                            (Route<dynamic> route) => false,
-                                            arguments: currentIndex);
-
-                                    ///
-                                    await _medicalInstructionHelper
-                                        .updateCheckToCreateOrList(false);
-                                  },
-                                ),
-                                Container(
-                                  height: 40,
-                                  width: 0.5,
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                ),
-                                FlatButton(
-                                  height: 40,
-                                  minWidth: 250 / 2 - 10.5,
-                                  child: Text('Có',
-                                      style: TextStyle(
-                                          color: DefaultTheme.BLUE_TEXT)),
-                                  onPressed: () {
-                                    //
-
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pushNamed(
-                                        RoutesHDr.CREATE_HEALTH_RECORD);
-                                    //////
-                                    //////
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
+            ///
+            await _medicalInstructionHelper.updateCheckToCreateOrList(false);
           } else {
             Navigator.pop(context);
             await _medicalInstructionHelper.updateCheckToCreateOrList(false);
@@ -229,7 +128,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                 HeaderWidget(
                   title: 'Chi tiết hồ sơ',
                   isMainView: false,
-                  buttonHeaderType: ButtonHeaderType.BACK_HOME,
+                  buttonHeaderType: ButtonHeaderType.CREATE_HEALTH_RECORD,
                 ),
                 BlocBuilder<HealthRecordDetailBloc, HealthRecordDetailState>(
                   builder: (context, state) {
@@ -259,6 +158,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                         child: Container(
                           height: MediaQuery.of(context).size.height * 0.80,
                           child: CustomScrollView(
+                            physics: NeverScrollableScrollPhysics(),
                             slivers: [
                               buildSliverToBoxAdapterHeader(),
                               buildSliverAppBarCollepse(),
@@ -281,6 +181,23 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                 ),
               ],
             ),
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            label: Text('Y lệnh mới',
+                style: TextStyle(color: DefaultTheme.BLUE_DARK)),
+            backgroundColor: DefaultTheme.GREY_VIEW,
+            icon: SizedBox(
+              width: 20,
+              height: 20,
+              child: Image.asset('assets/images/ic-medical-instruction.png'),
+            ),
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION)
+                  .then((value) {
+                _pullRefresh();
+              });
+            },
           ),
         ),
       ),
@@ -326,11 +243,14 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
           Column(
             children: [
               Container(
+                margin: EdgeInsets.only(left: 20, right: 20, top: 10),
                 padding: EdgeInsets.only(top: 10, bottom: 10),
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
                   color: DefaultTheme.GREY_VIEW,
                 ),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Row(
                       children: [
@@ -351,12 +271,14 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                           padding: EdgeInsets.only(left: 10),
                         ),
                         Container(
-                          width: MediaQuery.of(context).size.width - (155),
+                          width: MediaQuery.of(context).size.width -
+                              (155 + 40 + 10),
                           child: Text(
                             (_healthRecordDTO.diseases.length > 0)
                                 ? '${getDisease(_healthRecordDTO.diseases)}'
                                 : '', //lấy tên bệnh lý
                             overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.right,
                             maxLines: 3,
                             style: TextStyle(
                               color: Colors.black,
@@ -367,7 +289,16 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.only(
+                        bottom: 5,
+                        top: 10,
+                        left: 30,
+                        right: 30,
+                      ),
+                      child: Divider(
+                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                        height: 1,
+                      ),
                     ),
                     Row(
                       children: [
@@ -388,11 +319,13 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                           padding: EdgeInsets.only(left: 10),
                         ),
                         Container(
-                          width: MediaQuery.of(context).size.width - (155),
+                          width: MediaQuery.of(context).size.width -
+                              (155 + 40 + 10),
                           child: Text(
                             '${_healthRecordDTO.place}',
                             overflow: TextOverflow.ellipsis,
                             maxLines: 3,
+                            textAlign: TextAlign.right,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 15,
@@ -454,77 +387,28 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                   ],
                 ),
               ),
-              Container(
-                padding: EdgeInsets.only(left: 20, bottom: 5, top: 5),
-                child: Text(
-                  'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: DefaultTheme.BLACK, fontSize: 13),
-                ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 5),
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding:
-                              EdgeInsets.only(top: 30, left: 20, bottom: 0),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Danh sách y lệnh',
-                              style: TextStyle(
-                                color: DefaultTheme.BLACK,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: 20,
-                          ),
-                          child: Text(
-                            'Bao gồm các phiếu bệnh án/ y lệnh được thêm trước đó',
-                            style: TextStyle(
-                                color: DefaultTheme.GREY_TEXT, fontSize: 13),
-                          ),
-                        ),
-                      ],
-                    ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  padding: EdgeInsets.only(left: 20, bottom: 5, top: 5),
+                  child: Text(
+                    'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style:
+                        TextStyle(color: DefaultTheme.BLUE_DARK, fontSize: 13),
                   ),
-                  Expanded(
-                    child: ButtonHDr(
-                      style: BtnStyle.BUTTON_GREY,
-                      label: 'Thêm y lệnh',
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION)
-                            .then((value) {
-                          _pullRefresh();
-                        });
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 20),
-                  )
-                ],
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: 10),
               ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 5),
-                child: Divider(
-                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                  height: 0.1,
-                ),
+              Divider(
+                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                height: 0.1,
               ),
             ],
           ),
@@ -651,7 +535,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
       return (listMedicalIns.length != 0)
           ? ListView.builder(
               scrollDirection: Axis.vertical,
-              shrinkWrap: true,
+              // shrinkWrap: true,
               // physics: NeverScrollableScrollPhysics(),
               itemCount: listMedicalIns.length,
               itemBuilder: (BuildContext context, int index) {
@@ -662,14 +546,40 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
           : Container(
               width: MediaQuery.of(context).size.width,
               child: Center(
-                child: Text('Bạn chưa có thêm phiếu nào'),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: Image.asset(
+                            'assets/images/ic-medical-instruction.png')),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                    ),
+                    Text('Bạn chưa có thêm phiếu nào')
+                  ],
+                ),
               ),
             );
     } else {
       return Container(
         width: MediaQuery.of(context).size.width,
         child: Center(
-          child: Text('Bạn chưa có thêm phiếu nào'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                  width: 25,
+                  height: 25,
+                  child:
+                      Image.asset('assets/images/ic-medical-instruction.png')),
+              Padding(
+                padding: EdgeInsets.only(bottom: 20),
+              ),
+              Text('Bạn chưa có thêm phiếu nào')
+            ],
+          ),
         ),
       );
     }
@@ -1314,9 +1224,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     String str = '';
     for (var i = 0; i < listDisease.length; i++) {
       if (i == (listDisease.length - 1)) {
-        str += listDisease[i]['diseaseName'];
+        str += '- ' + listDisease[i]['diseaseName'];
       } else {
-        str += listDisease[i]['diseaseName'] + '\n';
+        str += '- ' + listDisease[i]['diseaseName'] + '\n';
       }
     }
     return str;

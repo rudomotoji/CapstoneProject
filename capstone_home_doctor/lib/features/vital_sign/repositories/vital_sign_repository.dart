@@ -61,7 +61,7 @@ class VitalSignRepository {
           await vitalSignHelper.updateHeartValue(value[1]);
           ReceiveNotification notiData = ReceiveNotification(
               id: 0, title: "reload heart rate", body: "", payload: "");
-          NotificationsBloc.instance.newNotification(notiData);
+          HeartRefreshBloc.instance.newNotification(notiData);
           //
           return value[1];
         } else {

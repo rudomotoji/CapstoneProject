@@ -68,8 +68,8 @@ class _Login extends State<Login> with WidgetsBindingObserver {
             Padding(padding: const EdgeInsets.only(top: 30)),
             Image.asset(
               'assets/images/logo-home-doctor.png',
-              width: 80,
-              height: 80,
+              width: 60,
+              height: 60,
             ),
             Expanded(
               flex: 3,
@@ -217,18 +217,30 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                 fontSize: 12,
               ),
             ),
+            Padding(padding: EdgeInsets.only(top: 5)),
             Container(
                 width: MediaQuery.of(context).size.width * 0.5,
                 height: 30,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(30),
                   child: Center(
-                    child: Text(
-                      'Đăng kí tài khoản',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: DefaultTheme.BLUE_TEXT,
-                        decoration: TextDecoration.underline,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.GREY_VIEW.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Đăng kí tài khoản',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: DefaultTheme.BLUE_DARK,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
                       ),
                     ),
                   ),

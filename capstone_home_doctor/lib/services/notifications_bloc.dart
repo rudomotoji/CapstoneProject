@@ -21,3 +21,24 @@ class NotificationsBloc {
     _notificationsStreamController?.close();
   }
 }
+
+class HeartRefreshBloc {
+  HeartRefreshBloc._internal();
+
+  static final HeartRefreshBloc instance = HeartRefreshBloc._internal();
+
+  final BehaviorSubject<ReceiveNotification> _notificationsStreamController =
+      BehaviorSubject<ReceiveNotification>();
+
+  Stream<ReceiveNotification> get notificationsStream {
+    return _notificationsStreamController;
+  }
+
+  void newNotification(ReceiveNotification notification) {
+    _notificationsStreamController.sink.add(notification);
+  }
+
+  void dispose() {
+    _notificationsStreamController?.close();
+  }
+}

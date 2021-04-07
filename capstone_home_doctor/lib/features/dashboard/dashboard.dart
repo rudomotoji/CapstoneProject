@@ -118,6 +118,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   List<AppointmentDTO> _listAppointment = [];
 
   Stream<ReceiveNotification> _notificationsStream;
+  Stream<ReceiveNotification> _refreshHeartRateStream;
 
   bool dangerKickedOn = false;
 
@@ -146,15 +147,21 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((notification) {
-      if (notification.title.contains('reload heart rate')) {
+      print('Notification: $notification');
+      _getPatientId();
+    });
+
+    //
+    _refreshHeartRateStream = HeartRefreshBloc.instance.notificationsStream;
+    _refreshHeartRateStream.listen((refresh) {
+      if (refresh.title.contains('reload heart rate')) {
         if (_patientId != 0) {
           _vitalSignBloc.add(
               VitalSignEventGetList(type: vitalType, patientId: _patientId));
         }
       }
-      print('Notification: $notification');
-      _getPatientId();
     });
+
     // _getPeopleStatus();
   }
 
@@ -454,17 +461,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   _showLastHeartRateMeasure() {
     return BlocBuilder<VitalSignBloc, VitalSignState>(
         builder: (context, state) {
-      if (state is VitalSignStateLoading) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          height: 80,
-          child: SizedBox(
-            width: 80,
-            height: 80,
-            child: Image.asset('assets/images/loading.gif'),
-          ),
-        );
-      }
       if (state is VitalSignStateFailure) {
         return Container(
             width: MediaQuery.of(context).size.width,
@@ -585,58 +581,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                                           ),
                                         ))
                                     : Container(),
-                                (lastMeasurement.value1 == null)
-                                    ? Container()
-                                    : (lastMeasurement.value1 == 0)
-                                        ? Text('-',
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                                color:
-                                                    DefaultTheme.RED_CALENDAR,
-                                                fontWeight: FontWeight.w500))
-                                        : (lastMeasurement.value1 < 55 &&
-                                                lastMeasurement.value1 > 0)
-                                            ? Text('Thấp',
-                                                textAlign: TextAlign.right,
-                                                style: TextStyle(
-                                                    color: DefaultTheme
-                                                        .RED_CALENDAR,
-                                                    fontWeight:
-                                                        FontWeight.w500))
-                                            : (lastMeasurement.value1 >= 55 &&
-                                                    lastMeasurement.value1 <
-                                                        120)
-                                                ? Text('Bình thường',
-                                                    textAlign: TextAlign.right,
-                                                    style: TextStyle(
-                                                        color: DefaultTheme
-                                                            .SUCCESS_STATUS,
-                                                        fontWeight:
-                                                            FontWeight.w500))
-                                                : (lastMeasurement.value1 >=
-                                                        120)
-                                                    ? Text('Cao',
-                                                        textAlign:
-                                                            TextAlign.right,
-                                                        style: TextStyle(
-                                                            color: DefaultTheme
-                                                                .CHIP_BLUE,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w500))
-                                                    : (lastMeasurement.value1 >
-                                                            150)
-                                                        ? Text('Cao bất thường',
-                                                            textAlign:
-                                                                TextAlign.right,
-                                                            style: TextStyle(
-                                                                color:
-                                                                    DefaultTheme
-                                                                        .RED_TEXT,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500))
-                                                        : Container()
                               ],
                             ),
                             Padding(
