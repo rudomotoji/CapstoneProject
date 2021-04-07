@@ -347,6 +347,31 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
+                BlocBuilder<AppointmentBloc, AppointmentState>(
+                  builder: (context, stateAppointment) {
+                    if (stateAppointment is AppointmentStateSuccess) {
+                      listAppointment = stateAppointment.listAppointment;
+                      if (stateAppointment.listAppointment != null) {
+                        DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
+                            .parse(DateFormat('dd/MM/yyyy')
+                                .format(DateTime.now()));
+                        for (var appointment
+                            in stateAppointment.listAppointment) {
+                          DateTime dateAppointment =
+                              new DateFormat("dd/MM/yyyy")
+                                  .parse(appointment.dateExamination);
+                          if (dateAppointment.millisecondsSinceEpoch ==
+                              curentDateNow.millisecondsSinceEpoch) {
+                            _appointmentDTO = appointment;
+                            print('có lịch tái khám vào hôm nay');
+                          }
+                        }
+                      }
+                    }
+                    return Container();
+                  },
+                ),
+
                 (listPrescription.length > 0)
                     ? Container(
                         width: MediaQuery.of(context).size.width,
