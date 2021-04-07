@@ -325,49 +325,59 @@ class _ContractShareView extends State<ContractShareView>
           children: <Widget>[
             Row(
               children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: SizedBox(
-                    width: (30 * 1.5),
-                    height: (40 * 1.5),
-                    child: (e.images != null || e.images.isNotEmpty)
-                        ? Stack(
-                            children: [
-                              Container(
-                                width: (30 * 1.5),
-                                height: (40 * 1.5),
-                                color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                child: Image.network(
-                                  'http://45.76.186.233:8000/api/v1/Images?pathImage=${e.images.first}',
-                                  fit: BoxFit.fill,
+                InkWell(
+                  onTap: () {
+                    //
+                    showFullDetailComponent(
+                        e.images, nameOfList, e.dateCreate, e.diagnose);
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: SizedBox(
+                      width: (30 * 1.5),
+                      height: (40 * 1.5),
+                      child: (e.images != null || e.images.isNotEmpty)
+                          ? Stack(
+                              children: [
+                                Container(
+                                  width: (30 * 1.5),
+                                  height: (40 * 1.5),
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  child: (e.images == null)
+                                      ? Container
+                                      : Image.network(
+                                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${e.images.first}',
+                                          fit: BoxFit.fill,
+                                        ),
                                 ),
-                              ),
-                              Positioned(
-                                top: 0,
-                                child: Container(
-                                    width: (30 * 1.5),
-                                    height: (40 * 1.5),
-                                    color: DefaultTheme.GREY_TOP_TAB_BAR
-                                        .withOpacity(0.2),
-                                    child: Center(
-                                      child: Text(
-                                        (e.images.length > 1)
-                                            ? '${e.images.length}+'
-                                            : '',
-                                        style: TextStyle(
-                                            color: DefaultTheme.WHITE),
-                                      ),
-                                    )),
-                              ),
-                            ],
-                          )
-                        : Container(
-                            width: (30 * 1.5),
-                            height: (40 * 1.5),
-                            color: DefaultTheme.GREY_TOP_TAB_BAR,
-                          ),
+                                Positioned(
+                                  top: 0,
+                                  child: Container(
+                                      width: (30 * 1.5),
+                                      height: (40 * 1.5),
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR
+                                          .withOpacity(0.2),
+                                      child: Center(
+                                        child: Text(
+                                          (e.images.length > 1)
+                                              ? '${e.images.length}+'
+                                              : '',
+                                          style: TextStyle(
+                                              color: DefaultTheme.WHITE),
+                                        ),
+                                      )),
+                                ),
+                              ],
+                            )
+                          : Container(
+                              width: (30 * 1.5),
+                              height: (40 * 1.5),
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                            ),
+                    ),
                   ),
                 ),
+
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1676,6 +1686,206 @@ class _ContractShareView extends State<ContractShareView>
         });
   }
 
+  showFullDetailComponent(
+      List<String> imgs, String miName, String dateCreate, String dianose) {
+    int positionImage = 0;
+    print('e img now: ${positionImage}');
+    return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          //
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+            return Material(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: DefaultTheme.BLACK,
+                child: Stack(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    //
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: PhotoView(
+                        customSize: Size(MediaQuery.of(context).size.width,
+                            MediaQuery.of(context).size.height),
+                        imageProvider: NetworkImage(
+                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+                      ),
+                    ),
+                    (imgs.length > 1)
+                        ? Positioned(
+                            right: 0,
+                            child: InkWell(
+                              onTap: () {
+                                //
+                                print('position img now: $positionImage');
+                                setModalState(() {
+                                  if (positionImage == imgs.length) {
+                                    positionImage = 0;
+                                  } else if (positionImage < imgs.length - 1) {
+                                    positionImage++;
+                                  } else {
+                                    positionImage = 0;
+                                  }
+                                });
+                              },
+                              child: Container(
+                                width: 50,
+                                height: MediaQuery.of(context).size.height,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.centerRight,
+                                      end: Alignment.centerLeft,
+                                      colors: [
+                                        DefaultTheme.BLACK.withOpacity(0.5),
+                                        DefaultTheme.TRANSPARENT,
+                                      ]),
+                                ),
+                                child: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child:
+                                      Image.asset('assets/images/ic-next.png'),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    (imgs.length > 1)
+                        ? Positioned(
+                            left: 0,
+                            child: InkWell(
+                              onTap: () {
+                                setModalState(() {
+                                  // if (positionImage == imgs.length) {
+                                  //   positionImage = 0;
+                                  // } else if (positionImage < imgs.length - 1) {
+                                  //   positionImage--;
+                                  // } else {
+                                  //   positionImage = 0;
+                                  // }
+                                  if (positionImage == 0) {
+                                    positionImage = imgs.length - 1;
+                                  } else {
+                                    positionImage--;
+                                  }
+                                });
+                              },
+                              child: Container(
+                                width: 50,
+                                height: MediaQuery.of(context).size.height,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        DefaultTheme.BLACK.withOpacity(0.5),
+                                        DefaultTheme.TRANSPARENT,
+                                      ]),
+                                ),
+                                child: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child:
+                                      Image.asset('assets/images/ic-prev.png'),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    Positioned(
+                      top: 20,
+                      right: 10,
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(20),
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Image.asset('assets/images/ic-close.png'),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        padding: EdgeInsets.only(left: 30, right: 30),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                DefaultTheme.TRANSPARENT,
+                                DefaultTheme.BLACK.withOpacity(0.9),
+                              ]),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            //
+
+                            Text(
+                              '$miName',
+                              style: TextStyle(
+                                  color: DefaultTheme.WHITE,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 5),
+                            ),
+                            Divider(
+                              color: DefaultTheme.WHITE,
+                              height: 1,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            Text(
+                              'Chuẩn đoán $dianose',
+                              style: TextStyle(
+                                  color: DefaultTheme.WHITE, fontSize: 15),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 5,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            Text(
+                              'Ngày tạo $dateCreate',
+                              style: TextStyle(
+                                  color: DefaultTheme.WHITE, fontSize: 15),
+                            ),
+
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 50),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+            //
+          });
+        });
+  }
+
   _showMedicalShare(String nameOfList) {
     return showModalBottomSheet(
         isScrollControlled: true,
@@ -1957,241 +2167,6 @@ class _ContractShareView extends State<ContractShareView>
                                                       );
                                                     }).toList(),
                                                   ),
-                                                ],
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  for (MedicalShareDTO i
-                                                      in state.listMedicalShare)
-                                                    Container(
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          //
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    top: 20),
-                                                          ),
-
-                                                          Container(
-                                                            width:
-                                                                MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width,
-                                                            child: Row(
-                                                              children: <
-                                                                  Widget>[
-                                                                SizedBox(
-                                                                  width: 20,
-                                                                  height: 20,
-                                                                  child: Image
-                                                                      .asset(
-                                                                          'assets/images/ic-health-record.png'),
-                                                                ),
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              20),
-                                                                ),
-                                                                //
-                                                                Container(
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width -
-                                                                      80,
-                                                                  child: Text(
-                                                                    'Hồ sơ ${i.healthRecordPlace}',
-                                                                    style: TextStyle(
-                                                                        color: DefaultTheme
-                                                                            .BLACK,
-                                                                        fontSize:
-                                                                            15,
-                                                                        fontWeight:
-                                                                            FontWeight.w500),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 3,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    bottom: 20),
-                                                          ),
-                                                          (i.medicalInstructions
-                                                                      .length !=
-                                                                  0)
-                                                              ? ListView
-                                                                  .builder(
-                                                                  physics:
-                                                                      NeverScrollableScrollPhysics(),
-                                                                  shrinkWrap:
-                                                                      true,
-                                                                  itemCount: i
-                                                                      .medicalInstructions
-                                                                      .length,
-                                                                  itemBuilder:
-                                                                      (BuildContext
-                                                                              context,
-                                                                          int index) {
-                                                                    //
-                                                                    bool
-                                                                        checkTemp =
-                                                                        false;
-                                                                    if (medicalInstructionIdsSelected.contains(i
-                                                                        .medicalInstructions[
-                                                                            index]
-                                                                        .medicalInstructionId)) {
-                                                                      checkTemp =
-                                                                          true;
-                                                                    }
-                                                                    return Container(
-                                                                        // height: 200,
-                                                                        margin: EdgeInsets
-                                                                            .only(
-                                                                          // left:
-                                                                          //     20,
-                                                                          // right:
-                                                                          //     20,
-                                                                          bottom:
-                                                                              10,
-                                                                        ),
-                                                                        padding: EdgeInsets.only(
-                                                                            left:
-                                                                                10,
-                                                                            right:
-                                                                                10),
-                                                                        decoration:
-                                                                            BoxDecoration(
-                                                                          // color: DefaultTheme
-                                                                          //     .WHITE,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(5),
-                                                                        ),
-                                                                        width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width,
-                                                                        child:
-                                                                            Column(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.start,
-                                                                          children: <
-                                                                              Widget>[
-                                                                            //
-                                                                            Row(
-                                                                              children: <Widget>[
-                                                                                ClipRRect(
-                                                                                  borderRadius: BorderRadius.circular(6),
-                                                                                  child: SizedBox(
-                                                                                    width: (30 * 1.5),
-                                                                                    height: (40 * 1.5),
-                                                                                    child: (i.medicalInstructions[index].images != null || i.medicalInstructions[index].images.isNotEmpty)
-                                                                                        ? Image.network(
-                                                                                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${i.medicalInstructions[index].images.first}',
-                                                                                            fit: BoxFit.fill,
-                                                                                          )
-                                                                                        : Container(
-                                                                                            width: (30 * 1.5),
-                                                                                            height: (40 * 1.5),
-                                                                                            color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                                                                          ),
-                                                                                  ),
-                                                                                ),
-                                                                                Container(
-                                                                                  padding: EdgeInsets.only(left: 20),
-                                                                                  child: (nameOfList.contains('điện tim')) ? Text('Phiếu điện tim') : (nameOfList.contains('X-Quang') ? Text('Phiếu X-Quang') : Container()),
-                                                                                ),
-                                                                                Spacer(),
-                                                                                ClipRRect(
-                                                                                  borderRadius: BorderRadius.circular(6),
-                                                                                  child: Container(
-                                                                                    width: 25,
-                                                                                    height: 25,
-                                                                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
-                                                                                    child: Checkbox(
-                                                                                      checkColor: DefaultTheme.BLUE_REFERENCE,
-                                                                                      activeColor: DefaultTheme.GREY_VIEW,
-                                                                                      hoverColor: DefaultTheme.GREY_VIEW,
-                                                                                      value: checkTemp,
-                                                                                      onChanged: (_) {
-                                                                                        setModalState(() {
-                                                                                          //  i.medicalInstructions[index].isChecked = !i.medicalInstructions[index].isChecked;
-                                                                                          //
-                                                                                          checkTemp = !checkTemp;
-
-                                                                                          setState(() {
-                                                                                            if (checkTemp == true) {
-                                                                                              if (nameOfList.contains('điện tim')) {
-                                                                                                medicalInstructions1.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
-                                                                                                medicalInstructions1.add(i.medicalInstructions[index]);
-                                                                                              } else if (nameOfList.contains('X-Quang')) {
-                                                                                                medicalInstructions2.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
-                                                                                                medicalInstructions2.add(i.medicalInstructions[index]);
-                                                                                              }
-                                                                                              medicalInstructionIdsSelected.removeWhere((item) => item == i.medicalInstructions[index].medicalInstructionId);
-                                                                                              medicalInstructionIdsSelected.add(i.medicalInstructions[index].medicalInstructionId);
-                                                                                              print('list medical ins selected: ${medicalInstructionIdsSelected}');
-                                                                                            } else {
-                                                                                              checkTemp = false;
-                                                                                              if (nameOfList.contains('điện tim')) {
-                                                                                                medicalInstructions1.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
-                                                                                              } else if (nameOfList.contains('X-Quang')) {
-                                                                                                medicalInstructions2.removeWhere((item) => item.medicalInstructionId == i.medicalInstructions[index].medicalInstructionId);
-                                                                                              }
-                                                                                              medicalInstructionIdsSelected.removeWhere((item) => item == i.medicalInstructions[index].medicalInstructionId);
-                                                                                            }
-                                                                                          });
-                                                                                          //
-                                                                                        });
-                                                                                      },
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                                //
-                                                                              ],
-                                                                            ),
-                                                                            Padding(
-                                                                              padding: EdgeInsets.only(bottom: 10, top: 5),
-                                                                              child: Divider(
-                                                                                color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                                                                height: 1,
-                                                                              ),
-                                                                            )
-                                                                            //
-                                                                          ],
-                                                                        ));
-                                                                  },
-                                                                )
-                                                              : Container(
-                                                                  height: 100,
-                                                                  width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width,
-                                                                  child: Text(
-                                                                      'Không có phiếu y lệnh nào'),
-                                                                ),
-                                                        ],
-                                                      ),
-                                                    ),
                                                 ],
                                               ),
                                             ),

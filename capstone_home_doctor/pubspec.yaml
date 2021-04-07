@@ -171,6 +171,8 @@ flutter:
     - assets/images/ic-create.png
     - assets/images/ic-acti.png
     - assets/images/ic-acti-u.png
+    - assets/images/ic-next.png
+    - assets/images/ic-prev.png
 
 
   
