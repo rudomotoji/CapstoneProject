@@ -116,11 +116,27 @@ class MedicalInstructionRepository extends BaseApiClient {
     request.fields['Diagnose'] = '${dto.diagnose}';
     // request.fields['DateStarted'] = '${dto.dateStarted}';
     // request.fields['DateFinished'] = '${dto.dateFinished}';
-    request.files.add(http.MultipartFile(
-        'image',
-        File(dto.imageFile.path).readAsBytes().asStream(),
-        File(dto.imageFile.path).lengthSync(),
-        filename: dto.imageFile.path.split("/").last));
+    //
+
+    for (var imageItem in dto.imageFile) {
+      String fileName = imageItem.split("/").last;
+      var length =
+          await File(imageItem).lengthSync(); //imageFile is your image file
+      var stream = File(imageItem).readAsBytes().asStream();
+
+      // multipart that takes file
+      var multipartFileSign =
+          new http.MultipartFile('images', stream, length, filename: fileName);
+
+      request.files.add(multipartFileSign);
+    }
+
+    // request.files.add(http.MultipartFile(
+    //     'image',
+    //     File(dto.imageFile.path).readAsBytes().asStream(),
+    //     File(dto.imageFile.path).lengthSync(),
+    //     filename: dto.imageFile.path.split("/").last));
+
     final response = await request.send();
     if (response.statusCode == 200) return true;
     return false;

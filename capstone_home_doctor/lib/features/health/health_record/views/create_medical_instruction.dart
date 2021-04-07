@@ -40,11 +40,16 @@ class _CreateMedicalInstructionViewState
   PickedFile _imgFile;
   String _note = '';
   double titleCompare;
-  String _imgString = '';
+  // String _imgString = '';
   String nowDate = '${DateTime.now()}';
   List<MedicalInstructionTypeDTO> _listMedInsType = [];
   double percenntCompare = 100;
   var f = NumberFormat("###.0#", "en_US");
+
+  //
+  //
+  List<String> listImage = [];
+  List<String> listImage64Bit = [];
 
   var _dianoseController = TextEditingController();
   MedicalInstructionHelper _medicalInstructionHelper =
@@ -177,8 +182,9 @@ class _CreateMedicalInstructionViewState
                                         onChanged: (_) {
                                           setState(() {
                                             titleCompare = null;
-                                            _imgString = '';
+                                            // _imgString = '';
                                             _imgFile = null;
+                                            listImage = [];
                                             _dianoseController.text = '';
                                             _medInsTypeId =
                                                 _.medicalInstructionTypeId;
@@ -290,7 +296,7 @@ class _CreateMedicalInstructionViewState
                         Padding(
                           padding: EdgeInsets.only(bottom: 10),
                         ),
-                        (_imgFile == null) ? Container() : checktitle(),
+                        (listImage.length > 0) ? Container() : checktitle(),
                         (titleCompare != null)
                             ? Text('${f.format(titleCompare * 100)} %')
                             : Container(),
@@ -300,8 +306,8 @@ class _CreateMedicalInstructionViewState
                           children: [
                             InkWell(
                               child: Container(
-                                width: (_imgString == '') ? 120 : 50,
-                                height: (_imgString == '') ? 120 : 50,
+                                width: 120,
+                                height: 120,
                                 decoration: BoxDecoration(
                                   color: DefaultTheme.TRANSPARENT,
                                   border: Border.all(
@@ -312,9 +318,7 @@ class _CreateMedicalInstructionViewState
                                 ),
                                 child: Center(
                                   child: Text(
-                                    (_imgString == '')
-                                        ? 'Chọn ảnh +'
-                                        : 'Chọn lại',
+                                    'Chọn ảnh +',
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: DefaultTheme.BLUE_REFERENCE),
@@ -395,23 +399,43 @@ class _CreateMedicalInstructionViewState
                             Padding(
                               padding: EdgeInsets.only(right: 10),
                             ),
-                            (_imgString == '')
+                            (listImage64Bit.length <= 0)
                                 ? Container()
-                                : ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: SizedBox(
-                                        width: 120,
-                                        height: 120,
-                                        child:
-                                            ImageUltility.imageFromBase64String(
-                                                _imgString)),
+                                : Expanded(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          170,
+                                      height: 120,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        // physics: NeverScrollableScrollPhysics(),
+                                        // shrinkWrap: true,
+                                        itemCount: listImage64Bit.length,
+                                        itemBuilder: (context, index) {
+                                          return Container(
+                                            margin: EdgeInsets.only(right: 10),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: SizedBox(
+                                                  width: 120,
+                                                  height: 120,
+                                                  child: ImageUltility
+                                                      .imageFromBase64String(
+                                                          listImage64Bit[
+                                                              index])),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ),
                           ],
                         ),
                         Padding(
                           padding: EdgeInsets.only(bottom: 25),
                         ),
-                        (_dianoseController.text == '' || _imgString == '')
+                        (_dianoseController.text == '' || listImage.length <= 0)
                             ? Container()
                             : ButtonHDr(
                                 width: MediaQuery.of(context).size.width - 40,
@@ -426,7 +450,7 @@ class _CreateMedicalInstructionViewState
                                       patientId: _patientId,
                                       description: _note,
                                       diagnose: _dianoseController.text,
-                                      imageFile: _imgFile,
+                                      imageFile: listImage,
                                     );
 
                                     setState(() {
@@ -540,116 +564,120 @@ class _CreateMedicalInstructionViewState
     );
   }
 
-  _createMedIns(medInsDTO) {
-    _medInsCreateBloc.add(MedInsCreateEventSend(dto: medInsDTO));
-    Future.delayed(
-      Duration(seconds: 3),
-      () {
-        _medicalInstructionHelper.getMedicalInsCreate().then(
-          (value) {
+  _createMedIns(medInsDTO) async {
+    // _medInsCreateBloc.add(MedInsCreateEventSend(dto: medInsDTO));
+    await _medicalInstructionRepository
+        .createMedicalInstruction(medInsDTO)
+        .then((res) {
+      Navigator.of(context).pop();
+      setState(() {
+        if (res) {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: DefaultTheme.WHITE.withOpacity(0.8)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: Image.asset('assets/images/ic-checked.png'),
+                          ),
+                          Text(
+                            'Tạo thành công',
+                            style: TextStyle(
+                                color: DefaultTheme.GREY_TEXT,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                decoration: TextDecoration.none),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+          Future.delayed(const Duration(seconds: 2), () {
             Navigator.of(context).pop();
-            setState(() {
-              if (value) {
-                showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                          child: Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: DefaultTheme.WHITE.withOpacity(0.8)),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: Image.asset(
-                                      'assets/images/ic-checked.png'),
-                                ),
-                                Text(
-                                  'Tạo thành công',
-                                  style: TextStyle(
-                                      color: DefaultTheme.GREY_TEXT,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                      decoration: TextDecoration.none),
-                                ),
-                              ],
+            Navigator.of(context).pop();
+          });
+        } else {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: DefaultTheme.WHITE.withOpacity(0.8)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            height: 100,
+                            child: Image.asset('assets/images/ic-failed.png'),
+                          ),
+                          Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Không thể tạo bệnh án, vui lòng tạo lại',
+                              style: TextStyle(
+                                  color: DefaultTheme.GREY_TEXT,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  decoration: TextDecoration.none),
+                              textAlign: TextAlign.center,
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    );
-                  },
-                );
-                Future.delayed(const Duration(seconds: 2), () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                });
-              } else {
-                showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                          child: Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: DefaultTheme.WHITE.withOpacity(0.8)),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: Image.asset(
-                                      'assets/images/ic-failed.png'),
-                                ),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Không thể tạo bệnh án, vui lòng tạo lại',
-                                    style: TextStyle(
-                                        color: DefaultTheme.GREY_TEXT,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w400,
-                                        decoration: TextDecoration.none),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-                Future.delayed(const Duration(seconds: 2), () {
-                  Navigator.of(context).pop();
-                });
-              }
-            });
-          },
-        );
-      },
-    );
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+          Future.delayed(const Duration(seconds: 2), () {
+            Navigator.of(context).pop();
+          });
+        }
+      });
+    });
+
+    // Future.delayed(
+    //   Duration(seconds: 3),
+    //   () {
+    //     _medicalInstructionHelper.getMedicalInsCreate().then(
+    //       (value) {
+
+    //       },
+    //     );
+    //   },
+    // );
   }
 
   checktitle() {
@@ -721,8 +749,11 @@ class _CreateMedicalInstructionViewState
         //
         setState(() {
           _imgFile = pickedFile;
-          _imgString = ImageUltility.base64String(
-              File(pickedFile.path).readAsBytesSync());
+          listImage.add(pickedFile.path);
+          listImage64Bit.add(ImageUltility.base64String(
+              File(pickedFile.path).readAsBytesSync()));
+          // _imgString = ImageUltility.base64String(
+          //     File(pickedFile.path).readAsBytesSync());
         });
         if (_imgFile.path != null || _imgFile.path != '') {
           showDialog(
@@ -774,7 +805,9 @@ class _CreateMedicalInstructionViewState
               setState(() {
                 _dianoseController.text =
                     _dianoseController.text + value.symptom;
-                if (titleCompare < value.titleCompare) {
+                if (titleCompare == null) {
+                  titleCompare = value.titleCompare;
+                } else if (titleCompare < value.titleCompare) {
                   titleCompare = value.titleCompare;
                 }
               });
@@ -794,7 +827,7 @@ class _CreateMedicalInstructionViewState
                             onPressed: () {
                               setState(() {
                                 titleCompare = null;
-                                _imgString = '';
+                                // _imgString = '';
                                 _imgFile = null;
                                 _dianoseController.text = '';
                               });

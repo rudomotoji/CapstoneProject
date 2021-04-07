@@ -123,7 +123,7 @@ class MedicalInstructionDTO {
   int healthRecordId;
   String dateCreate;
   int patientId;
-  PickedFile imageFile;
+  List<String> imageFile;
   //vitalsign
   VitalSignScheduleRespone vitalSignScheduleRespone;
 
