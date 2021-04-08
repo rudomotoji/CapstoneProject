@@ -1,4 +1,5 @@
 class ContractFullDTO {
+  int accountDoctorId;
   int doctorId;
   String fullNameDoctor;
   String phoneNumberDoctor;
@@ -7,6 +8,7 @@ class ContractFullDTO {
   String workLocationDoctor;
   String experience;
   String specialization;
+  int accountPatientId;
   int patientId;
   String fullNamePatient;
   String phoneNumberPatient;
@@ -21,12 +23,14 @@ class ContractFullDTO {
   int daysOfTracking;
   List<Diseases> diseases;
   List<MedicalInstructionTypes> medicalInstructionTypes;
+  List<MedicalInstructionTypes> medicalInstructionsDoctorChoosed;
   String dateCreated;
   String dateStarted;
   String dateFinished;
 
   ContractFullDTO(
-      {this.doctorId,
+      {this.accountDoctorId,
+      this.doctorId,
       this.fullNameDoctor,
       this.phoneNumberDoctor,
       this.addressDoctor,
@@ -34,6 +38,7 @@ class ContractFullDTO {
       this.workLocationDoctor,
       this.experience,
       this.specialization,
+      this.accountPatientId,
       this.patientId,
       this.fullNamePatient,
       this.phoneNumberPatient,
@@ -48,11 +53,13 @@ class ContractFullDTO {
       this.daysOfTracking,
       this.diseases,
       this.medicalInstructionTypes,
+      this.medicalInstructionsDoctorChoosed,
       this.dateCreated,
       this.dateStarted,
       this.dateFinished});
 
   ContractFullDTO.fromJson(Map<String, dynamic> json) {
+    accountDoctorId = json['accountDoctorId'];
     doctorId = json['doctorId'];
     fullNameDoctor = json['fullNameDoctor'];
     phoneNumberDoctor = json['phoneNumberDoctor'];
@@ -61,6 +68,7 @@ class ContractFullDTO {
     workLocationDoctor = json['workLocationDoctor'];
     experience = json['experience'];
     specialization = json['specialization'];
+    accountPatientId = json['accountPatientId'];
     patientId = json['patientId'];
     fullNamePatient = json['fullNamePatient'];
     phoneNumberPatient = json['phoneNumberPatient'];
@@ -85,6 +93,13 @@ class ContractFullDTO {
         medicalInstructionTypes.add(new MedicalInstructionTypes.fromJson(v));
       });
     }
+    if (json['medicalInstructionsDoctorChoosed'] != null) {
+      medicalInstructionsDoctorChoosed = new List<MedicalInstructionTypes>();
+      json['medicalInstructionsDoctorChoosed'].forEach((v) {
+        medicalInstructionsDoctorChoosed
+            .add(new MedicalInstructionTypes.fromJson(v));
+      });
+    }
     dateCreated = json['dateCreated'];
     dateStarted = json['dateStarted'];
     dateFinished = json['dateFinished'];
@@ -92,6 +107,7 @@ class ContractFullDTO {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['accountDoctorId'] = this.accountDoctorId;
     data['doctorId'] = this.doctorId;
     data['fullNameDoctor'] = this.fullNameDoctor;
     data['phoneNumberDoctor'] = this.phoneNumberDoctor;
@@ -100,6 +116,7 @@ class ContractFullDTO {
     data['workLocationDoctor'] = this.workLocationDoctor;
     data['experience'] = this.experience;
     data['specialization'] = this.specialization;
+    data['accountPatientId'] = this.accountPatientId;
     data['patientId'] = this.patientId;
     data['fullNamePatient'] = this.fullNamePatient;
     data['phoneNumberPatient'] = this.phoneNumberPatient;
@@ -118,6 +135,10 @@ class ContractFullDTO {
     if (this.medicalInstructionTypes != null) {
       data['medicalInstructionTypes'] =
           this.medicalInstructionTypes.map((v) => v.toJson()).toList();
+    }
+    if (this.medicalInstructionsDoctorChoosed != null) {
+      data['medicalInstructionsDoctorChoosed'] =
+          this.medicalInstructionsDoctorChoosed.map((v) => v.toJson()).toList();
     }
     data['dateCreated'] = this.dateCreated;
     data['dateStarted'] = this.dateStarted;
@@ -174,31 +195,30 @@ class MedicalInstructionTypes {
 }
 
 class MedicalInstructions {
-  String image;
-  String diagnose;
-  String description;
   int medicalInstructionId;
+  List<String> images;
+  String diagnose;
+  Null description;
 
-  MedicalInstructions({
-    this.image,
-    this.diagnose,
-    this.description,
-    this.medicalInstructionId,
-  });
+  MedicalInstructions(
+      {this.medicalInstructionId,
+      this.images,
+      this.diagnose,
+      this.description});
 
   MedicalInstructions.fromJson(Map<String, dynamic> json) {
-    image = json['image'];
+    medicalInstructionId = json['medicalInstructionId'];
+    images = json['images'].cast<String>();
     diagnose = json['diagnose'];
     description = json['description'];
-    medicalInstructionId = json['medicalInstructionId'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['image'] = this.image;
+    data['medicalInstructionId'] = this.medicalInstructionId;
+    data['images'] = this.images;
     data['diagnose'] = this.diagnose;
     data['description'] = this.description;
-    data['medicalInstructionId'] = this.medicalInstructionId;
     return data;
   }
 }

@@ -434,7 +434,7 @@ class _DetailContractView extends State<DetailContractView>
                                                     top: 10,
                                                     right: 10),
                                                 width: 250,
-                                                height: 185,
+                                                height: 200,
                                                 decoration: BoxDecoration(
                                                   color: DefaultTheme.WHITE
                                                       .withOpacity(0.7),
@@ -462,6 +462,7 @@ class _DetailContractView extends State<DetailContractView>
                                                         ),
                                                       ),
                                                     ),
+                                                    Spacer(),
                                                     Container(
                                                       padding: EdgeInsets.only(
                                                           left: 20, right: 20),
@@ -1126,8 +1127,25 @@ class _DetailContractView extends State<DetailContractView>
                                         Padding(
                                           padding: EdgeInsets.only(bottom: 7),
                                         ),
-                                        (_contractFullDTO.dateFinished != null)
+                                        (_contractFullDTO.dateFinished ==
+                                                    null ||
+                                                _contractFullDTO.dateFinished ==
+                                                    '0001-01-01T00:00:00')
                                             ? Row(
+                                                children: [
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                            40,
+                                                    child: Text(
+                                                      'Ngày kết thúc sẽ được cập nhật sau khi bác sĩ xét duyệt.',
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : Row(
                                                 children: [
                                                   //
 
@@ -1146,27 +1164,6 @@ class _DetailContractView extends State<DetailContractView>
                                                             40,
                                                     child: Text(
                                                       '${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}',
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            : Row(
-                                                children: [
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width -
-                                                            40,
-                                                    child: Text(
-                                                      'Ngày kết thúc sẽ được cập nhật sau khi bác sĩ xét duyệt.',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: DefaultTheme
-                                                              .SUCCESS_STATUS,
-                                                          wordSpacing: 1,
-                                                          letterSpacing: 0.4),
                                                     ),
                                                   ),
                                                 ],
@@ -1354,7 +1351,10 @@ class _DetailContractView extends State<DetailContractView>
                                     ],
                                   ),
                                 ),
-
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
                                 //
                                 Container(
                                   width: MediaQuery.of(context).size.width,
@@ -1385,7 +1385,7 @@ class _DetailContractView extends State<DetailContractView>
                                                     if (x
                                                             .medicalInstructions[
                                                                 index]
-                                                            .image ==
+                                                            .images ==
                                                         null) {
                                                       if (x
                                                           .medicalInstructionTypeName
@@ -1408,10 +1408,22 @@ class _DetailContractView extends State<DetailContractView>
                                                             .medicalInstructionId);
                                                       }
                                                     } else {
-                                                      _showFullImageDescription(
-                                                          x.medicalInstructions[
-                                                              index],
-                                                          x.medicalInstructionTypeName);
+                                                      showFullDetailComponent(
+                                                          x
+                                                              .medicalInstructions[
+                                                                  index]
+                                                              .images,
+                                                          x
+                                                              .medicalInstructionTypeName,
+                                                          '',
+                                                          x
+                                                              .medicalInstructions[
+                                                                  index]
+                                                              .diagnose);
+                                                      // _showFullImageDescription(
+                                                      //     x.medicalInstructions[
+                                                      //         index],
+                                                      //     x.medicalInstructionTypeName);
                                                     }
                                                   },
                                                   child: Stack(
@@ -1480,9 +1492,213 @@ class _DetailContractView extends State<DetailContractView>
                               ],
                             ),
                           ),
+                          Divider(
+                            color: DefaultTheme.GREY_TOP_TAB_BAR,
+                            height: 1,
+                          ),
                           Padding(
                             padding: EdgeInsets.only(bottom: 30),
                           ),
+                          //
+                          //
+                          //
+                          (state.dto.medicalInstructionsDoctorChoosed == null ||
+                                  state.dto.medicalInstructionTypes == [])
+                              ? Container()
+                              : Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  color: DefaultTheme.WHITE,
+                                  child: Column(
+                                    children: [
+                                      Divider(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        height: 1,
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        padding: EdgeInsets.only(
+                                            top: 10, bottom: 10, left: 20),
+                                        color: DefaultTheme.WHITE,
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: Image.asset(
+                                                  'assets/images/ic-medical-instruction.png'),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                            ),
+                                            Text(
+                                              'Phiếu y lệnh được bác sĩ lưu trữ',
+                                              textAlign: TextAlign.left,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: DefaultTheme
+                                                      .BLACK_BUTTON),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Divider(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        height: 1,
+                                      ),
+                                      //
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 200,
+                                        child: ListView(
+                                          scrollDirection: Axis.horizontal,
+                                          children: [
+                                            for (MedicalInstructionTypes x
+                                                in state.dto
+                                                    .medicalInstructionTypes)
+                                              Container(
+                                                height: 200,
+                                                child: ListView.builder(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                  itemCount: x
+                                                      .medicalInstructions
+                                                      .length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return Container(
+                                                      height: 200,
+                                                      width: 150,
+                                                      margin: EdgeInsets.only(
+                                                          left: 10),
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          if (x
+                                                                  .medicalInstructions[
+                                                                      index]
+                                                                  .images ==
+                                                              null) {
+                                                            if (x
+                                                                .medicalInstructionTypeName
+                                                                .contains(
+                                                                    'Đơn thuốc')) {
+                                                              Navigator.pushNamed(
+                                                                  context,
+                                                                  RoutesHDr
+                                                                      .MEDICAL_HISTORY_DETAIL,
+                                                                  arguments: x
+                                                                      .medicalInstructions[
+                                                                          index]
+                                                                      .medicalInstructionId);
+                                                            } else {
+                                                              //
+                                                              //
+                                                              _showDetailVitalSign(x
+                                                                  .medicalInstructions[
+                                                                      index]
+                                                                  .medicalInstructionId);
+                                                            }
+                                                          } else {
+                                                            showFullDetailComponent(
+                                                                x
+                                                                    .medicalInstructions[
+                                                                        index]
+                                                                    .images,
+                                                                x
+                                                                    .medicalInstructionTypeName,
+                                                                '',
+                                                                x
+                                                                    .medicalInstructions[
+                                                                        index]
+                                                                    .diagnose);
+                                                            // _showFullImageDescription(
+                                                            //     x.medicalInstructions[
+                                                            //         index],
+                                                            //     x.medicalInstructionTypeName);
+                                                          }
+                                                        },
+                                                        child: Stack(
+                                                          children: [
+                                                            //
+                                                            // SizedBox(
+                                                            //   width: 150,
+                                                            //   height: 200,
+                                                            //   child: Image.network(
+                                                            //       'http://45.76.186.233:8000/api/v1/Images?pathImage=${x.medicalInstructions[index].image}'),
+                                                            // ),
+                                                            checkTypeMedIns(
+                                                                x.medicalInstructions[
+                                                                    index],
+                                                                x.medicalInstructionTypeName),
+                                                            Positioned(
+                                                              bottom: 0,
+                                                              child: Container(
+                                                                width: 150,
+                                                                height: 100,
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            10),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  gradient: LinearGradient(
+                                                                      begin: Alignment
+                                                                          .topCenter,
+                                                                      end: Alignment
+                                                                          .bottomCenter,
+                                                                      colors: [
+                                                                        DefaultTheme
+                                                                            .TRANSPARENT,
+                                                                        DefaultTheme
+                                                                            .BLACK
+                                                                            .withOpacity(0.9),
+                                                                      ]),
+                                                                ),
+                                                                child: Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .bottomCenter,
+                                                                  child: Text(
+                                                                    '${x.medicalInstructionTypeName}',
+                                                                    style: TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .WHITE,
+                                                                        fontWeight:
+                                                                            FontWeight.w500),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                          (state.dto.medicalInstructionsDoctorChoosed == null ||
+                                  state.dto.medicalInstructionTypes == [])
+                              ? Container()
+                              : Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 1,
+                                ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 20),
+                          ),
+
                           //
                           Divider(
                             color: DefaultTheme.GREY_TOP_TAB_BAR,
@@ -1759,12 +1975,12 @@ class _DetailContractView extends State<DetailContractView>
 //hiển thị y lệnh
   checkTypeMedIns(MedicalInstructions medicalInstructions,
       String medicalInstructionTypeName) {
-    if (medicalInstructions.image != null) {
+    if (medicalInstructions.images != null) {
       return SizedBox(
         width: 150,
         height: 200,
         child: Image.network(
-            'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions.image}'),
+            'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions.images.first}'),
       );
     } else {
       if (medicalInstructionTypeName.contains('Đơn thuốc')) {
@@ -2271,7 +2487,10 @@ class _DetailContractView extends State<DetailContractView>
                                               left: 20, right: 20, bottom: 20),
                                           child: Text(
                                             (_contractFullDTO.dateFinished ==
-                                                    null)
+                                                        null ||
+                                                    _contractFullDTO
+                                                            .dateFinished ==
+                                                        '0001-01-01T00:00:00')
                                                 ? 'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateStarted)}. \n Ngày kết thúc sẽ được cập nhật sau khi bác sĩ xét duyệt.'
                                                 : 'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateStarted)} đến ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateFinished)}.',
                                             style: TextStyle(
@@ -2576,14 +2795,20 @@ class _DetailContractView extends State<DetailContractView>
                                                 fontFamily: 'NewYork'),
                                           ),
                                         ),
-                                        (_contractFullDTO.priceLicense != null)
+                                        (_contractFullDTO.priceLicense ==
+                                                    null ||
+                                                _contractFullDTO.priceLicense ==
+                                                    0 ||
+                                                _contractFullDTO
+                                                        .daysOfTracking ==
+                                                    0)
                                             ? Padding(
                                                 padding: EdgeInsets.only(
                                                     left: 20,
                                                     right: 20,
                                                     bottom: 10),
                                                 child: Text(
-                                                  '- Phí tiền dịch vụ: ${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)} từ ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)} đến ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}.',
+                                                  '- Phí tiền dịch vụ: Được cập nhật sau khi bác sĩ phê duyệt',
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -2597,7 +2822,7 @@ class _DetailContractView extends State<DetailContractView>
                                                     right: 20,
                                                     bottom: 10),
                                                 child: Text(
-                                                  '- Phí tiền dịch vụ: Được cập nhật sau khi bác sĩ phê duyệt',
+                                                  '- Phí tiền dịch vụ: ${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)} từ ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)} đến ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}.',
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w500,
@@ -2635,7 +2860,10 @@ class _DetailContractView extends State<DetailContractView>
                                               left: 20, right: 20, bottom: 10),
                                           child: Text(
                                             (_contractFullDTO.dateFinished ==
-                                                    null)
+                                                        null ||
+                                                    _contractFullDTO
+                                                            .dateFinished ==
+                                                        '0001-01-01T00:00:00')
                                                 ? '1. Hai bên cam kết thực hiện đúng những điều khoản trong hợp đồng từ ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)}. Ngày kết thúc hợp đồng sẽ được bác sĩ phê duyệt.'
                                                 : '1. Hai bên cam kết thực hiện đúng những điều khoản trong hợp đồng từ ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)} đến ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}.',
                                             style: TextStyle(
@@ -3085,7 +3313,7 @@ class _DetailContractView extends State<DetailContractView>
                       customSize: Size(MediaQuery.of(context).size.width,
                           MediaQuery.of(context).size.height),
                       imageProvider: NetworkImage(
-                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto.image}'),
+                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto.images.first}'),
                     ),
                   ),
                   Positioned(
@@ -3369,5 +3597,256 @@ class _DetailContractView extends State<DetailContractView>
       }
       return Container();
     });
+  }
+
+  showFullDetailComponent(
+      List<String> imgs, String miName, String dateCreate, String dianose) {
+    int positionImage = 0;
+    bool isTappedOut = false;
+
+    return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          //
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+            return Material(
+              child: InkWell(
+                onTap: () {
+                  setModalState(() {
+                    isTappedOut = !isTappedOut;
+                  });
+                },
+                child: (isTappedOut)
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        color: DefaultTheme.BLACK,
+                        child: Stack(
+                          // mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            //
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              child: PhotoView(
+                                customSize: Size(
+                                    MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height),
+                                imageProvider: NetworkImage(
+                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        color: DefaultTheme.BLACK,
+                        child: Stack(
+                          // mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            //
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              child: PhotoView(
+                                customSize: Size(
+                                    MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height),
+                                imageProvider: NetworkImage(
+                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+                              ),
+                            ),
+                            (imgs.length > 1)
+                                ? Positioned(
+                                    right: 0,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setModalState(() {
+                                          if (positionImage == imgs.length) {
+                                            positionImage = 0;
+                                          } else if (positionImage <
+                                              imgs.length - 1) {
+                                            positionImage++;
+                                          } else {
+                                            positionImage = 0;
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment.centerRight,
+                                              end: Alignment.centerLeft,
+                                              colors: [
+                                                DefaultTheme.BLACK
+                                                    .withOpacity(0.3),
+                                                DefaultTheme.TRANSPARENT,
+                                              ]),
+                                        ),
+                                        child: SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-next.png'),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            (imgs.length > 1)
+                                ? Positioned(
+                                    left: 0,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setModalState(() {
+                                          // if (positionImage == imgs.length) {
+                                          //   positionImage = 0;
+                                          // } else if (positionImage < imgs.length - 1) {
+                                          //   positionImage--;
+                                          // } else {
+                                          //   positionImage = 0;
+                                          // }
+                                          if (positionImage == 0) {
+                                            positionImage = imgs.length - 1;
+                                          } else {
+                                            positionImage--;
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment.centerLeft,
+                                              end: Alignment.centerRight,
+                                              colors: [
+                                                DefaultTheme.BLACK
+                                                    .withOpacity(0.3),
+                                                DefaultTheme.TRANSPARENT,
+                                              ]),
+                                        ),
+                                        child: SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-prev.png'),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            (imgs != null)
+                                ? Positioned(
+                                    top: 25,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Center(
+                                      child: Text(
+                                          '${positionImage + 1}/${imgs.length}',
+                                          style: TextStyle(
+                                              color: DefaultTheme.WHITE)),
+                                    ),
+                                  )
+                                : Container(),
+                            Positioned(
+                              top: 20,
+                              right: 10,
+                              child: Container(
+                                width: 30,
+                                height: 30,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: Image.asset(
+                                        'assets/images/ic-close.png'),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                padding: EdgeInsets.only(left: 30, right: 30),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        DefaultTheme.TRANSPARENT,
+                                        DefaultTheme.BLACK.withOpacity(0.9),
+                                      ]),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    //
+
+                                    Text(
+                                      '$miName',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5),
+                                    ),
+                                    Divider(
+                                      color: DefaultTheme.WHITE,
+                                      height: 1,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                    ),
+                                    Text(
+                                      'Chuẩn đoán $dianose',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 15),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 5,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                    ),
+                                    Text(
+                                      'Ngày tạo $dateCreate',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 15),
+                                    ),
+
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 50),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+            );
+            //
+          });
+        });
   }
 }

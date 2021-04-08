@@ -183,7 +183,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
             ),
           ),
           floatingActionButton: FloatingActionButton.extended(
-            isExtended: false,
+            elevation: 3,
             label: Text('Y lệnh mới',
                 style: TextStyle(color: DefaultTheme.BLUE_DARK)),
             backgroundColor: DefaultTheme.GREY_VIEW,

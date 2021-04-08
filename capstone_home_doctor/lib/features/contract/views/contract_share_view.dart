@@ -198,21 +198,61 @@ class _ContractShareView extends State<ContractShareView>
           children: <Widget>[
             Row(
               children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: SizedBox(
-                    width: (30 * 1.5),
-                    height: (40 * 1.5),
-                    child: (e.images != null || e.images.isNotEmpty)
-                        ? Image.network(
-                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${e.images.first}',
-                            fit: BoxFit.fill,
-                          )
-                        : Container(
-                            width: (30 * 1.5),
-                            height: (40 * 1.5),
-                            color: DefaultTheme.GREY_TOP_TAB_BAR,
-                          ),
+                InkWell(
+                  onTap: () {
+                    //
+                    if (e.images == null || e.images.isEmpty) {
+                      _showDetailVitalSign(e.medicalInstructionId);
+                    } else {
+                      showFullDetailComponent(
+                          e.images, nameOfList, e.dateCreate, e.diagnose);
+                    }
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: SizedBox(
+                      width: (30 * 1.5),
+                      height: (40 * 1.5),
+                      child: (e.images == null || e.images.isEmpty)
+                          ? Container(
+                              width: (30 * 1.5),
+                              height: (40 * 1.5),
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                            )
+                          : Stack(
+                              children: [
+                                Container(
+                                  width: (30 * 1.5),
+                                  height: (40 * 1.5),
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  child: (e.images == null)
+                                      ? Container
+                                      : Image.network(
+                                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${e.images.first}',
+                                          fit: BoxFit.fill,
+                                        ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  child: Container(
+                                      width: (30 * 1.5),
+                                      height: (40 * 1.5),
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR
+                                          .withOpacity(0.4),
+                                      child: Center(
+                                        child: Text(
+                                          (e.images.length > 1)
+                                              ? '${e.images.length}+'
+                                              : '',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: DefaultTheme.WHITE),
+                                        ),
+                                      )),
+                                ),
+                              ],
+                            ),
+                    ),
                   ),
                 ),
                 Column(
@@ -328,53 +368,57 @@ class _ContractShareView extends State<ContractShareView>
                 InkWell(
                   onTap: () {
                     //
-                    showFullDetailComponent(
-                        e.images, nameOfList, e.dateCreate, e.diagnose);
+                    if (e.images == null || e.images.isEmpty) {
+                      _showDetailVitalSign(e.medicalInstructionId);
+                    } else {
+                      showFullDetailComponent(
+                          e.images, nameOfList, e.dateCreate, e.diagnose);
+                    }
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(6),
                     child: SizedBox(
-                      width: (30 * 1.5),
-                      height: (40 * 1.5),
-                      child: (e.images != null || e.images.isNotEmpty)
-                          ? Stack(
-                              children: [
-                                Container(
-                                  width: (30 * 1.5),
-                                  height: (40 * 1.5),
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  child: (e.images == null)
-                                      ? Container
-                                      : Image.network(
-                                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${e.images.first}',
-                                          fit: BoxFit.fill,
-                                        ),
-                                ),
-                                Positioned(
-                                  top: 0,
-                                  child: Container(
-                                      width: (30 * 1.5),
-                                      height: (40 * 1.5),
-                                      color: DefaultTheme.GREY_TOP_TAB_BAR
-                                          .withOpacity(0.2),
-                                      child: Center(
-                                        child: Text(
-                                          (e.images.length > 1)
-                                              ? '${e.images.length}+'
-                                              : '',
-                                          style: TextStyle(
-                                              color: DefaultTheme.WHITE),
-                                        ),
-                                      )),
-                                ),
-                              ],
-                            )
-                          : Container(
-                              width: (30 * 1.5),
-                              height: (40 * 1.5),
-                              color: DefaultTheme.GREY_TOP_TAB_BAR,
-                            ),
-                    ),
+                        width: (30 * 1.5),
+                        height: (40 * 1.5),
+                        child: (e.images == null || e.images.isEmpty)
+                            ? Container(
+                                width: (30 * 1.5),
+                                height: (40 * 1.5),
+                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                              )
+                            : Stack(
+                                children: [
+                                  Container(
+                                    width: (30 * 1.5),
+                                    height: (40 * 1.5),
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    child: (e.images == null)
+                                        ? Container
+                                        : Image.network(
+                                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${e.images.first}',
+                                            fit: BoxFit.fill,
+                                          ),
+                                  ),
+                                  Positioned(
+                                    top: 0,
+                                    child: Container(
+                                        width: (30 * 1.5),
+                                        height: (40 * 1.5),
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR
+                                            .withOpacity(0.4),
+                                        child: Center(
+                                          child: Text(
+                                            (e.images.length > 1)
+                                                ? '${e.images.length}+'
+                                                : '',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: DefaultTheme.WHITE),
+                                          ),
+                                        )),
+                                  ),
+                                ],
+                              )),
                   ),
                 ),
 
@@ -1241,8 +1285,8 @@ class _ContractShareView extends State<ContractShareView>
                       child: InkWell(
                         onTap: () {
                           print('tap');
-                          _showFullImageDescription(
-                              medicalInstructions1[index].images.first,
+                          showFullDetailComponent(
+                              medicalInstructions1[index].images,
                               'Phiếu điện tim',
                               '${medicalInstructions1[index].dateCreate}',
                               '${medicalInstructions1[index].diagnose}');
@@ -1259,6 +1303,31 @@ class _ContractShareView extends State<ContractShareView>
                               width: 150,
                               height: 200,
                               color: DefaultTheme.BLACK_BUTTON.withOpacity(0.2),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: 150,
+                                height: 200,
+                                color: DefaultTheme.GREY_TOP_TAB_BAR
+                                    .withOpacity(0.3),
+                                child: Center(
+                                    child:
+                                        (medicalInstructions1[index].images ==
+                                                    null ||
+                                                medicalInstructions1[index]
+                                                        .images
+                                                        .length <
+                                                    2)
+                                            ? Text('')
+                                            : Text(
+                                                '${medicalInstructions1[index].images.length}+',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: DefaultTheme.WHITE,
+                                                    fontSize: 25),
+                                              )),
+                              ),
                             ),
                             Positioned(
                               bottom: 0,
@@ -1376,8 +1445,8 @@ class _ContractShareView extends State<ContractShareView>
                       child: InkWell(
                         onTap: () {
                           print('tap');
-                          _showFullImageDescription(
-                              medicalInstructions2[index].images.first,
+                          showFullDetailComponent(
+                              medicalInstructions2[index].images,
                               'Phiếu X-Quang',
                               '${medicalInstructions2[index].dateCreate}',
                               '${medicalInstructions2[index].diagnose}');
@@ -1396,6 +1465,31 @@ class _ContractShareView extends State<ContractShareView>
                               width: 150,
                               height: 200,
                               color: DefaultTheme.BLACK_BUTTON.withOpacity(0.2),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: 150,
+                                height: 200,
+                                color: DefaultTheme.GREY_TOP_TAB_BAR
+                                    .withOpacity(0.3),
+                                child: Center(
+                                    child:
+                                        (medicalInstructions2[index].images ==
+                                                    null ||
+                                                medicalInstructions2[index]
+                                                        .images
+                                                        .length <
+                                                    2)
+                                            ? Text('')
+                                            : Text(
+                                                '${medicalInstructions2[index].images.length}+',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: DefaultTheme.WHITE,
+                                                    fontSize: 25),
+                                              )),
+                              ),
                             ),
                             Positioned(
                               bottom: 0,
@@ -1532,7 +1626,32 @@ class _ContractShareView extends State<ContractShareView>
                             Container(
                               width: 150,
                               height: 200,
-                              color: DefaultTheme.BLACK_BUTTON.withOpacity(0.2),
+                              color: DefaultTheme.BLACK_BUTTON.withOpacity(0.4),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: 150,
+                                height: 200,
+                                color: DefaultTheme.GREY_TOP_TAB_BAR
+                                    .withOpacity(0.3),
+                                child: Center(
+                                    child:
+                                        (medicalInstructions3[index].images ==
+                                                    null ||
+                                                medicalInstructions3[index]
+                                                        .images
+                                                        .length <
+                                                    2)
+                                            ? Text('')
+                                            : Text(
+                                                '${medicalInstructions3[index].images.length}+',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: DefaultTheme.WHITE,
+                                                    fontSize: 25),
+                                              )),
+                              ),
                             ),
                             Positioned(
                               bottom: 0,
@@ -1577,119 +1696,11 @@ class _ContractShareView extends State<ContractShareView>
     );
   }
 
-  _showFullImageDescription(
-      String img, String miName, String dateCreate, String dianose) {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          //
-          return Material(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: DefaultTheme.BLACK,
-              child: Stack(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  //
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: PhotoView(
-                      customSize: Size(MediaQuery.of(context).size.width,
-                          MediaQuery.of(context).size.height),
-                      imageProvider: NetworkImage(
-                          'http://45.76.186.233:8000/api/v1/Images?pathImage=${img}'),
-                    ),
-                  ),
-                  Positioned(
-                    top: 20,
-                    right: 10,
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: Image.asset('assets/images/ic-close.png'),
-                        ),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      padding: EdgeInsets.only(left: 30, right: 30),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              DefaultTheme.TRANSPARENT,
-                              DefaultTheme.BLACK.withOpacity(0.9),
-                            ]),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          //
-
-                          Text(
-                            '$miName',
-                            style: TextStyle(
-                                color: DefaultTheme.WHITE,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 5),
-                          ),
-                          Divider(
-                            color: DefaultTheme.WHITE,
-                            height: 1,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                          ),
-                          Text(
-                            'Chuẩn đoán $dianose',
-                            style: TextStyle(
-                                color: DefaultTheme.WHITE, fontSize: 15),
-                          ),
-                          Text(
-                            'Ngày tạo $dateCreate',
-                            style: TextStyle(
-                                color: DefaultTheme.WHITE, fontSize: 15),
-                          ),
-
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 50),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-          //
-        });
-  }
-
   showFullDetailComponent(
       List<String> imgs, String miName, String dateCreate, String dianose) {
     int positionImage = 0;
-    print('e img now: ${positionImage}');
+    bool isTappedOut = false;
+
     return showDialog(
         barrierDismissible: false,
         context: context,
@@ -1698,187 +1709,237 @@ class _ContractShareView extends State<ContractShareView>
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
             return Material(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                color: DefaultTheme.BLACK,
-                child: Stack(
-                  // mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    //
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      child: PhotoView(
-                        customSize: Size(MediaQuery.of(context).size.width,
-                            MediaQuery.of(context).size.height),
-                        imageProvider: NetworkImage(
-                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
-                      ),
-                    ),
-                    (imgs.length > 1)
-                        ? Positioned(
-                            right: 0,
-                            child: InkWell(
-                              onTap: () {
-                                //
-                                print('position img now: $positionImage');
-                                setModalState(() {
-                                  if (positionImage == imgs.length) {
-                                    positionImage = 0;
-                                  } else if (positionImage < imgs.length - 1) {
-                                    positionImage++;
-                                  } else {
-                                    positionImage = 0;
-                                  }
-                                });
-                              },
-                              child: Container(
-                                width: 50,
-                                height: MediaQuery.of(context).size.height,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.centerRight,
-                                      end: Alignment.centerLeft,
-                                      colors: [
-                                        DefaultTheme.BLACK.withOpacity(0.5),
-                                        DefaultTheme.TRANSPARENT,
-                                      ]),
-                                ),
-                                child: SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child:
-                                      Image.asset('assets/images/ic-next.png'),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(),
-                    (imgs.length > 1)
-                        ? Positioned(
-                            left: 0,
-                            child: InkWell(
-                              onTap: () {
-                                setModalState(() {
-                                  // if (positionImage == imgs.length) {
-                                  //   positionImage = 0;
-                                  // } else if (positionImage < imgs.length - 1) {
-                                  //   positionImage--;
-                                  // } else {
-                                  //   positionImage = 0;
-                                  // }
-                                  if (positionImage == 0) {
-                                    positionImage = imgs.length - 1;
-                                  } else {
-                                    positionImage--;
-                                  }
-                                });
-                              },
-                              child: Container(
-                                width: 50,
-                                height: MediaQuery.of(context).size.height,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        DefaultTheme.BLACK.withOpacity(0.5),
-                                        DefaultTheme.TRANSPARENT,
-                                      ]),
-                                ),
-                                child: SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child:
-                                      Image.asset('assets/images/ic-prev.png'),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(),
-                    Positioned(
-                      top: 20,
-                      right: 10,
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
-                          child: SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: Image.asset('assets/images/ic-close.png'),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
+              child: InkWell(
+                onTap: () {
+                  setModalState(() {
+                    isTappedOut = !isTappedOut;
+                  });
+                },
+                child: (isTappedOut)
+                    ? Container(
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.4,
-                        padding: EdgeInsets.only(left: 30, right: 30),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                DefaultTheme.TRANSPARENT,
-                                DefaultTheme.BLACK.withOpacity(0.9),
-                              ]),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        height: MediaQuery.of(context).size.height,
+                        color: DefaultTheme.BLACK,
+                        child: Stack(
+                          // mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             //
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              child: PhotoView(
+                                customSize: Size(
+                                    MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height),
+                                imageProvider: NetworkImage(
+                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        color: DefaultTheme.BLACK,
+                        child: Stack(
+                          // mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            //
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              child: PhotoView(
+                                customSize: Size(
+                                    MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height),
+                                imageProvider: NetworkImage(
+                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+                              ),
+                            ),
+                            (imgs.length > 1)
+                                ? Positioned(
+                                    right: 0,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setModalState(() {
+                                          if (positionImage == imgs.length) {
+                                            positionImage = 0;
+                                          } else if (positionImage <
+                                              imgs.length - 1) {
+                                            positionImage++;
+                                          } else {
+                                            positionImage = 0;
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment.centerRight,
+                                              end: Alignment.centerLeft,
+                                              colors: [
+                                                DefaultTheme.BLACK
+                                                    .withOpacity(0.3),
+                                                DefaultTheme.TRANSPARENT,
+                                              ]),
+                                        ),
+                                        child: SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-next.png'),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            (imgs.length > 1)
+                                ? Positioned(
+                                    left: 0,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setModalState(() {
+                                          // if (positionImage == imgs.length) {
+                                          //   positionImage = 0;
+                                          // } else if (positionImage < imgs.length - 1) {
+                                          //   positionImage--;
+                                          // } else {
+                                          //   positionImage = 0;
+                                          // }
+                                          if (positionImage == 0) {
+                                            positionImage = imgs.length - 1;
+                                          } else {
+                                            positionImage--;
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment.centerLeft,
+                                              end: Alignment.centerRight,
+                                              colors: [
+                                                DefaultTheme.BLACK
+                                                    .withOpacity(0.3),
+                                                DefaultTheme.TRANSPARENT,
+                                              ]),
+                                        ),
+                                        child: SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-prev.png'),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            (imgs != null)
+                                ? Positioned(
+                                    top: 25,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Center(
+                                      child: Text(
+                                          '${positionImage + 1}/${imgs.length}',
+                                          style: TextStyle(
+                                              color: DefaultTheme.WHITE)),
+                                    ),
+                                  )
+                                : Container(),
+                            Positioned(
+                              top: 20,
+                              right: 10,
+                              child: Container(
+                                width: 30,
+                                height: 30,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: Image.asset(
+                                        'assets/images/ic-close.png'),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                padding: EdgeInsets.only(left: 30, right: 30),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        DefaultTheme.TRANSPARENT,
+                                        DefaultTheme.BLACK.withOpacity(0.9),
+                                      ]),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    //
 
-                            Text(
-                              '$miName',
-                              style: TextStyle(
-                                  color: DefaultTheme.WHITE,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 5),
-                            ),
-                            Divider(
-                              color: DefaultTheme.WHITE,
-                              height: 1,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                            ),
-                            Text(
-                              'Chuẩn đoán $dianose',
-                              style: TextStyle(
-                                  color: DefaultTheme.WHITE, fontSize: 15),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 5,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                            ),
-                            Text(
-                              'Ngày tạo $dateCreate',
-                              style: TextStyle(
-                                  color: DefaultTheme.WHITE, fontSize: 15),
-                            ),
+                                    Text(
+                                      '$miName',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5),
+                                    ),
+                                    Divider(
+                                      color: DefaultTheme.WHITE,
+                                      height: 1,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                    ),
+                                    Text(
+                                      'Chuẩn đoán $dianose',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 15),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 5,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                    ),
+                                    Text(
+                                      'Ngày tạo $dateCreate',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 15),
+                                    ),
 
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 50),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 50),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
               ),
             );
             //
@@ -2102,8 +2163,8 @@ class _ContractShareView extends State<ContractShareView>
                                                                   .start,
                                                           children: [
                                                             SizedBox(
-                                                              width: 20,
-                                                              height: 20,
+                                                              width: 30,
+                                                              height: 30,
                                                               child: Image.asset(
                                                                   'assets/images/ic-health-record.png'),
                                                             ),
@@ -2113,15 +2174,20 @@ class _ContractShareView extends State<ContractShareView>
                                                                       left: 10),
                                                             ),
                                                             Column(
-                                                              children: <
-                                                                  Widget>[
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
                                                                 //
                                                                 Container(
                                                                   width: MediaQuery.of(
                                                                               context)
                                                                           .size
                                                                           .width -
-                                                                      122,
+                                                                      132,
                                                                   child: Text(
                                                                     'Hồ sơ tại ${group.healthRecordPlace}',
                                                                     style: TextStyle(
@@ -2135,12 +2201,18 @@ class _ContractShareView extends State<ContractShareView>
                                                                     maxLines: 2,
                                                                   ),
                                                                 ),
+                                                                // Padding(
+                                                                //   padding: EdgeInsets
+                                                                //       .only(
+                                                                //           bottom:
+                                                                //               3),
+                                                                // ),
                                                                 Container(
                                                                   width: MediaQuery.of(
                                                                               context)
                                                                           .size
                                                                           .width -
-                                                                      122,
+                                                                      132,
                                                                   child: Text(
                                                                     'Ngày tạo: ${group.dateCreate}',
                                                                     style:
@@ -2154,6 +2226,15 @@ class _ContractShareView extends State<ContractShareView>
                                                                     maxLines: 1,
                                                                   ),
                                                                 ),
+                                                                Padding(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          bottom:
+                                                                              5),
+                                                                ),
+                                                                _genderDiseaseCheckBox(
+                                                                    group
+                                                                        .diseases),
                                                               ],
                                                             ),
                                                           ],
@@ -2593,12 +2674,12 @@ class _ContractShareView extends State<ContractShareView>
                                                                   maxLines: 2,
                                                                 ),
                                                               ),
-                                                              Padding(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        bottom:
-                                                                            5),
-                                                              ),
+                                                              // Padding(
+                                                              //   padding: EdgeInsets
+                                                              //       .only(
+                                                              //           bottom:
+                                                              //               3),
+                                                              // ),
                                                               Container(
                                                                 width: MediaQuery.of(
                                                                             context)
@@ -2703,21 +2784,13 @@ class _ContractShareView extends State<ContractShareView>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (String disease in diseases)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              width: MediaQuery.of(context).size.width - 160,
-              padding: EdgeInsets.only(left: 10, right: 5, top: 5, bottom: 5),
-              margin: EdgeInsets.only(bottom: 5),
-              decoration: BoxDecoration(
-                color: DefaultTheme.BLUE_REFERENCE.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text('$disease',
-                  style: TextStyle(fontSize: 12, color: DefaultTheme.WHITE),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2),
-            ),
+          Container(
+            width: MediaQuery.of(context).size.width - 132,
+            margin: EdgeInsets.only(bottom: 5),
+            child: Text('$disease',
+                style: TextStyle(fontSize: 12, color: DefaultTheme.BLUE_DARK),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2),
           ),
       ],
     );

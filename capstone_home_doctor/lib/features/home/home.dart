@@ -205,9 +205,10 @@ class _MainHomeState extends State<MainHome> {
             builder: (context, state) {
               countNoti = 0;
               if (state is NotificationListStateSuccess) {
-                // if (state.listNotification == null) {
-                //   print('having no list noti');
-                // } else {
+                if (state.listNotification == null) {
+                  return _offlineView(_widgetOptions);
+                }
+                // else {
                 //   print('get list noti success');
                 // }
                 for (NotificationDTO x in state.listNotification) {
@@ -219,273 +220,249 @@ class _MainHomeState extends State<MainHome> {
                 }
               }
               //
-              return Scaffold(
-                // appBar: AppBar(
-                //   title: Text('ssss'),
-                // ),
-                body: Center(
-                  child: _widgetOptions.elementAt(_currentIndex),
-                ),
-                bottomNavigationBar: BottomNavigationBar(
-                  currentIndex: _currentIndex,
-                  type: BottomNavigationBarType.fixed,
-                  backgroundColor: DefaultTheme.GREY_TAB_BAR,
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: new Image.asset(
-                        'assets/images/ic-dashboard.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      activeIcon: new Image.asset(
-                        'assets/images/ic-dashboard-selected.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      title: Text(
-                        'Trang chủ',
-                        style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                      ),
-                    ),
-                    BottomNavigationBarItem(
-                      icon: new Image.asset(
-                        'assets/images/ic-health.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      activeIcon: new Image.asset(
-                        'assets/images/ic-health-selected.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      title: Text(
-                        'Sức khỏe',
-                        style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                      ),
-                    ),
-                    BottomNavigationBarItem(
-                      icon: new Image.asset(
-                        'assets/images/ic-health-record-u.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      activeIcon: new Image.asset(
-                        'assets/images/ic-health-record.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      title: Text(
-                        'Hồ sơ',
-                        style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                      ),
-                    ),
-                    BottomNavigationBarItem(
-                      icon: new Image.asset(
-                        'assets/images/ic-acti-u.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      activeIcon: new Image.asset(
-                        'assets/images/ic-acti.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                      title: Text(
-                        'Hoạt động',
-                        style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                      ),
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Container(
-                        child: Stack(
-                          children: [
-                            new Image.asset(
-                              'assets/images/ic-noti.png',
-                              height: 30,
-                              width: 30,
-                            ),
-                            (countNoti != 0)
-                                ? Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: Container(
-                                      width: 15,
-                                      height: 15,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        // color: DefaultTheme.RED_CALENDAR,
-                                        gradient: LinearGradient(
-                                            begin: Alignment.topRight,
-                                            end: Alignment.bottomLeft,
-                                            colors: [
-                                              DefaultTheme.GRADIENT_5,
-                                              DefaultTheme.RED_CALENDAR,
-                                            ]),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          '${countNoti}',
-                                          style: TextStyle(
-                                              color: DefaultTheme.WHITE,
-                                              fontSize: 10),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: Container(
-                                      width: 0,
-                                      height: 0,
-                                    ),
-                                  )
-                          ],
-                        ),
-                      ),
-
-                      //
-                      activeIcon: new Stack(
-                        children: [
-                          new Image.asset(
-                            'assets/images/ic-noti-selected.png',
-                            height: 30,
-                            width: 30,
-                          ),
-                        ],
-                      ),
-                      title: Text(
-                        'Thông báo',
-                        style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                      ),
-                    ),
-                  ],
-                  onTap: (index) {
-                    setState(() {
-                      print('index: $index');
-                      arguments = null;
-                      _currentIndex = 0;
-                      _currentIndex = index;
-                    });
-                  },
-                ),
-              );
+              return _onlineGetNotiView(_widgetOptions);
             },
           )
-        : Scaffold(
-            // appBar: AppBar(
-            //   title: Text('ssss'),
-            // ),
-            body: Center(
-              child: _widgetOptions.elementAt(_currentIndex),
-            ),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: _currentIndex,
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: DefaultTheme.GREY_TAB_BAR,
-              items: [
-                BottomNavigationBarItem(
-                  icon: new Image.asset(
-                    'assets/images/ic-dashboard.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  activeIcon: new Image.asset(
-                    'assets/images/ic-dashboard-selected.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  title: Text(
-                    'Trang chủ',
-                    style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  icon: new Image.asset(
-                    'assets/images/ic-health.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  activeIcon: new Image.asset(
-                    'assets/images/ic-health-selected.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  title: Text(
-                    'Sức khỏe',
-                    style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  icon: new Image.asset(
-                    'assets/images/ic-health-record-u.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  activeIcon: new Image.asset(
-                    'assets/images/ic-health-record.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  title: Text(
-                    'Hồ sơ',
-                    style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  icon: new Image.asset(
-                    'assets/images/ic-acti-u.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  activeIcon: new Image.asset(
-                    'assets/images/ic-acti.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  title: Text(
-                    'Hoạt động',
-                    style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                  ),
-                ),
-                BottomNavigationBarItem(
-                  icon: Container(
-                    child: Stack(
-                      children: [
-                        new Image.asset(
-                          'assets/images/ic-noti.png',
-                          height: 30,
-                          width: 30,
-                        ),
-                      ],
-                    ),
-                  ),
+        : _offlineView(_widgetOptions);
+  }
 
-                  //
-                  activeIcon: new Stack(
-                    children: [
-                      new Image.asset(
-                        'assets/images/ic-noti-selected.png',
-                        height: 30,
-                        width: 30,
-                      ),
-                    ],
+  _onlineGetNotiView(List<Widget> widgetOption) {
+    return Scaffold(
+      // appBar: AppBar(
+      //   title: Text('ssss'),
+      // ),
+      body: Center(
+        child: widgetOption.elementAt(_currentIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: DefaultTheme.GREY_TAB_BAR,
+        elevation: 1,
+        showUnselectedLabels: false,
+        showSelectedLabels: false,
+        selectedLabelStyle: TextStyle(fontSize: 12, color: DefaultTheme.BLACK),
+        items: [
+          BottomNavigationBarItem(
+            icon: new Image.asset(
+              'assets/images/ic-dashboard.png',
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: new Image.asset(
+              'assets/images/ic-dashboard-selected.png',
+              height: 30,
+              width: 30,
+            ),
+            label: 'Trang chủ',
+          ),
+          BottomNavigationBarItem(
+            icon: new Image.asset(
+              'assets/images/ic-health.png',
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: new Image.asset(
+              'assets/images/ic-health-selected.png',
+              height: 30,
+              width: 30,
+            ),
+            label: 'Sức khoẻ',
+          ),
+          BottomNavigationBarItem(
+            icon: new Image.asset(
+              'assets/images/ic-health-record-u.png',
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: new Image.asset(
+              'assets/images/ic-health-record.png',
+              height: 30,
+              width: 30,
+            ),
+            label: 'Hồ sơ',
+          ),
+          BottomNavigationBarItem(
+            icon: new Image.asset(
+              'assets/images/ic-acti-u.png',
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: new Image.asset(
+              'assets/images/ic-acti.png',
+              height: 30,
+              width: 30,
+            ),
+            label: 'Hoạt động',
+          ),
+          BottomNavigationBarItem(
+            icon: Container(
+              child: Stack(
+                children: [
+                  new Image.asset(
+                    'assets/images/ic-noti.png',
+                    height: 30,
+                    width: 30,
                   ),
-                  title: Text(
-                    'Thông báo',
-                    style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                  ),
+                  (countNoti != 0)
+                      ? Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Container(
+                            width: 15,
+                            height: 15,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              // color: DefaultTheme.RED_CALENDAR,
+                              gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [
+                                    DefaultTheme.GRADIENT_5,
+                                    DefaultTheme.RED_CALENDAR,
+                                  ]),
+                            ),
+                            child: Center(
+                              child: Text(
+                                '${countNoti}',
+                                style: TextStyle(
+                                    color: DefaultTheme.WHITE, fontSize: 10),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Container(
+                            width: 0,
+                            height: 0,
+                          ),
+                        )
+                ],
+              ),
+            ),
+
+            //
+            activeIcon: new Stack(
+              children: [
+                new Image.asset(
+                  'assets/images/ic-noti-selected.png',
+                  height: 30,
+                  width: 30,
                 ),
               ],
-              onTap: (index) {
-                _getAccountId();
-                setState(() {
-                  arguments = null;
-                  _currentIndex = index;
-                });
-              },
             ),
-          );
-    ;
+            label: 'Thông báo',
+          ),
+        ],
+        onTap: (index) {
+          setState(() {
+            print('index: $index');
+            arguments = null;
+            _currentIndex = 0;
+            _currentIndex = index;
+          });
+        },
+      ),
+    );
+  }
+
+  _offlineView(List<Widget> widgetOption) {
+    return Scaffold(
+      body: Center(
+        child: widgetOption.elementAt(_currentIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: DefaultTheme.GREY_TAB_BAR,
+        selectedLabelStyle: TextStyle(fontSize: 12, color: DefaultTheme.BLACK),
+        items: [
+          BottomNavigationBarItem(
+            icon: new Image.asset(
+              'assets/images/ic-dashboard.png',
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: new Image.asset(
+              'assets/images/ic-dashboard-selected.png',
+              height: 30,
+              width: 30,
+            ),
+            label: 'Trang chủ',
+          ),
+          BottomNavigationBarItem(
+              icon: new Image.asset(
+                'assets/images/ic-health.png',
+                height: 30,
+                width: 30,
+              ),
+              activeIcon: new Image.asset(
+                'assets/images/ic-health-selected.png',
+                height: 30,
+                width: 30,
+              ),
+              label: 'Sức khoẻ'),
+          BottomNavigationBarItem(
+            icon: new Image.asset(
+              'assets/images/ic-health-record-u.png',
+              height: 30,
+              width: 30,
+            ),
+            activeIcon: new Image.asset(
+              'assets/images/ic-health-record.png',
+              height: 30,
+              width: 30,
+            ),
+            label: 'Hồ sơ',
+          ),
+          BottomNavigationBarItem(
+              icon: new Image.asset(
+                'assets/images/ic-acti-u.png',
+                height: 30,
+                width: 30,
+              ),
+              activeIcon: new Image.asset(
+                'assets/images/ic-acti.png',
+                height: 30,
+                width: 30,
+              ),
+              label: 'Hoạt động'),
+          BottomNavigationBarItem(
+            icon: Container(
+              child: Stack(
+                children: [
+                  new Image.asset(
+                    'assets/images/ic-noti.png',
+                    height: 30,
+                    width: 30,
+                  ),
+                ],
+              ),
+            ),
+
+            //
+            activeIcon: new Stack(
+              children: [
+                new Image.asset(
+                  'assets/images/ic-noti-selected.png',
+                  height: 30,
+                  width: 30,
+                ),
+              ],
+            ),
+            label: 'Thông báo',
+          ),
+        ],
+        onTap: (index) {
+          _getAccountId();
+          setState(() {
+            arguments = null;
+            _currentIndex = index;
+          });
+        },
+      ),
+    );
   }
 }

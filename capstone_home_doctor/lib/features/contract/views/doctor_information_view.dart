@@ -243,7 +243,7 @@ class _DoctorInformation extends State<DoctorInformation>
                             margin: EdgeInsets.only(left: 20),
                             width: 50,
                             child: Text(
-                              'Email',
+                              (state.dto.email != null) ? 'Email' : '',
                               style: TextStyle(
                                 color: DefaultTheme.GREY_TEXT,
                                 fontSize: 15,
@@ -256,7 +256,9 @@ class _DoctorInformation extends State<DoctorInformation>
                           Container(
                             width: MediaQuery.of(context).size.width - (200),
                             child: Text(
-                              '${state.dto.email}',
+                              (state.dto.email != null)
+                                  ? '${state.dto.email}'
+                                  : '',
                               overflow: TextOverflow.ellipsis,
                               maxLines: 3,
                               style: TextStyle(
