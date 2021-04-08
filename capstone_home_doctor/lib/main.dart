@@ -600,7 +600,8 @@ void main() async {
                             if (isSuccess) {
                               print('SUCCESSFUL PUSH DATA HEART RATE');
                               await _sqfLiteHelper
-                                  .deleteVitalSignSchedule()
+                                  .deleteRecordsVitalSign(
+                                      'HEART_RATE', _patientId)
                                   .then((isDeleted) async {
                                 //
                                 if (isDeleted) {

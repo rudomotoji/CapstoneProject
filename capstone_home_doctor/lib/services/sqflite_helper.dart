@@ -336,14 +336,16 @@ class SQFLiteHelper {
     }
   }
 
-  Future<void> deleteRecordsVitalSign(String valueType, int patientId) async {
+  Future<bool> deleteRecordsVitalSign(String valueType, int patientId) async {
     var dbClient = await database;
     try {
       await dbClient.rawQuery(
           'DELETE FROM $VITAL_SIGN_TABLE WHERE value_type = ? AND patient_id = ?',
           [valueType, patientId]);
+      return true;
     } catch (e) {
       print('ERROR at delete heart rate by patientId ${e}');
+      return false;
     }
   }
 

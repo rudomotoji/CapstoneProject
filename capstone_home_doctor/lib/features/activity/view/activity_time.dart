@@ -85,29 +85,31 @@ class _ActivityTimeView extends State<ActivityTimeView>
             (kickViewOn == false)
                 ? Padding(
                     padding: EdgeInsets.only(
-                        top: 5, left: 20, bottom: 15, right: 20),
+                        top: 5, left: 30, bottom: 15, right: 20),
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(50),
                       onTap: () {
                         _showFilterForm();
                       },
                       child: Container(
-                        width: MediaQuery.of(context).size.width - 40,
+                        width: 150,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: DefaultTheme.BLUE_DARK.withOpacity(0.3)),
+                            borderRadius: BorderRadius.circular(50),
+                            color:
+                                DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.6)),
                         child: Row(
                           children: [
                             Spacer(),
                             SizedBox(
                               width: 40,
                               height: 40,
-                              child: Image.asset('assets/images/ic-filter.png'),
+                              child: Image.asset(
+                                  'assets/images/ic-filter-black.png'),
                             ),
                             Text(
-                              'Bộ lọc',
+                              'Chọn ngày',
                               style: TextStyle(
-                                  color: DefaultTheme.BLUE_DARK,
+                                  color: DefaultTheme.BLACK,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500),
                             ),
@@ -120,7 +122,7 @@ class _ActivityTimeView extends State<ActivityTimeView>
                     padding: EdgeInsets.only(
                         top: 5, left: 20, bottom: 15, right: 20),
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(50),
                       onTap: () {
                         setState(() {
                           kickViewOn = false;

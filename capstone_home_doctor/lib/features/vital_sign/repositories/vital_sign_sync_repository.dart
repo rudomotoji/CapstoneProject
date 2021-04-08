@@ -15,7 +15,7 @@ class VitalSignSyncRepository extends BaseApiClient {
       int patientId, String dateTime) async {
     //
     String url =
-        '/VitalSigns/GetVitalSignValueByHRId?patientId=${patientId}&dateTime=${dateTime}';
+        '/VitalSigns/GetVitalSignValueByPatientId?patientId=${patientId}&dateTime=${dateTime}';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
@@ -156,7 +157,7 @@ class _HeartDetailView extends State<HeartDetailView>
                       _showDateTimeChosing();
                     },
                     child: Container(
-                      width: 131,
+                      width: 150,
                       height: 30,
                       margin: EdgeInsets.only(left: 30, top: 5),
                       padding: EdgeInsets.only(
@@ -168,6 +169,7 @@ class _HeartDetailView extends State<HeartDetailView>
                           color: DefaultTheme.GREY_TOP_TAB_BAR,
                           borderRadius: BorderRadius.circular(100)),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
                             width: 25,
@@ -327,7 +329,7 @@ class _HeartDetailView extends State<HeartDetailView>
                               }
                             }
                             return _heartRateChartToday(
-                                listTimeXAxis, listValueMap, minL, maxL);
+                                listTimeXAxis, listValueMap);
                           })
                         : BlocBuilder<VitalSignSyncBloc, VitalSignSyncState>(
                             builder: (context, state) {
@@ -345,38 +347,31 @@ class _HeartDetailView extends State<HeartDetailView>
                                       .where(
                                           (item) => item.vitalSignTypeId == 1)
                                       .first;
-                                  print(
-                                      'value heart rate: ${heartRateValue.numberValue}');
-                                  print(
-                                      'time heart rate: ${heartRateValue.timeValue}');
 
-                                  for (int i = 0;
-                                      i <
-                                          heartRateValue.timeValue
-                                              .split(',')
-                                              .length;
-                                      i++) {
-                                    timeData.add('"' +
-                                        heartRateValue.timeValue.split(',')[i] +
-                                        '"');
+                                  numberValue = '';
+                                  timeData.clear();
+                                  int count = 0;
+                                  for (String component in heartRateValue
+                                      .numberValue
+                                      .split(',')) {
+                                    if (component != null || component != ',') {
+                                      numberValue += component + ',';
+                                      count++;
+                                    }
                                   }
-                                  for (int i = 0;
-                                      i <
-                                          heartRateValue.numberValue
-                                              .split(',')
-                                              .length;
-                                      i++) {
-                                    numberValue += heartRateValue.numberValue
-                                            .split(',')[i] +
-                                        ',';
+                                  for (String component
+                                      in heartRateValue.timeValue.split(',')) {
+                                    if (component != null || component != ',') {
+                                      timeData.add('"' + component + '"');
+                                    }
                                   }
+                                  print('number lenght: $count');
                                 }
                               }
                             }
-                            print('time data ${timeData.toString()}');
-                            print('number value $numberValue');
-                            return _heartRateChartToday(
-                                timeData, numberValue, 110, 0);
+                            print('time data: LENGTH : ${timeData.length}');
+
+                            return _heartRateChartToday(timeData, numberValue);
                           }),
                   ],
                 ),
@@ -388,8 +383,7 @@ class _HeartDetailView extends State<HeartDetailView>
     );
   }
 
-  Widget _heartRateChartToday(
-      List<String> listXAxis, String listYAxis, int minLine, int maxLine) {
+  Widget _heartRateChartToday(List<String> listXAxis, String listYAxis) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -437,7 +431,7 @@ class _HeartDetailView extends State<HeartDetailView>
                                         show: true,
                                         nameTextStyle: {
                                           align: "center",
-                                          color: "#FF784B",
+                                          color: "#F5233C",
                                           fontSize: 10
                                         }
                                     },
@@ -447,7 +441,7 @@ class _HeartDetailView extends State<HeartDetailView>
                                       name: 'BPM',
                                       nameTextStyle: {
                                       verticalAlign: "middle",
-                                      color: "#FF784B"
+                                      color: "#F5233C"
                                       },
                                       axisTick: {
                                         show: false
@@ -462,6 +456,25 @@ class _HeartDetailView extends State<HeartDetailView>
                                         color: '#303030',
                                       },
                                     },
+                                     visualMap: {
+                                      show: true,
+                                         top: 20,
+                                         
+            right: 20,
+            pieces: [{
+                gt: 0,
+                lte:   ${minL},
+                color: '#F5233C'
+            }, {
+                gt:  ${minL},
+                lte:  ${maxL},
+                color: '#636AA7'
+            }, {
+                gt:  ${maxL},
+                lte: 150,
+                color: '#F5233C'
+            }],
+                                      },
                                       series: [{
                                         name: 'Nhịp tim',
                                         data: [${listYAxis}],
@@ -469,7 +482,7 @@ class _HeartDetailView extends State<HeartDetailView>
                                             markLine: {
                 silent: true,
                 lineStyle: {
-                    color: '#FF784B',
+                    color: '#303030',
                      type: 'solid',
                   
                 },
@@ -477,10 +490,10 @@ class _HeartDetailView extends State<HeartDetailView>
                 data: [
                  
                     {
-                    yAxis: ${maxLine},
+                    yAxis: ${maxL},
                    
                 }, {
-                    yAxis: ${minLine},
+                    yAxis: ${minL},
                 }]
             }
                                       },]
@@ -492,12 +505,12 @@ class _HeartDetailView extends State<HeartDetailView>
                       height: 400,
                     ),
                     Text(
-                        'Biểu đồ nhịp tim ${_dateValidator.parseToDateView3(_dateView)}'
+                        'Biểu đồ nhịp tim ngày ${_dateValidator.parseToDateView3(_dateView)}'
                             .toUpperCase(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: DefaultTheme.ORANGE_TEXT,
+                          color: DefaultTheme.BLUE_REFERENCE,
                         )),
                   ],
                 ),
@@ -731,13 +744,8 @@ class _HeartDetailView extends State<HeartDetailView>
                             if (_patientId != 0) {
                               if (_dateChosen.isAtSameMomentAs(xCompare)) {
                                 //
-                                _vitalSignSyncBloc.add(
-                                    VitalSignSyncEventGetByDate(
-                                        patientId: _patientId,
-                                        date: _dateChosen
-                                            .toString()
-                                            .split(' ')[0]));
-                                isShowOtherMap = true;
+
+                                isShowOtherMap = false;
                               } else {
                                 _vitalSignSyncBloc.add(
                                     VitalSignSyncEventGetByDate(

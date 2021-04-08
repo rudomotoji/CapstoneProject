@@ -6,6 +6,7 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/notification/blocs/notification_list_bloc.dart';
 import 'package:capstone_home_doctor/features/notification/events/notification_list_event.dart';
 import 'package:capstone_home_doctor/features/notification/states/notification_list_state.dart';
+import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/models/notification_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
@@ -293,9 +294,19 @@ class _NotificationState extends State<NotificationPage> {
 
                                       } else if (i.notificationType == 11) {
                                         //Navigate connect device screen
-                                        //
-                                        Navigator.of(context).pushNamed(
-                                            RoutesHDr.INTRO_CONNECT_PERIPHERAL);
+
+                                        await peripheralHelper
+                                            .getPeripheralId()
+                                            .then((value) async {
+                                          if (value != '') {
+                                            Navigator.of(context).pushNamed(
+                                                RoutesHDr
+                                                    .INTRO_CONNECT_PERIPHERAL);
+                                          } else {
+                                            Navigator.of(context).pushNamed(
+                                                RoutesHDr.PERIPHERAL_SERVICE);
+                                          }
+                                        });
                                       }
                                     },
                                   ),
