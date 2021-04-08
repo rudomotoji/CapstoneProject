@@ -16,8 +16,11 @@ import 'package:capstone_home_doctor/features/contract/events/disease_list_event
 import 'package:capstone_home_doctor/features/contract/repositories/disease_repository.dart';
 import 'package:capstone_home_doctor/features/contract/states/disease_list_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_create_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/hr_create_event.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:capstone_home_doctor/features/health/health_record/events/hr_detail_event.dart';
+import 'package:capstone_home_doctor/features/health/health_record/states/hr_detail_state.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
 import 'package:expandable_group/expandable_group_widget.dart';
@@ -37,9 +40,6 @@ final MedicalInstructionHelper _medicalInstructionHelper =
     MedicalInstructionHelper();
 
 class UpdateHealthRecord extends StatefulWidget {
-  final Function refresh;
-
-  UpdateHealthRecord(this.refresh);
   @override
   State<StatefulWidget> createState() {
     return _UpdateHealthRecord();
@@ -49,6 +49,8 @@ class UpdateHealthRecord extends StatefulWidget {
 class _UpdateHealthRecord extends State<UpdateHealthRecord>
     with WidgetsBindingObserver {
   int _patientId = 0;
+  int _hrId = 0;
+  HealthRecordDTO _healthRecordDTO;
   HealthRecordRepository healthRecordRepository =
       HealthRecordRepository(httpClient: http.Client());
   HealthRecordCreateBloc _healthRecordCreateBloc;
@@ -61,15 +63,16 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
   String _valueTypeIns;
 
   //
-  //SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
   DateValidator _dateValidator = DateValidator();
+  HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
+
   var _placeController = TextEditingController();
-  // var _diseaseController = TextEditingController();
-  String _note = '';
+  var _noteController = TextEditingController();
   List<DiseaseDTO> _listDisease = [];
   List<DiseaseDTO> _listDiseaseSelected = [];
   List<String> _diseaseIds = [];
   DiseaseListBloc _diseaseListBloc;
+  HealthRecordDetailBloc _healthRecordDetailBloc;
 
   //disease for heart
   List<DiseaseContractDTO> _listDiseaseForHeart = [];
@@ -84,10 +87,11 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    _getPatientId();
-    getDataFromJSONFile();
     _healthRecordCreateBloc = BlocProvider.of(context);
     _diseaseListBloc = BlocProvider.of(context);
+    _healthRecordDetailBloc = BlocProvider.of(context);
+    _getPatientId();
+    getDataFromJSONFile();
   }
 
   _getPatientId() async {
@@ -119,12 +123,57 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _healthRecordDTO = null;
     _diseaseListBloc.add(DiseaseEventSetInitial());
+    _healthRecordDetailBloc.add(HealthRecordEventInitial());
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _hrId = ModalRoute.of(context).settings.arguments;
+    if (_hrId > 0) {
+      // _healthRecordDetailBloc.add(HealthRecordEventGetById(id: _hrId));
+      healthRecordRepository.getHealthRecordById(_hrId).then((value) {
+        if (value != null && _healthRecordDTO == null) {
+          _placeController.text = value.place;
+          _noteController.text = value.description;
+
+          var listDiseases = value.diseases.map((dto) {
+            return Disease.fromJson(dto);
+          }).toList();
+
+          if (value.diseases.first['diseaseId'].contains('-')) {
+            //bệnh khác
+            setState(() {
+              _valueTypeIns = _listType.last;
+              _listDiseaseSelected = listDiseases.map((dto) {
+                _diseaseIds.add(dto.diseaseId);
+                return new DiseaseDTO(
+                    diseaseId: dto.diseaseId, name: dto.diseaseName);
+              }).toList();
+            });
+            _diseaseListBloc.add(DiseaseListEventSetStatus());
+          } else {
+            //bệnh tim
+            setState(() {
+              _valueTypeIns = _listType.first;
+              _listLv3Selected = listDiseases.map((dto) {
+                _listLv3IdSelected.add(dto.diseaseId);
+                return new DiseaseLeverThrees(
+                    diseaseLevelThreeId: dto.diseaseId,
+                    diseaseLeverThreeName: dto.diseaseName);
+              }).toList();
+            });
+            _diseaseListBloc.add(DiseaseEventGetHealthList());
+          }
+          setState(() {
+            _healthRecordDTO = value;
+          });
+        }
+      });
+    }
+
     return WillPopScope(
       onWillPop: () {
         _medicalInstructionHelper.getCreateHRFromDetail().then((check) async {
@@ -153,7 +202,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               HeaderWidget(
-                title: 'Tạo hồ sơ sức khỏe',
+                title: 'Sửa hồ sơ sức khỏe',
                 isMainView: false,
                 buttonHeaderType: ButtonHeaderType.BACK_HOME,
               ),
@@ -291,33 +340,30 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
                           keyboardAction: TextInputAction.done,
                           placeHolder: 'Mô tả thêm các vấn đề khác',
                           style: TFStyle.TEXT_AREA,
-                          onChange: (text) {
-                            setState(() {
-                              _note = text;
-                            });
-                          }),
+                          controller: _noteController,
+                          onChange: (text) {}),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 30),
                       child: ButtonHDr(
                         style: BtnStyle.BUTTON_BLACK,
-                        label: 'Tạo hồ sơ',
+                        label: 'Cập nhật',
                         onTap: () {
                           if (_patientId != 0 &&
                               _placeController.text != null &&
                               (_listLv3IdSelected.length > 0 ||
                                   _diseaseIds.length > 0)) {
                             healthRecordDTO = HealthRecordDTO(
-                              patientId: _patientId,
+                              healthRecordId: _hrId,
                               diceaseIds: _diseaseIds.length <= 0
                                   ? _listLv3IdSelected
                                   : _diseaseIds,
                               place: _placeController.text,
-                              description: _note,
+                              description: _noteController.text,
                             );
-                            _insertHealthRecord(healthRecordDTO);
+                            _updateHealthRecord(healthRecordDTO);
                           } else {
-                            _insertHealthRecord(null);
+                            _updateHealthRecord(null);
                           }
                         },
                       ),
@@ -348,11 +394,11 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
         listType: MultiSelectListType.CHIP,
         searchable: true,
         buttonText: Text(
-          "Chọn loại bệnh(*)",
+          "Chọn bệnh lý cụ thể (*)",
           style: TextStyle(color: Colors.black, fontSize: 16),
         ),
         title: Text(
-          "Chọn loại bệnh",
+          "Chọn bệnh lý",
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
         ),
         items: _itemsView,
@@ -383,6 +429,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
     );
   }
 
+//bệnh tim
   Widget _buildInheritedChipDisplay() {
     final _itemsView = _listLv3Selected
         .map((disease) =>
@@ -397,7 +444,29 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
     chipDisplayItems.removeWhere((element) => element == null);
     return MultiSelectChipDisplay<DiseaseLeverThrees>(
       items: chipDisplayItems,
-      // colorator: widget.chipDisplay.colorator ?? widget.colorator,
+      onTap: (item) {},
+      chipColor: DefaultTheme.BLUE_REFERENCE,
+      textStyle: TextStyle(
+        color: DefaultTheme.BLACK,
+      ),
+    );
+  }
+
+//bệnh khác
+  Widget _buildInheritedChipDisplayForOtherDisease() {
+    final _itemsView = _listDisease
+        .map((disease) =>
+            MultiSelectItem<DiseaseDTO>(disease, disease.toString()))
+        .toList();
+
+    List<MultiSelectItem<DiseaseDTO>> chipDisplayItems = [];
+    chipDisplayItems = _listDisease
+        .map((e) => _itemsView.firstWhere((element) => e == element.value,
+            orElse: () => null))
+        .toList();
+    chipDisplayItems.removeWhere((element) => element == null);
+    return MultiSelectChipDisplay<DiseaseDTO>(
+      items: chipDisplayItems,
       onTap: (item) {},
       chipColor: DefaultTheme.BLUE_REFERENCE,
       textStyle: TextStyle(
@@ -426,7 +495,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Chọn bệnh lý cần theo dõi (*)',
+                        'Chọn bệnh lý cụ thể (*)',
                         style: TextStyle(
                           color: DefaultTheme.BLACK,
                           fontWeight: FontWeight.w500,
@@ -766,12 +835,14 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
 
             // _listDisease = state.listDisease;
           }
+          print('DiseaseListStateSuccess');
           return _selectBoxInsOtherDissease();
         }
         if (state is DiseaseHeartListStateSuccess) {
           if (state.listDiseaseContract != null) {
             _listDiseaseForHeart = state.listDiseaseContract;
           }
+          print('DiseaseHeartListStateSuccess');
           return _selectBoxInsHeart();
         }
         return Container();
@@ -804,7 +875,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
           hint: Container(
             width: MediaQuery.of(context).size.width - 84,
             child: Text(
-              'Chọn loại bệnh để chia sẻ (*):',
+              'Chọn loại bệnh (*):',
               style: TextStyle(fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -838,9 +909,9 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
     );
   }
 
-  _insertHealthRecord(HealthRecordDTO dto) {
+  _updateHealthRecord(HealthRecordDTO dto) {
     if (dto == null) {
-      alertError('Hãy điền vào hồ sơ');
+      alertError('Hãy điền đầy đủ thông tin hồ sơ');
     } else {
       setState(() {
         showDialog(
@@ -868,7 +939,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
                           child: Image.asset('assets/images/loading.gif'),
                         ),
                         Text(
-                          'Đang tạo',
+                          'Đang cập nhật',
                           style: TextStyle(
                               color: DefaultTheme.GREY_TEXT,
                               fontSize: 15,
@@ -885,183 +956,57 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
           },
         );
 
-        _healthRecordCreateBloc.add(HRCreateEventSend(dto: dto));
-        Future.delayed(
-          const Duration(seconds: 3),
-          () {
-            hrHelper.getHRResponse().then(
-              (value) {
-                Navigator.of(context).pop();
-                if (value > 0) {
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context) {
-                      return Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                            child: Container(
-                              padding:
-                                  EdgeInsets.only(left: 10, top: 10, right: 10),
-                              width: 250,
-                              height: 185,
-                              decoration: BoxDecoration(
-                                color: DefaultTheme.WHITE.withOpacity(0.7),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(bottom: 10, top: 10),
-                                    child: Text(
-                                      'Tạo thành công',
-                                      style: TextStyle(
-                                        decoration: TextDecoration.none,
-                                        color: DefaultTheme.BLACK,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.only(
-                                        left: 20, right: 20, top: 15),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Bạn có muốn tạo thêm y lệnh ngay không?',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          decoration: TextDecoration.none,
-                                          color: DefaultTheme.GREY_TEXT,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Divider(
-                                    height: 1,
-                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      FlatButton(
-                                        height: 40,
-                                        minWidth: 250 / 2 - 10.5,
-                                        child: Text('Không',
-                                            style: TextStyle(
-                                                color: DefaultTheme.BLUE_TEXT)),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      Container(
-                                        height: 40,
-                                        width: 0.5,
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                      ),
-                                      FlatButton(
-                                        height: 40,
-                                        minWidth: 250 / 2 - 10.5,
-                                        child: Text('Tiếp tục',
-                                            style: TextStyle(
-                                                color: DefaultTheme.BLUE_TEXT)),
-                                        onPressed: () async {
-                                          //refresh data
-                                          setState(() {
-                                            _listDiseaseSelected = [];
-                                            _diseaseIds = [];
-                                            _listLv3Selected = [];
-                                            _listLv3IdSelected = [];
-                                            _listDiseaseForHeartForSearch = [];
-                                            _placeController.text = '';
-                                          });
-
-                                          _diseaseListBloc
-                                              .add(DiseaseEventSetInitial());
-                                          //navigate to health record detail
-                                          Navigator.of(context).pop();
-                                          hrHelper.setHealthReCordId(value);
-                                          //
-                                          await _medicalInstructionHelper
-                                              .updateCheckToCreateOrList(true);
-                                          Navigator.of(context)
-                                              .pushNamed(RoutesHDr
-                                                  .HEALTH_RECORD_DETAIL)
-                                              .then((value) =>
-                                                  Navigator.of(context).pop());
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+        healthRecordRepository.updateHealthRecord(dto).then((value) {
+          Navigator.pop(context);
+          if (value) {
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) {
+                return Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                      child: Container(
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: DefaultTheme.WHITE.withOpacity(0.8)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 100,
+                              height: 100,
+                              child:
+                                  Image.asset('assets/images/ic-checked.png'),
                             ),
-                          ),
+                            Text(
+                              'Cập nhật thành công',
+                              style: TextStyle(
+                                  color: DefaultTheme.GREY_TEXT,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  decoration: TextDecoration.none),
+                            ),
+                          ],
                         ),
-                      );
-
-                      // return AlertDialog(
-                      //   title: new Text(
-                      //     "Tạo thành công",
-                      //     style: TextStyle(
-                      //         color: DefaultTheme.BLUE_DARK, fontSize: 18),
-                      //   ),
-                      //   content: new Text("Bạn có muốn tạo thêm y lệnh ngay"),
-                      //   actions: <Widget>[
-                      //     new FlatButton(
-                      //       child: new Text("Không"),
-                      //       onPressed: () {
-                      //         Navigator.of(context).pop();
-                      //         Navigator.of(context).pop();
-                      //       },
-                      //     ),
-                      //     new FlatButton(
-                      //       child: new Text("Có"),
-                      //       onPressed: () async {
-                      //         //refresh data
-                      //         setState(() {
-                      //           _listDiseaseSelected = [];
-                      //           // _listDisease = [];
-                      //           _diseaseIds = [];
-                      //           // _listDiseaseForHeart = [];
-                      //           _listLv3Selected = [];
-                      //           _listLv3IdSelected = [];
-                      //           _listDiseaseForHeartForSearch = [];
-                      //           _placeController.text = '';
-                      //         });
-
-                      //         _diseaseListBloc.add(DiseaseEventSetInitial());
-                      //         //navigate to health record detail
-                      //         Navigator.of(context).pop();
-                      //         hrHelper.setHealthReCordId(value);
-                      //         //
-                      //         await _medicalInstructionHelper
-                      //             .updateCheckToCreateOrList(true);
-                      //         Navigator.of(context)
-                      //             .pushNamed(RoutesHDr.HEALTH_RECORD_DETAIL)
-                      //             .then((value) => Navigator.of(context).pop());
-                      //       },
-                      //     ),
-                      //   ],
-                      // );
-                    },
-                  );
-                } else {
-                  alertError('Lỗi tạo hồ sơ');
-                }
+                      ),
+                    ),
+                  ),
+                );
               },
             );
-          },
-        );
+            Future.delayed(const Duration(seconds: 2), () {
+              Navigator.of(context).pop();
+            });
+          } else {
+            alertError('Không thể cập nhật hồ sơ');
+          }
+        });
       });
     }
   }

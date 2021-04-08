@@ -348,11 +348,11 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
         listType: MultiSelectListType.CHIP,
         searchable: true,
         buttonText: Text(
-          "Chọn loại bệnh(*)",
+          "Chọn bệnh lý cụ thể (*)",
           style: TextStyle(color: Colors.black, fontSize: 16),
         ),
         title: Text(
-          "Chọn loại bệnh",
+          "Chọn bệnh lý",
           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
         ),
         items: _itemsView,
@@ -426,7 +426,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Chọn bệnh lý cần theo dõi (*)',
+                        'Chọn bệnh lý cụ thể(*)',
                         style: TextStyle(
                           color: DefaultTheme.BLACK,
                           fontWeight: FontWeight.w500,
@@ -804,7 +804,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
           hint: Container(
             width: MediaQuery.of(context).size.width - 84,
             child: Text(
-              'Chọn loại bệnh để chia sẻ (*):',
+              'Chọn loại bệnh(*)',
               style: TextStyle(fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,

@@ -81,7 +81,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   showFullDetailComponent(
       List<String> imgs, String miName, String dateCreate, String dianose) {
     int positionImage = 0;
-    print('e img now: ${positionImage}');
+    bool isTappedOut = false;
+
     return showDialog(
         barrierDismissible: false,
         context: context,
@@ -90,180 +91,237 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
             return Material(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                color: DefaultTheme.BLACK,
-                child: Stack(
-                  // mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    //
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      child: PhotoView(
-                        customSize: Size(MediaQuery.of(context).size.width,
-                            MediaQuery.of(context).size.height),
-                        imageProvider: NetworkImage(
-                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
-                      ),
-                    ),
-                    (imgs.length > 1)
-                        ? Positioned(
-                            right: 0,
-                            child: InkWell(
-                              onTap: () {
-                                //
-                                print('position img now: $positionImage');
-                                setModalState(() {
-                                  if (positionImage == imgs.length) {
-                                    positionImage = 0;
-                                  } else if (positionImage < imgs.length - 1) {
-                                    positionImage++;
-                                  } else {
-                                    positionImage = 0;
-                                  }
-                                });
-                              },
-                              child: Container(
-                                width: 50,
-                                height: MediaQuery.of(context).size.height,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.centerRight,
-                                      end: Alignment.centerLeft,
-                                      colors: [
-                                        DefaultTheme.BLACK.withOpacity(0.5),
-                                        DefaultTheme.TRANSPARENT,
-                                      ]),
-                                ),
-                                child: SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child:
-                                      Image.asset('assets/images/ic-next.png'),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(),
-                    (imgs.length > 1)
-                        ? Positioned(
-                            left: 0,
-                            child: InkWell(
-                              onTap: () {
-                                setModalState(() {
-                                  if (positionImage == 0) {
-                                    positionImage = imgs.length - 1;
-                                  } else {
-                                    positionImage--;
-                                  }
-                                });
-                              },
-                              child: Container(
-                                width: 50,
-                                height: MediaQuery.of(context).size.height,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        DefaultTheme.BLACK.withOpacity(0.5),
-                                        DefaultTheme.TRANSPARENT,
-                                      ]),
-                                ),
-                                child: SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  child:
-                                      Image.asset('assets/images/ic-prev.png'),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(),
-                    Positioned(
-                      top: 20,
-                      right: 10,
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(20),
-                          child: SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: Image.asset('assets/images/ic-close.png'),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
+              child: InkWell(
+                onTap: () {
+                  setModalState(() {
+                    isTappedOut = !isTappedOut;
+                  });
+                },
+                child: (isTappedOut)
+                    ? Container(
                         width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height * 0.4,
-                        padding: EdgeInsets.only(left: 30, right: 30),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                DefaultTheme.TRANSPARENT,
-                                DefaultTheme.BLACK.withOpacity(0.9),
-                              ]),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        height: MediaQuery.of(context).size.height,
+                        color: DefaultTheme.BLACK,
+                        child: Stack(
+                          // mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             //
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              child: PhotoView(
+                                customSize: Size(
+                                    MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height),
+                                imageProvider: NetworkImage(
+                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        color: DefaultTheme.BLACK,
+                        child: Stack(
+                          // mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            //
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              child: PhotoView(
+                                customSize: Size(
+                                    MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height),
+                                imageProvider: NetworkImage(
+                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+                              ),
+                            ),
+                            (imgs.length > 1)
+                                ? Positioned(
+                                    right: 0,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setModalState(() {
+                                          if (positionImage == imgs.length) {
+                                            positionImage = 0;
+                                          } else if (positionImage <
+                                              imgs.length - 1) {
+                                            positionImage++;
+                                          } else {
+                                            positionImage = 0;
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment.centerRight,
+                                              end: Alignment.centerLeft,
+                                              colors: [
+                                                DefaultTheme.BLACK
+                                                    .withOpacity(0.3),
+                                                DefaultTheme.TRANSPARENT,
+                                              ]),
+                                        ),
+                                        child: SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-next.png'),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            (imgs.length > 1)
+                                ? Positioned(
+                                    left: 0,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setModalState(() {
+                                          // if (positionImage == imgs.length) {
+                                          //   positionImage = 0;
+                                          // } else if (positionImage < imgs.length - 1) {
+                                          //   positionImage--;
+                                          // } else {
+                                          //   positionImage = 0;
+                                          // }
+                                          if (positionImage == 0) {
+                                            positionImage = imgs.length - 1;
+                                          } else {
+                                            positionImage--;
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment.centerLeft,
+                                              end: Alignment.centerRight,
+                                              colors: [
+                                                DefaultTheme.BLACK
+                                                    .withOpacity(0.3),
+                                                DefaultTheme.TRANSPARENT,
+                                              ]),
+                                        ),
+                                        child: SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-prev.png'),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            (imgs != null)
+                                ? Positioned(
+                                    top: 25,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Center(
+                                      child: Text(
+                                          '${positionImage + 1}/${imgs.length}',
+                                          style: TextStyle(
+                                              color: DefaultTheme.WHITE)),
+                                    ),
+                                  )
+                                : Container(),
+                            Positioned(
+                              top: 20,
+                              right: 10,
+                              child: Container(
+                                width: 30,
+                                height: 30,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: Image.asset(
+                                        'assets/images/ic-close.png'),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                padding: EdgeInsets.only(left: 30, right: 30),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        DefaultTheme.TRANSPARENT,
+                                        DefaultTheme.BLACK.withOpacity(0.9),
+                                      ]),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    //
 
-                            Text(
-                              '$miName',
-                              style: TextStyle(
-                                  color: DefaultTheme.WHITE,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 5),
-                            ),
-                            Divider(
-                              color: DefaultTheme.WHITE,
-                              height: 1,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                            ),
-                            Text(
-                              'Chuẩn đoán $dianose',
-                              style: TextStyle(
-                                  color: DefaultTheme.WHITE, fontSize: 15),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 5,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10),
-                            ),
-                            Text(
-                              'Ngày tạo $dateCreate',
-                              style: TextStyle(
-                                  color: DefaultTheme.WHITE, fontSize: 15),
-                            ),
+                                    Text(
+                                      '$miName',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5),
+                                    ),
+                                    Divider(
+                                      color: DefaultTheme.WHITE,
+                                      height: 1,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                    ),
+                                    Text(
+                                      'Chuẩn đoán $dianose',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 15),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 5,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                    ),
+                                    Text(
+                                      'Ngày tạo $dateCreate',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 15),
+                                    ),
 
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 50),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 50),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
               ),
             );
             //

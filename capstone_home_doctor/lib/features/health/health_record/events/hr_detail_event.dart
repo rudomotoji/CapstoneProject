@@ -14,3 +14,9 @@ class HealthRecordEventGetById extends HealthRecordEvent {
   // TODO: implement props
   List<Object> get props => [id];
 }
+
+class HealthRecordEventInitial extends HealthRecordEvent {
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}

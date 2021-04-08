@@ -144,12 +144,13 @@ class MedicalInstructionDTO {
     this.patientFullName,
     this.status,
     this.vitalSignScheduleRespone,
+    this.medicationsRespone,
   });
 
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
     medicalInstructionId = json['medicalInstructionId'];
     medicalInstructionType = json['medicalInstructionType'];
-    image = json['images'].cast<String>();
+    image = json['images'] != null ? json['images'].cast<String>() : [];
     description = json['description'];
     diagnose = json['diagnose'];
     placeHealthRecord = json['placeHealthRecord'];

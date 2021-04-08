@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
+import 'package:capstone_home_doctor/features/health/health_record/views/update_health_record.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/models/medical_share_dto.dart';
@@ -46,6 +47,22 @@ class HealthRecordRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT GET HEALTH RECORD DETAIL ${e}');
+    }
+  }
+
+//update health record
+  Future<bool> updateHealthRecord(HealthRecordDTO dto) async {
+    String url = '/HealthRecords/${dto.healthRecordId}';
+    try {
+      final response = await putApi(url, null, dto.toJsonUpdate());
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('ERROR AT GET HEALTH RECORD DETAIL ${e}');
+      return false;
     }
   }
 

@@ -25,5 +25,8 @@ class HealthRecordDetailBloc
         HealthRecordDetailStateFailure();
       }
     }
+    if (event is HealthRecordEventInitial) {
+      yield HealthRecordDetailStateInitial();
+    }
   }
 }
