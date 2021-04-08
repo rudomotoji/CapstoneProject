@@ -137,3 +137,22 @@ class DiseaseLeverThrees {
     return data;
   }
 }
+
+class Disease {
+  String diseaseId;
+  String diseaseName;
+
+  Disease({this.diseaseId, this.diseaseName});
+
+  Disease.fromJson(Map<String, dynamic> json) {
+    diseaseId = json['diseaseId'];
+    diseaseName = json['diseaseName'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['diseaseId'] = this.diseaseId;
+    data['diseaseName'] = this.diseaseName;
+    return data;
+  }
+}

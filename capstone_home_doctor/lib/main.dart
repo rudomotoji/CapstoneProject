@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
@@ -16,6 +14,7 @@ import 'package:capstone_home_doctor/features/contract/blocs/contract_checking_b
 import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/views/update_health_record.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/services/doctor_helper.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/vital_sign_chart_detail.dart';
@@ -1717,6 +1716,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
                     ReasonContractView(),
                 RoutesHDr.CREATE_HEALTH_RECORD: (context) =>
                     CreateHealthRecord(_doNothing()),
+                RoutesHDr.UPDATE_HEALTH_RECORD: (context) =>
+                    UpdateHealthRecord(),
                 RoutesHDr.HEALTH_RECORD_DETAIL: (context) =>
                     HealthRecordDetail(),
                 RoutesHDr.HEART: (context) => HeartDetailView(),

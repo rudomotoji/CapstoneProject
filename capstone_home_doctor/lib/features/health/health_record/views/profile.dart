@@ -462,19 +462,22 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
-                  // Positioned(
-                  //   width: 35,
-                  //   height: 35,
-                  //   top: -10,
-                  //   right: 0,
-                  //   child: ButtonHDr(
-                  //     style: BtnStyle.BUTTON_IMAGE,
-                  //     image: Image.asset('assets/images/ic-more.png'),
-                  //     onTap: () {
-                  //       _showMorePopup(dto.healthRecordId, dto.contractId);
-                  //     },
-                  //   ),
-                  // ),
+                  (dto.contractId != null)
+                      ? Container()
+                      : Positioned(
+                          width: 35,
+                          height: 35,
+                          top: -10,
+                          right: 0,
+                          child: ButtonHDr(
+                            style: BtnStyle.BUTTON_IMAGE,
+                            image: Image.asset('assets/images/ic-more.png'),
+                            onTap: () {
+                              _showMorePopup(dto.healthRecordId, dto.contractId,
+                                  dto.place);
+                            },
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -487,7 +490,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     );
   }
 
-  _showMorePopup(int healthRecordId, int contractID) {
+  _showMorePopup(int healthRecordId, int contractID, String place) {
     showModalBottomSheet(
         isScrollControlled: false,
         context: this.context,
@@ -520,7 +523,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                     padding: EdgeInsets.only(
                                         top: 30, left: 10, right: 10),
                                     child: Text(
-                                      'Hồ sơ tại ${healthRecordId}',
+                                      'Hồ sơ tại ${place}',
                                       style: TextStyle(
                                           color: DefaultTheme.GREY_TEXT),
                                       maxLines: 2,
@@ -543,16 +546,19 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                   height: 0.5,
                                 ),
                                 ButtonHDr(
-                                  label: 'Chi tiết',
+                                  label: 'Sửa',
                                   height: 60,
                                   labelColor: DefaultTheme.BLUE_TEXT,
                                   style: BtnStyle.BUTTON_IN_LIST,
                                   onTap: () {
-                                    _healthRecordHelper
-                                        .setHealthReCordId(healthRecordId);
+                                    // _healthRecordHelper
+                                    //     .setHealthReCordId(healthRecordId);
                                     Navigator.of(context).pop();
-                                    Navigator.of(context).pushNamed(
-                                        RoutesHDr.HEALTH_RECORD_DETAIL);
+                                    Navigator.of(context)
+                                        .pushNamed(
+                                            RoutesHDr.UPDATE_HEALTH_RECORD,
+                                            arguments: healthRecordId)
+                                        .then((value) => refreshListHR());
                                   },
                                 ),
                                 Divider(

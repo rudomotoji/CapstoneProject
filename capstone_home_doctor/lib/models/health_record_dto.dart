@@ -82,4 +82,12 @@ class HealthRecordDTO {
     data['status'] = this.status;
     return data;
   }
+
+  Map<String, dynamic> toJsonUpdate() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['place'] = this.place;
+    data['description'] = this.description;
+    data['diseases'] = this.diceaseIds;
+    return data;
+  }
 }
