@@ -150,7 +150,7 @@ class MedicalInstructionDTO {
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
     medicalInstructionId = json['medicalInstructionId'];
     medicalInstructionType = json['medicalInstructionType'];
-    image = json['images'] != null ? json['images'].cast<String>() : [];
+    image = json['images'] != null ? json['images'].cast<String>() : null;
     description = json['description'];
     diagnose = json['diagnose'];
     placeHealthRecord = json['placeHealthRecord'];

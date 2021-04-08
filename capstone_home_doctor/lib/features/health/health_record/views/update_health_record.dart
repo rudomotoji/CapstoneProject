@@ -71,6 +71,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
   List<DiseaseDTO> _listDisease = [];
   List<DiseaseDTO> _listDiseaseSelected = [];
   List<String> _diseaseIds = [];
+  List<DiseaseDTO> _listDiseaseForOtherForSearch = [];
   DiseaseListBloc _diseaseListBloc;
   HealthRecordDetailBloc _healthRecordDetailBloc;
 
@@ -379,52 +380,431 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
   }
 
   _selectBoxInsOtherDissease() {
-    final _itemsView = _listDisease
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.only(left: 20, right: 20),
+      decoration: BoxDecoration(
+          color: DefaultTheme.GREY_VIEW,
+          borderRadius: BorderRadius.circular(6)),
+      child: Column(
+        children: [
+          InkWell(
+            child: Row(
+              children: [
+                Container(
+                  height: 25,
+                  width: MediaQuery.of(context).size.width - 90,
+                  margin: EdgeInsets.only(top: 15, bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Chọn bệnh lý cụ thể (*)',
+                        style: TextStyle(
+                          color: DefaultTheme.BLACK,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: Image.asset('assets/images/ic-dropdown.png'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            onTap: () {
+              _getListDiseaseOther();
+            },
+          ),
+          _buildInheritedChipDisplayForOtherDisease()
+        ],
+      ),
+    );
+  }
+
+//bệnh khác
+  Widget _buildInheritedChipDisplayForOtherDisease() {
+    final _itemsView = _listDiseaseSelected
         .map((disease) =>
             MultiSelectItem<DiseaseDTO>(disease, disease.toString()))
         .toList();
-    return Container(
-      padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: DefaultTheme.GREY_VIEW),
-      child: MultiSelectBottomSheetField(
-        initialChildSize: 0.3,
-        selectedItemsTextStyle: TextStyle(color: DefaultTheme.WHITE),
-        listType: MultiSelectListType.CHIP,
-        searchable: true,
-        buttonText: Text(
-          "Chọn bệnh lý cụ thể (*)",
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
-        title: Text(
-          "Chọn bệnh lý",
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-        ),
-        items: _itemsView,
-        onConfirm: (values) {
-          String _idDisease = '';
-          _diseaseIds.clear();
-          setState(
-            () {
-              _listDiseaseSelected = values;
-              for (var i = 0; i < values.length; i++) {
-                _idDisease = values[i].toString().split(':')[0];
-                _diseaseIds.add(_idDisease);
-              }
+
+    List<MultiSelectItem<DiseaseDTO>> chipDisplayItems = [];
+    chipDisplayItems = _listDiseaseSelected
+        .map((e) => _itemsView.firstWhere((element) => e == element.value,
+            orElse: () => null))
+        .toList();
+    chipDisplayItems.removeWhere((element) => element == null);
+    return MultiSelectChipDisplay<DiseaseDTO>(
+      items: chipDisplayItems,
+      onTap: (item) {},
+      chipColor: DefaultTheme.BLUE_REFERENCE,
+      textStyle: TextStyle(
+        color: DefaultTheme.BLACK,
+      ),
+    );
+  }
+
+  _getListDiseaseOther() {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        backgroundColor: DefaultTheme.TRANSPARENT,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setModalState) {
+              return BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.9,
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.05),
+                      color: DefaultTheme.TRANSPARENT,
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(15)),
+                          color: DefaultTheme.GREY_VIEW,
+                        ),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(top: 30),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          'Danh sách bệnh lý',
+                                          style: TextStyle(
+                                              color: DefaultTheme.BLACK,
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        _searchDiseasesOrther(setModalState),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 20),
+                                        ),
+                                        Expanded(
+                                          child: ListView.builder(
+                                            itemCount:
+                                                _listDiseaseForOtherForSearch
+                                                            .length >
+                                                        0
+                                                    ? _listDiseaseForOtherForSearch
+                                                        .length
+                                                    : _listDisease.length,
+                                            itemBuilder: (context, index) {
+                                              bool checkTemp = false;
+                                              var e = null;
+
+                                              if (_listDiseaseForOtherForSearch
+                                                      .length >
+                                                  0) {
+                                                e = _listDiseaseForOtherForSearch[
+                                                    index];
+                                              } else {
+                                                e = _listDisease[index];
+                                              }
+
+                                              if (_diseaseIds
+                                                  .contains(e.diseaseId)) {
+                                                checkTemp = true;
+                                              }
+                                              return ListTile(
+                                                title: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width -
+                                                              100,
+                                                          child: Text(
+                                                            '${e.diseaseId} - ${e.name}',
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 3,
+                                                            style: TextStyle(
+                                                                color: DefaultTheme
+                                                                    .BLUE_REFERENCE,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500),
+                                                          ),
+                                                        ),
+                                                        Spacer(),
+                                                        ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(6),
+                                                          child: Container(
+                                                            width: 20,
+                                                            height: 20,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5)),
+                                                            child: Checkbox(
+                                                              materialTapTargetSize:
+                                                                  MaterialTapTargetSize
+                                                                      .padded,
+                                                              checkColor:
+                                                                  DefaultTheme
+                                                                      .GRADIENT_1,
+                                                              activeColor:
+                                                                  DefaultTheme
+                                                                      .GREY_VIEW,
+                                                              hoverColor:
+                                                                  DefaultTheme
+                                                                      .GREY_VIEW,
+                                                              value: checkTemp,
+                                                              onChanged: (_) {
+                                                                setModalState(
+                                                                  () {
+                                                                    checkTemp =
+                                                                        !checkTemp;
+
+                                                                    setState(
+                                                                      () {
+                                                                        if (checkTemp ==
+                                                                            true) {
+                                                                          _diseaseIds.removeWhere((item) =>
+                                                                              item ==
+                                                                              e.diseaseId);
+                                                                          _diseaseIds
+                                                                              .add(e.diseaseId);
+
+                                                                          _listDiseaseSelected.removeWhere((item) =>
+                                                                              item.diseaseId ==
+                                                                              e.diseaseId);
+                                                                          _listDiseaseSelected
+                                                                              .add(e);
+                                                                        } else {
+                                                                          _diseaseIds.removeWhere((item) =>
+                                                                              item ==
+                                                                              e.diseaseId);
+                                                                          _listDiseaseSelected.removeWhere((item) =>
+                                                                              item.diseaseId ==
+                                                                              e.diseaseId);
+                                                                        }
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                              // return Row(
+                                              //   mainAxisAlignment:
+                                              //       MainAxisAlignment.start,
+                                              //   crossAxisAlignment:
+                                              //       CrossAxisAlignment.center,
+                                              //   children: <Widget>[
+                                              //     Container(
+                                              //       width:
+                                              //           MediaQuery.of(context)
+                                              //                   .size
+                                              //                   .width -
+                                              //               100,
+                                              //       child: Text(
+                                              //         '${e.diseaseId} - ${e.name}',
+                                              //         overflow:
+                                              //             TextOverflow.ellipsis,
+                                              //         maxLines: 3,
+                                              //         style: TextStyle(
+                                              //             color: DefaultTheme
+                                              //                 .BLUE_REFERENCE,
+                                              //             fontWeight:
+                                              //                 FontWeight.w500),
+                                              //       ),
+                                              //     ),
+                                              //     Spacer(),
+                                              //     ClipRRect(
+                                              //       borderRadius:
+                                              //           BorderRadius.circular(
+                                              //               6),
+                                              //       child: Container(
+                                              //         width: 20,
+                                              //         height: 20,
+                                              //         decoration: BoxDecoration(
+                                              //             borderRadius:
+                                              //                 BorderRadius
+                                              //                     .circular(5)),
+                                              //         child: Checkbox(
+                                              //           materialTapTargetSize:
+                                              //               MaterialTapTargetSize
+                                              //                   .padded,
+                                              //           checkColor: DefaultTheme
+                                              //               .GRADIENT_1,
+                                              //           activeColor:
+                                              //               DefaultTheme
+                                              //                   .GREY_VIEW,
+                                              //           hoverColor: DefaultTheme
+                                              //               .GREY_VIEW,
+                                              //           value: checkTemp,
+                                              //           onChanged: (_) {
+                                              //             setModalState(
+                                              //               () {
+                                              //                 checkTemp =
+                                              //                     !checkTemp;
+
+                                              //                 setState(
+                                              //                   () {
+                                              //                     if (checkTemp ==
+                                              //                         true) {
+                                              //                       _diseaseIds.removeWhere(
+                                              //                           (item) =>
+                                              //                               item ==
+                                              //                               e.diseaseId);
+                                              //                       _diseaseIds
+                                              //                           .add(e
+                                              //                               .diseaseId);
+
+                                              //                       _listDiseaseSelected.removeWhere((item) =>
+                                              //                           item.diseaseId ==
+                                              //                           e.diseaseId);
+                                              //                       _listDiseaseSelected
+                                              //                           .add(e);
+                                              //                     } else {
+                                              //                       _diseaseIds.removeWhere(
+                                              //                           (item) =>
+                                              //                               item ==
+                                              //                               e.diseaseId);
+                                              //                       _listDiseaseSelected.removeWhere((item) =>
+                                              //                           item.diseaseId ==
+                                              //                           e.diseaseId);
+                                              //                     }
+                                              //                   },
+                                              //                 );
+                                              //               },
+                                              //             );
+                                              //           },
+                                              //         ),
+                                              //       ),
+                                              //     ),
+                                              //   ],
+                                              // );
+                                            },
+                                          ),
+                                        ),
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          margin: EdgeInsets.only(bottom: 30),
+                                          child: ButtonHDr(
+                                            style: BtnStyle.BUTTON_BLACK,
+                                            label: 'Xong',
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ]),
+                      ),
+                    ),
+                    Positioned(
+                      top: 23,
+                      left: MediaQuery.of(context).size.width * 0.3,
+                      height: 5,
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width * 0.3),
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: 15,
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
             },
           );
-        },
-        chipDisplay: MultiSelectChipDisplay(
-          onTap: (value) {
-            setState(() {
-              _listDiseaseSelected.remove(value);
-              _diseaseIds.remove(value.toString().split(':')[0]);
-              print(
-                  'DISEASE LIST SELECT WHEN REMOVE NOW: ${_listDiseaseSelected.toString()}');
-            });
-          },
+        });
+  }
+
+  List<DiseaseDTO> updateSearchQueryForDiseaseOrther(
+      String val, List<DiseaseDTO> allItems) {
+    if (val != null && val.trim().isNotEmpty) {
+      List<DiseaseDTO> filteredItems = [];
+      for (var item in allItems) {
+        if ((item.name.toLowerCase().contains(val.toLowerCase()) ||
+                item.strDiseaseID.toLowerCase().contains(val.toLowerCase())) &&
+            !filteredItems.contains(item)) {
+          filteredItems.add(item);
+        }
+      }
+
+      return filteredItems;
+    } else {
+      return allItems;
+    }
+  }
+
+  Widget _searchDiseasesOrther(StateSetter setModalState) {
+    return Container(
+      padding: EdgeInsets.only(left: 10),
+      child: TextField(
+        controller: _diseaseIDController,
+        autofocus: true,
+        decoration: InputDecoration(
+          hintText: "Tìm kiếm bệnh lý....",
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor),
+          ),
         ),
+        onChanged: (val) {
+          setModalState(() {
+            _listDiseaseForOtherForSearch =
+                updateSearchQueryForDiseaseOrther(val, _listDisease);
+          });
+        },
       ),
     );
   }
@@ -443,29 +823,6 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
         .toList();
     chipDisplayItems.removeWhere((element) => element == null);
     return MultiSelectChipDisplay<DiseaseLeverThrees>(
-      items: chipDisplayItems,
-      onTap: (item) {},
-      chipColor: DefaultTheme.BLUE_REFERENCE,
-      textStyle: TextStyle(
-        color: DefaultTheme.BLACK,
-      ),
-    );
-  }
-
-//bệnh khác
-  Widget _buildInheritedChipDisplayForOtherDisease() {
-    final _itemsView = _listDisease
-        .map((disease) =>
-            MultiSelectItem<DiseaseDTO>(disease, disease.toString()))
-        .toList();
-
-    List<MultiSelectItem<DiseaseDTO>> chipDisplayItems = [];
-    chipDisplayItems = _listDisease
-        .map((e) => _itemsView.firstWhere((element) => e == element.value,
-            orElse: () => null))
-        .toList();
-    chipDisplayItems.removeWhere((element) => element == null);
-    return MultiSelectChipDisplay<DiseaseDTO>(
       items: chipDisplayItems,
       onTap: (item) {},
       chipColor: DefaultTheme.BLUE_REFERENCE,

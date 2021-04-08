@@ -638,8 +638,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                 } else {
                                   if (dto.medicationsRespone != null) {
                                     Navigator.pushNamed(context,
-                                        RoutesHDr.MEDICAL_HISTORY_DETAIL,
-                                        arguments: dto.medicalInstructionId);
+                                            RoutesHDr.MEDICAL_HISTORY_DETAIL,
+                                            arguments: dto.medicalInstructionId)
+                                        .then((value) async {
+                                      await _pullRefresh();
+                                    });
                                   } else if (dto.vitalSignScheduleRespone !=
                                       null) {
                                     _showDetailVitalSign(
@@ -1014,8 +1017,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             .timeCanceled,
                                       };
                                       Navigator.pushNamed(context,
-                                          RoutesHDr.VITAL_SIGN_CHART_DETAIL,
-                                          arguments: arguments);
+                                              RoutesHDr.VITAL_SIGN_CHART_DETAIL,
+                                              arguments: arguments)
+                                          .then((value) async {
+                                        await _pullRefresh();
+                                      });
                                     },
                                   ),
                                 ],
