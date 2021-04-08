@@ -1,13 +1,21 @@
 class VitalSignDetailDTO {
-  String vitalSignValueDateCreated;
+  String timeStarted;
+  String timeCanceled;
+  String status;
   List<VitalSigns> vitalSigns;
   List<VitalSignValues> vitalSignValues;
 
   VitalSignDetailDTO(
-      {this.vitalSignValueDateCreated, this.vitalSigns, this.vitalSignValues});
+      {this.timeStarted,
+      this.timeCanceled,
+      this.status,
+      this.vitalSigns,
+      this.vitalSignValues});
 
   VitalSignDetailDTO.fromJson(Map<String, dynamic> json) {
-    vitalSignValueDateCreated = json['vitalSignValueDateCreated'];
+    timeStarted = json['timeStarted'];
+    timeCanceled = json['timeCanceled'];
+    status = json['status'];
     if (json['vitalSigns'] != null) {
       vitalSigns = new List<VitalSigns>();
       json['vitalSigns'].forEach((v) {
@@ -24,7 +32,9 @@ class VitalSignDetailDTO {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['vitalSignValueDateCreated'] = this.vitalSignValueDateCreated;
+    data['timeStarted'] = this.timeStarted;
+    data['timeCanceled'] = this.timeCanceled;
+    data['status'] = this.status;
     if (this.vitalSigns != null) {
       data['vitalSigns'] = this.vitalSigns.map((v) => v.toJson()).toList();
     }

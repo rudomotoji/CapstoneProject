@@ -944,7 +944,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                               height: 0.25,
                                             ),
                                             Text(
-                                              '${value.vitalSignScheduleRespone.vitalSigns[0].vitalSignType}',
+                                              '${item.vitalSignType}',
                                               style: TextStyle(
                                                 fontSize: 18,
                                                 decoration: TextDecoration.none,
@@ -966,7 +966,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                   ),
                                                 ),
                                                 Text(
-                                                  '${value.vitalSignScheduleRespone.vitalSigns[0].numberMin} - ${value.vitalSignScheduleRespone.vitalSigns[0].numberMax}',
+                                                  '${item.numberMin} - ${item.numberMax}',
                                                   style: TextStyle(
                                                     fontSize: 16,
                                                     decoration:
@@ -1009,6 +1009,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     onTap: () {
                                       Map<String, dynamic> arguments = {
                                         'healthRecordId': _hrId,
+                                        'medicalInstructionId':
+                                            medicalInstructionId,
                                         "timeStared": value
                                             .vitalSignScheduleRespone
                                             .timeStared,

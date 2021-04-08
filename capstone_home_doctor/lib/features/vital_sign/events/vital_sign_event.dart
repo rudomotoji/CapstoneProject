@@ -63,16 +63,13 @@ class VitalSignGetListdangerous extends VitalSignEvent {
 }
 
 class VitalSignEventGetDetail extends VitalSignEvent {
-  final String dateTime;
   final int patientId;
-  final int healthRecordId;
+  final int medicalInstructionId;
 
   const VitalSignEventGetDetail(
-      {@required this.dateTime,
-      @required this.patientId,
-      @required this.healthRecordId});
+      {@required this.patientId, @required this.medicalInstructionId});
 
   @override
   // TODO: implement props
-  List<Object> get props => [healthRecordId, patientId, dateTime];
+  List<Object> get props => [medicalInstructionId, patientId];
 }

@@ -26,6 +26,7 @@ import 'package:capstone_home_doctor/models/setting_background_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
@@ -82,6 +83,7 @@ class _MainHomeState extends State<MainHome> {
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   Stream<ReceiveNotification> _notificationsStream;
+  final ContractHelper _contractHelper = ContractHelper();
 
   @override
   void initState() {
@@ -95,9 +97,81 @@ class _MainHomeState extends State<MainHome> {
 
     //
     selectNotificationSubject.stream.listen((String payload) async {
-      print(payload);
       var navigate = jsonDecode(payload);
-      await Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
+      if (payload.contains('NAVIGATE_TO_SCREEN')) {
+        await Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
+      }
+
+      print('payload home page: $payload');
+
+      // ReceiveNotification notiData;
+      // if (Platform.isIOS) {
+      //   final dynamic notification = navigate['aps']['alert'];
+      //   notiData = ReceiveNotification(
+      //       id: 0,
+      //       title: notification["title"],
+      //       body: notification["body"],
+      //       payload: payload);
+      // }
+      // if (Platform.isAndroid) {
+      //   if (navigate.containsKey('data')) {
+      //     final dynamic data = navigate['data'];
+      //     payload = jsonEncode(data);
+      //   }
+      //   final dynamic notification = navigate['notification'];
+      //   notiData = ReceiveNotification(
+      //       id: 0,
+      //       title: notification["title"],
+      //       body: notification["body"],
+      //       payload: payload);
+      // }
+      //
+      if (payload.contains('notiTypeId')) {
+        int notificationType = navigate['notiTypeId'];
+        int contractId = navigate['contractId'];
+        int medicalInstructionId = navigate['medicalInstructionId'];
+        int appointmentId = navigate['appointmentId'];
+
+        if (notificationType == 1 ||
+            notificationType == 4 ||
+            notificationType == 5 ||
+            notificationType == 9 ||
+            notificationType == 10) {
+          //Navigate hợp đồng detail
+          if (contractId != null) {
+            await _contractHelper.updateContractId(contractId);
+
+            Navigator.of(context).pushNamed(RoutesHDr.DETAIL_CONTRACT_VIEW);
+          }
+        } else if (notificationType == 2) {
+          //Navigate Screen overview
+          //
+        } else if (notificationType == 7) {
+          //Navigate Lịch sinh hiệu
+          //
+          int currentIndex = 1;
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false,
+              arguments: currentIndex);
+        } else if (notificationType == 6) {
+          //Navigate thuốc detail
+          //
+          Navigator.pushNamed(context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
+              arguments: medicalInstructionId);
+        } else if (notificationType == 8) {
+          //Navigate hẹn hẹn detail
+          //
+
+        } else if (notificationType == 12) {
+          //Navigate share medical instruction
+          //
+
+        } else if (notificationType == 11) {
+          //Navigate connect device screen
+          //
+          Navigator.of(context).pushNamed(RoutesHDr.INTRO_CONNECT_PERIPHERAL);
+        }
+      }
     });
 
     _notificationsStream = NotificationsBloc.instance.notificationsStream;

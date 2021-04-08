@@ -31,22 +31,19 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
     with WidgetsBindingObserver {
   //
   VitalSignBloc _vitalSignBloc;
-  String vital_type = 'HEART_RATE';
-  List<int> listValueMap = [];
-  List<String> listTimeXAxis = [];
+  // List<int> listValueMap = [];
+  // List<String> listTimeXAxis = [];
   int _patientId = 0;
   String dateTime = '';
 
-  int minVitalSignValue = 0;
-  int maxVitalSignValue = 0;
-  int everageVitalSignValue = 0;
-  int _lastValueVitalSign = 0;
+  // int minVitalSignValue = 0;
+  // int maxVitalSignValue = 0;
 
   VitalSignDetailDTO _vitalSignDetailDTO = VitalSignDetailDTO();
   DateValidator _dateValidator = DateValidator();
 
   VitalSignDetailBloc _vitalSignDetailBloc;
-  int healthRecordId = 0;
+  int medicalInstructionId = 0;
   String timeStart = '';
   String timeCanceled = '';
 
@@ -65,10 +62,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
       });
       if (_patientId != 0) {
         _vitalSignDetailBloc.add(VitalSignEventGetDetail(
-            dateTime: _dateValidator.convertDateCreate(
-                dateTime, 'yyyy-MM-dd', 'yyyy-MM-dd'),
-            patientId: _patientId,
-            healthRecordId: healthRecordId));
+            patientId: _patientId, medicalInstructionId: medicalInstructionId));
       }
     });
   }
@@ -77,11 +71,11 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
   Widget build(BuildContext context) {
     Map<String, dynamic> arguments = ModalRoute.of(context).settings.arguments;
     if (arguments != null) {
-      healthRecordId = arguments['healthRecordId'];
+      medicalInstructionId = arguments['medicalInstructionId'];
       timeStart = arguments['timeStared'];
       timeCanceled = arguments['timeCanceled'];
       if (dateTime == '') {
-        dateTime = timeCanceled;
+        dateTime = timeStart;
       }
     }
     return Scaffold(
@@ -125,10 +119,8 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                                 dateTime = newDateTime.toString();
                               });
                               _vitalSignDetailBloc.add(VitalSignEventGetDetail(
-                                  dateTime: _dateValidator.convertDateCreate(
-                                      dateTime, 'yyyy-MM-dd', 'yyyy-MM-dd'),
                                   patientId: _patientId,
-                                  healthRecordId: healthRecordId));
+                                  medicalInstructionId: medicalInstructionId));
                             }
                           },
                         ),
@@ -166,40 +158,108 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                           if (state.vitalSignDetailDTO.vitalSignValues.length >
                               0) {
                             _vitalSignDetailDTO = state.vitalSignDetailDTO;
-                            if (_vitalSignDetailDTO.vitalSigns != null) {
-                              minVitalSignValue = _vitalSignDetailDTO
-                                  .vitalSigns.first.numberMin;
-                              maxVitalSignValue = _vitalSignDetailDTO
-                                  .vitalSigns.first.numberMax;
-                            }
 
-                            var listTime = _vitalSignDetailDTO
-                                .vitalSignValues.first.timeValue
-                                .split(',');
-                            var listValue = _vitalSignDetailDTO
-                                .vitalSignValues.first.numberValue
-                                .split(',');
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount:
+                                  _vitalSignDetailDTO.vitalSignValues.length,
+                              itemBuilder: (context, index) {
+                                // var itemVitalsign;
+                                var itemVitalsignValue =
+                                    _vitalSignDetailDTO.vitalSignValues[index];
 
-                            listTime.removeLast();
-                            listValue.removeLast();
+                                // if (index >
+                                //     _vitalSignDetailDTO.vitalSigns.length) {
+                                //   itemVitalsign = VitalSigns(
+                                //       vitalSignType: '',
+                                //       vitalSignTypeId: 1,
+                                //       numberMax: 0,
+                                //       numberMin: 0,
+                                //       minuteDangerInterval: 1,
+                                //       minuteNormalInterval: 1,
+                                //       timeStart: "",
+                                //       minuteAgain: 0);
+                                // } else {
+                                //   itemVitalsign =
+                                //       _vitalSignDetailDTO.vitalSigns[index];
+                                // }
 
-                            listValueMap = listValue
-                                .map((data) => int.parse(data))
-                                .toList();
-                            listTimeXAxis =
-                                listTime.map((e) => '"${e}"').toList();
+                                // int minVitalSignValue = (itemVitalsign == null)
+                                //     ? 0
+                                //     : itemVitalsign.numberMin;
+                                // int maxVitalSignValue = (itemVitalsign == null)
+                                //     ? 0
+                                //     : itemVitalsign.numberMax;
+                                //
+                                //
 
-                            return heartChart();
+                                int minVitalSignValue = 0;
+                                int maxVitalSignValue = 0;
+
+                                var listTime =
+                                    itemVitalsignValue.timeValue.split(',');
+                                var listValue =
+                                    itemVitalsignValue.numberValue.split(',');
+                                listTime.removeLast();
+                                listValue.removeLast();
+
+                                if (itemVitalsignValue.vitalSignTypeId == 1 ||
+                                    itemVitalsignValue.vitalSignTypeId == 3 ||
+                                    itemVitalsignValue.vitalSignTypeId == 4) {
+                                  List<int> listValueMap = listValue
+                                      .map((data) => int.parse(data))
+                                      .toList();
+                                  List<String> listTimeXAxis =
+                                      listTime.map((e) => '"${e}"').toList();
+
+                                  return heartChart(
+                                      listTimeXAxis,
+                                      minVitalSignValue,
+                                      maxVitalSignValue,
+                                      listValueMap);
+                                } else if (itemVitalsignValue.vitalSignTypeId ==
+                                    2) {
+                                  List<List<int>> listValueMap =
+                                      listValue.map((data) {
+                                    List<int> listNum = data
+                                        .split('-')
+                                        .map((e) => int.parse(e))
+                                        .toList();
+
+                                    listNum.sort();
+
+                                    List<int> dataClone = [
+                                      listNum.first,
+                                      listNum.last,
+                                      listNum.last,
+                                      listNum.last
+                                    ];
+
+                                    return dataClone;
+                                  }).toList();
+
+                                  List<String> listTimeXAxis =
+                                      listTime.map((e) => '"${e}"').toList();
+
+                                  return bloodChart(
+                                      listTimeXAxis,
+                                      minVitalSignValue,
+                                      maxVitalSignValue,
+                                      listValueMap);
+                                }
+                              },
+                            );
                           } else {
                             return Container(
                               width: MediaQuery.of(context).size.width,
-                              child: Text('Không có dữ liệu 1'),
+                              child: Text('Không có dữ liệu'),
                             );
                           }
                         } else {
                           return Container(
                             width: MediaQuery.of(context).size.width,
-                            child: Text('Không có dữ liệu 2'),
+                            child: Text('Không có dữ liệu'),
                           );
                         }
                       }
@@ -218,7 +278,8 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
     );
   }
 
-  heartChart() {
+  heartChart(List<String> listTimeXAxis, int minVitalSignValue,
+      int maxVitalSignValue, List<int> listValueMap) {
     return Column(
       children: <Widget>[
         Divider(
@@ -320,6 +381,130 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                       height: 400,
                     ),
                     Text('Biểu đồ nhịp tim'.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: DefaultTheme.ORANGE_TEXT,
+                        )),
+                  ],
+                ),
+              )
+            : Container(),
+        Divider(
+          color: DefaultTheme.GREY_TOP_TAB_BAR,
+          height: 0.5,
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 30),
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 20),
+        ),
+      ],
+    );
+  }
+
+  bloodChart(List<String> listTimeXAxis, int minVitalSignValue,
+      int maxVitalSignValue, List<List<int>> listValueMap) {
+    return Column(
+      children: <Widget>[
+        Divider(
+          color: DefaultTheme.GREY_TOP_TAB_BAR,
+          height: 0.5,
+        ),
+        (listTimeXAxis != null)
+            ? Container(
+                width: MediaQuery.of(context).size.width,
+                color: DefaultTheme.WHITE,
+                height: 430,
+                child: Column(
+                  children: [
+                    Container(
+                      child: new Echarts(
+                        option: '''
+   
+option = {
+
+                                      color: '#FF784B',
+                                      tooltip: {
+                                        trigger: "axis",
+                                        axisPointer: {
+                                          type: "shadow"
+                                      },
+                                      formatter: function (params)  {
+   
+            var tar = params[0];
+           
+            return 'Huyết áp lúc ' + (tar.value[0]+1) + 'giờ' + '<br/>' + 'tâm thu ' + tar.value[1] + '<br/>' +'tâm trương' + tar.value[2];
+        }
+                                  },
+    xAxis: {
+        name: 'GIỜ',
+                                      nameTextStyle: {
+                                      verticalAlign: "middle",
+                                      color: "#FF784B"
+                                      },
+          axisTick: {
+                                        show: false
+                                      },
+       data: function () {
+            var list = [];
+            for (var i = 1; i <= 24; i++) {
+                list.push(i + ':00');
+            }
+            return list;
+        }()
+    },
+    yAxis: {
+        max:150,
+        min:0,
+           name: '',
+                                      nameTextStyle: {
+                                      verticalAlign: "middle",
+                                      color: "#FF784B"
+                                      },
+                                      axisTick: {
+                                        show: false
+                                      },
+                                      type: 'value',
+                                      axisLine: {
+                                        lineStyle: {
+                                          color: '#303030',
+                                        },
+                                      },
+                                      axisLabel: {
+                                        color: '#303030',
+                                      }
+                                      
+                               
+    },
+    series: [
+
+        {
+        type: 'k',
+  
+        data: $listValueMap,
+         markLine: {
+                                          silent: true,
+                                          lineStyle: {
+                                              color: '#333'
+                                          },
+                                          data: [{
+                                              yAxis: $minVitalSignValue
+                                          }, {
+                                              yAxis: $maxVitalSignValue
+                                          }]
+                                        }
+    
+    }]
+                        }
+                                  ''',
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      // padding: EdgeInsets.only(right: 20),
+                      height: 400,
+                    ),
+                    Text('Biểu đồ nhịp tim trong ngày'.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
