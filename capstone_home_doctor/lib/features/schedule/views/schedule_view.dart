@@ -46,6 +46,11 @@ class _ScheduleView extends State<ScheduleView>
       PrescriptionRepository(httpClient: http.Client());
   PrescriptionListBloc _prescriptionListBloc;
   //
+  //
+  int arguments = 0;
+  int _currentIndex = 0;
+  int count = 0;
+  //
   int _accountId = 0;
   int _patientId = 0;
   DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
@@ -96,11 +101,22 @@ class _ScheduleView extends State<ScheduleView>
 
   @override
   Widget build(BuildContext context) {
+    if (count == 0) {
+      setState(() {
+        arguments = ModalRoute.of(context).settings.arguments;
+        if (arguments != null) {
+          _currentIndex = arguments;
+        } else {}
+      });
+      count++;
+    } else {
+      arguments = null;
+    }
     // _listPrescription.sort((a, b) => b.startDate.compareTo(a.startDate));
     // _currentPrescription = _listPrescription[0];
     return DefaultTabController(
       length: 2,
-      initialIndex: 0,
+      initialIndex: _currentIndex,
       child: Scaffold(
         body: SafeArea(
           child: Column(

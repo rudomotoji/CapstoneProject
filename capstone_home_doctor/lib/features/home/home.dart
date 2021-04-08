@@ -95,7 +95,7 @@ class _MainHomeState extends State<MainHome> {
 
     //
     selectNotificationSubject.stream.listen((String payload) async {
-      print(payload);
+      print('payload');
       var navigate = jsonDecode(payload);
       await Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
     });

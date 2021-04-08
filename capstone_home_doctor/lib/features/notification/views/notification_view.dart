@@ -283,7 +283,10 @@ class _NotificationState extends State<NotificationPage> {
                                       } else if (i.notificationType == 8) {
                                         //Navigate hẹn hẹn detail
                                         //
-
+                                        int _indexPage = 1;
+                                        Navigator.of(context).pushNamed(
+                                            RoutesHDr.SCHEDULE,
+                                            arguments: _indexPage);
                                       } else if (i.notificationType == 12) {
                                         //Navigate share medical instruction
                                         //

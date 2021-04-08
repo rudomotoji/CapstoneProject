@@ -30,6 +30,9 @@ class DateValidator {
 
   String parseToDateView3(String dateString) {
     String result = '';
+    if (dateString == '') {
+      return dateString;
+    }
     String day, month, year;
     String date = dateString.split(' ')[0];
     day = date.split('-')[2];

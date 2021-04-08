@@ -16,6 +16,8 @@ import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_blo
 import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/update_health_record.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_sync_bloc.dart';
+import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_sync_repository.dart';
 import 'package:capstone_home_doctor/services/doctor_helper.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/vital_sign_chart_detail.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
@@ -175,7 +177,8 @@ PeripheralRepository _peripheralRepository = PeripheralRepository();
 VitalSignRepository _vitalSignRepository = VitalSignRepository();
 ActivityRepository _activityRepository =
     ActivityRepository(httpClient: http.Client());
-
+VitalSignSyncRepository _vitalSignSyncRepository =
+    VitalSignSyncRepository(httpClient: http.Client());
 //AccountBloc
 // AccountBloc _accountBloc = AccountBloc(accountRepository: accountRepository);
 //
@@ -1662,6 +1665,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<VitalSignDetailBloc>(
             create: (BuildContext context) => VitalSignDetailBloc(
                 vitalSignServerRepository: _vitalSignServerRepository),
+          ),
+          BlocProvider<VitalSignSyncBloc>(
+            create: (BuildContext context) => VitalSignSyncBloc(
+                vitalSignSyncRepository: _vitalSignSyncRepository),
           ),
         ],
         child: GestureDetector(
