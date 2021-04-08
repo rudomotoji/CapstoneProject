@@ -140,14 +140,13 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     _updateTokenDevice();
     // _getHeartRateValue();
 
-    selectNotificationSubject.stream.listen((String payload) async {
-      await _getPatientId();
-    });
+    // selectNotificationSubject.stream.listen((String payload) async {
+    //   await _pullRefresh();
+    // });
 
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((notification) {
-      print('Notification: $notification');
-      _getPatientId();
+      _pullRefresh();
     });
 
     //
@@ -346,32 +345,33 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                     ),
                   ],
                 ),
-                BlocBuilder<AppointmentBloc, AppointmentState>(
-                  builder: (context, stateAppointment) {
-                    if (stateAppointment is AppointmentStateSuccess) {
-                      listAppointment = stateAppointment.listAppointment;
-                      if (stateAppointment.listAppointment != null) {
-                        DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
-                            .parse(DateFormat('dd/MM/yyyy')
-                                .format(DateTime.now()));
-                        for (var appointment
-                            in stateAppointment.listAppointment) {
-                          DateTime dateAppointment =
-                              new DateFormat("dd/MM/yyyy")
-                                  .parse(appointment.dateExamination);
-                          if (dateAppointment.millisecondsSinceEpoch ==
-                              curentDateNow.millisecondsSinceEpoch) {
-                            _appointmentDTO = appointment;
-                            print('có lịch tái khám vào hôm nay');
-                          }
-                        }
-                      }
-                    }
-                    return Container();
-                  },
-                ),
+                // BlocBuilder<AppointmentBloc, AppointmentState>(
+                //   builder: (context, stateAppointment) {
+                //     if (stateAppointment is AppointmentStateSuccess) {
+                //       listAppointment = stateAppointment.listAppointment;
+                //       if (stateAppointment.listAppointment != null) {
+                //         DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
+                //             .parse(DateFormat('dd/MM/yyyy')
+                //                 .format(DateTime.now()));
+                //         for (var appointment
+                //             in stateAppointment.listAppointment) {
+                //           DateTime dateAppointment =
+                //               new DateFormat("dd/MM/yyyy")
+                //                   .parse(appointment.dateExamination);
+                //           if (dateAppointment.millisecondsSinceEpoch ==
+                //               curentDateNow.millisecondsSinceEpoch) {
+                //             _appointmentDTO = appointment;
+                //             print('có lịch tái khám vào hôm nay');
+                //           }
+                //         }
+                //       }
+                //     }
+                //     return Container();
+                //   },
+                // ),
 
                 _sizeBoxCard(),
+                getAppointment(),
 
                 Padding(
                   padding: EdgeInsets.only(top: 20, bottom: 10),
@@ -1295,11 +1295,12 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         });
   }
 
-  Widget _medicalScheduleNotNull(List<MedicationSchedules> listSchedule) {
+  Widget _medicalScheduleNotNull(
+      List<MedicationSchedules> listSchedule, String place) {
     return Column(
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.only(left: 20, right: 20, bottom: 5, top: 20),
+          padding: EdgeInsets.only(left: 10, right: 20, bottom: 5, top: 10),
           child: Row(
             children: [
               Align(
@@ -1313,6 +1314,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                   ),
                 ),
               ),
+              (place != null) ? Text('(${place})') : Text(''),
             ],
           ),
         ),
@@ -1571,33 +1573,47 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         ],
       );
     }).toList();
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 20),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Lịch tái khám',
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-                fontSize: 17,
-                color: DefaultTheme.RED_CALENDAR,
-              ),
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      // height: 100,
+      padding: EdgeInsets.only(left: 20, right: 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: DefaultTheme.GREY_VIEW,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          //
+          Padding(
+            padding: EdgeInsets.only(
+              top: 15,
             ),
           ),
-        ),
-        Divider(
-          height: 0.1,
-          color: DefaultTheme.GREY_TOP_TAB_BAR,
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 20),
-        ),
-        Expanded(
-          child: Container(
+          Text(
+            'Lịch khám',
+            style: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 18,
+              color: DefaultTheme.RED_CALENDAR,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(
+              top: 5,
+            ),
+          ),
+          Divider(
+            color: DefaultTheme.GREY_TOP_TAB_BAR,
+            height: 1,
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 10),
+          ),
+          Container(
             padding: EdgeInsets.all(10),
-            child: ListView(
+            child: Column(
               children: [
                 Text(
                   'Bạn có ${_appointmentDTO.appointments.length} lịch khám trong hôm nay:',
@@ -1620,8 +1636,105 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
               ],
             ),
           ),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+
+  getAppointment() {
+    return BlocBuilder<AppointmentBloc, AppointmentState>(
+      builder: (context, stateAppointment) {
+        if (stateAppointment is AppointmentStateLoading) {
+          return Container(
+            width: 200,
+            height: 200,
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: Image.asset('assets/images/loading.gif'),
+            ),
+          );
+        }
+        if (stateAppointment is AppointmentStateFailure) {
+          return Container(
+              width: MediaQuery.of(context).size.width,
+              child: Center(
+                  child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+        }
+        if (stateAppointment is AppointmentStateSuccess) {
+          listAppointment = stateAppointment.listAppointment;
+          if (stateAppointment.listAppointment != null) {
+            DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
+                .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
+            for (var appointment in stateAppointment.listAppointment) {
+              DateTime dateAppointment = new DateFormat("dd/MM/yyyy")
+                  .parse(appointment.dateExamination);
+              if (dateAppointment.millisecondsSinceEpoch ==
+                  curentDateNow.millisecondsSinceEpoch) {
+                _appointmentDTO = appointment;
+              }
+              // _appointmentDTO = appointment;
+            }
+          }
+          return Container(
+            child: (_appointmentDTO == null)
+                ? Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 100,
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: DefaultTheme.GREY_VIEW,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        //
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 15,
+                          ),
+                        ),
+                        Text(
+                          'Lịch khám',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 18,
+                            color: DefaultTheme.RED_CALENDAR,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 5,
+                          ),
+                        ),
+                        Divider(
+                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                          height: 1,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 10),
+                        ),
+                        Text(
+                          'Hiện tại bạn không có lịch khám nào',
+                          style: TextStyle(
+                            color: DefaultTheme.BLACK,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : _appointmentNotNull(),
+          );
+        }
+        return Container(
+          width: MediaQuery.of(context).size.width,
+          child: Center(
+            child: Text('Không thể lấy dữ liệu'),
+          ),
+        );
+      },
     );
   }
 
@@ -1641,22 +1754,42 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         }
         if (contextPrescription is PrescriptionListStateFailure) {
           getLocalStorage();
-          return _getCalendar();
+          return _getMedicationSchedule();
         }
         if (contextPrescription is PrescriptionListStateSuccess) {
-          listPrescription = contextPrescription.listPrescription;
+          // listPrescription = contextPrescription.listPrescription;
+
+          List<MedicalInstructionDTO> _listPrescription = [];
           if (contextPrescription.listPrescription != null) {
             listPrescription.sort((a, b) =>
                 b.medicalInstructionId.compareTo(a.medicalInstructionId));
             listPrescription.sort((a, b) => b.medicationsRespone.dateFinished
                 .compareTo(a.medicationsRespone.dateFinished));
+
+            for (var schedule in contextPrescription.listPrescription) {
+              MedicalInstructionDTO _prescription = MedicalInstructionDTO();
+              if (schedule.medicationsRespone.dateFinished != null) {
+                DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
+                    .parse(schedule.medicationsRespone.dateFinished);
+                if (tempDate2.millisecondsSinceEpoch >=
+                        curentDateNow.millisecondsSinceEpoch &&
+                    schedule.medicationsRespone.status.contains('ACTIVE')) {
+                  schedule.medicationsRespone.medicalResponseID =
+                      schedule.medicalInstructionId;
+                  _prescription = schedule;
+                  _listPrescription.add(_prescription);
+                }
+              }
+            }
+
+            listPrescription = _listPrescription;
           }
           if (contextPrescription.listPrescription.length > 0) {
             handlingMEdicalResponse();
           } else {
             getLocalStorage();
           }
-          return _getCalendar();
+          return _getMedicationSchedule();
         }
         return Container(
           width: MediaQuery.of(context).size.width,
@@ -1668,91 +1801,156 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     );
   }
 
-  Widget _getCalendar() {
-    if (listPrescription.length > 0) {
-      return SizedBox(
-        height: 280,
-        width: MediaQuery.of(context).size.width,
-        child: PageView.builder(
-          itemCount: listPrescription.length,
-          controller: PageController(viewportFraction: 0.9),
-          onPageChanged: (int index) => setState(() => _index = index),
-          itemBuilder: (_, i) {
-            return Transform.scale(
-              scale: i == _index ? 1 : 0.9,
-              alignment: Alignment.centerLeft,
-              child: Card(
-                elevation: 0,
-                shadowColor: DefaultTheme.GREY_TEXT,
-                color: DefaultTheme.GREY_VIEW,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                child: _medicalScheduleNotNull(
-                    listPrescription[i].medicationsRespone.medicationSchedules),
-              ),
-            );
-          },
-        ),
-      );
-    } else {
-      return Container(
-        width: MediaQuery.of(context).size.width,
-        height: 100,
-        padding: EdgeInsets.only(left: 20, right: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: DefaultTheme.GREY_VIEW,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            //
-            Padding(
-              padding: EdgeInsets.only(
-                top: 15,
-              ),
+  Widget _getMedicationSchedule() {
+    return (listPrescription.length > 0)
+        ? SizedBox(
+            height: 280,
+            width: MediaQuery.of(context).size.width,
+            child: PageView.builder(
+              itemCount: listPrescription.length,
+              controller: PageController(viewportFraction: 0.9),
+              onPageChanged: (int index) => setState(() => _index = index),
+              itemBuilder: (_, i) {
+                return Transform.scale(
+                  scale: i == _index ? 1 : 0.9,
+                  alignment: Alignment.centerLeft,
+                  child: Card(
+                    elevation: 0,
+                    shadowColor: DefaultTheme.GREY_TEXT,
+                    color: DefaultTheme.GREY_VIEW,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    child: _medicalScheduleNotNull(
+                        listPrescription[i]
+                            .medicationsRespone
+                            .medicationSchedules,
+                        listPrescription[i].placeHealthRecord),
+                  ),
+                );
+              },
             ),
-            Text(
-              'Lịch dùng thuốc',
-              style: TextStyle(
-                fontWeight: FontWeight.w400,
-                fontSize: 18,
-                color: DefaultTheme.RED_CALENDAR,
-              ),
+          )
+        : Container(
+            width: MediaQuery.of(context).size.width,
+            height: 100,
+            padding: EdgeInsets.only(left: 20, right: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: DefaultTheme.GREY_VIEW,
             ),
-            Padding(
-              padding: EdgeInsets.only(
-                top: 5,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                //
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 15,
+                  ),
+                ),
+                Text(
+                  'Lịch dùng thuốc',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 18,
+                    color: DefaultTheme.RED_CALENDAR,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 5,
+                  ),
+                ),
+                Divider(
+                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                  height: 1,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                ),
+                Text(
+                  'Hiện tại bạn chưa có lịch uống thuốc nào từ bác sĩ.',
+                  style: TextStyle(
+                    color: DefaultTheme.BLACK,
+                  ),
+                ),
+              ],
             ),
-            Divider(
-              color: DefaultTheme.GREY_TOP_TAB_BAR,
-              height: 1,
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-            ),
-            Text(
-              'Hiện tại bạn chưa có lịch uống thuốc nào từ bác sĩ.',
-              style: TextStyle(
-                color: DefaultTheme.BLACK,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-  }
-
-  Widget _getAppointment() {
-    return Container(
-      child: (_appointmentDTO == null)
-          ? Center(
-              child: Text('Hôm nay không có lịch tái khám'),
-            )
-          : _appointmentNotNull(),
-    );
+          );
+    // if (listPrescription.length > 0) {
+    //   return SizedBox(
+    //     height: 280,
+    //     width: MediaQuery.of(context).size.width,
+    //     child: PageView.builder(
+    //       itemCount: listPrescription.length,
+    //       controller: PageController(viewportFraction: 0.9),
+    //       onPageChanged: (int index) => setState(() => _index = index),
+    //       itemBuilder: (_, i) {
+    //         return Transform.scale(
+    //           scale: i == _index ? 1 : 0.9,
+    //           alignment: Alignment.centerLeft,
+    //           child: Card(
+    //             elevation: 0,
+    //             shadowColor: DefaultTheme.GREY_TEXT,
+    //             color: DefaultTheme.GREY_VIEW,
+    //             shape: RoundedRectangleBorder(
+    //                 borderRadius: BorderRadius.circular(10)),
+    //             child: _medicalScheduleNotNull(
+    //                 listPrescription[i].medicationsRespone.medicationSchedules),
+    //           ),
+    //         );
+    //       },
+    //     ),
+    //   );
+    // } else {
+    //   return Container(
+    //     width: MediaQuery.of(context).size.width,
+    //     height: 100,
+    //     padding: EdgeInsets.only(left: 20, right: 20),
+    //     decoration: BoxDecoration(
+    //       borderRadius: BorderRadius.circular(12),
+    //       color: DefaultTheme.GREY_VIEW,
+    //     ),
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.start,
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       children: <Widget>[
+    //         //
+    //         Padding(
+    //           padding: EdgeInsets.only(
+    //             top: 15,
+    //           ),
+    //         ),
+    //         Text(
+    //           'Lịch dùng thuốc',
+    //           style: TextStyle(
+    //             fontWeight: FontWeight.w400,
+    //             fontSize: 18,
+    //             color: DefaultTheme.RED_CALENDAR,
+    //           ),
+    //         ),
+    //         Padding(
+    //           padding: EdgeInsets.only(
+    //             top: 5,
+    //           ),
+    //         ),
+    //         Divider(
+    //           color: DefaultTheme.GREY_TOP_TAB_BAR,
+    //           height: 1,
+    //         ),
+    //         Padding(
+    //           padding: EdgeInsets.only(bottom: 10),
+    //         ),
+    //         Text(
+    //           'Hiện tại bạn chưa có lịch uống thuốc nào từ bác sĩ.',
+    //           style: TextStyle(
+    //             color: DefaultTheme.BLACK,
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // }
   }
 
   Future _determinePosition() async {
@@ -1785,8 +1983,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   }
 
   handlingMEdicalResponse() async {
-    List<MedicalInstructionDTO> _listPrescription = [];
-
     await _sqfLiteHelper.cleanDatabase();
     for (var schedule in listPrescription) {
       MedicalInstructionDTO _prescription = MedicalInstructionDTO();
@@ -1801,7 +1997,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           await _sqfLiteHelper
               .insertMedicalResponse(schedule.medicationsRespone);
           _prescription = schedule;
-          _listPrescription.add(_prescription);
 
           for (var item in schedule.medicationsRespone.medicationSchedules) {
             item.medicalResponseID = schedule.medicalInstructionId;
@@ -1810,10 +2005,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         }
       }
     }
-
-    setState(() {
-      listPrescription = _listPrescription;
-    });
   }
 
   getLocalStorage() async {
