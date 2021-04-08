@@ -303,17 +303,14 @@ class _CreateMedicalInstructionViewState
                           padding: EdgeInsets.only(bottom: 10),
                         ),
                         (listImage.length <= 0) ? Container() : checktitle(),
-                        (titleCompare != null)
-                            ? Text('${f.format(titleCompare * 100)} %')
-                            : Container(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             InkWell(
                               child: Container(
-                                width: 120,
-                                height: 120,
+                                width: 100,
+                                height: 30,
                                 decoration: BoxDecoration(
                                   color: DefaultTheme.TRANSPARENT,
                                   border: Border.all(
@@ -405,190 +402,136 @@ class _CreateMedicalInstructionViewState
                             Padding(
                               padding: EdgeInsets.only(right: 10),
                             ),
-                            (listImage64Bit.length <= 0)
-                                ? Container()
-                                : Expanded(
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width -
-                                          170,
-                                      height: 120,
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        // physics: NeverScrollableScrollPhysics(),
-                                        // shrinkWrap: true,
-                                        itemCount: listImage64Bit.length,
-                                        itemBuilder: (context, index) {
-                                          return Container(
-                                            margin: EdgeInsets.only(right: 10),
-                                            child: Stack(
-                                              children: [
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  child: SizedBox(
-                                                      width: 120,
-                                                      height: 120,
-                                                      child: ImageUltility
-                                                          .imageFromBase64String(
-                                                              listImage64Bit[
-                                                                  index])),
-                                                ),
-                                                Positioned(
-                                                  top: 0,
-                                                  right: 0,
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        listImage
-                                                            .removeAt(index);
-                                                        listImage64Bit
-                                                            .removeAt(index);
+                            (titleCompare != null)
+                                ? Text('${f.format(titleCompare * 100)} %')
+                                : Container(),
+                            // (listImage64Bit.length <= 0)
+                            //     ? Container()
+                            //     : Expanded(
+                            //         child: Container(
+                            //           width: MediaQuery.of(context).size.width -
+                            //               170,
+                            //           height: 120,
+                            //           child: ListView.builder(
+                            //             scrollDirection: Axis.horizontal,
+                            //             // physics: NeverScrollableScrollPhysics(),
+                            //             // shrinkWrap: true,
+                            //             itemCount: listImage64Bit.length,
+                            //             itemBuilder: (context, index) {
+                            //               return Container(
+                            //                 margin: EdgeInsets.only(right: 10),
+                            //                 child: Stack(
+                            //                   children: [
+                            //                     ClipRRect(
+                            //                       borderRadius:
+                            //                           BorderRadius.circular(10),
+                            //                       child: SizedBox(
+                            //                           width: 120,
+                            //                           height: 120,
+                            //                           child: ImageUltility
+                            //                               .imageFromBase64String(
+                            //                                   listImage64Bit[
+                            //                                       index])),
+                            //                     ),
+                            //                     Positioned(
+                            //                       top: 0,
+                            //                       right: 0,
+                            //                       child: InkWell(
+                            //                         onTap: () {
+                            //                           setState(() {
+                            //                             listImage
+                            //                                 .removeAt(index);
+                            //                             listImage64Bit
+                            //                                 .removeAt(index);
 
-                                                        if (listImage.length ==
-                                                            0) {
-                                                          titleCompare = null;
-                                                          _dianoseController
-                                                                  .text =
-                                                              strDiseaseDraft;
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      width: 30,
-                                                      height: 30,
-                                                      child: Image.asset(
-                                                          'assets/images/ic-close.png'),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
+                            //                             if (listImage.length ==
+                            //                                 0) {
+                            //                               titleCompare = null;
+                            //                               _dianoseController
+                            //                                       .text =
+                            //                                   strDiseaseDraft;
+                            //                             }
+                            //                           });
+                            //                         },
+                            //                         child: Container(
+                            //                           width: 30,
+                            //                           height: 30,
+                            //                           child: Image.asset(
+                            //                               'assets/images/ic-close.png'),
+                            //                         ),
+                            //                       ),
+                            //                     ),
+                            //                   ],
+                            //                 ),
+                            //               );
+                            //             },
+                            //           ),
+                            //         ),
+                            //       ),
                           ],
                         ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 25),
+                          padding: EdgeInsets.only(bottom: 10),
                         ),
-                        (_dianoseController.text == '' || listImage.length <= 0)
+                        (listImage64Bit.length <= 0)
                             ? Container()
-                            : ButtonHDr(
-                                width: MediaQuery.of(context).size.width - 40,
-                                style: BtnStyle.BUTTON_BLACK,
-                                label: 'Thêm',
-                                onTap: () async {
-                                  if (_patientId != 0) {
-                                    MedicalInstructionDTO medInsDTO =
-                                        MedicalInstructionDTO(
-                                      medicalInstructionTypeId: _medInsTypeId,
-                                      healthRecordId: _hrId,
-                                      patientId: _patientId,
-                                      description: _note,
-                                      diagnose: _dianoseController.text,
-                                      imageFile: listImage,
+                            : Container(
+                                width: MediaQuery.of(context).size.width - 10,
+                                child: GridView.builder(
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 3),
+                                  itemCount: listImage64Bit.length,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      margin: EdgeInsets.only(right: 10),
+                                      child: Stack(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            child: SizedBox(
+                                                width: 120,
+                                                height: 120,
+                                                child: ImageUltility
+                                                    .imageFromBase64String(
+                                                        listImage64Bit[index])),
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  listImage.removeAt(index);
+                                                  listImage64Bit
+                                                      .removeAt(index);
+
+                                                  if (listImage.length == 0) {
+                                                    titleCompare = null;
+                                                    _dianoseController.text =
+                                                        strDiseaseDraft;
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                width: 30,
+                                                height: 30,
+                                                child: Image.asset(
+                                                    'assets/images/ic-close.png'),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     );
-
-                                    setState(() {
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Center(
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5)),
-                                              child: BackdropFilter(
-                                                filter: ImageFilter.blur(
-                                                    sigmaX: 25, sigmaY: 25),
-                                                child: Container(
-                                                  width: 300,
-                                                  height: 300,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      color: DefaultTheme.WHITE
-                                                          .withOpacity(0.8)),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: 200,
-                                                        height: 200,
-                                                        child: Image.asset(
-                                                            'assets/images/loading.gif'),
-                                                      ),
-                                                      Text(
-                                                        'Đang tạo...',
-                                                        style: TextStyle(
-                                                            color: DefaultTheme
-                                                                .GREY_TEXT,
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .none),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    });
-
-                                    if (titleCompare < percenntCompare) {
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: new Text(
-                                              "Cảnh báo",
-                                              style: TextStyle(
-                                                  color: DefaultTheme.RED_TEXT,
-                                                  fontSize: 18),
-                                            ),
-                                            content: new Text(
-                                                "Bạn đã chắc chắn thông tin bạn thêm vào là chính xác"),
-                                            actions: <Widget>[
-                                              new FlatButton(
-                                                child: new Text("Không"),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                              new FlatButton(
-                                                child: new Text("Đúng"),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                  _createMedIns(medInsDTO);
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    } else {
-                                      _createMedIns(medInsDTO);
-                                    }
-                                  }
-                                },
+                                  },
+                                ),
                               ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 25),
+                          padding: EdgeInsets.only(bottom: 40),
                         ),
                       ],
                     ),
@@ -596,6 +539,120 @@ class _CreateMedicalInstructionViewState
                 ],
               ),
             ),
+            (_dianoseController.text == '' || listImage.length <= 0)
+                ? Container()
+                : Positioned(
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: ButtonHDr(
+                        width: MediaQuery.of(context).size.width - 40,
+                        style: BtnStyle.BUTTON_BLACK,
+                        label: 'Thêm',
+                        onTap: () async {
+                          if (_patientId != 0) {
+                            MedicalInstructionDTO medInsDTO =
+                                MedicalInstructionDTO(
+                              medicalInstructionTypeId: _medInsTypeId,
+                              healthRecordId: _hrId,
+                              patientId: _patientId,
+                              description: _note,
+                              diagnose: _dianoseController.text,
+                              imageFile: listImage,
+                            );
+
+                            setState(() {
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Center(
+                                    child: ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                      child: BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                            sigmaX: 25, sigmaY: 25),
+                                        child: Container(
+                                          width: 300,
+                                          height: 300,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: DefaultTheme.WHITE
+                                                  .withOpacity(0.8)),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              SizedBox(
+                                                width: 200,
+                                                height: 200,
+                                                child: Image.asset(
+                                                    'assets/images/loading.gif'),
+                                              ),
+                                              Text(
+                                                'Đang tạo...',
+                                                style: TextStyle(
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT,
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w400,
+                                                    decoration:
+                                                        TextDecoration.none),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            });
+
+                            if (titleCompare < percenntCompare) {
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: new Text(
+                                      "Cảnh báo",
+                                      style: TextStyle(
+                                          color: DefaultTheme.RED_TEXT,
+                                          fontSize: 18),
+                                    ),
+                                    content: new Text(
+                                        "Bạn đã chắc chắn thông tin bạn thêm vào là chính xác"),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                        child: new Text("Không"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      new FlatButton(
+                                        child: new Text("Đúng"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          _createMedIns(medInsDTO);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            } else {
+                              _createMedIns(medInsDTO);
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),
@@ -746,6 +803,7 @@ class _CreateMedicalInstructionViewState
     }
   }
 
+//chọn loại để chọn hình: camera hoặc thư viện ảnh
   _showPicker(context) {
     showModalBottomSheet(
         context: context,
@@ -756,7 +814,7 @@ class _CreateMedicalInstructionViewState
                 children: <Widget>[
                   new ListTile(
                       leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
+                      title: new Text('Thư viện ảnh'),
                       onTap: () {
                         _onImageButtonPressed(ImageSource.gallery,
                             context: context);
@@ -798,106 +856,17 @@ class _CreateMedicalInstructionViewState
             load = true;
           }
         });
-        if (_imgFile.path != null && _imgFile.path != '' && load) {
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (BuildContext context) {
-              return Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                    child: Container(
-                      width: 300,
-                      height: 300,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: DefaultTheme.WHITE.withOpacity(0.8)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 200,
-                            height: 200,
-                            child: Image.asset('assets/images/loading.gif'),
-                          ),
-                          Text(
-                            'Vui lòng chờ trong giây lát....',
-                            style: TextStyle(
-                                color: DefaultTheme.GREY_TEXT,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                decoration: TextDecoration.none),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-
-          await _medicalInstructionRepository
-              .getTextFromImage(_imgFile.path, _selectedHRType)
-              .then((value) {
-            Navigator.of(context).pop();
-            if (value != null) {
-              setState(() {
-                _dianoseController.text =
-                    _dianoseController.text + value.symptom;
-                if (titleCompare == null) {
-                  titleCompare = value.titleCompare;
-                } else if (titleCompare < value.titleCompare) {
-                  titleCompare = value.titleCompare;
-                }
-              });
-              if (titleCompare < percenntCompare) {
-                setState(() {
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: new Text("Cảnh báo"),
-                        content: new Text(
-                            "Hãy chắc chắn rằng đây là phiếu ${_selectedHRType}"),
-                        actions: <Widget>[
-                          new FlatButton(
-                            child: new Text("Bỏ"),
-                            onPressed: () {
-                              setState(() {
-                                titleCompare = null;
-                                // _imgString = '';
-                                _imgFile = null;
-                                _dianoseController.text = strDiseaseDraft;
-
-                                listImage.removeLast();
-                                listImage64Bit.removeLast();
-                                if (listImage.length == 0) {
-                                  titleCompare = null;
-                                  _dianoseController.text = strDiseaseDraft;
-                                }
-                              });
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          new FlatButton(
-                            child: new Text("Đồng ý"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                });
-              }
+        if (titleCompare == null) {
+          deteckImage();
+        } else {
+          if (titleCompare >= percenntCompare) {
+            print('titleCompare >= percenntCompare');
+          } else {
+            if (_imgFile.path != null && _imgFile.path != '' && load) {
+              print('titleCompare < percenntCompare');
+              deteckImage();
             }
-          });
+          }
         }
       } else {
         print('No image selected.');
@@ -905,6 +874,107 @@ class _CreateMedicalInstructionViewState
     } catch (e) {
       print('_onImageButtonPressed: $e');
     }
+  }
+
+  deteckImage() async {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: DefaultTheme.WHITE.withOpacity(0.8)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      height: 200,
+                      child: Image.asset('assets/images/loading.gif'),
+                    ),
+                    Text(
+                      'Vui lòng chờ trong giây lát....',
+                      style: TextStyle(
+                          color: DefaultTheme.GREY_TEXT,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                          decoration: TextDecoration.none),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    await _medicalInstructionRepository
+        .getTextFromImage(_imgFile.path, _selectedHRType)
+        .then((value) {
+      Navigator.of(context).pop();
+      if (value != null) {
+        setState(() {
+          _dianoseController.text = _dianoseController.text + value.symptom;
+          if (titleCompare == null) {
+            titleCompare = value.titleCompare;
+          } else if (titleCompare < value.titleCompare) {
+            titleCompare = value.titleCompare;
+          }
+        });
+        if (titleCompare < percenntCompare) {
+          setState(() {
+            showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: new Text("Cảnh báo"),
+                  content: new Text(
+                      "Hãy chắc chắn rằng đây là phiếu ${_selectedHRType}"),
+                  actions: <Widget>[
+                    new FlatButton(
+                      child: new Text("Bỏ"),
+                      onPressed: () {
+                        setState(() {
+                          titleCompare = null;
+                          // _imgString = '';
+                          _imgFile = null;
+                          _dianoseController.text = strDiseaseDraft;
+
+                          listImage.removeLast();
+                          listImage64Bit.removeLast();
+                          if (listImage.length == 0) {
+                            titleCompare = null;
+                            _dianoseController.text = strDiseaseDraft;
+                          }
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    new FlatButton(
+                      child: new Text("Đồng ý"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          });
+        }
+      }
+    });
   }
 
   _getPatientId() async {
