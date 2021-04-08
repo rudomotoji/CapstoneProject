@@ -155,19 +155,11 @@ class VitalSignServerRepository extends BaseApiClient {
   }
 
   Future<VitalSignDetailDTO> getVitalSign(
-      int patientId, int healthRecordId, String dateTime) async {
-    String url = '';
-    if (healthRecordId > 0) {
-      url =
-          '/VitalSigns/GetVitalSignValueByHRId?patientId=$patientId&healthRecordId=$healthRecordId&dateTime=$dateTime';
-    } else {
-      url =
-          '/VitalSigns/GetVitalSignValueByHRId?patientId=$patientId&dateTime=$dateTime';
-    }
+      int patientId, int medicalInstructionId) async {
+    String url =
+        '/VitalSigns/GetVitalSignValueByMIId?medicalInstructionId=$medicalInstructionId&patientId=$patientId';
 
     try {
-      //
-      print(url);
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
         VitalSignDetailDTO dto =

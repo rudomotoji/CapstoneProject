@@ -79,9 +79,8 @@ class VitalSignDetailBloc extends Bloc<VitalSignEvent, VitalSignState> {
     if (event is VitalSignEventGetDetail) {
       yield VitalSignStateLoading();
       try {
-        final VitalSignDetailDTO data =
-            await vitalSignServerRepository.getVitalSign(
-                event.patientId, event.healthRecordId, event.dateTime);
+        final VitalSignDetailDTO data = await vitalSignServerRepository
+            .getVitalSign(event.patientId, event.medicalInstructionId);
         yield VitalSignGetDetailSuccess(vitalSignDetailDTO: data);
       } catch (e) {
         yield VitalSignStateFailure();
