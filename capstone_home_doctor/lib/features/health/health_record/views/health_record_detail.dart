@@ -626,7 +626,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                           children: [
                             InkWell(
                               onTap: () {
-                                if (dto?.image.length > 0) {
+                                if (dto?.image != null) {
                                   showFullDetailComponent(
                                       dto.image,
                                       dto.medicalInstructionType,
@@ -636,15 +636,15 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                           'yyyy-MM-ddThh:mm:ss'),
                                       dto.diagnose);
                                 } else {
-                                  if (dto.medicationsRespone != null) {
+                                  if (dto.medicalInstructionTypeId == 1) {
                                     Navigator.pushNamed(context,
                                             RoutesHDr.MEDICAL_HISTORY_DETAIL,
                                             arguments: dto.medicalInstructionId)
                                         .then((value) async {
                                       await _pullRefresh();
                                     });
-                                  } else if (dto.vitalSignScheduleRespone !=
-                                      null) {
+                                  } else if (dto.medicalInstructionTypeId ==
+                                      8) {
                                     _showDetailVitalSign(
                                         dto.medicalInstructionId);
                                   }
@@ -660,7 +660,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     width: 0.5,
                                   ),
                                 ),
-                                child: (dto?.image.length <= 0)
+                                child: (dto?.image == null)
                                     ? Container()
                                     : Stack(
                                         children: [
