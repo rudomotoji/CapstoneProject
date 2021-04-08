@@ -1643,10 +1643,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 vitalSignRepository: _vitalSignRepository,
                 sqfLiteHelper: _sqfLiteHelper),
           ),
-          BlocProvider<VitalSignDangerousBloc>(
-            create: (BuildContext context) =>
-                VitalSignDangerousBloc(sqfLiteHelper: _sqfLiteHelper),
-          ),
+          // BlocProvider<VitalSignDangerousBloc>(
+          //   create: (BuildContext context) =>
+          //       VitalSignDangerousBloc(sqfLiteHelper: _sqfLiteHelper),
+          // ),
           BlocProvider<VitalScheduleBloc>(
             create: (BuildContext context) => VitalScheduleBloc(
                 vitalSignServerRepository: _vitalSignServerRepository),

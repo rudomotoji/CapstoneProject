@@ -14,6 +14,8 @@ class VitalSignStateInitial extends VitalSignState {}
 
 class VitalSignStateLoading extends VitalSignState {}
 
+class VitalSignDangerStateLoading extends VitalSignState {}
+
 //success getHR
 class VitalSignStateSuccess extends VitalSignState {
   final int valueFromDevice;
@@ -25,6 +27,8 @@ class VitalSignStateSuccess extends VitalSignState {
 }
 
 class VitalSignStateFailure extends VitalSignState {}
+
+class VitalSignDangerStateFailure extends VitalSignState {}
 
 //success Insert
 class VitalSignStateInsertSuccess extends VitalSignState {}

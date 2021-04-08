@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
@@ -26,6 +28,7 @@ import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+final DateValidator _dateValidator = DateValidator();
 
 class HeartDetailView extends StatefulWidget {
   @override
@@ -53,6 +56,10 @@ class _HeartDetailView extends State<HeartDetailView>
   int maxVitalSignValue = 0;
   int everageVitalSignValue = 0;
   int _lastValueVitalSign = 0;
+
+  //
+  DateTime _dateChosen = DateTime.now();
+  String _dateView = '';
 
   //
   int minL = 0;
@@ -111,36 +118,74 @@ class _HeartDetailView extends State<HeartDetailView>
               isMainView: false,
               buttonHeaderType: ButtonHeaderType.BACK_HOME,
             ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: InkWell(
+                onTap: () {
+                  //
+                  _showDateTimeChosing();
+                },
+                child: Row(
+                  children: [
+                    Container(
+                      width: 131,
+                      margin: EdgeInsets.only(left: 30),
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, top: 5, bottom: 5),
+                      // width: 100,
+                      decoration: BoxDecoration(
+                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                          borderRadius: BorderRadius.circular(100)),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 25,
+                            height: 25,
+                            child: Image.asset(
+                                'assets/images/ic-filter-black.png'),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10),
+                          ),
+                          Text('Chọn ngày',
+                              style: TextStyle(
+                                color: DefaultTheme.BLACK,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ))
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    (_dateView != '')
+                        ? Container(
+                            child: Text(
+                                'Ngày ${_dateValidator.parseToDateView3(_dateView)}',
+                                style: TextStyle(
+                                  color: DefaultTheme.BLACK,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                )),
+                          )
+                        : Container(),
+                    Spacer(),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 20),
+            ),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _getPatientId,
                 child: ListView(
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 20),
-                    ),
                     BlocBuilder<VitalSignBloc, VitalSignState>(
                         builder: (context, state) {
-                      //
-                      if (state is VitalSignStateLoading) {
-                        return Container(
-                          width: 200,
-                          height: 200,
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: Image.asset('assets/images/loading.gif'),
-                          ),
-                        );
-                      }
-                      if (state is VitalSignStateFailure) {
-                        return Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 200,
-                            child: Center(
-                              child: Text('Không thể tải biểu đồ'),
-                            ));
-                      }
                       if (state is VitalSignStateGetListSuccess) {
                         listValueMap = '';
                         listTimeXAxis.clear();
@@ -209,21 +254,8 @@ class _HeartDetailView extends State<HeartDetailView>
                         }
                       }
                       return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                //
-                                Text('Nhịp tim gần đây'),
-                                Text('${_lastValueVitalSign} BPM'),
-                                Text(
-                                    '${listSortedDateTime.last.dateTime.split(' ')[1].split('.')[0]}'),
-                              ],
-                            ),
-                          ),
                           Divider(
                             color: DefaultTheme.GREY_TOP_TAB_BAR,
                             height: 0.5,
@@ -638,6 +670,76 @@ option = {
           ],
         ),
       ),
+    );
+  }
+
+  _showDateTimeChosing() {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return Material(
+          color: DefaultTheme.TRANSPARENT,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width - 20,
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  decoration: BoxDecoration(
+                    color: DefaultTheme.WHITE.withOpacity(0.6),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Chọn ngày',
+                            style: TextStyle(
+                              fontSize: 25,
+                              color: DefaultTheme.BLACK,
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.date,
+                            initialDateTime: DateTime.now(),
+                            onDateTimeChanged: (dateTime) {
+                              //
+                              setState(() {
+                                //
+                                _dateChosen = dateTime;
+                                _dateView = dateTime.toString();
+                              });
+                            }),
+                      ),
+                      ButtonHDr(
+                        style: BtnStyle.BUTTON_BLACK,
+                        label: 'Chọn',
+                        onTap: () async {
+                          setState(() {
+                            _dateView = _dateChosen.toString();
+                          });
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

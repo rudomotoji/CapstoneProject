@@ -290,29 +290,29 @@ class SQFLiteHelper {
     }
   }
 
-  //get vital Sign (HEART RATE) that OUT OF SAFE SCOPE
-  Future<List<VitalSignDTO>> getListDangerousVitalSign(
-      int min, int max, int patient_id, String value_type) async {
-    //
-    var dbClient = await database;
-    try {
-      //
-      var maps = await dbClient.rawQuery(
-          'SELECT * FROM $VITAL_SIGN_TABLE WHERE value_type = ? AND patient_id = ? AND value1 < ? AND value1 > ?',
-          [value_type, patient_id, min, max]);
-      List<VitalSignDTO> listVitalSign = [];
-      if (maps.length > 0) {
-        for (int i = 0; i < maps.length; i++) {
-          listVitalSign.add(VitalSignDTO.fromMapSQL(maps[i]));
-        }
-        // print(
-        //     'GET LIST Vital Sign type ${value_type} successful at ${DateTime.now()}');
-        return listVitalSign;
-      }
-    } catch (e) {
-      print('ERROR at getListDangerousVitalSign ${e}');
-    }
-  }
+  // //get vital Sign (HEART RATE) that OUT OF SAFE SCOPE
+  // Future<List<VitalSignDTO>> getListDangerousVitalSign(
+  //     int min, int max, int patient_id, String value_type) async {
+  //   //
+  //   var dbClient = await database;
+  //   try {
+  //     //
+  //     var maps = await dbClient.rawQuery(
+  //         'SELECT * FROM $VITAL_SIGN_TABLE WHERE value_type = ? AND patient_id = ? AND value1 < ? AND value1 > ?',
+  //         [value_type, patient_id, min, max]);
+  //     List<VitalSignDTO> listVitalSign = [];
+  //     if (maps.length > 0) {
+  //       for (int i = 0; i < maps.length; i++) {
+  //         listVitalSign.add(VitalSignDTO.fromMapSQL(maps[i]));
+  //       }
+  //       // print(
+  //       //     'GET LIST Vital Sign type ${value_type} successful at ${DateTime.now()}');
+  //       return listVitalSign;
+  //     }
+  //   } catch (e) {
+  //     print('ERROR at getListDangerousVitalSign ${e}');
+  //   }
+  // }
 
   Future<List<VitalSignDTO>> getListVitalSign(
       String value_type, int patient_id) async {

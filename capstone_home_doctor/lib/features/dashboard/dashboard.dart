@@ -98,7 +98,6 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   AppointmentBloc _appointmentBloc;
   TokenDeviceBloc _tokenDeviceBloc;
   VitalSignBloc _vitalSignBloc;
-  VitalSignDangerousBloc _vitalSignDangerousBloc;
 
   //
   String vitalType = 'HEART_RATE';
@@ -131,7 +130,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
     _vitalSignBloc = BlocProvider.of(context);
-    _vitalSignDangerousBloc = BlocProvider.of(context);
+
     _getPeripheralInfo();
     if (_patientId != 0) {
       _vitalSignBloc
@@ -486,7 +485,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   _showLastHeartRateMeasure() {
     return BlocBuilder<VitalSignBloc, VitalSignState>(
         builder: (context, state) {
-      if (state is VitalSignStateFailure) {
+      if (state is VitalSignDangerStateFailure) {
         return Container(
             width: MediaQuery.of(context).size.width,
             height: 80,

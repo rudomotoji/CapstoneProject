@@ -18,28 +18,6 @@ class VitalSignBloc extends Bloc<VitalSignEvent, VitalSignState> {
 
   @override
   Stream<VitalSignState> mapEventToState(VitalSignEvent event) async* {
-    if (event is VitalSignEventGetHeartRateFromDevice) {
-      yield VitalSignStateLoading();
-      try {
-        final int valueHRFromDevice = await vitalSignRepository
-            .getHeartRateValueFromDevice(event.peripheralId);
-
-        yield VitalSignStateSuccess(valueFromDevice: valueHRFromDevice);
-      } catch (e) {
-        yield VitalSignStateFailure();
-      }
-      return;
-    }
-    if (event is VitalSignEventInsert) {
-      yield VitalSignStateLoading();
-      try {
-        await sqfLiteHelper.insertVitalSign(event.dto);
-        yield VitalSignStateInsertSuccess();
-      } catch (e) {
-        yield VitalSignStateFailure();
-      }
-      return;
-    }
     if (event is VitalSignEventGetList) {
       yield VitalSignStateLoading();
       try {
@@ -54,27 +32,37 @@ class VitalSignBloc extends Bloc<VitalSignEvent, VitalSignState> {
   }
 }
 
-class VitalSignDangerousBloc extends Bloc<VitalSignEvent, VitalSignState> {
+class VitalSignDeviceBloc extends Bloc<VitalSignEvent, VitalSignState> {
   final SQFLiteHelper sqfLiteHelper;
-  VitalSignDangerousBloc({@required this.sqfLiteHelper})
-      : assert(sqfLiteHelper != null),
+  final VitalSignRepository vitalSignRepository;
+  VitalSignDeviceBloc(
+      {@required this.sqfLiteHelper, @required this.vitalSignRepository})
+      : assert(sqfLiteHelper != null && vitalSignRepository != null),
         super(VitalSignStateInitial());
-//
+
   @override
   Stream<VitalSignState> mapEventToState(VitalSignEvent event) async* {
-    //
-    if (event is VitalSignGetListdangerous) {
+    if (event is VitalSignEventInsert) {
       yield VitalSignStateLoading();
       try {
-        //
-        print('go into bloc dangerous list');
-        final List<VitalSignDTO> list =
-            await sqfLiteHelper.getListDangerousVitalSign(
-                event.min, event.max, event.patientId, event.valueType);
-        yield VitalSignGetListDangerousSuccess(list: list);
+        await sqfLiteHelper.insertVitalSign(event.dto);
+        yield VitalSignStateInsertSuccess();
       } catch (e) {
         yield VitalSignStateFailure();
       }
+      return;
+    }
+    if (event is VitalSignEventGetHeartRateFromDevice) {
+      yield VitalSignStateLoading();
+      try {
+        final int valueHRFromDevice = await vitalSignRepository
+            .getHeartRateValueFromDevice(event.peripheralId);
+
+        yield VitalSignStateSuccess(valueFromDevice: valueHRFromDevice);
+      } catch (e) {
+        yield VitalSignStateFailure();
+      }
+      return;
     }
   }
 }
