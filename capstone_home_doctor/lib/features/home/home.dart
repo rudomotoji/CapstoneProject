@@ -105,29 +105,6 @@ class _MainHomeState extends State<MainHome> {
       }
 
       print('payload home page: $payload');
-
-      // ReceiveNotification notiData;
-      // if (Platform.isIOS) {
-      //   final dynamic notification = navigate['aps']['alert'];
-      //   notiData = ReceiveNotification(
-      //       id: 0,
-      //       title: notification["title"],
-      //       body: notification["body"],
-      //       payload: payload);
-      // }
-      // if (Platform.isAndroid) {
-      //   if (navigate.containsKey('data')) {
-      //     final dynamic data = navigate['data'];
-      //     payload = jsonEncode(data);
-      //   }
-      //   final dynamic notification = navigate['notification'];
-      //   notiData = ReceiveNotification(
-      //       id: 0,
-      //       title: notification["title"],
-      //       body: notification["body"],
-      //       payload: payload);
-      // }
-      //
       if (payload.contains('notiTypeId')) {
         int notificationType = navigate['notiTypeId'];
         int contractId = navigate['contractId'];
@@ -163,7 +140,9 @@ class _MainHomeState extends State<MainHome> {
         } else if (notificationType == 8) {
           //Navigate hẹn hẹn detail
           //
-
+          int _indexPage = 1;
+          Navigator.of(context)
+              .pushNamed(RoutesHDr.SCHEDULE, arguments: _indexPage);
         } else if (notificationType == 12) {
           //Navigate share medical instruction
           //

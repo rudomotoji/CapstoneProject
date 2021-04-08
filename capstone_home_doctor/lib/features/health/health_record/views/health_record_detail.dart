@@ -401,19 +401,78 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               Padding(
                 padding: EdgeInsets.only(bottom: 5),
               ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Container(
-                  padding: EdgeInsets.only(left: 30, bottom: 5, top: 5),
-                  child: Text(
-                    'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style:
-                        TextStyle(color: DefaultTheme.BLUE_DARK, fontSize: 13),
-                  ),
-                ),
-              ),
+              (_healthRecordDTO.contractId != null)
+                  ? Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 30, bottom: 5, top: 5),
+                        child: Text(
+                          'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: DefaultTheme.BLUE_DARK, fontSize: 13),
+                        ),
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding:
+                                EdgeInsets.only(left: 30, bottom: 5, top: 5),
+                            child: Text(
+                              'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: DefaultTheme.BLUE_DARK, fontSize: 13),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Padding(padding: EdgeInsets.only(left: 20)),
+                            InkWell(
+                              splashColor: DefaultTheme.TRANSPARENT,
+                              highlightColor: DefaultTheme.TRANSPARENT,
+                              onTap: () async {
+                                Navigator.of(context)
+                                    .pushNamed(RoutesHDr.UPDATE_HEALTH_RECORD,
+                                        arguments: _hrId)
+                                    .then((value) => _pullRefresh());
+                              },
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    left: 15, right: 15, bottom: 5, top: 5),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: DefaultTheme.GREY_VIEW,
+                                ),
+                                child: Row(
+                                  children: [
+                                    // SizedBox(
+                                    //   width: 25,
+                                    //   height: 25,
+                                    //   child: Image.asset(''),
+                                    // ),
+                                    Text(
+                                      'Cập nhật hồ sơ',
+                                      style: TextStyle(
+                                          color: DefaultTheme.BLUE_DARK,
+                                          fontSize: 16),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
               Padding(
                 padding: EdgeInsets.only(bottom: 10),
               ),

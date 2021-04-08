@@ -126,7 +126,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
     WidgetsBinding.instance.removeObserver(this);
     _healthRecordDTO = null;
     _diseaseListBloc.add(DiseaseEventSetInitial());
-    _healthRecordDetailBloc.add(HealthRecordEventInitial());
+    // _healthRecordDetailBloc.add(HealthRecordEventInitial());
     super.dispose();
   }
 

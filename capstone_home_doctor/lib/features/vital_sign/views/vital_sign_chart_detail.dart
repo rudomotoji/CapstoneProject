@@ -217,7 +217,11 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                                       listTimeXAxis,
                                       minVitalSignValue,
                                       maxVitalSignValue,
-                                      listValueMap);
+                                      listValueMap,
+                                      _dateValidator.convertDateCreate(
+                                          itemVitalsignValue.dateCreated,
+                                          'dd/MM/yyyy',
+                                          'yyyy-MM-dd'));
                                 } else if (itemVitalsignValue.vitalSignTypeId ==
                                     2) {
                                   List<List<int>> listValueMap =
@@ -246,7 +250,11 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                                       listTimeXAxis,
                                       minVitalSignValue,
                                       maxVitalSignValue,
-                                      listValueMap);
+                                      listValueMap,
+                                      _dateValidator.convertDateCreate(
+                                          itemVitalsignValue.dateCreated,
+                                          'dd/MM/yyyy',
+                                          'yyyy-MM-dd'));
                                 }
                               },
                             );
@@ -279,7 +287,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
   }
 
   heartChart(List<String> listTimeXAxis, int minVitalSignValue,
-      int maxVitalSignValue, List<int> listValueMap) {
+      int maxVitalSignValue, List<int> listValueMap, String dateCreate) {
     return Column(
       children: <Widget>[
         Divider(
@@ -290,7 +298,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
             ? new Container(
                 width: MediaQuery.of(context).size.width,
                 color: DefaultTheme.WHITE,
-                height: 430,
+                height: 450,
                 child: Column(
                   children: [
                     Container(
@@ -386,6 +394,12 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                           fontWeight: FontWeight.w500,
                           color: DefaultTheme.ORANGE_TEXT,
                         )),
+                    Text('Thời gian tạo: ${dateCreate}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: DefaultTheme.GREY_TEXT,
+                        )),
                   ],
                 ),
               )
@@ -405,7 +419,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
   }
 
   bloodChart(List<String> listTimeXAxis, int minVitalSignValue,
-      int maxVitalSignValue, List<List<int>> listValueMap) {
+      int maxVitalSignValue, List<List<int>> listValueMap, String dateCreate) {
     return Column(
       children: <Widget>[
         Divider(
@@ -416,7 +430,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
             ? Container(
                 width: MediaQuery.of(context).size.width,
                 color: DefaultTheme.WHITE,
-                height: 430,
+                height: 450,
                 child: Column(
                   children: [
                     Container(
@@ -509,6 +523,12 @@ option = {
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                           color: DefaultTheme.ORANGE_TEXT,
+                        )),
+                    Text('Thời gian tạo: ${dateCreate}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: DefaultTheme.GREY_TEXT,
                         )),
                   ],
                 ),
