@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -20,6 +21,7 @@ import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -50,6 +52,7 @@ class _ScheduleView extends State<ScheduleView>
   int arguments = 0;
   int _currentIndex = 0;
   int count = 0;
+  int dateChangeAppointment = 1;
   //
   int _accountId = 0;
   int _patientId = 0;
@@ -76,6 +79,7 @@ class _ScheduleView extends State<ScheduleView>
     _appointmentBloc = BlocProvider.of(context);
 
     _calendarController = CalendarController();
+    getDataFromJSONFile();
 
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 400),
@@ -89,6 +93,15 @@ class _ScheduleView extends State<ScheduleView>
     });
 
     _animationController.forward();
+  }
+
+  Future<void> getDataFromJSONFile() async {
+    final String response = await rootBundle.loadString('assets/global.json');
+
+    if (response.contains('suggestions')) {
+      final data = await json.decode(response);
+      dateChangeAppointment = data['dateChangeAppointment'];
+    }
   }
 
   @override
@@ -354,7 +367,7 @@ class _ScheduleView extends State<ScheduleView>
 
     if ((dateAppointment.millisecondsSinceEpoch -
                 curentDateNow.millisecondsSinceEpoch) ==
-            (86400000 * 1) &&
+            (86400000 * dateChangeAppointment) &&
         dto.status.contains('ACTIVE')) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.end,

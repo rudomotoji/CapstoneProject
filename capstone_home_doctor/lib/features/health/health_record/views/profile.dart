@@ -507,12 +507,12 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                       padding: EdgeInsets.only(left: 10),
                     ),
                     Container(
-                      height: 270,
+                      height: 200,
                       width: MediaQuery.of(context).size.width - 20,
                       child: Column(
                         children: <Widget>[
                           Container(
-                            height: 170,
+                            height: 100,
                             decoration: BoxDecoration(
                               color: DefaultTheme.WHITE.withOpacity(0.8),
                               borderRadius: BorderRadius.circular(10),
@@ -561,22 +561,22 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                         .then((value) => refreshListHR());
                                   },
                                 ),
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 0.5,
-                                ),
-                                ButtonHDr(
-                                  label: 'Xoá',
-                                  height: 60,
-                                  labelColor: DefaultTheme.RED_TEXT,
-                                  style: BtnStyle.BUTTON_IN_LIST,
-                                  onTap: () {
-                                    // _sqfLiteHelper
-                                    //     .deleteHealthRecord(healthRecordId);
-                                    // refreshListHR();
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
+                                // Divider(
+                                //   color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                //   height: 0.5,
+                                // ),
+                                // ButtonHDr(
+                                //   label: 'Xoá',
+                                //   height: 60,
+                                //   labelColor: DefaultTheme.RED_TEXT,
+                                //   style: BtnStyle.BUTTON_IN_LIST,
+                                //   onTap: () {
+                                //     // _sqfLiteHelper
+                                //     //     .deleteHealthRecord(healthRecordId);
+                                //     // refreshListHR();
+                                //     Navigator.of(context).pop();
+                                //   },
+                                // ),
                               ],
                             ),
                           ),

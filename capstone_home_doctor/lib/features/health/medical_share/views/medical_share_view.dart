@@ -736,7 +736,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                                       .length <=
                                                                   0 &&
                                                               itemMedi.medicalInstructionTypeId ==
-                                                                  6) {
+                                                                  8) {
                                                             _showDetailVitalSign(
                                                                 itemMedi
                                                                     .medicalInstructionId);
@@ -1300,24 +1300,28 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                       physics: NeverScrollableScrollPhysics(),
                                     ),
                                   ),
-                                  ButtonHDr(
-                                    style: BtnStyle.BUTTON_BLACK,
-                                    label: 'Chi tiết',
-                                    onTap: () {
-                                      Map<String, dynamic> arguments = {
-                                        'healthRecordId':
-                                            dropdownValue.healthRecordId,
-                                        "timeStared": value
-                                            .vitalSignScheduleRespone
-                                            .timeStared,
-                                        "timeCanceled": value
-                                            .vitalSignScheduleRespone
-                                            .timeCanceled,
-                                      };
-                                      Navigator.pushNamed(context,
-                                          RoutesHDr.VITAL_SIGN_CHART_DETAIL,
-                                          arguments: arguments);
-                                    },
+                                  Center(
+                                    child: ButtonHDr(
+                                      style: BtnStyle.BUTTON_BLACK,
+                                      label: 'Chi tiết',
+                                      onTap: () {
+                                        Map<String, dynamic> arguments = {
+                                          'healthRecordId':
+                                              dropdownValue.healthRecordId,
+                                          'medicalInstructionId':
+                                              medicalInstructionId,
+                                          "timeStared": value
+                                              .vitalSignScheduleRespone
+                                              .timeStared,
+                                          "timeCanceled": value
+                                              .vitalSignScheduleRespone
+                                              .timeCanceled,
+                                        };
+                                        Navigator.pushNamed(context,
+                                            RoutesHDr.VITAL_SIGN_CHART_DETAIL,
+                                            arguments: arguments);
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),

@@ -48,5 +48,6 @@
         "Các bệnh khác"
     ],
     "percentCompare": 0.7,
-    "ageReq": 18
+    "ageReq": 18,
+    "dateChangeAppointment": 1
 }

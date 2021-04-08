@@ -126,6 +126,8 @@ class MedicalInstructionDTO {
   List<String> imageFile;
   //vitalsign
   VitalSignScheduleRespone vitalSignScheduleRespone;
+  //appointmemt
+  AppointmentDetail appointmentDetail;
 
   MedicalInstructionDTO({
     this.medicalInstructionType,
@@ -145,6 +147,7 @@ class MedicalInstructionDTO {
     this.status,
     this.vitalSignScheduleRespone,
     this.medicationsRespone,
+    this.appointmentDetail,
   });
 
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
@@ -167,6 +170,10 @@ class MedicalInstructionDTO {
     vitalSignScheduleRespone = json['vitalSignScheduleRespone'] != null
         ? new VitalSignScheduleRespone.fromJson(
             json['vitalSignScheduleRespone'])
+        : null;
+
+    appointmentDetail = json['appointmentDetail'] != null
+        ? new AppointmentDetail.fromJson(json['appointmentDetail'])
         : null;
   }
 
@@ -305,6 +312,47 @@ class VitalSigns {
     data['minuteNormalInterval'] = this.minuteNormalInterval;
     data['timeStart'] = this.timeStart;
     data['minuteAgain'] = this.minuteAgain;
+    return data;
+  }
+}
+
+class AppointmentDetail {
+  int appointmentId;
+  String dateExamination;
+  String status;
+  Null note;
+  String description;
+  Null reasonCanceled;
+  Null dateCanceled;
+
+  AppointmentDetail(
+      {this.appointmentId,
+      this.dateExamination,
+      this.status,
+      this.note,
+      this.description,
+      this.reasonCanceled,
+      this.dateCanceled});
+
+  AppointmentDetail.fromJson(Map<String, dynamic> json) {
+    appointmentId = json['appointmentId'];
+    dateExamination = json['dateExamination'];
+    status = json['status'];
+    note = json['note'];
+    description = json['description'];
+    reasonCanceled = json['reasonCanceled'];
+    dateCanceled = json['dateCanceled'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['appointmentId'] = this.appointmentId;
+    data['dateExamination'] = this.dateExamination;
+    data['status'] = this.status;
+    data['note'] = this.note;
+    data['description'] = this.description;
+    data['reasonCanceled'] = this.reasonCanceled;
+    data['dateCanceled'] = this.dateCanceled;
     return data;
   }
 }
