@@ -144,6 +144,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                               listRelative: listRelative,
                               relativeNameController: relativeNameController,
                               phoneRelativeController: phoneRelativeController,
+                              alertError: alertError,
                               addRelative: () {
                                 RelativeRegisterDTO dto = RelativeRegisterDTO(
                                   fullName: relativeNameController.text,
@@ -216,11 +217,20 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                     onTap: () async {
                       bool checkError = false;
                       if (_currentPage == 0) {
-                        if (usernameController.text == '' ||
-                            passwordController.text == '' ||
-                            passwordConfirmController.text == '') {
-                          alertError(
-                              'Vui lòng điền đầy đủ thông tin có dấu (*)');
+                        if (usernameController.text.isEmpty ||
+                            passwordController.text.isEmpty ||
+                            passwordConfirmController.text.isEmpty) {
+                          alertError('Vui lòng nhập thông tin có dấu *');
+                        } else if (validateUsernamePassword(
+                                usernameController.text, 'tên đăng nhập') !=
+                            null) {
+                          alertError(validateUsernamePassword(
+                              usernameController.text, 'tên đăng nhập'));
+                        } else if (validateUsernamePassword(
+                                passwordController.text, 'mật khẩu') !=
+                            null) {
+                          alertError(validateUsernamePassword(
+                              passwordController.text, 'mật khẩu'));
                         } else if (passwordController.text !=
                             passwordConfirmController.text) {
                           alertError('2 mật khẩu chưa trùng khớp');
@@ -505,6 +515,15 @@ class _Register extends State<Register> with WidgetsBindingObserver {
     setState(() {
       listRelative.removeAt(index);
     });
+  }
+
+  String validateUsernamePassword(String value, String type) {
+    Pattern pattern = r'\w{5}$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value))
+      return 'Vui lòng nhập $type ít nhất 5 ký tự';
+    else
+      return null;
   }
 
   alertError(String title) {
