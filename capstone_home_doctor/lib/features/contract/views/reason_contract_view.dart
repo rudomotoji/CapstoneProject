@@ -2,10 +2,13 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
+import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
+import 'package:capstone_home_doctor/models/date_request_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +18,9 @@ import 'package:http/http.dart' as http;
 final ContractHelper _contractHelper = ContractHelper();
 final ContractRepository contractRepository =
     ContractRepository(httpClient: http.Client());
+final DateValidator _dateValidator = DateValidator();
+final BackgroundRepository _backgroundRepository =
+    BackgroundRepository(httpClient: http.Client());
 
 class ReasonContractView extends StatefulWidget {
   @override
@@ -26,9 +32,15 @@ class ReasonContractView extends StatefulWidget {
 
 class _ReasonContractView extends State<ReasonContractView>
     with WidgetsBindingObserver {
+  //DateRequestDTO dateRequestDTO = DateRequestDTO(id: '1', dateAfter: 0);
+
+  //
   TextEditingController _noteController = TextEditingController();
   String _startDate =
-      DateTime.now().add(Duration(days: 5)).toString().split(' ')[0];
+      DateTime.now().add(Duration(days: 0)).toString().split(' ')[0];
+
+  int dateAfterFromServer = 0;
+  String dateView = 'Chọn ngày';
   String _note = '';
   String _availableDay = '';
   int date = 0;
@@ -41,7 +53,23 @@ class _ReasonContractView extends State<ReasonContractView>
   void initState() {
     // TODO: implement initState
     super.initState();
+    _getDateRequestFromServer();
     _getAvailableDay();
+  }
+
+  _getDateRequestFromServer() async {
+    await _backgroundRepository.getDateRequest().then((dateDTO) async {
+      setState(() {
+        if (dateDTO != null) {
+          //
+          dateAfterFromServer = dateDTO.dateAfter;
+          _startDate = new DateTime.now()
+              .add(Duration(days: dateDTO.dateAfter))
+              .toString()
+              .split(' ')[0];
+        }
+      });
+    });
   }
 
   _getAvailableDay() async {
@@ -274,25 +302,35 @@ class _ReasonContractView extends State<ReasonContractView>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: 5, left: 20, right: 20),
-                                child: Text(
-                                  'Ngày bắt đầu hợp đồng mong muốn',
-                                  style: TextStyle(
-                                      color: DefaultTheme.BLACK_BUTTON,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16),
-                                ),
-                              ),
+                                  padding: EdgeInsets.only(
+                                      bottom: 5, left: 30, right: 20),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Ngày bắt đầu hợp đồng mong muốn',
+                                        style: TextStyle(
+                                            color: DefaultTheme.BLACK_BUTTON,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16),
+                                      ),
+                                      Text(
+                                        '*',
+                                        style: TextStyle(
+                                            color: DefaultTheme.RED_CALENDAR,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 20),
+                                      ),
+                                    ],
+                                  )),
                               Padding(
                                 padding: EdgeInsets.only(
-                                    bottom: 5, left: 20, right: 30),
+                                    bottom: 5, left: 30, right: 30),
                                 child: Text(
-                                  'Ngày bắt đầu hợp đồng nên cách ngày gửi yêu cầu 5 ngày.',
+                                  'Ngày bắt đầu hợp đồng nên cách ngày gửi yêu cầu $dateAfterFromServer ngày.',
                                   style: TextStyle(
                                       color: DefaultTheme.BLACK_BUTTON,
                                       fontWeight: FontWeight.w400,
-                                      fontSize: 15),
+                                      fontSize: 13),
                                 ),
                               ),
                               Container(
@@ -308,22 +346,33 @@ class _ReasonContractView extends State<ReasonContractView>
                                       padding: EdgeInsets.only(left: 20),
                                     ),
                                     Text(
-                                      '${_startDate.split('-')[2]} tháng ${_startDate.split('-')[1]} năm ${_startDate.split('-')[0]}',
+                                      // '${_startDate.split('-')[2]} tháng ${_startDate.split('-')[1]} năm ${_startDate.split('-')[0]}',
+                                      '$dateView',
                                       style: TextStyle(
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w400),
+                                          fontWeight: FontWeight.w400,
+                                          color: DefaultTheme.BLACK),
                                     ),
                                     Spacer(),
                                     ButtonHDr(
-                                      label: 'Chọn',
-                                      style: BtnStyle.BUTTON_FULL,
+                                      style: BtnStyle.BUTTON_IMAGE,
                                       image: Image.asset(
-                                          'assets/images/ic-choose-date.png'),
+                                          'assets/images/ic-calendar.png'),
                                       width: 30,
                                       height: 40,
                                       labelColor: DefaultTheme.BLUE_DARK,
                                       bgColor: DefaultTheme.TRANSPARENT,
                                       onTap: () {
+                                        setState(() {
+                                          dateView = 'Chọn ngày';
+                                          if (dateAfterFromServer != 0) {
+                                            _startDate = DateTime.now()
+                                                .add(Duration(
+                                                    days: dateAfterFromServer))
+                                                .toString()
+                                                .split(' ')[0];
+                                          }
+                                        });
                                         _showDatePickerStart(_requestContract);
                                       },
                                     ),
@@ -355,7 +404,7 @@ class _ReasonContractView extends State<ReasonContractView>
                                 padding: EdgeInsets.only(
                                     bottom: 5, left: 20, right: 30),
                                 child: Text(
-                                  'Bạn đang có hợp đồng với bác sỹ này. Ngày kết thúc là ngày $date tháng $month, $year. Vui lòng chọn ngày yêu cầu hợp đồng sau ngày trên.',
+                                  'Bạn đang có hợp đồng với bác sỹ này. Ngày kết thúc là ngày ${int.tryParse(_availableDay.split('/')[0])} tháng ${int.tryParse(_availableDay.split('/')[1])}, ${int.tryParse(_availableDay.split('/')[2])}. Vui lòng chọn ngày yêu cầu hợp đồng sau ngày trên.',
                                   style: TextStyle(
                                       color: DefaultTheme.RED_CALENDAR,
                                       fontWeight: FontWeight.w400,
@@ -528,11 +577,13 @@ class _ReasonContractView extends State<ReasonContractView>
                     Expanded(
                       child: CupertinoDatePicker(
                           mode: CupertinoDatePickerMode.date,
-                          initialDateTime:
-                              DateTime.now().add(Duration(days: 5)),
+                          initialDateTime: DateTime.now()
+                              .add(Duration(days: dateAfterFromServer)),
                           onDateTimeChanged: (dateTime) {
                             setState(() {
                               _startDate = dateTime.toString().split(' ')[0];
+                              dateView = _dateValidator.parseToDateView2(
+                                  dateTime.toString().split(' ')[0]);
                             });
                           }),
                     ),
@@ -540,6 +591,13 @@ class _ReasonContractView extends State<ReasonContractView>
                       style: BtnStyle.BUTTON_BLACK,
                       label: 'Chọn',
                       onTap: () async {
+                        setState(() {
+                          if (dateView == 'Chọn ngày') {
+                            dateView =
+                                _dateValidator.parseToDateView2(_startDate);
+                          }
+                        });
+                        print('date view now: $dateView');
                         Navigator.of(context).pop();
                         _checkDateAvailable(
                             dto.patientId, dto.doctorId, _startDate);
@@ -556,6 +614,12 @@ class _ReasonContractView extends State<ReasonContractView>
   }
 
   _checkDateAvailable(int patientId, int doctorId, String date) {
+    String x = DateTime.now()
+        .add(Duration(days: dateAfterFromServer))
+        .toString()
+        .split(' ')[0];
+    DateTime _dateToCheck = new DateTime(int.tryParse(x.split('-')[0]),
+        int.tryParse(x.split('-')[1]), int.tryParse(x.split('-')[2]));
     setState(() {
       //
       showDialog(
@@ -614,10 +678,97 @@ class _ReasonContractView extends State<ReasonContractView>
             .then((isOK) async {
           _contractHelper.isAcceptable().then((value) {
             //
+            DateTime dateCompare = new DateTime(
+                int.tryParse(date.split('-')[0]),
+                int.tryParse(date.split('-')[1]),
+                int.tryParse(date.split('-')[2]));
+
+            print('date time compare: $dateCompare');
+            print('date time to check: $_dateToCheck');
             if (value == true) {
-              setState(() {
-                isOKDate = true;
-              });
+              if (dateCompare.isAfter(_dateToCheck) ||
+                  dateCompare.isAtSameMomentAs(_dateToCheck)) {
+                setState(() {
+                  isOKDate = true;
+                });
+              } else {
+                Navigator.of(context).pop();
+                return showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                          child: Container(
+                            padding:
+                                EdgeInsets.only(left: 10, top: 10, right: 10),
+                            width: 250,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: DefaultTheme.WHITE.withOpacity(0.7),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.only(bottom: 10, top: 10),
+                                  child: Text(
+                                    'Chọn ngày khác',
+                                    style: TextStyle(
+                                      decoration: TextDecoration.none,
+                                      color: DefaultTheme.BLACK,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'Vui lòng chọn ngày bắt đầu hợp đồng theo quy định.',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        decoration: TextDecoration.none,
+                                        color: DefaultTheme.GREY_TEXT,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Spacer(),
+                                Divider(
+                                  height: 1,
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                ),
+                                ButtonHDr(
+                                  height: 40,
+                                  style: BtnStyle.BUTTON_TRANSPARENT,
+                                  label: 'OK',
+                                  labelColor: DefaultTheme.BLUE_TEXT,
+                                  onTap: () {
+                                    setState(() {
+                                      dateView = 'Chọn ngày';
+                                      isOKDate = false;
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
               Navigator.of(context).pop();
             } else {
               //
@@ -690,6 +841,7 @@ class _ReasonContractView extends State<ReasonContractView>
                                     labelColor: DefaultTheme.BLUE_TEXT,
                                     onTap: () {
                                       setState(() {
+                                        dateView = 'Chọn ngày';
                                         isOKDate = false;
                                       });
                                       Navigator.of(context).pop();
@@ -755,6 +907,8 @@ class _ReasonContractView extends State<ReasonContractView>
                           onDateTimeChanged: (dateTime) {
                             setState(() {
                               _startDate = dateTime.toString().split(' ')[0];
+                              dateView = _dateValidator.parseToDateView2(
+                                  dateTime.toString().split(' ')[0]);
                               date = int.tryParse(_startDate.split('-')[2]);
                               month = int.tryParse(_startDate.split('-')[1]);
                               year = int.tryParse(_startDate.split('-')[0]);
@@ -765,6 +919,13 @@ class _ReasonContractView extends State<ReasonContractView>
                       style: BtnStyle.BUTTON_BLACK,
                       label: 'Chọn',
                       onTap: () {
+                        setState(() {
+                          if (dateView == 'Chọn ngày') {
+                            dateView =
+                                _dateValidator.parseToDateView2(_startDate);
+                          }
+                        });
+                        print('date view now: $dateView');
                         Navigator.of(context).pop();
                         _checkDateAvailable2(date, month, year, time);
                       },
@@ -891,6 +1052,7 @@ class _ReasonContractView extends State<ReasonContractView>
                             labelColor: DefaultTheme.BLUE_TEXT,
                             onTap: () {
                               setState(() {
+                                dateView = 'Chọn ngày';
                                 isOKDate = false;
                               });
                               Navigator.of(context).pop();

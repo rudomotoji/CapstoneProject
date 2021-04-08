@@ -1000,6 +1000,278 @@ class _ManageContract extends State<ManageContract> {
                                       ],
                                     )),
                                   ),
+                            /////List here
+                            (_listCancel.length != 0)
+                                ? Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 350,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      // shrinkWrap: true,
+                                      // physics: NeverScrollableScrollPhysics(),
+                                      itemCount: _listCancel.length,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        String statusTemp = '';
+                                        Color statusColor =
+                                            DefaultTheme.BLACK_BUTTON;
+                                        if (_listCancel[index]
+                                            .status
+                                            .contains('CANCELP')) {
+                                          statusTemp = 'Đã huỷ';
+                                          statusColor =
+                                              DefaultTheme.RED_CALENDAR;
+                                        }
+                                        if (_listCancel[index]
+                                            .status
+                                            .contains('CANCELD')) {
+                                          statusTemp = 'Đã huỷ';
+                                          statusColor =
+                                              DefaultTheme.RED_CALENDAR;
+                                        }
+
+                                        //
+                                        return Container(
+                                          width: 250,
+                                          height: 350,
+                                          // padding: EdgeInsets.only(left: 10),
+                                          margin: EdgeInsets.only(left: 10),
+                                          decoration: BoxDecoration(
+                                              color: DefaultTheme.GREY_VIEW,
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                  width: 1,
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR)),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              //
+                                              Container(
+                                                color: DefaultTheme.YELLOW
+                                                    .withOpacity(0.5),
+                                                padding: EdgeInsets.only(
+                                                    top: 20,
+                                                    bottom: 10,
+                                                    left: 10),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    // SizedBox(
+                                                    //   width: 20,
+                                                    //   child: Image.asset(
+                                                    //       'assets/images/ic-contract.png'),
+                                                    // ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //       EdgeInsets.only(
+                                                    //           left: 5),
+                                                    // ),
+                                                    Center(
+                                                      child: Text(
+                                                        'HỢP ĐỒNG',
+                                                        style: TextStyle(
+                                                          //
+
+                                                          color: DefaultTheme
+                                                              .BLACK,
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 10,
+                                                    top: 9,
+                                                    bottom: 5),
+                                                child: Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 10,
+                                                      height: 10,
+                                                      child: Image.asset(
+                                                          'assets/images/ic-add-disease.png'),
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 10),
+                                                    ),
+                                                    Text(
+                                                      'Bệnh lý theo dõi',
+                                                      style: TextStyle(
+                                                          color: DefaultTheme
+                                                              .BLUE_DARK,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                              for (Diseases i
+                                                  in _listCancel[index]
+                                                      .diseases)
+                                                Container(
+                                                  width: 250,
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 5,
+                                                      top: 5,
+                                                      left: 10),
+                                                  child: Text(
+                                                    '${i.diseaseId}: ${i.name}',
+                                                    style: TextStyle(
+                                                      //
+                                                      fontFamily: 'NewYork',
+                                                      // foreground: Paint()
+                                                      //   ..shader =
+                                                      //       _normalHealthColors,
+                                                      color: DefaultTheme.BLACK,
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                    textAlign: TextAlign.left,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 2,
+                                                  ),
+                                                ),
+                                              Spacer(),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 90,
+                                                    padding: EdgeInsets.only(
+                                                        left: 10),
+                                                    child: Text('Trạng thái:'),
+                                                  ),
+                                                  Container(
+                                                    width: 150,
+                                                    child: Text(
+                                                      '${statusTemp}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: statusColor),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 5),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 90,
+                                                    padding: EdgeInsets.only(
+                                                        left: 10),
+                                                    child: Text('Bác sĩ:'),
+                                                  ),
+                                                  Container(
+                                                    width: 150,
+                                                    child: Text(
+                                                      '${_listCancel[index].fullNameDoctor}',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 5),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 90,
+                                                    child: Text('Tạo ngày:'),
+                                                    padding: EdgeInsets.only(
+                                                        left: 10),
+                                                  ),
+                                                  Container(
+                                                    width: 150,
+                                                    child: Text(
+                                                      '${_dateValidator.parseToDateView(_listCancel[index].dateCreated)}',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 10),
+                                                child: Divider(
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR,
+                                                  height: 1,
+                                                ),
+                                              ),
+                                              ButtonHDr(
+                                                style:
+                                                    BtnStyle.BUTTON_TRANSPARENT,
+                                                label: 'Chi tiết',
+                                                onTap: () async {
+                                                  await _contractHelper
+                                                      .updateContractId(
+                                                          _listCancel[index]
+                                                              .contractId);
+                                                  Navigator.pushNamed(
+                                                      context,
+                                                      RoutesHDr
+                                                          .DETAIL_CONTRACT_VIEW);
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 100,
+                                    child: Center(
+                                        child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: Image.asset(
+                                              'assets/images/ic-contract-empty.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                        ),
+                                        Text(
+                                          'Không có hợp đồng nào trong danh sách này',
+                                          style: TextStyle(
+                                              color: DefaultTheme.GREY_TEXT),
+                                        ),
+                                      ],
+                                    )),
+                                  ),
+                            /////
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 20),
+                            ),
                             Padding(
                               padding: EdgeInsets.only(bottom: 30),
                             ),

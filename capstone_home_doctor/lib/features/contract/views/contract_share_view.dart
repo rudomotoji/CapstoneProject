@@ -352,12 +352,13 @@ class _ContractShareView extends State<ContractShareView>
       StateSetter setModalState,
       String nameOfList) {
     //
+
     return items.map((e) {
       bool checkTemp = false;
       if (medicalInstructionIdsSelected.contains(e.medicalInstructionId)) {
         checkTemp = true;
       }
-
+      e.medicalInstructionTypeName = nameOfList;
       return ListTile(
         title: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -372,7 +373,10 @@ class _ContractShareView extends State<ContractShareView>
                       _showDetailVitalSign(e.medicalInstructionId);
                     } else {
                       showFullDetailComponent(
-                          e.images, nameOfList, e.dateCreate, e.diagnose);
+                          e.images,
+                          e.medicalInstructionTypeName,
+                          e.dateCreate,
+                          e.diagnose);
                     }
                   },
                   child: ClipRRect(
@@ -1665,7 +1669,7 @@ class _ContractShareView extends State<ContractShareView>
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Phiếu khác',
+                                        '${medicalInstructions3[index].medicalInstructionTypeName}',
                                         style: TextStyle(
                                             color: DefaultTheme.WHITE),
                                         maxLines: 1,
@@ -1913,7 +1917,9 @@ class _ContractShareView extends State<ContractShareView>
                                       padding: EdgeInsets.only(bottom: 10),
                                     ),
                                     Text(
-                                      'Chuẩn đoán $dianose',
+                                      (dianose == null)
+                                          ? ''
+                                          : 'Chuẩn đoán $dianose',
                                       style: TextStyle(
                                           color: DefaultTheme.WHITE,
                                           fontSize: 15),

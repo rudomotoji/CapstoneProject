@@ -167,213 +167,269 @@ class _DetailContractView extends State<DetailContractView>
                     height: 1,
                   ),
 
-                  Stack(
-                    children: [
-                      Positioned(
-                          top: 0,
-                          child: Container(
-                            color: DefaultTheme.WHITE,
-                            width: MediaQuery.of(context).size.width,
-                            padding: EdgeInsets.only(bottom: 5),
-                            height: 60,
-                            child: Column(
-                              children: [
-                                //
-                                Container(
+                  (state.dto.status == 'CANCELP' ||
+                          state.dto.status == 'CANCELD')
+                      ? Container(
+                          height: 60,
+                          width: MediaQuery.of(context).size.width,
+                          color: DefaultTheme.RED_CALENDAR,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                width: 60,
+                                height: 25,
+                                child: Image.asset(
+                                    'assets/images/ic-c-cancel.png'),
+                              ),
+                              Text(
+                                (state.dto.status == 'CANCELP')
+                                    ? 'Hợp đồng ở trạng thái bị huỷ'
+                                    : 'Bác sĩ đã huỷ hợp đồng yêu cầu của bạn',
+                                style: TextStyle(color: DefaultTheme.WHITE),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Stack(
+                          children: [
+                            Positioned(
+                                top: 0,
+                                child: Container(
+                                  color: DefaultTheme.WHITE,
                                   width: MediaQuery.of(context).size.width,
-                                  height: 21,
-                                ),
-                                Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    margin: EdgeInsets.only(
-                                      left: MediaQuery.of(context).size.width *
-                                          0.2,
-                                      right: MediaQuery.of(context).size.width *
-                                          0.2,
-                                    ),
-                                    height: 1,
-                                    color: DefaultTheme.GREY_TOP_TAB_BAR)
-                              ],
-                            ),
-                          )),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: EdgeInsets.only(bottom: 10, top: 5),
-                        height: 60,
-                        child: Row(
-                          children: <Widget>[
-                            //
-
+                                  padding: EdgeInsets.only(bottom: 5),
+                                  height: 60,
+                                  child: Column(
+                                    children: [
+                                      //
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 21,
+                                      ),
+                                      Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          margin: EdgeInsets.only(
+                                            left: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            right: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                          ),
+                                          height: 1,
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR)
+                                    ],
+                                  ),
+                                )),
                             Container(
-                              width: MediaQuery.of(context).size.width * 0.1,
+                              width: MediaQuery.of(context).size.width,
+                              padding: EdgeInsets.only(bottom: 10, top: 5),
                               height: 60,
-                            ),
-                            (_stateContract.contains('PENDING'))
-                                ? Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    height: 60,
-                                    child: Column(
-                                      children: [
-                                        Spacer(),
-                                        SizedBox(
-                                          width: 60,
-                                          height: 25,
-                                          child: Image.asset(
-                                              'assets/images/ic-c-pending.png'),
-                                        ),
-                                        Spacer(),
-                                        Text('Xét duyệt',
-                                            style: TextStyle(fontSize: 11)),
-                                      ],
-                                    ),
-                                  )
-                                : Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    height: 60,
-                                    child: Column(
-                                      children: [
-                                        Spacer(),
-                                        SizedBox(
-                                          width: 60,
-                                          height: 25,
-                                          child: Image.asset(
-                                              'assets/images/ic-c-pending-u.png'),
-                                        ),
-                                        Spacer(),
-                                        Text('Xét duyệt',
-                                            style: TextStyle(fontSize: 11)),
-                                      ],
-                                    ),
-                                  ),
+                              child: Row(
+                                children: <Widget>[
+                                  //
 
-                            (_stateContract.contains('APPROVED'))
-                                ? Container(
+                                  Container(
                                     width:
-                                        MediaQuery.of(context).size.width * 0.2,
+                                        MediaQuery.of(context).size.width * 0.1,
                                     height: 60,
-                                    child: Column(
-                                      children: [
-                                        Spacer(),
-                                        SizedBox(
-                                          width: 60,
-                                          height: 25,
-                                          child: Image.asset(
-                                              'assets/images/ic-c-approved.png'),
-                                        ),
-                                        Spacer(),
-                                        Text('Chấp thuận',
-                                            style: TextStyle(fontSize: 11)),
-                                      ],
-                                    ),
-                                  )
-                                : Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    height: 60,
-                                    child: Column(
-                                      children: [
-                                        Spacer(),
-                                        SizedBox(
-                                          width: 60,
-                                          height: 25,
-                                          child: Image.asset(
-                                              'assets/images/ic-c-approved-u.png'),
-                                        ),
-                                        Spacer(),
-                                        Text('Chấp thuận',
-                                            style: TextStyle(fontSize: 11)),
-                                      ],
-                                    ),
                                   ),
-                            (_stateContract.contains('ACTIVE'))
-                                ? Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    height: 60,
-                                    child: Column(
-                                      children: [
-                                        Spacer(),
-                                        SizedBox(
-                                          width: 60,
-                                          height: 25,
-                                          child: Image.asset(
-                                              'assets/images/ic-c-active.png'),
+                                  (_stateContract.contains('PENDING'))
+                                      ? Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                          height: 60,
+                                          child: Column(
+                                            children: [
+                                              Spacer(),
+                                              SizedBox(
+                                                width: 60,
+                                                height: 25,
+                                                child: Image.asset(
+                                                    'assets/images/ic-c-pending.png'),
+                                              ),
+                                              Spacer(),
+                                              Text('Xét duyệt',
+                                                  style:
+                                                      TextStyle(fontSize: 11)),
+                                            ],
+                                          ),
+                                        )
+                                      : Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                          height: 60,
+                                          child: Column(
+                                            children: [
+                                              Spacer(),
+                                              SizedBox(
+                                                width: 60,
+                                                height: 25,
+                                                child: Image.asset(
+                                                    'assets/images/ic-c-pending-u.png'),
+                                              ),
+                                              Spacer(),
+                                              Text('Xét duyệt',
+                                                  style:
+                                                      TextStyle(fontSize: 11)),
+                                            ],
+                                          ),
                                         ),
-                                        Spacer(),
-                                        Text('Hiện hành',
-                                            style: TextStyle(fontSize: 11)),
-                                      ],
-                                    ),
-                                  )
-                                : Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    height: 60,
-                                    child: Column(
-                                      children: [
-                                        Spacer(),
-                                        SizedBox(
-                                          width: 60,
-                                          height: 25,
-                                          child: Image.asset(
-                                              'assets/images/ic-c-active-u.png'),
+
+                                  (_stateContract.contains('APPROVED'))
+                                      ? Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                          height: 60,
+                                          child: Column(
+                                            children: [
+                                              Spacer(),
+                                              SizedBox(
+                                                width: 60,
+                                                height: 25,
+                                                child: Image.asset(
+                                                    'assets/images/ic-c-approved.png'),
+                                              ),
+                                              Spacer(),
+                                              Text('Chấp thuận',
+                                                  style:
+                                                      TextStyle(fontSize: 11)),
+                                            ],
+                                          ),
+                                        )
+                                      : Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                          height: 60,
+                                          child: Column(
+                                            children: [
+                                              Spacer(),
+                                              SizedBox(
+                                                width: 60,
+                                                height: 25,
+                                                child: Image.asset(
+                                                    'assets/images/ic-c-approved-u.png'),
+                                              ),
+                                              Spacer(),
+                                              Text('Chấp thuận',
+                                                  style:
+                                                      TextStyle(fontSize: 11)),
+                                            ],
+                                          ),
                                         ),
-                                        Spacer(),
-                                        Text('Hiện hành',
-                                            style: TextStyle(fontSize: 11)),
-                                      ],
-                                    ),
+                                  (_stateContract.contains('ACTIVE'))
+                                      ? Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                          height: 60,
+                                          child: Column(
+                                            children: [
+                                              Spacer(),
+                                              SizedBox(
+                                                width: 60,
+                                                height: 25,
+                                                child: Image.asset(
+                                                    'assets/images/ic-c-active.png'),
+                                              ),
+                                              Spacer(),
+                                              Text('Hiện hành',
+                                                  style:
+                                                      TextStyle(fontSize: 11)),
+                                            ],
+                                          ),
+                                        )
+                                      : Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                          height: 60,
+                                          child: Column(
+                                            children: [
+                                              Spacer(),
+                                              SizedBox(
+                                                width: 60,
+                                                height: 25,
+                                                child: Image.asset(
+                                                    'assets/images/ic-c-active-u.png'),
+                                              ),
+                                              Spacer(),
+                                              Text('Hiện hành',
+                                                  style:
+                                                      TextStyle(fontSize: 11)),
+                                            ],
+                                          ),
+                                        ),
+                                  (_stateContract.contains('FINISHED'))
+                                      ? Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                          height: 60,
+                                          child: Column(
+                                            children: [
+                                              Spacer(),
+                                              SizedBox(
+                                                width: 60,
+                                                height: 25,
+                                                child: Image.asset(
+                                                    'assets/images/ic-c-finished.png'),
+                                              ),
+                                              Spacer(),
+                                              Text('Kết thúc',
+                                                  style:
+                                                      TextStyle(fontSize: 11)),
+                                            ],
+                                          ),
+                                        )
+                                      : Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2,
+                                          height: 60,
+                                          child: Column(
+                                            children: [
+                                              Spacer(),
+                                              SizedBox(
+                                                width: 60,
+                                                height: 25,
+                                                child: Image.asset(
+                                                    'assets/images/ic-c-finished-u.png'),
+                                              ),
+                                              Spacer(),
+                                              Text('Kết thúc',
+                                                  style:
+                                                      TextStyle(fontSize: 11)),
+                                            ],
+                                          ),
+                                        ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.1,
+                                    height: 60,
                                   ),
-                            (_stateContract.contains('FINISHED'))
-                                ? Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    height: 60,
-                                    child: Column(
-                                      children: [
-                                        Spacer(),
-                                        SizedBox(
-                                          width: 60,
-                                          height: 25,
-                                          child: Image.asset(
-                                              'assets/images/ic-c-finished.png'),
-                                        ),
-                                        Spacer(),
-                                        Text('Kết thúc',
-                                            style: TextStyle(fontSize: 11)),
-                                      ],
-                                    ),
-                                  )
-                                : Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    height: 60,
-                                    child: Column(
-                                      children: [
-                                        Spacer(),
-                                        SizedBox(
-                                          width: 60,
-                                          height: 25,
-                                          child: Image.asset(
-                                              'assets/images/ic-c-finished-u.png'),
-                                        ),
-                                        Spacer(),
-                                        Text('Kết thúc',
-                                            style: TextStyle(fontSize: 11)),
-                                      ],
-                                    ),
-                                  ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.1,
-                              height: 60,
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
                   Divider(
                     color: DefaultTheme.GREY_TOP_TAB_BAR,
                     height: 1,

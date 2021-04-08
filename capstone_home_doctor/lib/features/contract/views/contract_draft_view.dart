@@ -96,7 +96,7 @@ class _ContractDraftView extends State<ContractDraftView>
     String note = arguments['NOTE'];
     String dateStart = arguments['DATE_START'];
     print(
-        'PATIENT ID ${_requestContract.patientId} AND DOCTOR ID ${_requestContract.doctorId}');
+        'PATIENT ID ${_requestContract.patientId} AND DOCTOR ID ${_requestContract.doctorId} AND DATE CHOOSE ${dateStart}');
     return Scaffold(
       body: SafeArea(
         child: Column(

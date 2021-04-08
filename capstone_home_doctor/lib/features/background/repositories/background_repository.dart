@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
+import 'package:capstone_home_doctor/models/date_request_dto.dart';
 import 'package:capstone_home_doctor/models/setting_background_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -60,6 +61,25 @@ class BackgroundRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT getSummarySetting: ${e}');
+    }
+  }
+
+  //get default date after request contract
+  Future<DateRequestDTO> getDateRequest() async {
+    String url = '/DateContractRecommend';
+    try {
+      //
+      final response = await getApiMockup(url, null);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as List;
+        List<DateRequestDTO> list = data.map((dto) {
+          //
+          return DateRequestDTO.fromJson(dto);
+        }).toList();
+        return list[0];
+      }
+    } catch (e) {
+      print('ERRROR AT get Date Request: $e');
     }
   }
 }

@@ -36,13 +36,18 @@ class MedicalShareDTO {
 }
 
 class MedicalInstructions {
+  String medicalInstructionTypeName;
   int medicalInstructionId;
   List<String> images;
   String dateCreate;
   String diagnose;
 
   MedicalInstructions(
-      {this.medicalInstructionId, this.images, this.dateCreate, this.diagnose});
+      {this.medicalInstructionTypeName,
+      this.medicalInstructionId,
+      this.images,
+      this.dateCreate,
+      this.diagnose});
 
   MedicalInstructions.fromJson(Map<String, dynamic> json) {
     medicalInstructionId = json['medicalInstructionId'];
