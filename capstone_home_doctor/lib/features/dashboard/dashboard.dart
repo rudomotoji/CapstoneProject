@@ -160,7 +160,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       }
     });
 
-    // _getPeopleStatus();
+    _getPeopleStatus();
   }
 
   _getPeripheralInfo() async {
@@ -179,6 +179,17 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   }
 
   _getPeopleStatus() async {
+    await vitalSignHelper.getPeopleStatus().then((value) async {
+      //
+      setState(() {
+        if (value == 'DANGER') {
+          checkPeopleStatusLocal = true;
+        } else {
+          checkPeopleStatusLocal = false;
+        }
+      });
+    });
+
     const oneSec = const Duration(seconds: 60);
 
     Timer.periodic(oneSec, (Timer t) async {
@@ -371,6 +382,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                 // ),
 
                 _sizeBoxCard(),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20),
+                ),
                 getAppointment(),
 
                 Padding(

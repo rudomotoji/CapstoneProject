@@ -114,6 +114,9 @@ class _OverviewTabState extends State<OverviewTab> {
               } else {
                 _saveVitalSignScheduleOffline(state.dto);
                 return Container(
+                  margin: EdgeInsets.only(left: 20, right: 20),
+                  padding:
+                      EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 10),
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                     color: DefaultTheme.GREY_VIEW,
@@ -126,15 +129,23 @@ class _OverviewTabState extends State<OverviewTab> {
                       //
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        child: Text(
-                            'Bác sĩ đã đặt các chỉ số đo sinh hiệu cho bạn'),
+                        child: Text('Bác sĩ đã đặt các chỉ số đo sinh hiệu',
+                            style: TextStyle(
+                              color: DefaultTheme.BLACK,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                            )),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
                         child: (state.dto.dateStarted != null)
                             ? Text(
-                                'Bắt đầu từ ngày ${_dateValidator.parseToDateView(state.dto.dateStarted)}')
+                                'Bắt đầu từ ngày ${_dateValidator.parseToDateView(state.dto.dateStarted)}',
+                                style: TextStyle(color: DefaultTheme.GREY_TEXT))
                             : Container(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 20),
                       ),
                       ListView.builder(
                         shrinkWrap: true,
@@ -162,9 +173,19 @@ class _OverviewTabState extends State<OverviewTab> {
                                               : Image.asset(
                                                   'assets/images/ic-health-selected.png'),
                                     ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 10),
+                                    ),
                                     Text(
-                                        '${state.dto.vitalSigns[index].vitalSignType}'),
+                                      '${state.dto.vitalSigns[index].vitalSignType}',
+                                      style: TextStyle(
+                                          color: DefaultTheme.RED_CALENDAR,
+                                          fontSize: 16),
+                                    ),
                                   ],
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 5),
                                 ),
                                 (state.dto.vitalSigns[index].vitalSignType ==
                                         'Nhịp tim')
@@ -174,7 +195,7 @@ class _OverviewTabState extends State<OverviewTab> {
                                                 .vitalSignType ==
                                             'Huyết áp')
                                         ? Text(
-                                            'Huyết áp  được đo bắt đầu vào ${state.dto.vitalSigns[index].timeStart} giờ, cách ${(state.dto.vitalSigns[index].minuteAgain / 60).toInt()} tiếng đo lại.')
+                                            'Huyết áp  được đo bắt đầu vào ${state.dto.vitalSigns[index].timeStart} giờ mỗi ngày.')
                                         : Text(''),
                               ],
                             ),

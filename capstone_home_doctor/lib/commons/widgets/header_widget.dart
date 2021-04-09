@@ -17,6 +17,8 @@ import 'package:capstone_home_doctor/models/patient_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
@@ -516,6 +518,20 @@ class _HeaderWidget extends State<HeaderWidget> {
                                   }
                                 });
                                 //
+                                await _vitalSignHelper
+                                    .updatePeopleStatus('')
+                                    .then((isOk) {
+                                  if (isOk) {
+                                    ReceiveNotification notiData =
+                                        ReceiveNotification(
+                                            id: 0,
+                                            title: "reload heart rate",
+                                            body: "",
+                                            payload: "");
+                                    HeartRefreshBloc.instance
+                                        .newNotification(notiData);
+                                  }
+                                });
 
                                 await _sqfLiteHelper
                                     .deleteVitalSignSchedule()

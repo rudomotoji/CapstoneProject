@@ -456,7 +456,19 @@ void main() async {
                                       }
                                     };
                                     await _vitalSignHelper
-                                        .updatePeopleStatus('DANGER');
+                                        .updatePeopleStatus('DANGER')
+                                        .then((isOk) {
+                                      if (isOk) {
+                                        ReceiveNotification notiData =
+                                            ReceiveNotification(
+                                                id: 0,
+                                                title: "reload heart rate",
+                                                body: "",
+                                                payload: "");
+                                        HeartRefreshBloc.instance
+                                            .newNotification(notiData);
+                                      }
+                                    });
                                     _handleGeneralMessage(
                                         dangerousNotification);
                                     ////////////////////////
@@ -884,7 +896,20 @@ _connectInBackground(int timeInsert) async {
                               "NAVIGATE_TO_SCREEN": RoutesHDr.MAIN_HOME,
                             }
                           };
-                          await _vitalSignHelper.updatePeopleStatus('DANGER');
+                          await _vitalSignHelper
+                              .updatePeopleStatus('DANGER')
+                              .then((isOk) {
+                            if (isOk) {
+                              ReceiveNotification notiData =
+                                  ReceiveNotification(
+                                      id: 0,
+                                      title: "reload heart rate",
+                                      body: "",
+                                      payload: "");
+                              HeartRefreshBloc.instance
+                                  .newNotification(notiData);
+                            }
+                          });
 
                           _handleGeneralMessage(dangerousNotification);
                           //
@@ -933,7 +958,19 @@ _connectInBackground(int timeInsert) async {
                               print(
                                   'CHANGE DEFAULT normal people status successful!');
                               await _vitalSignHelper
-                                  .updatePeopleStatus('NORMAL');
+                                  .updatePeopleStatus('NORMAL')
+                                  .then((isOk) {
+                                if (isOk) {
+                                  ReceiveNotification notiData =
+                                      ReceiveNotification(
+                                          id: 0,
+                                          title: "reload heart rate",
+                                          body: "",
+                                          payload: "");
+                                  HeartRefreshBloc.instance
+                                      .newNotification(notiData);
+                                }
+                              });
                               //UPDATE VARIABLE CHECK DANGEROUS TO NORMAL = FALSE
                               await _vitalSignHelper.updateCheckToNormal(false);
                             }
@@ -978,7 +1015,20 @@ _connectInBackground(int timeInsert) async {
                             }
                           };
                           _handleGeneralMessage(dangerousNotification);
-                          await _vitalSignHelper.updatePeopleStatus('DANGER');
+                          await _vitalSignHelper
+                              .updatePeopleStatus('DANGER')
+                              .then((isOK) {
+                            if (isOK) {
+                              ReceiveNotification notiData =
+                                  ReceiveNotification(
+                                      id: 0,
+                                      title: "reload heart rate",
+                                      body: "",
+                                      payload: "");
+                              HeartRefreshBloc.instance
+                                  .newNotification(notiData);
+                            }
+                          });
                         }
                         //
                       } else {
@@ -993,7 +1043,19 @@ _connectInBackground(int timeInsert) async {
                               //
                               await _connectFirstOpenApp();
                               await _vitalSignHelper
-                                  .updatePeopleStatus('NORMAL');
+                                  .updatePeopleStatus('NORMAL')
+                                  .then((isOk) {
+                                if (isOk) {
+                                  ReceiveNotification notiData =
+                                      ReceiveNotification(
+                                          id: 0,
+                                          title: "reload heart rate",
+                                          body: "",
+                                          payload: "");
+                                  HeartRefreshBloc.instance
+                                      .newNotification(notiData);
+                                }
+                              });
                             });
                           }
                         });
@@ -1061,7 +1123,18 @@ _connectInBackground(int timeInsert) async {
                           }
                         };
                         _handleGeneralMessage(dangerousNotification);
-                        await _vitalSignHelper.updatePeopleStatus('DANGER');
+                        await _vitalSignHelper
+                            .updatePeopleStatus('DANGER')
+                            .then((isOk) {
+                          if (isOk) {
+                            ReceiveNotification notiData = ReceiveNotification(
+                                id: 0,
+                                title: "reload heart rate",
+                                body: "",
+                                payload: "");
+                            HeartRefreshBloc.instance.newNotification(notiData);
+                          }
+                        });
                         ////////////////////////
                         //SERVER EXECUTE HERE
 
@@ -1189,7 +1262,19 @@ _connectInBackground(int timeInsert) async {
                               //
                               if (isSuccess) {
                                 await _vitalSignHelper
-                                    .updatePeopleStatus('NORMAL');
+                                    .updatePeopleStatus('NORMAL')
+                                    .then((isOk) {
+                                  if (isOk) {
+                                    ReceiveNotification notiData =
+                                        ReceiveNotification(
+                                            id: 0,
+                                            title: "reload heart rate",
+                                            body: "",
+                                            payload: "");
+                                    HeartRefreshBloc.instance
+                                        .newNotification(notiData);
+                                  }
+                                });
                                 print(
                                     'Updated normal people status successful!');
                                 //UPDATE VARIABLE CHECK DANGEROUS TO NORMAL = FALSE
@@ -1252,7 +1337,18 @@ _connectInBackground(int timeInsert) async {
                           }
                         };
                         _handleGeneralMessage(dangerousNotification);
-                        await _vitalSignHelper.updatePeopleStatus('DANGER');
+                        await _vitalSignHelper
+                            .updatePeopleStatus('DANGER')
+                            .then((isOk) {
+                          if (isOk) {
+                            ReceiveNotification notiData = ReceiveNotification(
+                                id: 0,
+                                title: "reload heart rate",
+                                body: "",
+                                payload: "");
+                            HeartRefreshBloc.instance.newNotification(notiData);
+                          }
+                        });
                         ////////////////////////
                         //SERVER EXECUTE HERE
                         //CHANGE STATUS PEOPLE

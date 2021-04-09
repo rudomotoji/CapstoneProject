@@ -141,12 +141,13 @@ class VitalSignHelper {
     prefs.setString('STATUS_PEOPLE', '');
   }
 
-  Future<void> updatePeopleStatus(String status) async {
+  Future<bool> updatePeopleStatus(String status) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('STATUS_PEOPLE')) {
       initialPeopleStatus();
     }
     prefs.setString('STATUS_PEOPLE', status);
+    return true;
   }
 
   Future<String> getPeopleStatus() async {

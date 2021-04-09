@@ -518,7 +518,7 @@ option = {
                       // padding: EdgeInsets.only(right: 20),
                       height: 400,
                     ),
-                    Text('Biểu đồ nhịp tim trong ngày'.toUpperCase(),
+                    Text('Biểu đồ huyết áp'.toUpperCase(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
