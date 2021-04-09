@@ -1617,85 +1617,167 @@ class _ContractShareView extends State<ContractShareView>
                                 '${medicalInstructions3[index].diagnose}');
                           }
                         },
-                        child: Stack(
-                          children: [
-                            SizedBox(
-                              width: 150,
-                              height: 200,
-                              child: Image.network(
-                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions3[index].images.first}',
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                            Container(
-                              width: 150,
-                              height: 200,
-                              color: DefaultTheme.BLACK_BUTTON.withOpacity(0.4),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              child: Container(
-                                width: 150,
-                                height: 200,
-                                color: DefaultTheme.GREY_TOP_TAB_BAR
-                                    .withOpacity(0.3),
-                                child: Center(
-                                    child:
-                                        (medicalInstructions3[index].images ==
-                                                    null ||
-                                                medicalInstructions3[index]
-                                                        .images
-                                                        .length <
-                                                    2)
-                                            ? Text('')
-                                            : Text(
-                                                '${medicalInstructions3[index].images.length}+',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    color: DefaultTheme.WHITE,
-                                                    fontSize: 25),
-                                              )),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              child: Container(
-                                width: 150,
-                                height: 50,
-                                color:
-                                    DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        '${medicalInstructions3[index].medicalInstructionTypeName}',
-                                        style: TextStyle(
-                                            color: DefaultTheme.WHITE),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        'Ngày tạo: ${medicalInstructions3[index].dateCreate}',
-                                        style: TextStyle(
-                                            color: DefaultTheme.WHITE,
-                                            fontSize: 12),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
+                        child: (medicalInstructions3[index].images == null ||
+                                medicalInstructions3[index].images.isEmpty)
+                            ? Stack(
+                                children: [
+                                  Container(
+                                    width: 150,
+                                    height: 200,
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR
+                                        .withOpacity(0.6),
                                   ),
-                                ),
+                                  Container(
+                                    width: 150,
+                                    height: 200,
+                                    color: DefaultTheme.BLACK_BUTTON
+                                        .withOpacity(0.4),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    child: Container(
+                                      width: 150,
+                                      height: 200,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR
+                                          .withOpacity(0.3),
+                                      child: Center(
+                                          child: (medicalInstructions3[index]
+                                                          .images ==
+                                                      null ||
+                                                  medicalInstructions3[index]
+                                                          .images
+                                                          .length <
+                                                      2)
+                                              ? Text('')
+                                              : Text(
+                                                  '${medicalInstructions3[index].images.length}+',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: DefaultTheme.WHITE,
+                                                      fontSize: 25),
+                                                )),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    child: Container(
+                                      width: 150,
+                                      height: 50,
+                                      color: DefaultTheme.BLACK_BUTTON
+                                          .withOpacity(0.5),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${medicalInstructions3[index].medicalInstructionTypeName}',
+                                              style: TextStyle(
+                                                  color: DefaultTheme.WHITE),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Text(
+                                              'Ngày tạo: ${medicalInstructions3[index].dateCreate}',
+                                              style: TextStyle(
+                                                  color: DefaultTheme.WHITE,
+                                                  fontSize: 12),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Stack(
+                                children: [
+                                  SizedBox(
+                                    width: 150,
+                                    height: 200,
+                                    child: Image.network(
+                                      'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions3[index].images.first}',
+                                      fit: BoxFit.fill,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 150,
+                                    height: 200,
+                                    color: DefaultTheme.BLACK_BUTTON
+                                        .withOpacity(0.4),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    child: Container(
+                                      width: 150,
+                                      height: 200,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR
+                                          .withOpacity(0.3),
+                                      child: Center(
+                                          child: (medicalInstructions3[index]
+                                                          .images ==
+                                                      null ||
+                                                  medicalInstructions3[index]
+                                                          .images
+                                                          .length <
+                                                      2)
+                                              ? Text('')
+                                              : Text(
+                                                  '${medicalInstructions3[index].images.length}+',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: DefaultTheme.WHITE,
+                                                      fontSize: 25),
+                                                )),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    child: Container(
+                                      width: 150,
+                                      height: 50,
+                                      color: DefaultTheme.BLACK_BUTTON
+                                          .withOpacity(0.5),
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${medicalInstructions3[index].medicalInstructionTypeName}',
+                                              style: TextStyle(
+                                                  color: DefaultTheme.WHITE),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Text(
+                                              'Ngày tạo: ${medicalInstructions3[index].dateCreate}',
+                                              style: TextStyle(
+                                                  color: DefaultTheme.WHITE,
+                                                  fontSize: 12),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
                       ),
                     );
                   },
                 ),
               )
             : Container(),
+        Padding(
+          padding: EdgeInsets.only(bottom: 10),
+        )
       ],
     );
   }
@@ -3010,6 +3092,8 @@ class _ContractShareView extends State<ContractShareView>
                                     onTap: () {
                                       Map<String, dynamic> arguments = {
                                         'healthRecordId': 0,
+                                        'medicalInstructionId':
+                                            medicalInstructionId,
                                         "timeStared": value
                                             .vitalSignScheduleRespone
                                             .timeStared,

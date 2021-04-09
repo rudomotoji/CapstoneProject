@@ -198,7 +198,7 @@ class MedicalInstructions {
   int medicalInstructionId;
   List<String> images;
   String diagnose;
-  Null description;
+  String description;
 
   MedicalInstructions(
       {this.medicalInstructionId,

@@ -1159,6 +1159,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         .then((value) {
       Navigator.pop(context);
       if (value != null) {
+        print(value.appointmentDetail.appointmentId);
         if (value.appointmentDetail != null) {
           showDialog(
             context: context,

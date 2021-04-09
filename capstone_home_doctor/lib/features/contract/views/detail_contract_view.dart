@@ -490,7 +490,7 @@ class _DetailContractView extends State<DetailContractView>
                                                     top: 10,
                                                     right: 10),
                                                 width: 250,
-                                                height: 200,
+                                                height: 210,
                                                 decoration: BoxDecoration(
                                                   color: DefaultTheme.WHITE
                                                       .withOpacity(0.7),
@@ -1439,25 +1439,26 @@ class _DetailContractView extends State<DetailContractView>
                                                 child: InkWell(
                                                   onTap: () {
                                                     if (x
+                                                                .medicalInstructions[
+                                                                    index]
+                                                                .images ==
+                                                            null ||
+                                                        x
                                                             .medicalInstructions[
                                                                 index]
-                                                            .images ==
-                                                        null) {
+                                                            .images
+                                                            .isEmpty) {
                                                       if (x
                                                           .medicalInstructionTypeName
                                                           .contains(
                                                               'Đơn thuốc')) {
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            RoutesHDr
-                                                                .MEDICAL_HISTORY_DETAIL,
-                                                            arguments: x
-                                                                .medicalInstructions[
-                                                                    index]
-                                                                .medicalInstructionId);
+                                                        _showDetailVitalSign(x
+                                                            .medicalInstructions[
+                                                                index]
+                                                            .medicalInstructionId);
                                                       } else {
-                                                        //
-                                                        //
+                                                        print(
+                                                            'THIS IS MEDICAL INSTRUCTION ID: ${x.medicalInstructions[index].medicalInstructionId}');
                                                         _showDetailVitalSign(x
                                                             .medicalInstructions[
                                                                 index]
@@ -1636,10 +1637,15 @@ class _DetailContractView extends State<DetailContractView>
                                                       child: InkWell(
                                                         onTap: () {
                                                           if (x
+                                                                      .medicalInstructions[
+                                                                          index]
+                                                                      .images ==
+                                                                  null ||
+                                                              x
                                                                   .medicalInstructions[
                                                                       index]
-                                                                  .images ==
-                                                              null) {
+                                                                  .images
+                                                                  .isEmpty) {
                                                             if (x
                                                                 .medicalInstructionTypeName
                                                                 .contains(
@@ -2031,7 +2037,8 @@ class _DetailContractView extends State<DetailContractView>
 //hiển thị y lệnh
   checkTypeMedIns(MedicalInstructions medicalInstructions,
       String medicalInstructionTypeName) {
-    if (medicalInstructions.images != null) {
+    if (medicalInstructions.images != null &&
+        medicalInstructions.images.isNotEmpty) {
       return SizedBox(
         width: 150,
         height: 200,
@@ -2055,6 +2062,22 @@ class _DetailContractView extends State<DetailContractView>
             ],
           ),
         );
+      } else if (medicalInstructionTypeName.contains('Sinh hiệu')) {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset('assets/images/ic-health-selected.png'),
+              ),
+            ],
+          ),
+        );
       } else {
         return Container(
           width: 150,
@@ -2064,10 +2087,9 @@ class _DetailContractView extends State<DetailContractView>
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               //
-              SizedBox(
+              Container(
                 width: 40,
                 height: 40,
-                child: Image.asset(''),
               ),
             ],
           ),
@@ -2077,6 +2099,7 @@ class _DetailContractView extends State<DetailContractView>
   }
 
   void _showDetailVitalSign(int medicalInstructionId) {
+    print('THIS IS MEDICAL INSTRUCTION ID: $medicalInstructionId');
     setState(() {
       showDialog(
           barrierDismissible: false,
@@ -2128,13 +2151,10 @@ class _DetailContractView extends State<DetailContractView>
         .then((value) {
       Navigator.pop(context);
       if (value != null) {
-        if (value.vitalSignScheduleRespone != null) {
-          // var dateStarted = new DateFormat('dd/MM/yyyy').format(
-          //     new DateFormat("yyyy-MM-dd")
-          //         .parse(value.vitalSignResponse.dateStarted));
-          // var dateFinished = new DateFormat('dd/MM/yyyy').format(
-          //     new DateFormat("yyyy-MM-dd")
-          //         .parse(value.vitalSignResponse.dateFinished));
+        if (value.medicationsRespone != null) {
+          Navigator.pushNamed(context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
+              arguments: value.medicalInstructionId);
+        } else {
           var dateStarted = _dateValidator.convertDateCreate(
               value.vitalSignScheduleRespone.timeStared,
               'dd/MM/yyyy',
@@ -2287,6 +2307,8 @@ class _DetailContractView extends State<DetailContractView>
                                     onTap: () {
                                       Map<String, dynamic> arguments = {
                                         'healthRecordId': 0,
+                                        'medicalInstructionId':
+                                            medicalInstructionId,
                                         "timeStared": value
                                             .vitalSignScheduleRespone
                                             .timeStared,
