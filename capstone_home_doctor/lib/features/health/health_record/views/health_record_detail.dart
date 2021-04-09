@@ -777,31 +777,36 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     style: TextStyle(
                                         color: DefaultTheme.GREY_TEXT),
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Container(
-                                        width: 80,
-                                        child: Text(
-                                          'Chẩn đoán:',
-                                          style: TextStyle(
-                                              color: DefaultTheme.GREY_TEXT),
+                                  (dto.diagnose == null)
+                                      ? Container()
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Container(
+                                              width: 80,
+                                              child: Text(
+                                                'Chẩn đoán:',
+                                                style: TextStyle(
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  220,
+                                              child: Text(
+                                                '${dto.diagnose}',
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                220,
-                                        child: Text(
-                                          '${dto.diagnose}',
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
                                   (dto.description != null)
                                       ? Row(
                                           mainAxisAlignment:
@@ -1235,17 +1240,29 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   maxLines: 5,
                                 ),
                                 Padding(padding: EdgeInsets.only(top: 10)),
-                                Text(
-                                  'Ghi chú: ${value.appointmentDetail.note}',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    decoration: TextDecoration.none,
-                                    color: DefaultTheme.GREY_TEXT,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 5,
-                                ),
+                                (value.appointmentDetail.note == null)
+                                    ? Text(
+                                        'Không có ghi chú',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.GREY_TEXT,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      )
+                                    : Text(
+                                        'Ghi chú: ${value.appointmentDetail.note}',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.GREY_TEXT,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      ),
                                 Padding(padding: EdgeInsets.only(top: 10)),
                                 Center(
                                   child: ButtonHDr(
@@ -1491,14 +1508,23 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                     ),
-                                    Text(
-                                      'Chuẩn đoán $dianose',
-                                      style: TextStyle(
-                                          color: DefaultTheme.WHITE,
-                                          fontSize: 15),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 5,
-                                    ),
+                                    (dianose == null)
+                                        ? Text(
+                                            '',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 5,
+                                          )
+                                        : Text(
+                                            'Chẩn đoán $dianose',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 5,
+                                          ),
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                     ),
