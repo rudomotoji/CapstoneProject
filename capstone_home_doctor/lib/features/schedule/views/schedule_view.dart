@@ -347,9 +347,9 @@ class _ScheduleView extends State<ScheduleView>
                       (event.status.contains('CANCEL'))
                           ? Text('Lý do hủy lịch: ${event.reasonCanceled}')
                           : Container(),
-                      (event.status.contains('CANCEL'))
-                          ? Container()
-                          : _buttonChangeDate(event, context),
+                      // (event.status.contains('CANCEL'))
+                      //     ? Container()
+                      //     : _buttonChangeDate(event, context),
                     ],
                   ),
                 ),

@@ -71,7 +71,7 @@ class NotificationRepository extends BaseApiClient {
         '/Notifications?deviceType=${notiPushDTO.deviceType}&notificationType=${notiPushDTO.notificationType}&senderAccountId=${notiPushDTO.senderAccountId}&recipientAccountId=${notiPushDTO.recipientAccountId}';
     try {
       final request = await postApi(url, null, notiPushDTO.toJson());
-      if (request.statusCode == 200) {
+      if (request.statusCode == 201) {
         return true;
       } else {
         return false;
