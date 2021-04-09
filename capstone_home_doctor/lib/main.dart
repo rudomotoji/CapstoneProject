@@ -1620,6 +1620,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
 
       NotificationsBloc.instance.newNotification(notiData);
     }
+    _saveVitalSignScheduleOffline();
     if (notiData.body.contains('Bạn có một lịch đo sinh hiệu mới')) {
       _saveVitalSignScheduleOffline();
       print('CATCHED THIS NOTI TO DOWNLOAD NEW SCHEDULE');
