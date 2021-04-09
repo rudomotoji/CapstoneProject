@@ -21,6 +21,7 @@ import 'package:capstone_home_doctor/features/health/medical_share/states/medica
 import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
+import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/medical_share_helper.dart';
 import 'package:flutter/material.dart';
@@ -488,6 +489,68 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
     );
   }
 
+  checkImageNull(MedicalInstructionsDTO dto) {
+    int size = 20;
+    if (dto.image == null) {
+      if (dto.medicalInstructionTypeId == 1) {
+        return Container(
+          width: (size * 1.5),
+          height: (size * 1.5),
+          child: Image.asset('assets/images/ic-medicine.png'),
+        );
+      } else if (dto.medicalInstructionTypeId == 8) {
+        return Container(
+          width: (size * 1.5),
+          height: (size * 1.5),
+          child: Image.asset('assets/images/ic-health-selected.png'),
+        );
+      } else if (dto.medicalInstructionTypeId == 10) {
+        return Container(
+          width: (size * 1.5),
+          height: (size * 1.5),
+          child: Image.asset('assets/images/ic-calendar.png'),
+        );
+      } else {
+        return Container(
+            width: (size * 1.5),
+            height: (size * 1.5),
+            color: DefaultTheme.GREY_TOP_TAB_BAR);
+      }
+    } else {
+      if (dto.image.length <= 0) {
+        if (dto.medicalInstructionTypeId == 1) {
+          return Container(
+            width: (size * 1.5),
+            height: (size * 1.5),
+            child: Image.asset('assets/images/ic-medicine.png'),
+          );
+        } else if (dto.medicalInstructionTypeId == 8) {
+          return Container(
+            width: (size * 1.5),
+            height: (size * 1.5),
+            child: Image.asset('assets/images/ic-health-selected.png'),
+          );
+        } else if (dto.medicalInstructionTypeId == 10) {
+          return Container(
+            width: (size * 1.5),
+            height: (size * 1.5),
+            child: Image.asset('assets/images/ic-calendar.png'),
+          );
+        } else {
+          return Container(
+              width: (size * 1.5),
+              height: (size * 1.5),
+              color: DefaultTheme.GREY_TOP_TAB_BAR);
+        }
+      } else {
+        return Image.network(
+          'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto?.image.first}',
+          fit: BoxFit.fill,
+        );
+      }
+    }
+  }
+
   Widget _selectContract() {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -764,9 +827,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                             width: (30 * 1.5),
                                                             height: (40 * 1.5),
                                                             child: (itemMedi
-                                                                        .image
-                                                                        .length >
-                                                                    0)
+                                                                        .image !=
+                                                                    null)
                                                                 ? Stack(
                                                                     children: [
                                                                       Container(
@@ -776,13 +838,15 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                                             1.5),
                                                                         color: DefaultTheme
                                                                             .GREY_TOP_TAB_BAR,
-                                                                        child: (itemMedi.image.length <=
-                                                                                0)
-                                                                            ? Container
-                                                                            : Image.network(
-                                                                                'http://45.76.186.233:8000/api/v1/Images?pathImage=${itemMedi.image.first}',
-                                                                                fit: BoxFit.fill,
-                                                                              ),
+                                                                        child: checkImageNull(
+                                                                            itemMedi),
+                                                                        // (itemMedi.image.length <=
+                                                                        //         0)
+                                                                        //     ? Container
+                                                                        //     : Image.network(
+                                                                        //         'http://45.76.186.233:8000/api/v1/Images?pathImage=${itemMedi.image.first}',
+                                                                        //         fit: BoxFit.fill,
+                                                                        //       ),
                                                                       ),
                                                                       Positioned(
                                                                         top: 0,
@@ -806,6 +870,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                                                         1.5),
                                                                     color: DefaultTheme
                                                                         .GREY_TOP_TAB_BAR,
+                                                                    child: checkImageNull(
+                                                                        itemMedi),
                                                                   ),
                                                           ),
                                                         ),
