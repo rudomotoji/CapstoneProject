@@ -1588,7 +1588,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
     // _fcm.subscribeToTopic("");
 
     // localNotifyManager.setOnNotificationReceive(onNotificationReceive);
-    localNotifyManager.setNotificationnOnClick(selectNotificationSubject);
+    // localNotifyManager.setNotificationnOnClick(selectNotificationSubject);
   }
 
   onNotificationReceive(message) {

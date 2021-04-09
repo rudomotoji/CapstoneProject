@@ -34,7 +34,7 @@ class NotiHelper {
         );
   }
 
-  initializePlatform() {
+  initializePlatform() async {
     // var initSettingAndroid = AndroidInitializationSettings('app_notification_icon');
     var initSettingAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -50,6 +50,9 @@ class NotiHelper {
         });
     initSetting = InitializationSettings(
         android: initSettingAndroid, iOS: initSettingIOS);
+
+    await _plugin.initialize(initSetting,
+        onSelectNotification: selectNotification);
   }
 
   // setOnNotificationReceive(Function onNotificationReceive) {
@@ -64,6 +67,10 @@ class NotiHelper {
   //     onNotificationOnClick(payload);
   //   });
   // }
+  //
+  Future selectNotification(String payload) async {
+    selectNotificationSubject.add(payload);
+  }
 
   setOnNotificationReceive(Function onNotificationReceive) {
     didReceiveNotificationSubject.listen((nontification) {
@@ -71,12 +78,12 @@ class NotiHelper {
     });
   }
 
-  setNotificationnOnClick(BehaviorSubject selectNotificationSubject) async {
-    await _plugin.initialize(initSetting,
-        onSelectNotification: (String payload) async {
-      selectNotificationSubject.add(payload);
-    });
-  }
+  // setNotificationnOnClick(BehaviorSubject selectNotificationSubject) async {
+  //   await _plugin.initialize(initSetting,
+  //       onSelectNotification: (String payload) async {
+  //     selectNotificationSubject.add(payload);
+  //   });
+  // }
 
   Future<void> show(ReceiveNotification receiveNotification) async {
     var androidChannel = AndroidNotificationDetails(
