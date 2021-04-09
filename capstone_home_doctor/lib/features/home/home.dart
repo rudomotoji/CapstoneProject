@@ -96,56 +96,58 @@ class _MainHomeState extends State<MainHome> {
     _getAccountId();
 
     //
+
     selectNotificationSubject.stream.listen((String payload) async {
-      var navigate = jsonDecode(payload);
+      // var navigate = jsonDecode(payload);
+      Map<String, dynamic> navigate = jsonDecode(payload);
       if (payload.contains('NAVIGATE_TO_SCREEN')) {
         await Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
       }
 
       print('payload home page: $payload');
       if (payload.contains('notiTypeId')) {
-        int notificationType = navigate['notiTypeId'];
-        int contractId = navigate['contractId'];
-        int medicalInstructionId = navigate['medicalInstructionId'];
-        int appointmentId = navigate['appointmentId'];
+        var notificationType = navigate['notiTypeId'];
+        var contractId = navigate['contractId'];
+        var medicalInstructionId = navigate['medicalInstructionId'];
+        var appointmentId = navigate['appointmentId'];
 
-        if (notificationType == 1 ||
-            notificationType == 4 ||
-            notificationType == 5 ||
-            notificationType == 9 ||
-            notificationType == 10) {
+        if (int.parse(notificationType) == 1 ||
+            int.parse(notificationType) == 4 ||
+            int.parse(notificationType) == 5 ||
+            int.parse(notificationType) == 9 ||
+            int.parse(notificationType) == 10) {
           //Navigate hợp đồng detail
-          if (contractId != null) {
-            await _contractHelper.updateContractId(contractId);
+          if (int.parse(contractId) != null) {
+            await _contractHelper.updateContractId(int.parse(contractId));
 
             Navigator.of(context).pushNamed(RoutesHDr.DETAIL_CONTRACT_VIEW);
           }
-        } else if (notificationType == 2) {
+        } else if (int.parse(notificationType) == 2) {
           //Navigate Screen overview
           //
-        } else if (notificationType == 7) {
+        } else if (int.parse(notificationType) == 7) {
           //Navigate Lịch sinh hiệu
           //
           int currentIndex = 1;
           Navigator.of(context).pushNamedAndRemoveUntil(
               RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false,
               arguments: currentIndex);
-        } else if (notificationType == 6) {
+        } else if (int.parse(notificationType) == 6) {
           //Navigate thuốc detail
           //
           Navigator.pushNamed(context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
-              arguments: medicalInstructionId);
-        } else if (notificationType == 8) {
-          //Navigate hẹn hẹn detail
+              arguments: int.parse(medicalInstructionId));
+        } else if (int.parse(notificationType) == 8) {
+          //Navigate hẹn detail
           //
           int _indexPage = 1;
           Navigator.of(context)
               .pushNamed(RoutesHDr.SCHEDULE, arguments: _indexPage);
-        } else if (notificationType == 12) {
+        } else if (int.parse(notificationType) == 12) {
           //Navigate share medical instruction
           //
 
-        } else if (notificationType == 11) {
+        } else if (int.parse(notificationType) == 11) {
           //Navigate connect device screen
           //
           Navigator.of(context).pushNamed(RoutesHDr.INTRO_CONNECT_PERIPHERAL);

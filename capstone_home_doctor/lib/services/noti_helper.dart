@@ -85,6 +85,14 @@ class NotiHelper {
   //   });
   // }
 
+  // setNotificationnOnClick(BehaviorSubject selectNotificationSubject) async {
+  //   await _plugin.initialize(initSetting,
+  //       onSelectNotification: (String payload) async {
+  //     print('PAY LOADDDDDDDD: $payload');
+  //     selectNotificationSubject.add(payload);
+  //   });
+  // }
+
   Future<void> show(ReceiveNotification receiveNotification) async {
     var androidChannel = AndroidNotificationDetails(
       'CHANNEL_ID',

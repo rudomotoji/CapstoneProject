@@ -156,6 +156,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         if (_patientId != 0) {
           _vitalSignBloc.add(
               VitalSignEventGetList(type: vitalType, patientId: _patientId));
+          _getPeopleStatus();
         }
       }
     });
@@ -192,26 +193,26 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
     const oneSec = const Duration(seconds: 60);
 
-    Timer.periodic(oneSec, (Timer t) async {
-      await vitalSignHelper.getPeopleStatus().then((value) async {
-        print('EVERY 1 MINUTES. CHECK STATUS PEOPLE LOCAL');
-        print('people status is ${value}');
-        if (value == 'DANGER') {
-          if (mounted) {
-            _changeDangerView();
-            setState(() {
-              checkPeopleStatusLocal = true;
-            });
-          }
-        } else {
-          if (mounted) {
-            setState(() {
-              checkPeopleStatusLocal = false;
-            });
-          }
+    // Timer.periodic(oneSec, (Timer t) async {
+    await vitalSignHelper.getPeopleStatus().then((value) async {
+      print('EVERY 1 MINUTES. CHECK STATUS PEOPLE LOCAL');
+      print('people status is ${value}');
+      if (value == 'DANGER') {
+        if (mounted) {
+          _changeDangerView();
+          setState(() {
+            checkPeopleStatusLocal = true;
+          });
         }
-      });
+      } else {
+        if (mounted) {
+          setState(() {
+            checkPeopleStatusLocal = false;
+          });
+        }
+      }
     });
+    //  });
   }
 
   _changeDangerView() {
@@ -1777,8 +1778,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
           if (contextPrescription.listPrescription != null) {
             listPrescription.sort((a, b) =>
                 b.medicalInstructionId.compareTo(a.medicalInstructionId));
-            listPrescription.sort((a, b) => b.medicationsRespone.dateFinished
-                .compareTo(a.medicationsRespone.dateFinished));
+            listPrescription.sort((a, b) => a.medicationsRespone.dateStarted
+                .compareTo(b.medicationsRespone.dateStarted));
 
             for (var schedule in contextPrescription.listPrescription) {
               MedicalInstructionDTO _prescription = MedicalInstructionDTO();
