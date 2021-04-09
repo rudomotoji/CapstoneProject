@@ -97,35 +97,35 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                     Padding(
                       padding: EdgeInsets.only(bottom: 20),
                     ),
-                    Row(
-                      children: [
-                        Text('Ngày:'),
-                        FlatButton(
-                          child: Text(
-                            _dateValidator.convertDateCreate(
-                                dateTime, 'dd/MM/yyyy', 'yyyy-MM-dd'),
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          onPressed: () async {
-                            DateTime newDateTime = await showRoundedDatePicker(
-                                context: context,
-                                initialDate: DateTime.parse(timeStart),
-                                firstDate: DateTime.parse(timeCanceled),
-                                lastDate: DateTime.now(),
-                                borderRadius: 16,
-                                theme: ThemeData.dark());
-                            if (newDateTime != null) {
-                              setState(() {
-                                dateTime = newDateTime.toString();
-                              });
-                              _vitalSignDetailBloc.add(VitalSignEventGetDetail(
-                                  patientId: _patientId,
-                                  medicalInstructionId: medicalInstructionId));
-                            }
-                          },
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Text('Ngày:'),
+                    //     FlatButton(
+                    //       child: Text(
+                    //         _dateValidator.convertDateCreate(
+                    //             dateTime, 'dd/MM/yyyy', 'yyyy-MM-dd'),
+                    //         style: TextStyle(color: Colors.black),
+                    //       ),
+                    //       onPressed: () async {
+                    //         DateTime newDateTime = await showRoundedDatePicker(
+                    //             context: context,
+                    //             initialDate: DateTime.parse(timeStart),
+                    //             firstDate: DateTime.parse(timeCanceled),
+                    //             lastDate: DateTime.now(),
+                    //             borderRadius: 16,
+                    //             theme: ThemeData.dark());
+                    //         if (newDateTime != null) {
+                    //           setState(() {
+                    //             dateTime = newDateTime.toString();
+                    //           });
+                    //           _vitalSignDetailBloc.add(VitalSignEventGetDetail(
+                    //               patientId: _patientId,
+                    //               medicalInstructionId: medicalInstructionId));
+                    //         }
+                    //       },
+                    //     ),
+                    //   ],
+                    // ),
                     BlocBuilder<VitalSignDetailBloc, VitalSignState>(
                         builder: (context, state) {
                       if (state is VitalSignStateLoading) {
@@ -207,6 +207,14 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                                 if (itemVitalsignValue.vitalSignTypeId == 1 ||
                                     itemVitalsignValue.vitalSignTypeId == 3 ||
                                     itemVitalsignValue.vitalSignTypeId == 4) {
+                                  for (var val
+                                      in _vitalSignDetailDTO.vitalSigns) {
+                                    if (val.vitalSignTypeId ==
+                                        itemVitalsignValue.vitalSignTypeId) {
+                                      minVitalSignValue = val.numberMin;
+                                      maxVitalSignValue = val.numberMax;
+                                    }
+                                  }
                                   List<int> listValueMap = listValue
                                       .map((data) => int.parse(data))
                                       .toList();
