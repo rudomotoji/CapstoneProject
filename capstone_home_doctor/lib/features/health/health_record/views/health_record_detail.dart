@@ -724,20 +724,38 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   ),
                                 ),
                                 child: (dto?.image == null)
-                                    ? Container()
+                                    ? Container(
+                                        width: (70 * 1.5),
+                                        height: (70 * 1.5),
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        child: checkImageNull(dto),
+                                      )
                                     : Stack(
                                         children: [
+                                          // (dto?.image.length <= 0)
+                                          //     ? Container(
+                                          //         width: (70 * 1.5),
+                                          //         height: (70 * 1.5),
+                                          //         color: DefaultTheme
+                                          //             .GREY_TOP_TAB_BAR)
+                                          //     : Container(
+                                          //         width: (70 * 1.5),
+                                          //         height: (70 * 1.5),
+                                          //         color: DefaultTheme
+                                          //             .GREY_TOP_TAB_BAR,
+                                          //         child: (dto?.image == null)
+                                          //             ? Container
+                                          //             : Image.network(
+                                          //                 'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto?.image.first}',
+                                          //                 fit: BoxFit.fill,
+                                          //               ),
+                                          //       ),
                                           Container(
                                             width: (70 * 1.5),
                                             height: (70 * 1.5),
                                             color:
                                                 DefaultTheme.GREY_TOP_TAB_BAR,
-                                            child: (dto?.image == null)
-                                                ? Container
-                                                : Image.network(
-                                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto?.image.first}',
-                                                    fit: BoxFit.fill,
-                                                  ),
+                                            child: checkImageNull(dto),
                                           ),
                                           Positioned(
                                             top: 0,
@@ -866,6 +884,68 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         ],
       ),
     );
+  }
+
+  checkImageNull(MedicalInstructionDTO dto) {
+    int size = 20;
+    if (dto.image == null) {
+      if (dto.medicalInstructionTypeId == 1) {
+        return Container(
+          width: (size * 1.5),
+          height: (size * 1.5),
+          child: Image.asset('assets/images/ic-medicine.png'),
+        );
+      } else if (dto.medicalInstructionTypeId == 8) {
+        return Container(
+          width: (size * 1.5),
+          height: (size * 1.5),
+          child: Image.asset('assets/images/ic-health-selected.png'),
+        );
+      } else if (dto.medicalInstructionTypeId == 10) {
+        return Container(
+          width: (size * 1.5),
+          height: (size * 1.5),
+          child: Image.asset('assets/images/ic-calendar.png'),
+        );
+      } else {
+        return Container(
+            width: (size * 1.5),
+            height: (size * 1.5),
+            color: DefaultTheme.GREY_TOP_TAB_BAR);
+      }
+    } else {
+      if (dto.image.length <= 0) {
+        if (dto.medicalInstructionTypeId == 1) {
+          return Container(
+            width: (size * 1.5),
+            height: (size * 1.5),
+            child: Image.asset('assets/images/ic-medicine.png'),
+          );
+        } else if (dto.medicalInstructionTypeId == 8) {
+          return Container(
+            width: (size * 1.5),
+            height: (size * 1.5),
+            child: Image.asset('assets/images/ic-health-selected.png'),
+          );
+        } else if (dto.medicalInstructionTypeId == 10) {
+          return Container(
+            width: (size * 1.5),
+            height: (size * 1.5),
+            child: Image.asset('assets/images/ic-calendar.png'),
+          );
+        } else {
+          return Container(
+              width: (size * 1.5),
+              height: (size * 1.5),
+              color: DefaultTheme.GREY_TOP_TAB_BAR);
+        }
+      } else {
+        return Image.network(
+          'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto?.image.first}',
+          fit: BoxFit.fill,
+        );
+      }
+    }
   }
 
   Future<void> _pullRefresh() async {
@@ -1228,17 +1308,19 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   ),
                                 ),
                                 Padding(padding: EdgeInsets.only(top: 10)),
-                                Text(
-                                  'Mô tả: ${value.appointmentDetail.description}',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    decoration: TextDecoration.none,
-                                    color: DefaultTheme.GREY_TEXT,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 5,
-                                ),
+                                (value.appointmentDetail.description != null)
+                                    ? Text(
+                                        'Mô tả: ${value.appointmentDetail.description}',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.GREY_TEXT,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                      )
+                                    : Container(),
                                 Padding(padding: EdgeInsets.only(top: 10)),
                                 (value.appointmentDetail.note == null)
                                     ? Text(

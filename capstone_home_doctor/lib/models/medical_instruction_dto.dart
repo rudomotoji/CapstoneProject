@@ -320,10 +320,10 @@ class AppointmentDetail {
   int appointmentId;
   String dateExamination;
   String status;
-  Null note;
+  String note;
   String description;
-  Null reasonCanceled;
-  Null dateCanceled;
+  String reasonCanceled;
+  String dateCanceled;
 
   AppointmentDetail(
       {this.appointmentId,
