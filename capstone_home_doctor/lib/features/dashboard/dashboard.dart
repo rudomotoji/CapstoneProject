@@ -182,13 +182,13 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   _getPeopleStatus() async {
     await vitalSignHelper.getPeopleStatus().then((value) async {
       //
-      setState(() {
-        if (value == 'DANGER') {
-          checkPeopleStatusLocal = true;
-        } else {
-          checkPeopleStatusLocal = false;
-        }
-      });
+      // setState(() {
+      if (value == 'DANGER') {
+        checkPeopleStatusLocal = true;
+      } else {
+        checkPeopleStatusLocal = false;
+      }
+      // });
     });
 
     const oneSec = const Duration(seconds: 60);
@@ -200,15 +200,16 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       if (value == 'DANGER') {
         if (mounted) {
           _changeDangerView();
-          setState(() {
-            checkPeopleStatusLocal = true;
-          });
+          // setState(() {
+          checkPeopleStatusLocal = true;
+          // });
         }
+        //this is comment
       } else {
         if (mounted) {
-          setState(() {
-            checkPeopleStatusLocal = false;
-          });
+          // setState(() {
+          checkPeopleStatusLocal = false;
+          // });
         }
       }
     });
@@ -228,6 +229,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     //
   }
 
+//dispose
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -1796,7 +1798,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                 }
               }
             }
-
+//comment hihi
             listPrescription = _listPrescription;
           }
           if (contextPrescription.listPrescription.length > 0) {
