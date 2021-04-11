@@ -6,7 +6,9 @@ import 'package:capstone_home_doctor/models/image_scanner_dto.dart';
 import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
+import 'package:capstone_home_doctor/models/medical_type_required_dto.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:string_similarity/string_similarity.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -38,6 +40,38 @@ class MedicalInstructionRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT getMedInsByDisease ${e.toString()}');
+    }
+  }
+
+  //GET MEDICAL INSTRUCTION REQUIRED WHEN DISEASE CHOSEN
+  Future<List<MedicalTypeRequiredDTO>> getMiRequiredByDisease(
+      List<String> diseaseIds) async {
+    List<MedicalTypeRequiredDTO> listFiltered = [];
+    try {
+      //
+      final String response =
+          await rootBundle.loadString('assets/medicalInstructionRequire.json');
+      final reponseData = json.decode(response) as List;
+      List<MedicalTypeRequiredDTO> list = reponseData.map((dto) {
+        //
+        return MedicalTypeRequiredDTO.fromJson(dto);
+      }).toList();
+      listFiltered.clear();
+      for (String diseaseId in diseaseIds) {
+        for (MedicalTypeRequiredDTO component in list) {
+          for (SuggestionDisease suggestList in component.suggestionDisease) {
+            if (suggestList.diseaseId == diseaseId) {
+              listFiltered.removeWhere((item) =>
+                  item.medicalInstructionRequiredId ==
+                  component.medicalInstructionRequiredId);
+              listFiltered.add(component);
+            }
+          }
+        }
+      }
+      return listFiltered;
+    } catch (e) {
+      print('ERROR AT GET MEDICAL INS TYPE BY DISEAS: $e');
     }
   }
 

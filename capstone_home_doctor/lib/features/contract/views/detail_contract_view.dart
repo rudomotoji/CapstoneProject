@@ -13,6 +13,7 @@ import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.da
 import 'package:capstone_home_doctor/features/contract/events/contract_full_event.dart';
 import 'package:capstone_home_doctor/features/contract/events/contract_update_event.dart';
 import 'package:capstone_home_doctor/features/contract/events/doctor_info_event.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
 import 'package:capstone_home_doctor/features/contract/states/contract_full_state_dto.dart';
 import 'package:capstone_home_doctor/features/contract/states/doctor_info_state.dart';
@@ -78,6 +79,8 @@ class _DetailContractView extends State<DetailContractView>
   Stream<ReceiveNotification> _notificationsStream;
   MedicalInstructionRepository _medicalInstructionRepository =
       MedicalInstructionRepository(httpClient: http.Client());
+  ContractRepository contractRepository =
+      ContractRepository(httpClient: http.Client());
 
   //
   @override
@@ -474,134 +477,149 @@ class _DetailContractView extends State<DetailContractView>
                                       status: 'ACTIVE',
                                     );
                                     return showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Center(
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(15)),
-                                            child: BackdropFilter(
-                                              filter: ImageFilter.blur(
-                                                  sigmaX: 25, sigmaY: 25),
-                                              child: Container(
-                                                padding: EdgeInsets.only(
-                                                    left: 10,
-                                                    top: 10,
-                                                    right: 10),
-                                                width: 250,
-                                                height: 210,
-                                                decoration: BoxDecoration(
-                                                  color: DefaultTheme.WHITE
-                                                      .withOpacity(0.7),
-                                                ),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          bottom: 5, top: 0),
-                                                      child: Text(
-                                                        'Lưu ý',
-                                                        style: TextStyle(
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .none,
-                                                          color: DefaultTheme
-                                                              .BLACK,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 18,
-                                                        ),
-                                                      ),
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Material(
+                                            color: DefaultTheme.TRANSPARENT,
+                                            child: Center(
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(15)),
+                                                child: BackdropFilter(
+                                                  filter: ImageFilter.blur(
+                                                      sigmaX: 25, sigmaY: 25),
+                                                  child: Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 10,
+                                                        top: 10,
+                                                        right: 10),
+                                                    width: 250,
+                                                    height: 210,
+                                                    decoration: BoxDecoration(
+                                                      color: DefaultTheme.WHITE
+                                                          .withOpacity(0.7),
                                                     ),
-                                                    Spacer(),
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 20, right: 20),
-                                                      child: Align(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Text(
-                                                          'Bạn vui lòng đọc kĩ nội dung hợp đồng tiếp theo bởi vì hợp đồng sẽ có hiệu lực kể từ khi bạn xác nhận và mọi thông tin trong hợp đồng sẽ thực hiện đúng qui định của pháp luật.',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .none,
-                                                            color: DefaultTheme
-                                                                .GREY_TEXT,
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Spacer(),
-                                                    Divider(
-                                                      height: 1,
-                                                      color: DefaultTheme
-                                                          .GREY_TOP_TAB_BAR,
-                                                    ),
-                                                    Row(
+                                                    child: Column(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
                                                               .center,
-                                                      children: [
-                                                        FlatButton(
-                                                          height: 40,
-                                                          minWidth:
-                                                              250 / 2 - 10.5,
-                                                          child: Text('Đóng',
-                                                              style: TextStyle(
-                                                                  color: DefaultTheme
-                                                                      .BLUE_TEXT)),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
+                                                      children: <Widget>[
                                                         Container(
-                                                          height: 40,
-                                                          width: 0.5,
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 5,
+                                                                  top: 10),
+                                                          child: Text(
+                                                            'Lưu ý',
+                                                            style: TextStyle(
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .none,
+                                                              color:
+                                                                  DefaultTheme
+                                                                      .BLACK,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 18,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Spacer(),
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 20,
+                                                                  right: 20),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                              'Bạn vui lòng đọc kĩ nội dung hợp đồng tiếp theo bởi vì hợp đồng sẽ có hiệu lực kể từ khi bạn xác nhận và mọi thông tin trong hợp đồng sẽ thực hiện đúng qui định của pháp luật.',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: TextStyle(
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .none,
+                                                                color: DefaultTheme
+                                                                    .GREY_TEXT,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 13,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Spacer(),
+                                                        Divider(
+                                                          height: 1,
                                                           color: DefaultTheme
                                                               .GREY_TOP_TAB_BAR,
                                                         ),
-                                                        FlatButton(
-                                                          height: 40,
-                                                          minWidth:
-                                                              250 / 2 - 10.5,
-                                                          child: Text(
-                                                              'Tiếp tục',
-                                                              style: TextStyle(
-                                                                  color: DefaultTheme
-                                                                      .BLUE_TEXT)),
-                                                          onPressed: () {
-                                                            //
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                            _showContractDocument(
-                                                                contractUpdateDTO,
-                                                                true);
-                                                          },
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            FlatButton(
+                                                              height: 40,
+                                                              minWidth:
+                                                                  250 / 2 -
+                                                                      10.5,
+                                                              child: Text(
+                                                                  'Đóng',
+                                                                  style: TextStyle(
+                                                                      color: DefaultTheme
+                                                                          .BLUE_TEXT)),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                            ),
+                                                            Container(
+                                                              height: 40,
+                                                              width: 0.5,
+                                                              color: DefaultTheme
+                                                                  .GREY_TOP_TAB_BAR,
+                                                            ),
+                                                            FlatButton(
+                                                              height: 40,
+                                                              minWidth:
+                                                                  250 / 2 -
+                                                                      10.5,
+                                                              child: Text(
+                                                                  'Tiếp tục',
+                                                                  style: TextStyle(
+                                                                      color: DefaultTheme
+                                                                          .BLUE_TEXT)),
+                                                              onPressed: () {
+                                                                //
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                _showContractDocument(
+                                                                    contractUpdateDTO,
+                                                                    true);
+                                                              },
+                                                            ),
+                                                          ],
                                                         ),
                                                       ],
                                                     ),
-                                                  ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                    );
+                                          );
+                                        });
                                   }
                                 },
                                 child: Row(
@@ -1767,54 +1785,57 @@ class _DetailContractView extends State<DetailContractView>
                             height: 1,
                           ),
                           //
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: EdgeInsets.only(
-                                left: 20, right: 20, top: 10, bottom: 10),
-                            color: DefaultTheme.YELLOW.withOpacity(0.2),
-                            child: InkWell(
-                              onTap: () {
-                                print('contractId ${_contractId}');
-                                print('patientId ${_patientId}');
-                                print('doctorId ${_doctorId}');
+                          (_stateContract == 'APPROVED')
+                              ? Container()
+                              : Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  padding: EdgeInsets.only(
+                                      left: 20, right: 20, top: 10, bottom: 10),
+                                  color: DefaultTheme.YELLOW.withOpacity(0.2),
+                                  child: InkWell(
+                                    onTap: () {
+                                      print('contractId ${_contractId}');
+                                      print('patientId ${_patientId}');
+                                      print('doctorId ${_doctorId}');
 
-                                if (_contractId != 0 &&
-                                    _patientId != 0 &&
-                                    _doctorId != 0) {
-                                  ContractUpdateDTO contractUpdateDTO =
-                                      ContractUpdateDTO(
-                                    contractId: _contractId,
-                                    doctorId: 1,
-                                    patientId: _patientId,
-                                    status: 'ACTIVE',
-                                  );
+                                      if (_contractId != 0 &&
+                                          _patientId != 0 &&
+                                          _doctorId != 0) {
+                                        ContractUpdateDTO contractUpdateDTO =
+                                            ContractUpdateDTO(
+                                          contractId: _contractId,
+                                          doctorId: 1,
+                                          patientId: _patientId,
+                                          status: 'ACTIVE',
+                                        );
 
-                                  _showContractDocument(
-                                      contractUpdateDTO, false);
-                                }
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  //
-                                  SizedBox(
-                                    width: 30,
-                                    height: 30,
-                                    child: Image.asset(
-                                        'assets/images/ic-contract.png'),
+                                        _showContractDocument(
+                                            contractUpdateDTO, false);
+                                      }
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        //
+                                        SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: Image.asset(
+                                              'assets/images/ic-contract.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 20),
+                                        ),
+                                        Text(
+                                          'Xem bản hợp đồng',
+                                          style: TextStyle(
+                                              color: DefaultTheme.ORANGE_TEXT),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 20),
-                                  ),
-                                  Text(
-                                    'Xem bản hợp đồng',
-                                    style: TextStyle(
-                                        color: DefaultTheme.ORANGE_TEXT),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
+                                ),
                           Divider(
                             color: DefaultTheme.GREY_TOP_TAB_BAR,
                             height: 1,
@@ -1844,153 +1865,161 @@ class _DetailContractView extends State<DetailContractView>
                                           barrierDismissible: false,
                                           context: context,
                                           builder: (BuildContext context) {
-                                            return Center(
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(15)),
-                                                child: BackdropFilter(
-                                                  filter: ImageFilter.blur(
-                                                      sigmaX: 25, sigmaY: 25),
-                                                  child: Container(
-                                                    padding: EdgeInsets.only(
-                                                        left: 10,
-                                                        top: 10,
-                                                        right: 10),
-                                                    width: 250,
-                                                    height: 185,
-                                                    decoration: BoxDecoration(
-                                                      color: DefaultTheme.WHITE
-                                                          .withOpacity(0.7),
-                                                    ),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: <Widget>[
-                                                        Spacer(),
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  bottom: 10,
-                                                                  top: 0),
-                                                          child: Text(
-                                                            'Lưu ý',
-                                                            style: TextStyle(
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .none,
-                                                              color:
-                                                                  DefaultTheme
-                                                                      .BLACK,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 18,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 20,
-                                                                  right: 20),
-                                                          child: Align(
-                                                            alignment: Alignment
+                                            return Material(
+                                              color: DefaultTheme.TRANSPARENT,
+                                              child: Center(
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(15)),
+                                                  child: BackdropFilter(
+                                                    filter: ImageFilter.blur(
+                                                        sigmaX: 25, sigmaY: 25),
+                                                    child: Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 10,
+                                                          top: 10,
+                                                          right: 10),
+                                                      width: 250,
+                                                      height: 185,
+                                                      decoration: BoxDecoration(
+                                                        color: DefaultTheme
+                                                            .WHITE
+                                                            .withOpacity(0.7),
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
                                                                 .center,
+                                                        children: <Widget>[
+                                                          Spacer(),
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    bottom: 10,
+                                                                    top: 0),
                                                             child: Text(
-                                                              'Huỷ yêu cầu đồng nghĩa bác sĩ sẽ không xem xét được tình trạng bệnh lý và yêu cầu chăm khám. Bạn có muốn huỷ?',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
+                                                              'Lưu ý',
                                                               style: TextStyle(
                                                                 decoration:
                                                                     TextDecoration
                                                                         .none,
-                                                                color: DefaultTheme
-                                                                    .GREY_TEXT,
+                                                                color:
+                                                                    DefaultTheme
+                                                                        .BLACK,
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .w400,
-                                                                fontSize: 13,
+                                                                        .w600,
+                                                                fontSize: 18,
                                                               ),
                                                             ),
                                                           ),
-                                                        ),
-                                                        Spacer(),
-                                                        Divider(
-                                                          height: 1,
-                                                          color: DefaultTheme
-                                                              .GREY_TOP_TAB_BAR,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            FlatButton(
-                                                              height: 40,
-                                                              minWidth:
-                                                                  250 / 2 -
-                                                                      10.5,
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20,
+                                                                    right: 20),
+                                                            child: Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
                                                               child: Text(
-                                                                  'ĐÓNG',
-                                                                  style: TextStyle(
-                                                                      color: DefaultTheme
-                                                                          .BLUE_TEXT)),
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
+                                                                'Huỷ yêu cầu đồng nghĩa bác sĩ sẽ không xem xét được tình trạng bệnh lý và yêu cầu chăm khám. Bạn có muốn huỷ?',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    TextStyle(
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .none,
+                                                                  color: DefaultTheme
+                                                                      .GREY_TEXT,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontSize: 13,
+                                                                ),
+                                                              ),
                                                             ),
-                                                            Container(
-                                                              height: 40,
-                                                              width: 1,
-                                                              color: DefaultTheme
-                                                                  .GREY_TOP_TAB_BAR,
-                                                            ),
-                                                            FlatButton(
-                                                              height: 40,
-                                                              minWidth:
-                                                                  250 / 2 -
-                                                                      10.5,
-                                                              child: Text('HUỶ',
-                                                                  style: TextStyle(
-                                                                      color: DefaultTheme
-                                                                          .RED_TEXT)),
-                                                              onPressed: () {
-                                                                //
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                                //
-                                                                print(
-                                                                    'CONTRACT CANCEL DTO:\n contractId:${contractCancelDTO.contractId} -dateStart: ${contractCancelDTO.dateStart} -daysOfTracking: ${contractCancelDTO.daysOfTracking} - status:${contractCancelDTO.status} -patientId: ${contractCancelDTO.patientId} - doctorId: ${contractCancelDTO.doctorId} ');
-                                                                _contractUpdateBloc.add(
-                                                                    ContractUpdateEventUpdate(
-                                                                        dto:
-                                                                            contractCancelDTO));
-                                                                Future.delayed(
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            1),
-                                                                    () {
+                                                          ),
+                                                          Spacer(),
+                                                          Divider(
+                                                            height: 1,
+                                                            color: DefaultTheme
+                                                                .GREY_TOP_TAB_BAR,
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              FlatButton(
+                                                                height: 40,
+                                                                minWidth:
+                                                                    250 / 2 -
+                                                                        10.5,
+                                                                child: Text(
+                                                                    'ĐÓNG',
+                                                                    style: TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLUE_TEXT)),
+                                                                onPressed: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                              ),
+                                                              Container(
+                                                                height: 40,
+                                                                width: 1,
+                                                                color: DefaultTheme
+                                                                    .GREY_TOP_TAB_BAR,
+                                                              ),
+                                                              FlatButton(
+                                                                height: 40,
+                                                                minWidth:
+                                                                    250 / 2 -
+                                                                        10.5,
+                                                                child: Text(
+                                                                    'HUỶ',
+                                                                    style: TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .RED_TEXT)),
+                                                                onPressed: () {
                                                                   //
-                                                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                                                      RoutesHDr
-                                                                          .MAIN_HOME,
-                                                                      (Route<dynamic>
-                                                                              route) =>
-                                                                          false);
-                                                                });
-                                                              },
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                  //
+                                                                  print(
+                                                                      'CONTRACT CANCEL DTO:\n contractId:${contractCancelDTO.contractId} -dateStart: ${contractCancelDTO.dateStart} -daysOfTracking: ${contractCancelDTO.daysOfTracking} - status:${contractCancelDTO.status} -patientId: ${contractCancelDTO.patientId} - doctorId: ${contractCancelDTO.doctorId} ');
+                                                                  _contractUpdateBloc.add(
+                                                                      ContractUpdateEventUpdate(
+                                                                          dto:
+                                                                              contractCancelDTO));
+                                                                  Future.delayed(
+                                                                      const Duration(
+                                                                          seconds:
+                                                                              1),
+                                                                      () {
+                                                                    //
+                                                                    Navigator.of(context).pushNamedAndRemoveUntil(
+                                                                        RoutesHDr
+                                                                            .MAIN_HOME,
+                                                                        (Route<dynamic>
+                                                                                route) =>
+                                                                            false);
+                                                                  });
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -3021,14 +3050,178 @@ class _DetailContractView extends State<DetailContractView>
                                             label: 'Xác nhận hợp đồng',
                                             onTap: () {
                                               Navigator.of(context).pop();
-                                              _contractUpdateBloc.add(
-                                                  ContractUpdateEventUpdate(
-                                                      dto: dto));
-                                              Future.delayed(
-                                                  const Duration(seconds: 2),
-                                                  () {
-                                                _refreshData();
-                                              });
+                                              return showDialog(
+                                                  barrierDismissible: false,
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return Material(
+                                                      color: DefaultTheme
+                                                          .TRANSPARENT,
+                                                      child: Center(
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          15)),
+                                                          child: BackdropFilter(
+                                                            filter: ImageFilter
+                                                                .blur(
+                                                                    sigmaX: 25,
+                                                                    sigmaY: 25),
+                                                            child: Container(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 10,
+                                                                      top: 10,
+                                                                      right:
+                                                                          10),
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width -
+                                                                  40,
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  0.5,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: DefaultTheme
+                                                                    .WHITE
+                                                                    .withOpacity(
+                                                                        0.7),
+                                                              ),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: <
+                                                                    Widget>[
+                                                                  Container(
+                                                                    padding: EdgeInsets.only(
+                                                                        bottom:
+                                                                            5,
+                                                                        top:
+                                                                            20),
+                                                                    child: Text(
+                                                                      'Xác nhận hợp đồng',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        decoration:
+                                                                            TextDecoration.none,
+                                                                        color: DefaultTheme
+                                                                            .BLACK,
+                                                                        fontWeight:
+                                                                            FontWeight.w600,
+                                                                        fontSize:
+                                                                            25,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  Spacer(),
+                                                                  Container(
+                                                                    padding: EdgeInsets.only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            20),
+                                                                    child: Align(
+                                                                        alignment: Alignment.center,
+                                                                        child: RichText(
+                                                                          text:
+                                                                              TextSpan(
+                                                                            style:
+                                                                                TextStyle(color: DefaultTheme.BLACK, fontSize: 18),
+                                                                            children: <TextSpan>[
+                                                                              TextSpan(text: 'Khi ký hợp đồng này, đồng nghĩa với việc bạn phải trả '),
+                                                                              TextSpan(text: '${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)}', style: TextStyle(color: DefaultTheme.SUCCESS_STATUS, fontWeight: FontWeight.w600)),
+                                                                              TextSpan(text: '.\nSố tiền này sẽ không được hoàn trả.'),
+                                                                              TextSpan(text: '\nHợp đồng có hiệu lực từ ngày '),
+                                                                              TextSpan(text: '${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)}', style: TextStyle(color: DefaultTheme.BLUE_TEXT)),
+                                                                              TextSpan(text: ' đến ngày '),
+                                                                              TextSpan(text: '${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}', style: TextStyle(color: DefaultTheme.BLUE_TEXT)),
+                                                                              TextSpan(text: '.'),
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                                  ),
+                                                                  Spacer(),
+                                                                  Divider(
+                                                                    height: 1,
+                                                                    color: DefaultTheme
+                                                                        .GREY_TOP_TAB_BAR,
+                                                                  ),
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FlatButton(
+                                                                        height:
+                                                                            40,
+                                                                        minWidth:
+                                                                            (MediaQuery.of(context).size.width - 60.5) /
+                                                                                2,
+                                                                        child: Text(
+                                                                            'Đóng',
+                                                                            style:
+                                                                                TextStyle(color: DefaultTheme.RED_CALENDAR)),
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            _isAccept =
+                                                                                false;
+                                                                          });
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        },
+                                                                      ),
+                                                                      Container(
+                                                                        height:
+                                                                            40,
+                                                                        width:
+                                                                            0.5,
+                                                                        color: DefaultTheme
+                                                                            .GREY_TOP_TAB_BAR,
+                                                                      ),
+                                                                      FlatButton(
+                                                                        height:
+                                                                            40,
+                                                                        minWidth:
+                                                                            (MediaQuery.of(context).size.width - 60.5) /
+                                                                                2,
+                                                                        child: Text(
+                                                                            'Đồng ý',
+                                                                            style:
+                                                                                TextStyle(color: DefaultTheme.BLUE_TEXT)),
+                                                                        onPressed:
+                                                                            () {
+                                                                          _contractUpdateBloc
+                                                                              .add(ContractUpdateEventUpdate(dto: dto));
+                                                                          Future.delayed(
+                                                                              const Duration(seconds: 2),
+                                                                              () {
+                                                                            _refreshData();
+                                                                          });
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  });
                                             },
                                           ),
                                         )

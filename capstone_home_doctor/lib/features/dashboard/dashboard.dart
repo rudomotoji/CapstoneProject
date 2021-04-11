@@ -9,7 +9,13 @@ import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/artboard_button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/commons/widgets/silver_floating_header.dart';
+import 'package:capstone_home_doctor/commons/widgets/silver_pin_box_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
+import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
+import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
+import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
 import 'package:capstone_home_doctor/features/login/blocs/token_device_bloc.dart';
 import 'package:capstone_home_doctor/features/login/events/token_device_event.dart';
 import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
@@ -24,7 +30,9 @@ import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.d
 import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/appointment_dto.dart';
+import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
+import 'package:capstone_home_doctor/models/patient_dto.dart';
 import 'package:capstone_home_doctor/models/prescription_dto.dart';
 import 'package:capstone_home_doctor/models/token_device_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
@@ -33,6 +41,7 @@ import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
+import 'package:capstone_home_doctor/services/reminder_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
@@ -41,12 +50,15 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 
 //
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final MobileDeviceHelper _mobileDeviceHelper = MobileDeviceHelper();
 final VitalSignHelper vitalSignHelper = VitalSignHelper();
 final ContractHelper contractHelper = ContractHelper();
+final ReminderHelper _reminderHelper = ReminderHelper();
+DateValidator _dateValidator = DateValidator();
 
 //
 final Shader _normalHealthColors = LinearGradient(
@@ -69,13 +81,13 @@ class DashboardPage extends StatefulWidget {
   _DashboardState createState() => _DashboardState();
 }
 
-class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
+class _DashboardState extends State<DashboardPage>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   var _index = 0;
   var location;
   var _idDoctorController = TextEditingController();
   String _idDoctor = '';
-  DateValidator _dateValidator = DateValidator();
-
+  List<ContractListDTO> listContract = [];
   bool checkPeopleStatusLocal = false;
 
   //peripheral
@@ -93,6 +105,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   //
   PrescriptionRepository prescriptionRepository =
       PrescriptionRepository(httpClient: http.Client());
+  ContractRepository contractRepository =
+      ContractRepository(httpClient: http.Client());
 
   PrescriptionListBloc _prescriptionListBloc;
   AppointmentBloc _appointmentBloc;
@@ -103,6 +117,14 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   String vitalType = 'HEART_RATE';
   String vitalBPType = 'PRESSURE';
   VitalSignDTO lastMeasurement = VitalSignDTO();
+  //
+  //
+  bool isBluetoothConnection = false;
+  bool isContractApproved = false;
+
+  //animation controller
+  // AnimationController _animationController;
+  // bool isDJOn = false;
 
   //
   List<VitalSignDTO> listVitalSignDangerous = [];
@@ -113,6 +135,8 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   // List<MedicationSchedules> listSchedule = [];
   List<AppointmentDTO> listAppointment = [];
+  List<AppointmentDTO> listAppointmentCurrentSortedDate = [];
+  List<AppointmentDetailDTO> listAppointmentDetailSortedDate = [];
   List<MedicalInstructionDTO> listPrescription = [];
   List<AppointmentDTO> _listAppointment = [];
 
@@ -120,6 +144,13 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
   Stream<ReceiveNotification> _refreshHeartRateStream;
 
   bool dangerKickedOn = false;
+
+  //
+  final _controller = ScrollController();
+
+  double get maxHeight => 200 + MediaQuery.of(context).padding.top;
+
+  double get minHeight => kToolbarHeight + MediaQuery.of(context).padding.top;
 
   @override
   void initState() {
@@ -130,15 +161,27 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
     _vitalSignBloc = BlocProvider.of(context);
-
-    _getPeripheralInfo();
+    _getBluetoothConnection();
     if (_patientId != 0) {
       _vitalSignBloc
           .add(VitalSignEventGetList(type: vitalType, patientId: _patientId));
     }
     _updateAvailableContract();
     _updateTokenDevice();
+    _getPeripheralInfo();
+
     // _getHeartRateValue();
+    //
+    // _animationController = new AnimationController(
+    //   duration: const Duration(milliseconds: 1000),
+    //   vsync: this,
+    // );
+    // _animationController.addListener(() {
+    //   setState(() {
+    //     isDJOn = !isDJOn;
+    //   });
+    // });
+    // _animationController.forward();
 
     // selectNotificationSubject.stream.listen((String payload) async {
     //   await _pullRefresh();
@@ -164,16 +207,26 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
     _getPeopleStatus();
   }
 
+  _getBluetoothConnection() async {
+    await _reminderHelper.isBluetoothConnection().then((value) {
+      setState(() {
+        if (value) {
+          isBluetoothConnection = true;
+        } else {
+          isBluetoothConnection = false;
+        }
+      });
+    });
+  }
+
   _getPeripheralInfo() async {
     await peripheralHelper.getPeripheralId().then((peripheralId) async {
       if (peripheralId != '') {
         await peripheralHelper
             .isPeripheralConnected()
             .then((isConnected) async {
-          setState(() {
-            _isConnectedWithPeripheral = isConnected;
-            _peripheralId = peripheralId;
-          });
+          _isConnectedWithPeripheral = isConnected;
+          _peripheralId = peripheralId;
         });
       }
     });
@@ -190,50 +243,52 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       }
       // });
     });
-
-    const oneSec = const Duration(seconds: 60);
-
-    // Timer.periodic(oneSec, (Timer t) async {
-    await vitalSignHelper.getPeopleStatus().then((value) async {
-      print('EVERY 1 MINUTES. CHECK STATUS PEOPLE LOCAL');
-      print('people status is ${value}');
-      if (value == 'DANGER') {
-        if (mounted) {
-          _changeDangerView();
-          // setState(() {
-          checkPeopleStatusLocal = true;
-          // });
-        }
-        //this is comment
-      } else {
-        if (mounted) {
-          // setState(() {
-          checkPeopleStatusLocal = false;
-          // });
-        }
-      }
-    });
-    //  });
   }
+  //   const oneSec = const Duration(seconds: 60);
 
-  _changeDangerView() {
-    const oneSec = const Duration(milliseconds: 500);
-    Timer.periodic(oneSec, (Timer t) {
-      //
+  //   // Timer.periodic(oneSec, (Timer t) async {
+  //   await vitalSignHelper.getPeopleStatus().then((value) async {
+  //     print('EVERY 1 MINUTES. CHECK STATUS PEOPLE LOCAL');
+  //     print('people status is ${value}');
+  //     if (value == 'DANGER') {
+  //       if (mounted) {
+  //         _changeDangerView();
+  //         // setState(() {
+  //         checkPeopleStatusLocal = true;
+  //         // });
+  //       }
+  //       //this is comment
+  //     } else {
+  //       if (mounted) {
+  //         // setState(() {
+  //         checkPeopleStatusLocal = false;
+  //         // });
+  //       }
+  //     }
+  //   });
+  //   //  });
+  // }
 
-      if (!mounted) return;
-      setState(() {
-        dangerKickedOn = !dangerKickedOn;
-      });
-    });
-    //
-  }
+  // _changeDangerView() {
+  //   const oneSec = const Duration(milliseconds: 500);
+  //   Timer.periodic(oneSec, (Timer t) {
+  //     //
 
+  //     if (!mounted) return;
+  //     setState(() {
+  //       dangerKickedOn = !dangerKickedOn;
+  //     });
+  //   });
+  //   //
+  // }
+
+//reload
 //dispose
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+    //  _animationController.dispose();
   }
 
   // _getHeartRateValue() {
@@ -274,14 +329,10 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) {
-      setState(() {
-        _patientId = value;
-      });
+      _patientId = value;
     });
     await _authenticateHelper.getAccountId().then((value) {
-      setState(() {
-        _accountId = value;
-      });
+      _accountId = value;
     });
     if (_patientId != 0) {
       DateTime curentDateNow = new DateTime.now();
@@ -292,6 +343,17 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
       _appointmentBloc.add(AppointmentGetListEvent(
           patientId: _accountId,
           date: '${curentDateNow.year}/${curentDateNow.month}'));
+      await contractRepository.getListContract(_patientId).then((value) async {
+        //
+        listContract = value;
+        for (ContractListDTO contract in listContract) {
+          if (contract.status == 'APPROVED') {
+            setState(() {
+              isContractApproved = true;
+            });
+          }
+        }
+      });
     }
     // await _authenticateHelper.getAccountId().then((value) {
     //   print('ACCOUNT ID ${value}');
@@ -300,145 +362,609 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        HeaderWidget(
-          title: 'Trang chủ',
-          isMainView: true,
-          buttonHeaderType: ButtonHeaderType.AVATAR,
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: _pullRefresh,
+        child: NotificationListener<ScrollEndNotification>(
+          onNotification: (_) {
+            _snapAppbar();
+            return false;
+          },
+          child: CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            controller: _controller,
+            slivers: [
+              SliverAppBar(
+                brightness: Brightness.light,
+                pinned: true,
+                collapsedHeight: minHeight + 10,
+                floating: false,
+                // stretch: true,
+                flexibleSpace: Stack(
+                  children: [
+                    Header(
+                      maxHeight: maxHeight + 10,
+                      minHeight: minHeight + 10,
+                    ),
+                    (checkPeopleStatusLocal)
+                        ? Positioned(
+                            top: 30,
+                            child: Center(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width - 80,
+                                margin: EdgeInsets.only(left: 40, right: 40),
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: Center(
+                                    child: Text('Sinh hiệu bất thường',
+                                        style: TextStyle(
+                                            color: DefaultTheme.WHITE,
+                                            fontWeight: FontWeight.w500))),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
+                expandedHeight:
+                    maxHeight - MediaQuery.of(context).padding.top + 10,
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return _buildComponentDashboard();
+                  },
+                  childCount: 1,
+                ),
+              )
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildComponentDashboard() {
+    //  final int percent = (_animationController.value * 100.0).round();
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Container(
+          //   width: (isDJOn) ? 200 : 300,
+          //   color: DefaultTheme.RED_CALENDAR,
+          //   height: 50,
+
+          // ),
+          // Text('$percent%'),
+          _showAppointmentNoti(),
+          _buildReminder(),
+          _buildShorcut(),
+          // _build
+          //
+          //
+          //
+
+          _showLastHeartRateMeasure(),
+        ]);
+  }
+
+  Widget _buildReminder() {
+    return Column(
+      children: <Widget>[
         Align(
           alignment: Alignment.centerLeft,
           child: Container(
             padding: EdgeInsets.only(left: 20, bottom: 10),
+            margin: EdgeInsets.only(top: 20),
             child: Text(
-              '${_dateValidator.getDateTimeView()}',
-              style: TextStyle(color: DefaultTheme.GREY_TEXT, fontSize: 15),
+              'Nhắc nhở',
+              style: TextStyle(
+                  color: DefaultTheme.BLACK,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
             ),
           ),
         ),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: _pullRefresh,
-            child: ListView(
-              padding: EdgeInsets.only(left: 20, right: 20),
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+          padding: EdgeInsets.only(left: 10, right: 20, bottom: 10, top: 10),
+          decoration: BoxDecoration(
+            color: DefaultTheme.GREY_VIEW,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: Image.asset('assets/images/ic-medicine.png'),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+              ),
+              Text('Bạn có lịch dùng thuốc vào buổi tối',
+                  style: TextStyle(color: DefaultTheme.BLACK))
+            ],
+          ),
+        ),
+        //
+        (isContractApproved)
+            ? Container(
+                margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                padding:
+                    EdgeInsets.only(left: 10, right: 20, bottom: 10, top: 10),
+                decoration: BoxDecoration(
+                  color: DefaultTheme.GREY_VIEW,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  children: [
                     SizedBox(
                       width: 20,
                       height: 20,
-                      child: Image.asset('assets/images/ic-calendar.png'),
+                      child: Image.asset('assets/images/ic-contract.png'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20),
+                    ),
+                    Text('Bạn có hợp đồng cần xác nhận',
+                        style: TextStyle(color: DefaultTheme.BLACK))
+                  ],
+                ),
+              )
+            : Container(),
+
+        //
+        StreamBuilder<BluetoothState>(
+            stream: FlutterBlue.instance.state,
+            initialData: BluetoothState.unknown,
+            builder: (c, snapshot) {
+              final state = snapshot.data;
+              if (state == BluetoothState.on) {
+                return Container();
+              }
+              return Container(
+                margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                padding:
+                    EdgeInsets.only(left: 10, right: 20, bottom: 10, top: 10),
+                decoration: BoxDecoration(
+                  color: DefaultTheme.GREY_VIEW,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: Image.asset('assets/images/ic-bluetooth.png'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20),
+                    ),
+                    Text('Kết nối bluetooth đã tắt',
+                        style: TextStyle(color: DefaultTheme.BLACK))
+                  ],
+                ),
+              );
+            }),
+        (_isConnectedWithPeripheral)
+            ? Container()
+            : Container(
+                margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                padding:
+                    EdgeInsets.only(left: 10, right: 20, bottom: 10, top: 10),
+                decoration: BoxDecoration(
+                  color: DefaultTheme.GREY_VIEW,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: Image.asset('assets/images/ic-connect-p.png'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20),
+                    ),
+                    Text('Bạn cần nối thiết bị đeo để lấy dữ liệu sinh hiệu.',
+                        style: TextStyle(color: DefaultTheme.BLACK))
+                  ],
+                ),
+              ),
+      ],
+    );
+  }
+
+  Widget _buildShorcut() {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            padding: EdgeInsets.only(left: 20, bottom: 10),
+            margin: EdgeInsets.only(top: 20),
+            child: Text(
+              'Phím tắt',
+              style: TextStyle(
+                  color: DefaultTheme.BLACK,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
+        ),
+        Divider(color: DefaultTheme.GREY_TOP_TAB_BAR, height: 1),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: 80,
+          child: Row(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: 80,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/images/ic-calendar.png',
+                        width: 30, height: 30),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 3),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: Text(
+                        'Lịch',
+                        style: TextStyle(fontSize: 12),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: 80,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/images/ic-contract.png',
+                        width: 30, height: 30),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 3),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: Text(
+                        'Tạo hợp đồng',
+                        style: TextStyle(fontSize: 12),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: 80,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/images/ic-health-record.png',
+                        width: 30, height: 30),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 3),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: Text(
+                        'Tạo Hồ sơ',
+                        style: TextStyle(fontSize: 12),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: 80,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/images/ic-connect-p.png',
+                        width: 30, height: 30),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 3),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: Text(
+                        'Thiết bị đeo',
+                        style: TextStyle(fontSize: 12),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: 80,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/images/ic-health-selected.png',
+                        width: 30, height: 30),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 3),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      child: Text(
+                        'Sinh hiệu',
+                        style: TextStyle(fontSize: 12),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Divider(color: DefaultTheme.GREY_TOP_TAB_BAR, height: 1),
+      ],
+    );
+  }
+
+  Widget _buildCard(int index) {
+    return Container(
+      margin: EdgeInsets.only(left: 12, right: 12, top: 12),
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+        child: Text("Item $index"),
+      ),
+    );
+  }
+
+  void _snapAppbar() {
+    final scrollDistance = maxHeight - minHeight;
+
+    if (_controller.offset > 0 && _controller.offset < scrollDistance) {
+      final double snapOffset =
+          _controller.offset / scrollDistance > 0.5 ? scrollDistance : 0;
+
+      Future.microtask(() => _controller.animateTo(snapOffset,
+          duration: Duration(milliseconds: 200), curve: Curves.easeIn));
+    }
+  }
+
+  _showAppointmentNoti() {
+    return BlocBuilder<AppointmentBloc, AppointmentState>(
+        builder: (context, stateAppointment) {
+      if (stateAppointment is AppointmentStateLoading) {
+        return Container(
+            // width: MediaQuery.of(context).size.width,
+            // height: 50,
+            // child: SizedBox(
+            //   width: MediaQuery.of(context).size.width,
+            //   height: 50,
+            //   child: Image.asset('assets/images/loading.gif'),
+            // ),
+            );
+      }
+      if (stateAppointment is AppointmentStateFailure) {
+        return Container(
+            width: MediaQuery.of(context).size.width,
+            child:
+                Center(child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+      }
+      if (stateAppointment is AppointmentStateSuccess) {
+        listAppointment = stateAppointment.listAppointment;
+        listAppointmentCurrentSortedDate.clear();
+        listAppointmentDetailSortedDate.clear();
+        if (stateAppointment.listAppointment != null &&
+            stateAppointment.listAppointment.isNotEmpty) {
+          print('current: $curentDateNow');
+          for (AppointmentDTO dto in stateAppointment.listAppointment) {
+            if (_dateValidator
+                    .parseStringToDateApnt(dto.dateExamination)
+                    .isAfter(curentDateNow) ||
+                _dateValidator
+                    .parseStringToDateApnt(dto.dateExamination)
+                    .isAtSameMomentAs(curentDateNow)) {
+              //
+              listAppointmentCurrentSortedDate.add(dto);
+              listAppointmentDetailSortedDate.addAll(dto.appointments);
+            }
+          }
+        }
+      }
+      return (listAppointmentCurrentSortedDate == null ||
+              listAppointmentCurrentSortedDate.isEmpty)
+          ? Container()
+          : Container(
+              child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 20, bottom: 0),
+                  margin: EdgeInsets.only(top: 20, bottom: 0),
+                  child: Row(children: [
+                    Text(
+                      'Sự kiện tiếp theo',
+                      style: TextStyle(
+                          color: DefaultTheme.BLACK,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 10),
                     ),
-                    Text(
-                      'Lịch',
-                      style: TextStyle(
-                        color: DefaultTheme.BLACK,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        // color: DefaultTheme.RED_CALENDAR,
+                        gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              DefaultTheme.YELLOW,
+                              DefaultTheme.GRADIENT_5,
+                              DefaultTheme.RED_CALENDAR,
+                            ]),
                       ),
-                    ),
-                    Spacer(),
-                    ButtonHDr(
-                      style: BtnStyle.BUTTON_TRANSPARENT,
-                      label: 'Chi tiết',
-                      labelColor: DefaultTheme.BLACK_BUTTON.withOpacity(0.8),
-                      isUnderline: true,
-                      width: 40,
-                      onTap: () {
-                        Navigator.of(context).pushNamed(RoutesHDr.SCHEDULE);
-                      },
-                    ),
-                  ],
-                ),
-                // BlocBuilder<AppointmentBloc, AppointmentState>(
-                //   builder: (context, stateAppointment) {
-                //     if (stateAppointment is AppointmentStateSuccess) {
-                //       listAppointment = stateAppointment.listAppointment;
-                //       if (stateAppointment.listAppointment != null) {
-                //         DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
-                //             .parse(DateFormat('dd/MM/yyyy')
-                //                 .format(DateTime.now()));
-                //         for (var appointment
-                //             in stateAppointment.listAppointment) {
-                //           DateTime dateAppointment =
-                //               new DateFormat("dd/MM/yyyy")
-                //                   .parse(appointment.dateExamination);
-                //           if (dateAppointment.millisecondsSinceEpoch ==
-                //               curentDateNow.millisecondsSinceEpoch) {
-                //             _appointmentDTO = appointment;
-                //             print('có lịch tái khám vào hôm nay');
-                //           }
-                //         }
-                //       }
-                //     }
-                //     return Container();
-                //   },
-                // ),
-
-                _sizeBoxCard(),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 20),
-                ),
-                getAppointment(),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 20, bottom: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        width: 25,
-                        height: 25,
-                        child:
-                            Image.asset('assets/images/ic-health-selected.png'),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10),
-                      ),
-                      Text(
-                        'Trạng thái',
-                        style: TextStyle(
-                          color: DefaultTheme.BLACK,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
+                      child: Center(
+                        child: Text(
+                          '${listAppointmentDetailSortedDate.length}',
+                          style: TextStyle(
+                              fontSize: 12, color: DefaultTheme.WHITE),
                         ),
                       ),
-                      Spacer(),
-                    ],
+                    ),
+                  ]),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 10),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(0),
+                    primary: true,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: listAppointmentCurrentSortedDate.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.GREY_VIEW,
+                          // border: Border(
+                          //   left: BorderSide(
+                          //       width: 2.0, color: DefaultTheme.RED_CALENDAR),
+                          // ),
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.only(left: 20, right: 20, bottom: 5),
+                        padding: EdgeInsets.only(bottom: 10, top: 10),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            Container(
+                              // width: 60,
+                              // height: 60,
+                              child: Center(
+                                child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        width: 0.5),
+                                    color: DefaultTheme.WHITE,
+                                    borderRadius: BorderRadius.circular(13),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        '${listAppointmentCurrentSortedDate[index].dateExamination.split('/')[0]}',
+                                        style: TextStyle(
+                                            fontSize: 17,
+                                            color: DefaultTheme.RED_CALENDAR),
+                                      ),
+                                      Text(
+                                        'Th ${listAppointmentCurrentSortedDate[index].dateExamination.split('/')[1]}',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: DefaultTheme.BLACK),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                for (AppointmentDetailDTO detail
+                                    in listAppointmentCurrentSortedDate[index]
+                                        .appointments)
+                                  Container(
+                                      margin: EdgeInsets.only(bottom: 5),
+                                      padding: EdgeInsets.only(left: 5),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                        left: BorderSide(
+                                            width: 2.0,
+                                            color: DefaultTheme.RED_CALENDAR),
+                                      )),
+                                      width: MediaQuery.of(context).size.width -
+                                          (40 + 20 + 50 + 2 + 10),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                              'Bác sĩ ${detail.fullNameDoctor} lên lịch tái khám cho bạn.'),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                              top: 3,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Thời gian: ${detail.dateExamination.split('T')[1].split(':')[0]}:${detail.dateExamination.split('T')[1].split(':')[1]}',
+                                            style: TextStyle(
+                                              color: DefaultTheme.GREY_TEXT,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                              top: 3,
+                                            ),
+                                            child: Divider(
+                                              height: 2,
+                                              color:
+                                                  DefaultTheme.GREY_TOP_TAB_BAR,
+                                            ),
+                                          ),
+                                        ],
+                                      ))
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
-
-                _showStatusOverview(),
-                //
-                _showLastHeartRateMeasure(),
-
-                // Padding(
-                //   padding: EdgeInsets.only(bottom: 20),
-                // ),
-                // _showLastBloodPressureMeasure(),
-                // //
-                _showSuggestionDashboard(),
-
-                //_showLastMeasurement(),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 50),
-                ),
               ],
-            ),
-          ),
-        ),
-      ],
-    ));
+            ));
+    });
   }
 
   _showLastHeartRateMeasure() {
@@ -465,12 +991,12 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
         children: <Widget>[
           //
           Padding(
-            padding: EdgeInsets.only(top: 20),
+            padding: EdgeInsets.only(top: 20, left: 20),
             child: Text(
               'Lần đo gần nhất',
               style: TextStyle(
                 color: DefaultTheme.BLACK,
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -487,7 +1013,7 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                   width: MediaQuery.of(context).size.width,
                   height: 80,
                   child: InkWell(
-                      borderRadius: BorderRadius.circular(12),
+                      // borderRadius: BorderRadius.circular(12),
                       onTap: () {
                         Navigator.of(context).pushNamed(RoutesHDr.HEART);
                       },
@@ -499,8 +1025,9 @@ class _DashboardState extends State<DashboardPage> with WidgetsBindingObserver {
                         padding: EdgeInsets.only(left: 20, right: 20),
                         height: 80,
                         decoration: BoxDecoration(
-                            color: DefaultTheme.GREY_VIEW,
-                            borderRadius: BorderRadius.circular(12)),
+                          color: DefaultTheme.GREY_VIEW,
+                          // borderRadius: BorderRadius.circular(12),
+                        ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[

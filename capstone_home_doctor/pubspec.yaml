@@ -175,6 +175,8 @@ flutter:
     - assets/images/ic-prev.png
     - assets/images/ic-c-cancel.png
     - assets/images/ic-filter-black.png
+    - assets/images/bg-home.png
+    - assets/images/ic-bluetooth.png
 
 
   

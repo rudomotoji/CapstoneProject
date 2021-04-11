@@ -1,4 +1,5 @@
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
+import 'package:capstone_home_doctor/models/medical_type_required_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -24,3 +25,11 @@ class MedInsTypeStateSuccess extends MedInsTypeState {
 }
 
 class MedInsTypeStateFailure extends MedInsTypeState {}
+
+class MedInsTypeRequiredStateSuccess extends MedInsTypeState {
+  final List<MedicalTypeRequiredDTO> list;
+  const MedInsTypeRequiredStateSuccess({@required this.list});
+
+  @override
+  List<Object> get props => [list];
+}

@@ -1,0 +1,13 @@
+[{
+    "medicalInstructionRequiredId": 1,
+    "medicalInstructionTypeId": 1,
+    "medicalInstructionTypeName": "",
+    "suggestionDisease": [
+        {
+            "suggestionDiseaseId": 0,
+            "diseaseId": "",
+            "diseaseName": ""
+        }
+    ]
+},
+]

@@ -2,6 +2,7 @@ import 'package:capstone_home_doctor/features/health/health_record/events/med_in
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_type_list_state.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
+import 'package:capstone_home_doctor/models/medical_type_required_dto.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MedInsTypeListBloc extends Bloc<MedInsTypeEvent, MedInsTypeState> {
@@ -33,6 +34,17 @@ class MedInsTypeListBloc extends Bloc<MedInsTypeEvent, MedInsTypeState> {
             await medicalInstructionRepository
                 .getMedicalInstructionTypeToShare(event.patientId);
         yield MedInsTypeStateSuccess(listMedInsType: list);
+      } catch (e) {
+        yield MedInsTypeStateFailure();
+      }
+    }
+    //
+    if (event is MedInsTypeRequiredEventGet) {
+      try {
+        final List<MedicalTypeRequiredDTO> list =
+            await medicalInstructionRepository
+                .getMiRequiredByDisease(event.diseaseIds);
+        yield MedInsTypeRequiredStateSuccess(list: list);
       } catch (e) {
         yield MedInsTypeStateFailure();
       }

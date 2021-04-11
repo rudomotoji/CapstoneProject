@@ -70,6 +70,13 @@ class DateValidator {
     return result;
   }
 
+  DateTime parseStringToDateApnt(String date) {
+    int year = int.tryParse(date.split('/')[2]);
+    int month = int.tryParse(date.split('/')[1]);
+    int day = int.tryParse(date.split('/')[0]);
+    return new DateTime(year, month, day);
+  }
+
   // String parseDateToNotiView(String importedDate) {
   //   String result = '';
   //   //imported date

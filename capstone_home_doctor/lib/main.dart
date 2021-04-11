@@ -21,6 +21,7 @@ import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign
 import 'package:capstone_home_doctor/services/doctor_helper.dart';
 import 'package:capstone_home_doctor/features/vital_sign/views/vital_sign_chart_detail.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
+import 'package:capstone_home_doctor/services/reminder_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_request_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_update_bloc.dart';
@@ -136,6 +137,7 @@ final MobileDeviceHelper mobileDeviceHelper = MobileDeviceHelper();
 final ContractHelper contractHelper = ContractHelper();
 final MedicalShareHelper _medicalShareHelper = MedicalShareHelper();
 final VitalSignHelper _vitalSignHelper = VitalSignHelper();
+final ReminderHelper _reminderHelper = ReminderHelper();
 final AppointmentHelper _appointmentHelper = AppointmentHelper();
 final MedicalInstructionHelper _medicalInstructionHelper =
     MedicalInstructionHelper();
@@ -400,11 +402,13 @@ void main() async {
                         if (countDangerousLosingBluetooth == 0) {
                           await _connectInBackground(
                               backGroundSetting.insertLocal);
+                          await _reminderHelper.updateValueBluetooth(true);
                         }
                         countDangerousLosingBluetooth++;
                       } else if (state == BluetoothState.off) {
                         if (countDangerousLosingBluetooth == 0) {
                           //BLUETOOTH OF BUT USER STIL DANGER
+                          await _reminderHelper.updateValueBluetooth(false);
                           int dangerPlus = 0;
                           //IF HAS SCHEDULE OFFLINE
                           List<VitalSigns> scheduleOffline = [];
@@ -1503,6 +1507,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     if (!prefs.containsKey('STATUS_PEOPLE')) {
       _vitalSignHelper.initialPeopleStatus();
     }
+    if (!prefs.containsKey('BLUETOOTH_CONNECTION')) {
+      _reminderHelper.initialBluetoothConnection();
+    }
   }
 
   @override
@@ -1834,7 +1841,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.DETAIL_CONTRACT_VIEW: (context) =>
                     DetailContractView(),
                 RoutesHDr.DOCTOR_INFORMATION: (context) => DoctorInformation(),
-                RoutesHDr.CONTRACT_SHARE_VIEW: (context) => ContractShareView(),
+                //       RoutesHDr.CONTRACT_SHARE_VIEW: (context) => ContractShareView(),
 
                 RoutesHDr.CONTRACT_DRAFT_VIEW: (context) => ContractDraftView(),
                 RoutesHDr.MEDICAL_HISTORY_DETAIL: (context) =>

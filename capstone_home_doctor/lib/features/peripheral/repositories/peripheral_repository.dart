@@ -16,6 +16,7 @@ class PeripheralRepository {
   Future<List<ScanResult>> scanBluetoothDevice() async {
     List<ScanResult> listScanned = [];
     //
+    await flutterBlue.stopScan();
     await flutterBlue.startScan(timeout: Duration(seconds: 5));
     flutterBlue.scanResults.listen((results) {
       for (ScanResult r in results) {
@@ -23,12 +24,13 @@ class PeripheralRepository {
         listScanned.add(r);
       }
     });
+    await flutterBlue.stopScan();
     return listScanned;
   }
 
   //stop scan device
   Future<void> stopScanning() async {
-    flutterBlue.stopScan();
+    await flutterBlue.stopScan();
   }
 
   //disconnect device
@@ -83,6 +85,7 @@ class PeripheralRepository {
   //find device by id
   Future<BluetoothDevice> findScanResultById(String peripheralId) async {
     BluetoothDevice result;
+    flutterBlue.stopScan();
     List<BluetoothDevice> listConnected = await flutterBlue.connectedDevices;
     for (BluetoothDevice deviceCheck in listConnected) {
       if (peripheralId == deviceCheck.id.toString()) {
@@ -97,6 +100,7 @@ class PeripheralRepository {
   Future<bool> checkPeripheralKeepConnect(BluetoothDevice device) async {
     //
     bool check = false;
+    flutterBlue.stopScan();
     List<BluetoothDevice> listConnected = await flutterBlue.connectedDevices;
     for (BluetoothDevice deviceCheck in listConnected) {
       if (device.id == deviceCheck.id) {
@@ -110,6 +114,7 @@ class PeripheralRepository {
   Future<bool> connectDeviceInBackground(String peripheralId) async {
     try {
       bool check = false;
+      stopScanning();
       await FlutterBlue.instance.startScan(timeout: Duration(seconds: 5));
       print('Scanning to connect in background');
       FlutterBlue.instance.scanResults.listen((results) async {
@@ -129,9 +134,11 @@ class PeripheralRepository {
             await _peripheralHelper.updatePeripheralChecking(
                 false, peripheralId);
             check = false;
+            stopScanning();
           }
         }
       });
+      stopScanning();
       return check;
     } catch (e) {
       print('error connect background: $e');
@@ -164,6 +171,7 @@ class PeripheralRepository {
   //get battery device
   Future<int> getBatteryDevice(String peripheralId) async {
     try {
+      flutterBlue.stopScan();
       BluetoothDevice device = await findScanResultById(peripheralId);
       // device.disconnect();
       // await device.connect();

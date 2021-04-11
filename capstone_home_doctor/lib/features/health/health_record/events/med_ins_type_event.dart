@@ -27,3 +27,13 @@ class MedInsTypeEventGetListToShare extends MedInsTypeEvent {
   // TODO: implement props
   List<Object> get props => [patientId];
 }
+
+class MedInsTypeRequiredEventGet extends MedInsTypeEvent {
+  final List<String> diseaseIds;
+
+  const MedInsTypeRequiredEventGet({@required this.diseaseIds});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [diseaseIds];
+}
