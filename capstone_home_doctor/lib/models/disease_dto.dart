@@ -144,6 +144,10 @@ class Disease {
 
   Disease({this.diseaseId, this.diseaseName});
 
+  String toString() {
+    return '${diseaseId}: ${diseaseName}';
+  }
+
   Disease.fromJson(Map<String, dynamic> json) {
     diseaseId = json['diseaseId'];
     diseaseName = json['diseaseName'];

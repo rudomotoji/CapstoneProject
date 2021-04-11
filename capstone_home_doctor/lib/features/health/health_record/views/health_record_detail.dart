@@ -194,7 +194,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
             ),
             onPressed: () {
               Navigator.of(context)
-                  .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION)
+                  .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
+                      arguments: _healthRecordDTO.diseases)
                   .then((value) async {
                 await _pullRefresh();
               });

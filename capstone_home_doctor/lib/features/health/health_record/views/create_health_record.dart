@@ -537,7 +537,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                                         height: 20,
                                                         child: Image.asset(
                                                             'assets/images/ic-down.png')),
-                                                    isExpanded: false,
+                                                    isExpanded: true,
                                                     header: Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -1008,51 +1008,6 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                           ),
                         ),
                       );
-
-                      // return AlertDialog(
-                      //   title: new Text(
-                      //     "Tạo thành công",
-                      //     style: TextStyle(
-                      //         color: DefaultTheme.BLUE_DARK, fontSize: 18),
-                      //   ),
-                      //   content: new Text("Bạn có muốn tạo thêm y lệnh ngay"),
-                      //   actions: <Widget>[
-                      //     new FlatButton(
-                      //       child: new Text("Không"),
-                      //       onPressed: () {
-                      //         Navigator.of(context).pop();
-                      //         Navigator.of(context).pop();
-                      //       },
-                      //     ),
-                      //     new FlatButton(
-                      //       child: new Text("Có"),
-                      //       onPressed: () async {
-                      //         //refresh data
-                      //         setState(() {
-                      //           _listDiseaseSelected = [];
-                      //           // _listDisease = [];
-                      //           _diseaseIds = [];
-                      //           // _listDiseaseForHeart = [];
-                      //           _listLv3Selected = [];
-                      //           _listLv3IdSelected = [];
-                      //           _listDiseaseForHeartForSearch = [];
-                      //           _placeController.text = '';
-                      //         });
-
-                      //         _diseaseListBloc.add(DiseaseEventSetInitial());
-                      //         //navigate to health record detail
-                      //         Navigator.of(context).pop();
-                      //         hrHelper.setHealthReCordId(value);
-                      //         //
-                      //         await _medicalInstructionHelper
-                      //             .updateCheckToCreateOrList(true);
-                      //         Navigator.of(context)
-                      //             .pushNamed(RoutesHDr.HEALTH_RECORD_DETAIL)
-                      //             .then((value) => Navigator.of(context).pop());
-                      //       },
-                      //     ),
-                      //   ],
-                      // );
                     },
                   );
                 } else {

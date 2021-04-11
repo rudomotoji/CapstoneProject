@@ -99,12 +99,12 @@ class _MainHomeState extends State<MainHome> {
 
     selectNotificationSubject.stream.listen((String payload) async {
       // var navigate = jsonDecode(payload);
+      print('payload home page: $payload');
       Map<String, dynamic> navigate = jsonDecode(payload);
       if (payload.contains('NAVIGATE_TO_SCREEN')) {
         await Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
       }
 
-      print('payload home page: $payload');
       if (payload.contains('notiTypeId')) {
         var notificationType = navigate['notiTypeId'];
         var contractId = navigate['contractId'];

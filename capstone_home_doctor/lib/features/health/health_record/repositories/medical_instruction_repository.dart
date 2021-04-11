@@ -99,7 +99,7 @@ class MedicalInstructionRepository extends BaseApiClient {
   //medical instruction type
   Future<List<MedicalInstructionTypeDTO>> getMedicalInstructionType(
       String status) async {
-    final String url = '/MedicalInstructrionTypes?status=${status}';
+    final String url = '/MedicalInstructrionTypes';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
@@ -266,56 +266,6 @@ class MedicalInstructionRepository extends BaseApiClient {
     }
   }
 
-  // //create medical instruction by multiple part
-  // Future<ImageScannerDTO> getTextFromImage(String imagePath) async {
-  //   var uri = Uri.parse('http://0.0.0.0:80/scanMedicalInsurance');
-  //   var request = new http.MultipartRequest('POST', uri);
-  //   try {
-  //     request.files.add(http.MultipartFile(
-  //         'file',
-  //         File(imagePath).readAsBytes().asStream(),
-  //         File(imagePath).lengthSync(),
-  //         filename: imagePath.split("/").last));
-  //     final response = await request.send();
-  //     if (response.statusCode == 200) {
-  //       var responseString = await response.stream.bytesToString();
-  //       dynamic dto = json.decode(responseString);
-
-  //       var newArrData = dto['data'].split("\n");
-  //       var str_list = newArrData.where((s) => !s.isEmpty).toList();
-
-  //       String strSymptom = "";
-  //       String title = "";
-
-  //       for (var itemString in str_list) {
-  //         if (itemString.contains('PHIẾU')) {
-  //           title += itemString;
-  //         } else if (itemString.contains('BỆNH ÁN')) {
-  //           title = itemString;
-  //         }
-  //         if (title != "") {
-  //           if (strSymptom.contains('Triệu')) {
-  //             if (itemString.contains(' - ')) {
-  //               strSymptom += itemString;
-  //             } else if (itemString.contains('(')) {
-  //               strSymptom += itemString;
-  //             }
-  //           }
-  //           if (itemString.contains('Triệu ')) {
-  //             strSymptom += itemString;
-  //           }
-  //         }
-  //       }
-
-  //       return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
-  //     }
-  //     return ImageScannerDTO();
-  //   } catch (e) {
-  //     print('ERROR AT getTextIMG repo: ${e}');
-  //     return ImageScannerDTO(symptom: '', title: '');
-  //   }
-  // }
-
   //// lấy chi tiết đơn thuốc
   Future<MedicalInstructionDTO> getMedicalInstructionById(
       int medicalInstructionId) async {
@@ -332,63 +282,4 @@ class MedicalInstructionRepository extends BaseApiClient {
       print('ERROR AT GET DOCTOR BY DOCTOR_ID API $e');
     }
   }
-
-  // Future<ImageScannerDTO> recogniseText(String imageFile) async {
-  //   if (imageFile == null) {
-  //     return null;
-  //   } else {
-  //     final visionImage = FirebaseVisionImage.fromFilePath(imageFile);
-  //     final textRecognizer = FirebaseVision.instance.textRecognizer();
-  //     try {
-  //       final visionText = await textRecognizer.processImage(visionImage);
-  //       await textRecognizer.close();
-
-  //       final text = extractText(visionText);
-  //       // return text.isEmpty ? 'No text found in the image' : text;
-  //       String strSymptom = "";
-  //       String title = "";
-
-  //       var newArrData = text.split("\n");
-  //       var str_list = newArrData.where((s) => !s.isEmpty).toList();
-
-  //       for (var itemString in str_list) {
-  //         if (itemString.contains('PHIẾU') ||
-  //             itemString.contains('BỆNH ÁN') ||
-  //             itemString.contains('XÉT NGHIỆM')) {
-  //           title = itemString;
-  //         }
-  //         if (strSymptom != null && strSymptom != '') {
-  //           if (itemString.contains('-') && itemString.contains('/')) {
-  //             strSymptom += itemString;
-  //           }
-  //         } else {
-  //           if (itemString.contains('Triệu') ||
-  //               itemString.contains('chứng') ||
-  //               itemString.contains('Chẩn') ||
-  //               itemString.contains('đoán')) {
-  //             strSymptom = itemString;
-  //           }
-  //         }
-  //       }
-  //       return ImageScannerDTO(symptom: strSymptom.trim(), title: title.trim());
-  //     } catch (error) {
-  //       return null;
-  //     }
-  //   }
-  // }
-
-  // static extractText(VisionText visionText) {
-  //   String text = '';
-
-  //   for (TextBlock block in visionText.blocks) {
-  //     for (TextLine line in block.lines) {
-  //       for (TextElement word in line.elements) {
-  //         text = text + word.text + ' ';
-  //       }
-  //       text = text + '\n';
-  //     }
-  //   }
-
-  //   return text;
-  // }
 }
