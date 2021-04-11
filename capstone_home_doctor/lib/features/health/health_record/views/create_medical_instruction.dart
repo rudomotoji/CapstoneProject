@@ -6,6 +6,8 @@ import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/utils/img_util.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/commons/widgets/multiple_select_tag/multi_select_chip_display.dart';
+import 'package:capstone_home_doctor/commons/widgets/multiple_select_tag/multi_select_item.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_type_list_bloc.dart';
@@ -13,6 +15,7 @@ import 'package:capstone_home_doctor/features/health/health_record/events/med_in
 import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_type_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_type_list_state.dart';
+import 'package:capstone_home_doctor/models/disease_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
@@ -37,6 +40,7 @@ class _CreateMedicalInstructionViewState
   int _hrId = 0;
   int _patientId = 0;
   String _selectedHRType = '';
+  MedicalInstructionTypeDTO selectType;
   String strDiseaseDraft = '';
   PickedFile _imgFile;
   String _note = '';
@@ -48,9 +52,12 @@ class _CreateMedicalInstructionViewState
   var f = NumberFormat("###.0#", "en_US");
 
   //
-  //
   List<String> listImage = [];
   List<String> listImage64Bit = [];
+
+  List<Disease> listDisease = [];
+  List<Disease> listDiseaseSelected = [];
+  List<String> _diseaseIds = [];
 
   var _dianoseController = TextEditingController();
   MedicalInstructionHelper _medicalInstructionHelper =
@@ -84,6 +91,20 @@ class _CreateMedicalInstructionViewState
       final data = await json.decode(response);
       setState(() {
         percenntCompare = data["percentCompare"];
+      });
+    }
+
+    var arguments = ModalRoute.of(context).settings.arguments;
+    if (arguments != null) {
+      listDisease.clear();
+      listDiseaseSelected.clear();
+      for (var item in arguments) {
+        Disease dto = Disease.fromJson(item);
+        listDisease.add(dto);
+        listDiseaseSelected.add(dto);
+      }
+      setState(() {
+        _diseaseIds = listDisease.map((e) => e.diseaseId).toList();
       });
     }
   }
@@ -190,6 +211,7 @@ class _CreateMedicalInstructionViewState
                                             _medInsTypeId =
                                                 _.medicalInstructionTypeId;
                                             _selectedHRType = _.name;
+                                            selectType = _;
                                             print('${_selectedHRType}');
                                           });
                                         },
@@ -210,41 +232,7 @@ class _CreateMedicalInstructionViewState
                             ],
                           ),
                         ),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.center,
-                        //   crossAxisAlignment: CrossAxisAlignment.center,
-                        //   children: [
-                        //     Padding(
-                        //       padding: EdgeInsets.only(top: 40, left: 0),
-                        //       child: Text(
-                        //         'Chọn loại phiếu',
-                        //         style: TextStyle(
-                        //           color: DefaultTheme.BLACK,
-                        //           fontSize: 18,
-                        //         ),
-                        //       ),
-                        //     ),
-                        //     Spacer(),
-
-                        //   ],
-                        // ),
-                        // (_selectedHRType == '')
-                        //     ? Container()
-                        //     : Column(
-                        //         mainAxisAlignment: MainAxisAlignment.start,
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           Container(
-                        //             margin: EdgeInsets.only(top: 10, left: 0),
-                        //             child: Text(
-                        //               '${_selectedHRType}',
-                        //               style: TextStyle(
-                        //                   fontSize: 18,
-                        //                   fontWeight: FontWeight.w500),
-                        //             ),
-                        //           ),
-                        //         ],
-                        //       ),
+                        _selectBoxDissease(),
                         Padding(
                           padding: EdgeInsets.only(top: 20),
                           child: Divider(
@@ -405,69 +393,6 @@ class _CreateMedicalInstructionViewState
                             (titleCompare != null)
                                 ? Text('${f.format(titleCompare * 100)} %')
                                 : Container(),
-                            // (listImage64Bit.length <= 0)
-                            //     ? Container()
-                            //     : Expanded(
-                            //         child: Container(
-                            //           width: MediaQuery.of(context).size.width -
-                            //               170,
-                            //           height: 120,
-                            //           child: ListView.builder(
-                            //             scrollDirection: Axis.horizontal,
-                            //             // physics: NeverScrollableScrollPhysics(),
-                            //             // shrinkWrap: true,
-                            //             itemCount: listImage64Bit.length,
-                            //             itemBuilder: (context, index) {
-                            //               return Container(
-                            //                 margin: EdgeInsets.only(right: 10),
-                            //                 child: Stack(
-                            //                   children: [
-                            //                     ClipRRect(
-                            //                       borderRadius:
-                            //                           BorderRadius.circular(10),
-                            //                       child: SizedBox(
-                            //                           width: 120,
-                            //                           height: 120,
-                            //                           child: ImageUltility
-                            //                               .imageFromBase64String(
-                            //                                   listImage64Bit[
-                            //                                       index])),
-                            //                     ),
-                            //                     Positioned(
-                            //                       top: 0,
-                            //                       right: 0,
-                            //                       child: InkWell(
-                            //                         onTap: () {
-                            //                           setState(() {
-                            //                             listImage
-                            //                                 .removeAt(index);
-                            //                             listImage64Bit
-                            //                                 .removeAt(index);
-
-                            //                             if (listImage.length ==
-                            //                                 0) {
-                            //                               titleCompare = null;
-                            //                               _dianoseController
-                            //                                       .text =
-                            //                                   strDiseaseDraft;
-                            //                             }
-                            //                           });
-                            //                         },
-                            //                         child: Container(
-                            //                           width: 30,
-                            //                           height: 30,
-                            //                           child: Image.asset(
-                            //                               'assets/images/ic-close.png'),
-                            //                         ),
-                            //                       ),
-                            //                     ),
-                            //                   ],
-                            //                 ),
-                            //               );
-                            //             },
-                            //           ),
-                            //         ),
-                            //       ),
                           ],
                         ),
                         Padding(
@@ -660,57 +585,56 @@ class _CreateMedicalInstructionViewState
   }
 
   _createMedIns(medInsDTO) async {
-    // _medInsCreateBloc.add(MedInsCreateEventSend(dto: medInsDTO));
     await _medicalInstructionRepository
         .createMedicalInstruction(medInsDTO)
         .then((res) {
       Navigator.of(context).pop();
       setState(() {
         if (res) {
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (BuildContext context) {
-              return Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: DefaultTheme.WHITE.withOpacity(0.8)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: Image.asset('assets/images/ic-checked.png'),
-                          ),
-                          Text(
-                            'Tạo thành công',
-                            style: TextStyle(
-                                color: DefaultTheme.GREY_TEXT,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                decoration: TextDecoration.none),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-          Future.delayed(const Duration(seconds: 2), () {
-            Navigator.of(context).pop();
-            Navigator.of(context).pop();
-          });
+          // showDialog(
+          //   barrierDismissible: false,
+          //   context: context,
+          //   builder: (BuildContext context) {
+          //     return Center(
+          //       child: ClipRRect(
+          //         borderRadius: BorderRadius.all(Radius.circular(5)),
+          //         child: BackdropFilter(
+          //           filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+          //           child: Container(
+          //             width: 200,
+          //             height: 200,
+          //             decoration: BoxDecoration(
+          //                 borderRadius: BorderRadius.circular(10),
+          //                 color: DefaultTheme.WHITE.withOpacity(0.8)),
+          //             child: Column(
+          //               mainAxisAlignment: MainAxisAlignment.center,
+          //               crossAxisAlignment: CrossAxisAlignment.center,
+          //               children: [
+          //                 SizedBox(
+          //                   width: 100,
+          //                   height: 100,
+          //                   child: Image.asset('assets/images/ic-checked.png'),
+          //                 ),
+          //                 Text(
+          //                   'Tạo thành công',
+          //                   style: TextStyle(
+          //                       color: DefaultTheme.GREY_TEXT,
+          //                       fontSize: 15,
+          //                       fontWeight: FontWeight.w400,
+          //                       decoration: TextDecoration.none),
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     );
+          //   },
+          // );
+          // Future.delayed(const Duration(seconds: 2), () {
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+          // });
         } else {
           showDialog(
             barrierDismissible: false,
@@ -773,6 +697,291 @@ class _CreateMedicalInstructionViewState
     //     );
     //   },
     // );
+  }
+
+  _selectBoxDissease() {
+    if (selectType == null) {
+      return Container();
+    } else if (selectType.status.contains('SCOPE')) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.only(left: 20, right: 20),
+        decoration: BoxDecoration(
+            color: DefaultTheme.GREY_VIEW,
+            borderRadius: BorderRadius.circular(6)),
+        child: Column(
+          children: [
+            InkWell(
+              child: Row(
+                children: [
+                  Container(
+                    height: 25,
+                    width: MediaQuery.of(context).size.width - 90,
+                    margin: EdgeInsets.only(top: 15, bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Chọn bệnh lý (*)',
+                          style: TextStyle(
+                            color: DefaultTheme.BLACK,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: Image.asset('assets/images/ic-dropdown.png'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              onTap: () {
+                _getListDisease();
+              },
+            ),
+            _buildInheritedChipDisplayForDisease()
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  Widget _buildInheritedChipDisplayForDisease() {
+    final _itemsView = listDiseaseSelected
+        .map((disease) => MultiSelectItem<Disease>(disease, disease.toString()))
+        .toList();
+
+    List<MultiSelectItem<Disease>> chipDisplayItems = [];
+    chipDisplayItems = listDiseaseSelected
+        .map((e) => _itemsView.firstWhere((element) => e == element.value,
+            orElse: () => null))
+        .toList();
+
+    chipDisplayItems.removeWhere((element) => element == null);
+    return MultiSelectChipDisplay<Disease>(
+      items: chipDisplayItems,
+      onTap: (item) {},
+      chipColor: DefaultTheme.BLUE_REFERENCE,
+      textStyle: TextStyle(
+        color: DefaultTheme.BLACK,
+      ),
+    );
+  }
+
+  _getListDisease() {
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: DefaultTheme.TRANSPARENT,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.6,
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.05),
+                    color: DefaultTheme.TRANSPARENT,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.9,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(15)),
+                        color: DefaultTheme.GREY_VIEW,
+                      ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(top: 30),
+                            ),
+                            Expanded(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        'Danh sách bệnh lý',
+                                        style: TextStyle(
+                                            color: DefaultTheme.BLACK,
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 20),
+                                      ),
+                                      Expanded(
+                                        child: ListView.builder(
+                                          itemCount: listDisease.length,
+                                          itemBuilder: (context, index) {
+                                            bool checkTemp = false;
+                                            var e = listDisease[index];
+
+                                            if (_diseaseIds
+                                                .contains(e.diseaseId)) {
+                                              checkTemp = true;
+                                            }
+                                            return ListTile(
+                                              title: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: <Widget>[
+                                                      Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width -
+                                                            100,
+                                                        child: Text(
+                                                          '${e.diseaseId} - ${e.diseaseName}',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 3,
+                                                          style: TextStyle(
+                                                              color: DefaultTheme
+                                                                  .BLUE_REFERENCE,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500),
+                                                        ),
+                                                      ),
+                                                      Spacer(),
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        child: Container(
+                                                          width: 20,
+                                                          height: 20,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5)),
+                                                          child: Checkbox(
+                                                            materialTapTargetSize:
+                                                                MaterialTapTargetSize
+                                                                    .padded,
+                                                            checkColor:
+                                                                DefaultTheme
+                                                                    .GRADIENT_1,
+                                                            activeColor:
+                                                                DefaultTheme
+                                                                    .GREY_VIEW,
+                                                            hoverColor:
+                                                                DefaultTheme
+                                                                    .GREY_VIEW,
+                                                            value: checkTemp,
+                                                            onChanged: (_) {
+                                                              setModalState(
+                                                                () {
+                                                                  checkTemp =
+                                                                      !checkTemp;
+
+                                                                  setState(
+                                                                    () {
+                                                                      if (checkTemp) {
+                                                                        _diseaseIds.removeWhere((item) =>
+                                                                            item ==
+                                                                            e.diseaseId);
+                                                                        _diseaseIds
+                                                                            .add(e.diseaseId);
+
+                                                                        listDiseaseSelected.removeWhere((item) =>
+                                                                            item.diseaseId ==
+                                                                            e.diseaseId);
+                                                                        listDiseaseSelected
+                                                                            .add(e);
+                                                                      } else {
+                                                                        _diseaseIds.removeWhere((item) =>
+                                                                            item ==
+                                                                            e.diseaseId);
+                                                                        listDiseaseSelected.removeWhere((item) =>
+                                                                            item.diseaseId ==
+                                                                            e.diseaseId);
+                                                                      }
+                                                                    },
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        margin: EdgeInsets.only(bottom: 30),
+                                        child: ButtonHDr(
+                                          style: BtnStyle.BUTTON_BLACK,
+                                          label: 'Xong',
+                                          onTap: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ]),
+                    ),
+                  ),
+                  Positioned(
+                    top: 23,
+                    left: MediaQuery.of(context).size.width * 0.3,
+                    height: 5,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.3),
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: 15,
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.WHITE.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   checktitle() {
@@ -902,7 +1111,7 @@ class _CreateMedicalInstructionViewState
                       child: Image.asset('assets/images/loading.gif'),
                     ),
                     Text(
-                      'Vui lòng chờ trong giây lát....',
+                      'Vui lòng chờ chúng tôi kiểm tra xem phiếu này có trùng khớp với loại phiếu bạn đã chọn hay không',
                       style: TextStyle(
                           color: DefaultTheme.GREY_TEXT,
                           fontSize: 15,
