@@ -2315,7 +2315,7 @@ class _DetailContractView extends State<DetailContractView>
                                               ),
                                             ),
                                             Text(
-                                              'Ngày bắt đầu: ${dateFinished}',
+                                              'Ngày Kết thúc: ${dateFinished}',
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 decoration: TextDecoration.none,

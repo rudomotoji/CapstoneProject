@@ -32,6 +32,7 @@ class HealthRecordRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT getListHealthRecord ${e.toString()}');
+      return List<HealthRecordDTO>();
     }
   }
 
@@ -47,6 +48,7 @@ class HealthRecordRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT GET HEALTH RECORD DETAIL ${e}');
+      // return null;
     }
   }
 
@@ -104,6 +106,7 @@ class HealthRecordRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT getListMedicalShare: ${e}');
+      return null;
     }
   }
 
@@ -125,6 +128,7 @@ class HealthRecordRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT getAllMedicalToShare ${e.toString()}');
+      return List<MedInsByDiseaseDTO>();
     }
   }
 //

@@ -72,6 +72,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
     Map<String, dynamic> arguments = ModalRoute.of(context).settings.arguments;
     if (arguments != null) {
       medicalInstructionId = arguments['medicalInstructionId'];
+      print(medicalInstructionId);
       timeStart = arguments['timeStared'];
       timeCanceled = arguments['timeCanceled'];
       if (dateTime == '') {
@@ -96,6 +97,24 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(bottom: 20),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              'Bắt đầu ngày: ${_dateValidator.convertDateCreate(timeStart, 'dd/MM/yyyy', 'yyyy-MM-dd')}'),
+                          Text(
+                              'Kết thúc ngày:  ${_dateValidator.convertDateCreate(timeCanceled, 'dd/MM/yyyy', 'yyyy-MM-dd')}'),
+                          Row(
+                            children: [
+                              Text('Nhận xét:'),
+                              Text('Bác sĩ chưa có nhận xét nào.'),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     // Row(
                     //   children: [

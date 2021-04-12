@@ -40,6 +40,7 @@ class MedicalInstructionRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT getMedInsByDisease ${e.toString()}');
+      return List<MedInsByDiseaseDTO>();
     }
   }
 
@@ -75,6 +76,7 @@ class MedicalInstructionRepository extends BaseApiClient {
       return listFiltered;
     } catch (e) {
       print('ERROR AT GET MEDICAL INS TYPE BY DISEAS: $e');
+      return listFiltered;
     }
   }
 
@@ -96,6 +98,7 @@ class MedicalInstructionRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT getListMedicalInstruction ${e.toString()}');
+      return List<MedicalInstructionDTO>();
     }
   }
 
@@ -116,6 +119,7 @@ class MedicalInstructionRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT getMedicalInstructionType ${e.toString()}');
+      return List<MedicalInstructionTypeDTO>();
     }
   }
 
@@ -142,41 +146,47 @@ class MedicalInstructionRepository extends BaseApiClient {
 
   //create medical instruction by multiple part
   Future<bool> createMedicalInstruction(MedicalInstructionDTO dto) async {
-    var uri = Uri.parse(
-        'http://45.76.186.233:8000/api/v1/MedicalInstructions/InsertMedicalInstructionOld');
-    var request = new http.MultipartRequest('POST', uri);
-    request.fields['MedicalInstructionTypeId'] =
-        '${dto.medicalInstructionTypeId}';
-    request.fields['HealthRecordId'] = '${dto.healthRecordId}';
-    request.fields['PatientId'] = '${dto.patientId}';
-    request.fields['Description'] = '${dto.description}';
-    request.fields['Diagnose'] = '${dto.diagnose}';
-    // request.fields['DateStarted'] = '${dto.dateStarted}';
-    // request.fields['DateFinished'] = '${dto.dateFinished}';
-    //
+    try {
+      var uri = Uri.parse(
+          'http://45.76.186.233:8000/api/v1/MedicalInstructions/InsertMedicalInstructionOld');
+      var request = new http.MultipartRequest('POST', uri);
+      request.fields['MedicalInstructionTypeId'] =
+          '${dto.medicalInstructionTypeId}';
+      request.fields['HealthRecordId'] = '${dto.healthRecordId}';
+      request.fields['PatientId'] = '${dto.patientId}';
+      request.fields['Description'] = '${dto.description}';
+      request.fields['Diagnose'] = '${dto.diagnose}';
 
-    for (var imageItem in dto.imageFile) {
-      String fileName = imageItem.split("/").last;
-      var length =
-          await File(imageItem).lengthSync(); //imageFile is your image file
-      var stream = File(imageItem).readAsBytes().asStream();
+      if (dto.diseaseIds == null) {
+        print('null');
+        request.fields['DiseaseIds'] = '';
+      } else {
+        print('not null');
+        for (String itemDisease in dto.diseaseIds) {
+          request.files
+              .add(http.MultipartFile.fromString('DiseaseIds', itemDisease));
+        }
+      }
 
-      // multipart that takes file
-      var multipartFileSign =
-          new http.MultipartFile('images', stream, length, filename: fileName);
+      for (var imageItem in dto.imageFile) {
+        String fileName = imageItem.split("/").last;
+        var length =
+            await File(imageItem).lengthSync(); //imageFile is your image file
+        var stream = File(imageItem).readAsBytes().asStream();
 
-      request.files.add(multipartFileSign);
+        // multipart that takes file
+        var multipartFileSign = new http.MultipartFile('images', stream, length,
+            filename: fileName);
+
+        request.files.add(multipartFileSign);
+      }
+      final response = await request.send();
+      if (response.statusCode == 200) return true;
+      return false;
+    } catch (e) {
+      print('createMedicalInstruction: $e');
+      return false;
     }
-
-    // request.files.add(http.MultipartFile(
-    //     'image',
-    //     File(dto.imageFile.path).readAsBytes().asStream(),
-    //     File(dto.imageFile.path).lengthSync(),
-    //     filename: dto.imageFile.path.split("/").last));
-
-    final response = await request.send();
-    if (response.statusCode == 200) return true;
-    return false;
   }
 
   Future<ImageScannerDTO> getTextFromImage(
@@ -205,7 +215,11 @@ class MedicalInstructionRepository extends BaseApiClient {
                 if ((itemString.contains('Triệu') ||
                         itemString.contains('chứng') ||
                         itemString.contains('Chẩn') ||
-                        itemString.contains('đoán')) &&
+                        itemString.contains('đoán') ||
+                        itemString.contains('kết') ||
+                        itemString.contains('luận') ||
+                        itemString.contains('KẾT') ||
+                        itemString.contains('LUẬN')) &&
                     strSymptom == '') {
                   strSymptom = itemString;
                 }
@@ -214,6 +228,9 @@ class MedicalInstructionRepository extends BaseApiClient {
           }
         });
       }
+      strSymptom = strSymptom.replaceAll(
+          new RegExp(r'[!@#$%^&*().?":{}|<>\`~wzjWZJ©=——,—°";†_¬‡…ÿ›]+'), '');
+
       return ImageScannerDTO(
           symptom: strSymptom.trim(),
           title: title.trim(),
@@ -283,6 +300,23 @@ class MedicalInstructionRepository extends BaseApiClient {
       return null;
     } catch (e) {
       print('ERROR AT GET DOCTOR BY DOCTOR_ID API $e');
+      return null;
+    }
+  }
+
+  Future<bool> deleteMedicalInstruction(int medicalInstructionID) async {
+    try {
+      final String url = '/MedicalInstructions';
+      // final response = await getApi(url, null);
+      // if (response.statusCode == 200) {
+      //   MedicalInstructionDTO data =
+      //       MedicalInstructionDTO.fromJson(jsonDecode(response.body));
+      //   return data;
+      // }
+      return false;
+    } catch (e) {
+      print('deleteMedicalInstruction: $e');
+      return false;
     }
   }
 }
