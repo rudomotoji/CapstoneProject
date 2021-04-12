@@ -624,125 +624,146 @@ class _DashboardState extends State<DashboardPage>
           height: 80,
           child: Row(
             children: [
-              Container(
-                width: MediaQuery.of(context).size.width * 0.2,
-                height: 80,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/ic-calendar.png',
-                        width: 30, height: 30),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 3),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      child: Text(
-                        'Lịch',
-                        style: TextStyle(fontSize: 12),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, RoutesHDr.SCHEDULE);
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  height: 80,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/images/ic-calendar.png',
+                          width: 30, height: 30),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 3),
                       ),
-                    )
-                  ],
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        child: Text(
+                          'Lịch',
+                          style: TextStyle(fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.2,
-                height: 80,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/ic-contract.png',
-                        width: 30, height: 30),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 3),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      child: Text(
-                        'Tạo hợp đồng',
-                        style: TextStyle(fontSize: 12),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
+              InkWell(
+                onTap: () {
+                  _chooseStepContract();
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  height: 80,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/images/ic-contract.png',
+                          width: 30, height: 30),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 3),
                       ),
-                    )
-                  ],
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        child: Text(
+                          'Tạo hợp đồng',
+                          style: TextStyle(fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.2,
-                height: 80,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/ic-create-hr.png',
-                        width: 30, height: 30),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 3),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      child: Text(
-                        'Tạo Hồ sơ',
-                        style: TextStyle(fontSize: 12),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, RoutesHDr.CREATE_HEALTH_RECORD);
+                },
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  height: 80,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/images/ic-create-hr.png',
+                          width: 30, height: 30),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 3),
                       ),
-                    )
-                  ],
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        child: Text(
+                          'Tạo Hồ sơ',
+                          style: TextStyle(fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.2,
-                height: 80,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/ic-connect-p.png',
-                        width: 30, height: 30),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 3),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      child: Text(
-                        'Thiết bị đeo',
-                        style: TextStyle(fontSize: 12),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
+              InkWell(
+                onTap: () {},
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  height: 80,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/images/ic-connect-p.png',
+                          width: 30, height: 30),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 3),
                       ),
-                    )
-                  ],
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        child: Text(
+                          'Thiết bị đeo',
+                          style: TextStyle(fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.2,
-                height: 80,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/ic-health-selected.png',
-                        width: 30, height: 30),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 3),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      child: Text(
-                        'Sinh hiệu',
-                        style: TextStyle(fontSize: 12),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
+              InkWell(
+                onTap: () {},
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  height: 80,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset('assets/images/ic-health-selected.png',
+                          width: 30, height: 30),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 3),
                       ),
-                    )
-                  ],
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        child: Text(
+                          'Sinh hiệu',
+                          style: TextStyle(fontSize: 12),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ],
