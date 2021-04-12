@@ -31,7 +31,6 @@ import 'package:capstone_home_doctor/features/contract/blocs/medical_share_bloc.
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/disease_repository.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
-import 'package:capstone_home_doctor/features/contract/views/contract_detail_status_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/contract_draft_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/contract_share_view.dart';
 import 'package:capstone_home_doctor/features/contract/views/detail_contract_view.dart';
@@ -1775,6 +1774,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
             create: (BuildContext context) => VitalSignSyncBloc(
                 vitalSignSyncRepository: _vitalSignSyncRepository),
           ),
+          BlocProvider<MedInsTypeReqListBloc>(
+            create: (BuildContext context) => MedInsTypeReqListBloc(
+                medicalInstructionRepository: _medicalInstructionRepository),
+          ),
         ],
         child: GestureDetector(
           onTap: () {
@@ -1836,8 +1839,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.MEDICINE_NOTI_VIEW: (context) =>
                     ScheduleMedNotiView(),
                 RoutesHDr.MEDICAL_SHARE: (context) => MedicalShare(),
-                RoutesHDr.CONTRACT_DETAIL_STATUS: (context) =>
-                    ContractStatusDetail(),
+
                 RoutesHDr.DETAIL_CONTRACT_VIEW: (context) =>
                     DetailContractView(),
                 RoutesHDr.DOCTOR_INFORMATION: (context) => DoctorInformation(),

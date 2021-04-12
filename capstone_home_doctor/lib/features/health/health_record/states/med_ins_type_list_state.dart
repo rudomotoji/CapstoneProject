@@ -33,3 +33,27 @@ class MedInsTypeRequiredStateSuccess extends MedInsTypeState {
   @override
   List<Object> get props => [list];
 }
+//////////////////
+
+class MedInsTypeReqState extends Equatable {
+  //
+  const MedInsTypeReqState();
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [];
+}
+
+class MedInsTypeReqStateInitial extends MedInsTypeReqState {}
+
+class MedInsTypeReqStateLoading extends MedInsTypeReqState {}
+
+class MedInsTypeReqStateFailure extends MedInsTypeReqState {}
+
+class MedInsTypeReqStateSuccess extends MedInsTypeReqState {
+  final List<MedicalTypeRequiredDTO> list;
+  const MedInsTypeReqStateSuccess({@required this.list});
+
+  @override
+  List<Object> get props => [list];
+}

@@ -57,6 +57,7 @@ class _ManageContract extends State<ManageContract> {
   //
   List<ContractListDTO> _listPending = List<ContractListDTO>();
   List<ContractListDTO> _listApprove = List<ContractListDTO>();
+  List<ContractListDTO> _listSigned = List<ContractListDTO>();
   List<ContractListDTO> _listActive = List<ContractListDTO>();
   List<ContractListDTO> _listFinished = List<ContractListDTO>();
 
@@ -272,10 +273,15 @@ class _ManageContract extends State<ManageContract> {
                         _listActive = state.listContract
                             .where((item) => item.status == 'ACTIVE')
                             .toList();
+                        _listSigned = state.listContract
+                            .where((item) => item.status == 'SIGNED')
+                            .toList();
                         //
                         _listExecuting.clear();
-                        _listExecuting =
-                            _listPending + _listApprove + _listActive;
+                        _listExecuting = _listPending +
+                            _listApprove +
+                            _listSigned +
+                            _listActive;
                         //
                         _listAcitved.clear();
                         _listAcitved = state.listContract
@@ -344,6 +350,12 @@ class _ManageContract extends State<ManageContract> {
                                           statusTemp = 'Xét duyệt';
                                           statusColor =
                                               DefaultTheme.ORANGE_TEXT;
+                                        }
+                                        if (_listExecuting[index]
+                                            .status
+                                            .contains('SIGNED')) {
+                                          statusTemp = 'Đã ký';
+                                          statusColor = DefaultTheme.BLUE_TEXT;
                                         }
                                         if (_listExecuting[index]
                                             .status

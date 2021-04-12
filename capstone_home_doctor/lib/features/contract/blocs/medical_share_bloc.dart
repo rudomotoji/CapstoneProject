@@ -18,7 +18,10 @@ class MedicalShareBloc extends Bloc<MedicalShareEvent, MedicalShareState> {
       try {
         final List<MedicalShareDTO> list =
             await healthRecordRepository.getListMedicalShare(
-                event.patientId, event.medicalInstructionType, event.diseaseId);
+                event.patientId,
+                event.medicalInstructionType,
+                event.diseaseId,
+                event.medicalInstructionIds);
         yield MedicalShareStateSuccess(listMedicalShare: list);
       } catch (e) {
         yield MedicalShareStateFailure();

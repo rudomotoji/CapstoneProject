@@ -21,9 +21,10 @@ class ContractFullDTO {
   String nameLicense;
   int priceLicense;
   int daysOfTracking;
-  List<Diseases> diseases;
-  List<MedicalInstructionTypes> medicalInstructionTypes;
-  List<MedicalInstructionTypes> medicalInstructionsDoctorChoosed;
+  List<String> diseaseContracts;
+  List<MedicalInstructionDiseases> medicalInstructionDiseases;
+  List<MedicalInstructionOthers> medicalInstructionOthers;
+  List<MedicalInstructionChoosed> medicalInstructionChoosed;
   String dateCreated;
   String dateStarted;
   String dateFinished;
@@ -51,9 +52,10 @@ class ContractFullDTO {
       this.nameLicense,
       this.priceLicense,
       this.daysOfTracking,
-      this.diseases,
-      this.medicalInstructionTypes,
-      this.medicalInstructionsDoctorChoosed,
+      this.diseaseContracts,
+      this.medicalInstructionDiseases,
+      this.medicalInstructionOthers,
+      this.medicalInstructionChoosed,
       this.dateCreated,
       this.dateStarted,
       this.dateFinished});
@@ -81,23 +83,29 @@ class ContractFullDTO {
     nameLicense = json['nameLicense'];
     priceLicense = json['priceLicense'];
     daysOfTracking = json['daysOfTracking'];
-    if (json['diseases'] != null) {
-      diseases = new List<Diseases>();
-      json['diseases'].forEach((v) {
-        diseases.add(new Diseases.fromJson(v));
+    if (json['diseaseContracts'] == null) {
+      diseaseContracts = [];
+    } else {
+      diseaseContracts = json['diseaseContracts'].cast<String>();
+    }
+    if (json['medicalInstructionDiseases'] != null) {
+      medicalInstructionDiseases = new List<MedicalInstructionDiseases>();
+      json['medicalInstructionDiseases'].forEach((v) {
+        medicalInstructionDiseases
+            .add(new MedicalInstructionDiseases.fromJson(v));
       });
     }
-    if (json['medicalInstructionTypes'] != null) {
-      medicalInstructionTypes = new List<MedicalInstructionTypes>();
-      json['medicalInstructionTypes'].forEach((v) {
-        medicalInstructionTypes.add(new MedicalInstructionTypes.fromJson(v));
+    if (json['medicalInstructionOthers'] != null) {
+      medicalInstructionOthers = new List<MedicalInstructionOthers>();
+      json['medicalInstructionOthers'].forEach((v) {
+        medicalInstructionOthers.add(new MedicalInstructionOthers.fromJson(v));
       });
     }
-    if (json['medicalInstructionsDoctorChoosed'] != null) {
-      medicalInstructionsDoctorChoosed = new List<MedicalInstructionTypes>();
-      json['medicalInstructionsDoctorChoosed'].forEach((v) {
-        medicalInstructionsDoctorChoosed
-            .add(new MedicalInstructionTypes.fromJson(v));
+    if (json['medicalInstructionChoosed'] != null) {
+      medicalInstructionChoosed = new List<MedicalInstructionChoosed>();
+      json['medicalInstructionChoosed'].forEach((v) {
+        medicalInstructionChoosed
+            .add(new MedicalInstructionChoosed.fromJson(v));
       });
     }
     dateCreated = json['dateCreated'];
@@ -129,16 +137,18 @@ class ContractFullDTO {
     data['nameLicense'] = this.nameLicense;
     data['priceLicense'] = this.priceLicense;
     data['daysOfTracking'] = this.daysOfTracking;
-    if (this.diseases != null) {
-      data['diseases'] = this.diseases.map((v) => v.toJson()).toList();
+    data['diseaseContracts'] = this.diseaseContracts;
+    if (this.medicalInstructionDiseases != null) {
+      data['medicalInstructionDiseases'] =
+          this.medicalInstructionDiseases.map((v) => v.toJson()).toList();
     }
-    if (this.medicalInstructionTypes != null) {
-      data['medicalInstructionTypes'] =
-          this.medicalInstructionTypes.map((v) => v.toJson()).toList();
+    if (this.medicalInstructionOthers != null) {
+      data['medicalInstructionOthers'] =
+          this.medicalInstructionOthers.map((v) => v.toJson()).toList();
     }
-    if (this.medicalInstructionsDoctorChoosed != null) {
-      data['medicalInstructionsDoctorChoosed'] =
-          this.medicalInstructionsDoctorChoosed.map((v) => v.toJson()).toList();
+    if (this.medicalInstructionChoosed != null) {
+      data['medicalInstructionChoosed'] =
+          this.medicalInstructionChoosed.map((v) => v.toJson()).toList();
     }
     data['dateCreated'] = this.dateCreated;
     data['dateStarted'] = this.dateStarted;
@@ -147,34 +157,17 @@ class ContractFullDTO {
   }
 }
 
-class Diseases {
+class MedicalInstructionDiseases {
   String diseaseId;
   String nameDisease;
-
-  Diseases({this.diseaseId, this.nameDisease});
-
-  Diseases.fromJson(Map<String, dynamic> json) {
-    diseaseId = json['diseaseId'];
-    nameDisease = json['nameDisease'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['diseaseId'] = this.diseaseId;
-    data['nameDisease'] = this.nameDisease;
-    return data;
-  }
-}
-
-class MedicalInstructionTypes {
-  String medicalInstructionTypeName;
   List<MedicalInstructions> medicalInstructions;
 
-  MedicalInstructionTypes(
-      {this.medicalInstructionTypeName, this.medicalInstructions});
+  MedicalInstructionDiseases(
+      {this.diseaseId, this.nameDisease, this.medicalInstructions});
 
-  MedicalInstructionTypes.fromJson(Map<String, dynamic> json) {
-    medicalInstructionTypeName = json['medicalInstructionTypeName'];
+  MedicalInstructionDiseases.fromJson(Map<String, dynamic> json) {
+    diseaseId = json['diseaseId'];
+    nameDisease = json['nameDisease'];
     if (json['medicalInstructions'] != null) {
       medicalInstructions = new List<MedicalInstructions>();
       json['medicalInstructions'].forEach((v) {
@@ -185,7 +178,8 @@ class MedicalInstructionTypes {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['medicalInstructionTypeName'] = this.medicalInstructionTypeName;
+    data['diseaseId'] = this.diseaseId;
+    data['nameDisease'] = this.nameDisease;
     if (this.medicalInstructions != null) {
       data['medicalInstructions'] =
           this.medicalInstructions.map((v) => v.toJson()).toList();
@@ -196,19 +190,33 @@ class MedicalInstructionTypes {
 
 class MedicalInstructions {
   int medicalInstructionId;
+  String medicalInstructionTypeName;
   List<String> images;
+  List<String> diseases;
   String diagnose;
   String description;
 
   MedicalInstructions(
       {this.medicalInstructionId,
+      this.medicalInstructionTypeName,
       this.images,
+      this.diseases,
       this.diagnose,
       this.description});
 
   MedicalInstructions.fromJson(Map<String, dynamic> json) {
     medicalInstructionId = json['medicalInstructionId'];
-    images = json['images'].cast<String>();
+    medicalInstructionTypeName = json['medicalInstructionTypeName'];
+    if (json['images'] == null) {
+      diseases = [];
+    } else {
+      images = json['images'].cast<String>();
+    }
+    if (json['diseases'] == null) {
+      diseases = [];
+    } else {
+      diseases = json['diseases'].cast<String>();
+    }
     diagnose = json['diagnose'];
     description = json['description'];
   }
@@ -216,7 +224,101 @@ class MedicalInstructions {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['medicalInstructionId'] = this.medicalInstructionId;
+    data['medicalInstructionTypeName'] = this.medicalInstructionTypeName;
     data['images'] = this.images;
+    data['diseases'] = this.diseases;
+    data['diagnose'] = this.diagnose;
+    data['description'] = this.description;
+    return data;
+  }
+}
+
+class MedicalInstructionOthers {
+  int medicalInstructionId;
+  String medicalInstructionTypeName;
+  List<String> images;
+  List<String> diseases;
+  String diagnose;
+  String description;
+
+  MedicalInstructionOthers(
+      {this.medicalInstructionId,
+      this.medicalInstructionTypeName,
+      this.images,
+      this.diseases,
+      this.diagnose,
+      this.description});
+
+  MedicalInstructionOthers.fromJson(Map<String, dynamic> json) {
+    medicalInstructionId = json['medicalInstructionId'];
+    medicalInstructionTypeName = json['medicalInstructionTypeName'];
+    if (json['images'] == null) {
+      diseases = [];
+    } else {
+      images = json['images'].cast<String>();
+    }
+
+    if (json['diseases'] == null) {
+      diseases = [];
+    } else {
+      diseases = json['diseases'].cast<String>();
+    }
+    diagnose = json['diagnose'];
+    description = json['description'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['medicalInstructionId'] = this.medicalInstructionId;
+    data['medicalInstructionTypeName'] = this.medicalInstructionTypeName;
+    data['images'] = this.images;
+    data['diseases'] = this.diseases;
+    data['diagnose'] = this.diagnose;
+    data['description'] = this.description;
+    return data;
+  }
+}
+
+class MedicalInstructionChoosed {
+  int medicalInstructionId;
+  String medicalInstructionTypeName;
+  List<String> images;
+  List<String> diseases;
+  String diagnose;
+  String description;
+
+  MedicalInstructionChoosed(
+      {this.medicalInstructionId,
+      this.medicalInstructionTypeName,
+      this.images,
+      this.diseases,
+      this.diagnose,
+      this.description});
+
+  MedicalInstructionChoosed.fromJson(Map<String, dynamic> json) {
+    medicalInstructionId = json['medicalInstructionId'];
+    medicalInstructionTypeName = json['medicalInstructionTypeName'];
+    if (json['images'] == null) {
+      diseases = [];
+    } else {
+      images = json['images'].cast<String>();
+    }
+    if (json['diseases'] == null) {
+      diseases = [];
+    } else {
+      diseases = json['diseases'].cast<String>();
+    }
+
+    diagnose = json['diagnose'];
+    description = json['description'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['medicalInstructionId'] = this.medicalInstructionId;
+    data['medicalInstructionTypeName'] = this.medicalInstructionTypeName;
+    data['images'] = this.images;
+    data['diseases'] = this.diseases;
     data['diagnose'] = this.diagnose;
     data['description'] = this.description;
     return data;

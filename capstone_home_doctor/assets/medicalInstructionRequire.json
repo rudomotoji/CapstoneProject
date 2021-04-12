@@ -3,540 +3,320 @@
     "medicalInstructionRequireId": 0,
     "diseaseId": "I00",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 1,
     "diseaseId": "I01",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 5,
-        "medicalInstructionTypeName": "Phiếu siêu âm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 2,
     "diseaseId": "I05",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      },
-      {
-        "medicalInstructionTypeId": 5,
-        "medicalInstructionTypeName": "Phiếu siêu âm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 3,
     "diseaseId": "I06",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 6,
-        "medicalInstructionTypeName": "Phiếu điện tim"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 4,
     "diseaseId": "I07",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      },
-      {
-        "medicalInstructionTypeId": 6,
-        "medicalInstructionTypeName": "Phiếu điện tim"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 5,
     "diseaseId": "I08",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 6,
     "diseaseId": "I09",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 7,
     "diseaseId": "I10",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 8,
     "diseaseId": "I11",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 9,
     "diseaseId": "I13",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      },
-      {
-        "medicalInstructionTypeId": 5,
-        "medicalInstructionTypeName": "Phiếu siêu âm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 10,
     "diseaseId": "I15",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 11,
     "diseaseId": "I20",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 12,
     "diseaseId": "I21",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 6,
-        "medicalInstructionTypeName": "Phiếu điện tim"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 13,
     "diseaseId": "I22",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 14,
     "diseaseId": "I23",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 15,
     "diseaseId": "I24",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 6,
-        "medicalInstructionTypeName": "Phiếu điện tim"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 16,
     "diseaseId": "I25",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 17,
     "diseaseId": "I27",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 5,
-        "medicalInstructionTypeName": "Phiếu siêu âm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 18,
     "diseaseId": "I30",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 19,
     "diseaseId": "I31",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 20,
     "diseaseId": "I32",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 21,
     "diseaseId": "I33",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 22,
     "diseaseId": "I34",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      },
-      {
-        "medicalInstructionTypeId": 6,
-        "medicalInstructionTypeName": "Phiếu điện tim"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 23,
     "diseaseId": "I35",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 24,
     "diseaseId": "I36",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 25,
     "diseaseId": "I40",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 26,
     "diseaseId": "I42",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 27,
     "diseaseId": "I43",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 6,
-        "medicalInstructionTypeName": "Phiếu điện tim"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 28,
     "diseaseId": "I46",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 29,
     "diseaseId": "I49",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 3,
-        "medicalInstructionTypeName": "Phiếu xét nghiệm"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 30,
     "diseaseId": "I50",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   },
   {
     "medicalInstructionRequireId": 31,
     "diseaseId": "I51",
     "medicalInstructions": [
-      {
-        "medicalInstructionTypeId": 4,
-        "medicalInstructionTypeName": "Phiếu chụp X-Quang"
-      },
-      {
-        "medicalInstructionTypeId": 9,
-        "medicalInstructionTypeName": "Sinh hoá máu"
-      },
-      {
-        "medicalInstructionTypeId": 6,
-        "medicalInstructionTypeName": "Phiếu điện tim"
-      }
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        }
     ]
   }
 ]

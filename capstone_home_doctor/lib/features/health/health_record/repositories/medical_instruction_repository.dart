@@ -125,11 +125,11 @@ class MedicalInstructionRepository extends BaseApiClient {
 
   //medical instruction type to share
   Future<List<MedicalInstructionTypeDTO>> getMedicalInstructionTypeToShare(
-      int patientId) async {
+      int patientId, List<int> medicalInstructionIds) async {
     final String url =
         '/MedicalInstructrionTypes/GetMITypeToShare?patientId=${patientId}';
     try {
-      final response = await getApi(url, null);
+      final response = await postApi(url, null, medicalInstructionIds);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body) as List;
         List<MedicalInstructionTypeDTO> list = responseData.map((dto) {

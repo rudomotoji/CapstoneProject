@@ -51,19 +51,21 @@ class ContractRepository extends BaseApiClient {
     final String url = '/Contracts';
     try {
       final request = await postApi(url, null, dto.toJson());
-      if (request.statusCode == 201) {
-        //
-        _contractHelper.updateContractSendStatus(
-            true, 'Gửi yêu cầu thành công');
-        return true;
-      }
+      print('request body: ${request.request.toString()}');
       if (request.statusCode == 400) {
         _contractHelper.updateContractSendStatus(
             false, 'Bạn đang có hợp đồng với bác sĩ này');
         return false;
+      } else if (request.statusCode == 201) {
+        //
+        _contractHelper.updateContractSendStatus(
+            true, 'Gửi yêu cầu thành công');
+        return true;
+      } else {
+        createRequestContract(dto);
+        _contractHelper.updateContractSendStatus(false, 'Kiểm tra lại kết nối');
+        return false;
       }
-      _contractHelper.updateContractSendStatus(false, 'Kiểm tra lại kết nối');
-      return false;
     } catch (e) {
       print('ERROR AT MAKE REQUEST CONTRACT API: $e');
     }

@@ -1432,7 +1432,7 @@ class _ContractDraftView extends State<ContractDraftView>
         //
 
         _requestContractBloc.add(RequestContractEventSend(dto: dto));
-        Future.delayed(const Duration(seconds: 3), () {
+        Future.delayed(const Duration(seconds: 5), () {
           //
           _contractHelper.isSent().then((value) async {
             //

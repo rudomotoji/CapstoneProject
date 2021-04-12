@@ -31,22 +31,46 @@ class MedInsTypeListBloc extends Bloc<MedInsTypeEvent, MedInsTypeState> {
       try {
         //
         final List<MedicalInstructionTypeDTO> list =
-            await medicalInstructionRepository
-                .getMedicalInstructionTypeToShare(event.patientId);
+            await medicalInstructionRepository.getMedicalInstructionTypeToShare(
+                event.patientId, event.medicalInstructionsIds);
         yield MedInsTypeStateSuccess(listMedInsType: list);
       } catch (e) {
         yield MedInsTypeStateFailure();
       }
     }
     //
-    if (event is MedInsTypeRequiredEventGet) {
+    // if (event is MedInsTypeRequiredEventGet) {
+    //   try {
+    //     final List<MedicalTypeRequiredDTO> list =
+    //         await medicalInstructionRepository
+    //             .getMiRequiredByDisease(event.diseaseIds);
+    //     yield MedInsTypeRequiredStateSuccess(list: list);
+    //   } catch (e) {
+    //     yield MedInsTypeStateFailure();
+    //   }
+    // }
+  }
+}
+
+class MedInsTypeReqListBloc
+    extends Bloc<MedInsTypeReqEvent, MedInsTypeReqState> {
+  final MedicalInstructionRepository medicalInstructionRepository;
+  MedInsTypeReqListBloc({this.medicalInstructionRepository})
+      : assert(medicalInstructionRepository != null),
+        super(MedInsTypeReqStateInitial());
+
+  @override
+  Stream<MedInsTypeReqState> mapEventToState(MedInsTypeReqEvent event) async* {
+    //
+    if (event is MedInsTypeReqEventGet) {
+      yield MedInsTypeReqStateLoading();
       try {
         final List<MedicalTypeRequiredDTO> list =
             await medicalInstructionRepository
                 .getMiRequiredByDisease(event.diseaseIds);
-        yield MedInsTypeRequiredStateSuccess(list: list);
+        yield MedInsTypeReqStateSuccess(list: list);
       } catch (e) {
-        yield MedInsTypeStateFailure();
+        yield MedInsTypeReqStateFailure();
       }
     }
   }

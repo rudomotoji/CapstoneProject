@@ -36,16 +36,16 @@ class MedicalShareDTO {
 }
 
 class MedicalInstructions {
-  String medicalInstructionTypeName;
   int medicalInstructionId;
+  String medicalInstructionTypeName;
   List<String> diseases;
   List<String> images;
   String dateCreate;
   String diagnose;
 
   MedicalInstructions(
-      {this.medicalInstructionTypeName,
-      this.medicalInstructionId,
+      {this.medicalInstructionId,
+      this.medicalInstructionTypeName,
       this.diseases,
       this.images,
       this.dateCreate,

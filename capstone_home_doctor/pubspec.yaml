@@ -178,6 +178,8 @@ flutter:
     - assets/images/bg-home.png
     - assets/images/ic-bluetooth.png
     - assets/images/ic-create-hr.png
+    - assets/images/ic-c-signed.png
+    - assets/images/ic-c-signed-u.png
 
 
   

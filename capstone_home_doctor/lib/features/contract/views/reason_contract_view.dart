@@ -95,8 +95,11 @@ class _ReasonContractView extends State<ReasonContractView>
     // TODO: implement build
     Map<String, Object> arguments = ModalRoute.of(context).settings.arguments;
     RequestContractDTO _requestContract = arguments['REQUEST_OBJ'];
-    // print(
-    //     '${_requestContract.medicalInstructionIds} \n ${_requestContract.diseaseIds}');
+    print('${_requestContract.diseaseHealthRecordIds} \n}');
+    for (DiseaseMedicalInstructions x
+        in _requestContract.diseaseMedicalInstructions) {
+      print('${x.diseaseId}--${x.medicalInstructionIds}');
+    }
     return Scaffold(
       body: SafeArea(
         child: Column(
