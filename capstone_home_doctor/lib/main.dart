@@ -1841,7 +1841,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.DETAIL_CONTRACT_VIEW: (context) =>
                     DetailContractView(),
                 RoutesHDr.DOCTOR_INFORMATION: (context) => DoctorInformation(),
-                //       RoutesHDr.CONTRACT_SHARE_VIEW: (context) => ContractShareView(),
+                RoutesHDr.CONTRACT_SHARE_VIEW: (context) => ContractShareView(),
 
                 RoutesHDr.CONTRACT_DRAFT_VIEW: (context) => ContractDraftView(),
                 RoutesHDr.MEDICAL_HISTORY_DETAIL: (context) =>

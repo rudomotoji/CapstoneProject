@@ -443,13 +443,34 @@ class _DashboardState extends State<DashboardPage>
           _showAppointmentNoti(),
           _buildReminder(),
           _buildShorcut(),
-          // _build
+          _buildVitalSign(),
           //
           //
           //
 
           _showLastHeartRateMeasure(),
         ]);
+  }
+
+  Widget _buildVitalSign() {
+    return Column(
+      children: <Widget>[
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Container(
+            padding: EdgeInsets.only(left: 20, bottom: 10),
+            margin: EdgeInsets.only(top: 20),
+            child: Text(
+              'Sinh hiệu',
+              style: TextStyle(
+                  color: DefaultTheme.BLACK,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildReminder() {
@@ -657,7 +678,7 @@ class _DashboardState extends State<DashboardPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset('assets/images/ic-health-record.png',
+                    Image.asset('assets/images/ic-create-hr.png',
                         width: 30, height: 30),
                     Padding(
                       padding: EdgeInsets.only(bottom: 3),
@@ -913,7 +934,8 @@ class _DashboardState extends State<DashboardPage>
                                     in listAppointmentCurrentSortedDate[index]
                                         .appointments)
                                   Container(
-                                      margin: EdgeInsets.only(bottom: 5),
+                                      margin:
+                                          EdgeInsets.only(bottom: 5, top: 5),
                                       padding: EdgeInsets.only(left: 5),
                                       decoration: BoxDecoration(
                                           border: Border(

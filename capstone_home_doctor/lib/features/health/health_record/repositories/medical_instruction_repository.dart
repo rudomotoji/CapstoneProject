@@ -59,14 +59,17 @@ class MedicalInstructionRepository extends BaseApiClient {
       listFiltered.clear();
       for (String diseaseId in diseaseIds) {
         for (MedicalTypeRequiredDTO component in list) {
-          for (SuggestionDisease suggestList in component.suggestionDisease) {
-            if (suggestList.diseaseId == diseaseId) {
-              listFiltered.removeWhere((item) =>
-                  item.medicalInstructionRequiredId ==
-                  component.medicalInstructionRequiredId);
-              listFiltered.add(component);
-            }
+          if (component.diseaseId == diseaseId) {
+            listFiltered.add(component);
           }
+          // for (SuggestionDisease suggestList in component.suggestionDisease) {
+          //   if (suggestList.diseaseId == diseaseId) {
+          //     listFiltered.removeWhere((item) =>
+          //         item.medicalInstructionRequiredId ==
+          //         component.medicalInstructionRequiredId);
+          //     listFiltered.add(component);
+          //   }
+          // }
         }
       }
       return listFiltered;
