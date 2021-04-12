@@ -1358,7 +1358,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
             //   },
             // );
             // Future.delayed(const Duration(seconds: 2), () {
-            Navigator.of(context).pop();
+            // Navigator.of(context).pop();
             Navigator.of(context).pop();
             // });
           } else {

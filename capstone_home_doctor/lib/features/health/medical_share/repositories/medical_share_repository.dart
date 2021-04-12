@@ -17,6 +17,7 @@ class MedicalShareInsRepository extends BaseApiClient {
         '/MedicalInstructions/ShareMedicalInstructions?healthRecordId=${healthRecordId}';
     try {
       final response = await postApi(url, null, listMedicalShare);
+      print(response.statusCode);
       if (response.statusCode == 201) {
         return true;
       } else {
@@ -24,6 +25,7 @@ class MedicalShareInsRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT SHARE MEDICAL INS ${e.toString()}');
+      return false;
     }
   }
 
@@ -44,6 +46,7 @@ class MedicalShareInsRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT GET LIST MEDICAL INS ${e.toString()}');
+      return List<MedicalInstructionByTypeDTO>();
     }
   }
 }

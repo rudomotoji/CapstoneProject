@@ -410,7 +410,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                                 // );
 
                                 // Future.delayed(const Duration(seconds: 2), () {
-                                Navigator.of(context).pop();
+                                // Navigator.of(context).pop();
                                 Navigator.of(context).pop();
                                 // });
                               } else {

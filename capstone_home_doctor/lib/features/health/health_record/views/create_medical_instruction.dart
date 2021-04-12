@@ -55,6 +55,7 @@ class _CreateMedicalInstructionViewState
   List<String> listImage = [];
   List<String> listImage64Bit = [];
 
+//triệu chứng bệnh đối với các bệnh scrope
   List<Disease> listDisease = [];
   List<Disease> listDiseaseSelected = [];
   List<String> _diseaseIds = [];
@@ -475,15 +476,42 @@ class _CreateMedicalInstructionViewState
                         label: 'Thêm',
                         onTap: () async {
                           if (_patientId != 0) {
-                            MedicalInstructionDTO medInsDTO =
-                                MedicalInstructionDTO(
-                              medicalInstructionTypeId: _medInsTypeId,
-                              healthRecordId: _hrId,
-                              patientId: _patientId,
-                              description: _note,
-                              diagnose: _dianoseController.text,
-                              imageFile: listImage,
-                            );
+                            MedicalInstructionDTO medInsDTO;
+
+                            if (selectType.status.contains('SCOPE')) {
+                              if (_diseaseIds.length == listDisease.length ||
+                                  _diseaseIds.length <= 0) {
+                                medInsDTO = MedicalInstructionDTO(
+                                  medicalInstructionTypeId: _medInsTypeId,
+                                  healthRecordId: _hrId,
+                                  patientId: _patientId,
+                                  description: _note,
+                                  diagnose: _dianoseController.text,
+                                  diseaseIds: null,
+                                  imageFile: listImage,
+                                );
+                              } else {
+                                medInsDTO = MedicalInstructionDTO(
+                                  medicalInstructionTypeId: _medInsTypeId,
+                                  healthRecordId: _hrId,
+                                  patientId: _patientId,
+                                  description: _note,
+                                  diagnose: _dianoseController.text,
+                                  diseaseIds: _diseaseIds,
+                                  imageFile: listImage,
+                                );
+                              }
+                            } else {
+                              medInsDTO = MedicalInstructionDTO(
+                                medicalInstructionTypeId: _medInsTypeId,
+                                healthRecordId: _hrId,
+                                patientId: _patientId,
+                                description: _note,
+                                diagnose: _dianoseController.text,
+                                diseaseIds: null,
+                                imageFile: listImage,
+                              );
+                            }
 
                             setState(() {
                               showDialog(
@@ -518,7 +546,7 @@ class _CreateMedicalInstructionViewState
                                                     'assets/images/loading.gif'),
                                               ),
                                               Text(
-                                                'Đang tạo...',
+                                                'Vui lòng chờ trong giây lát chúng tôi đang tạo y lệnh cho bạn',
                                                 style: TextStyle(
                                                     color:
                                                         DefaultTheme.GREY_TEXT,
@@ -633,7 +661,7 @@ class _CreateMedicalInstructionViewState
           // );
           // Future.delayed(const Duration(seconds: 2), () {
           Navigator.of(context).pop();
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
           // });
         } else {
           showDialog(
@@ -706,6 +734,7 @@ class _CreateMedicalInstructionViewState
       return Container(
         width: MediaQuery.of(context).size.width,
         padding: EdgeInsets.only(left: 20, right: 20),
+        margin: EdgeInsets.only(top: 10),
         decoration: BoxDecoration(
             color: DefaultTheme.GREY_VIEW,
             borderRadius: BorderRadius.circular(6)),
@@ -1111,7 +1140,7 @@ class _CreateMedicalInstructionViewState
                       child: Image.asset('assets/images/loading.gif'),
                     ),
                     Text(
-                      'Vui lòng chờ chúng tôi kiểm tra xem phiếu này có trùng khớp với loại phiếu bạn đã chọn hay không',
+                      'Vui lòng chờ chúng tôi kiểm tra xem hình này có trùng khớp với loại phiếu bạn đã chọn hay không',
                       style: TextStyle(
                           color: DefaultTheme.GREY_TEXT,
                           fontSize: 15,

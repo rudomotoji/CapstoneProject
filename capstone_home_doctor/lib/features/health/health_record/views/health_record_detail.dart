@@ -866,19 +866,22 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     ),
                   ],
                 ),
-                // Positioned(
-                //   width: 35,
-                //   height: 35,
-                //   top: 7,
-                //   right: 0,
-                //   child: ButtonHDr(
-                //     style: BtnStyle.BUTTON_IMAGE,
-                //     image: Image.asset('assets/images/ic-more.png'),
-                //     onTap: () {
-                //       _showMorePopup();
-                //     },
-                //   ),
-                // ),
+                // (dto.status.contains('PATIENT'))
+                //     ? Positioned(
+                //         width: 35,
+                //         height: 35,
+                //         top: 7,
+                //         right: 0,
+                //         child: ButtonHDr(
+                //           style: BtnStyle.BUTTON_IMAGE,
+                //           image: Image.asset('assets/images/ic-more.png'),
+                //           onTap: () {
+                //             _showMorePopup(dto.medicalInstructionId,
+                //                 dto.medicalInstructionType);
+                //           },
+                //         ),
+                //       )
+                //     : Container(),
               ],
             ),
           ),
@@ -1131,7 +1134,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             ),
                                           ),
                                           Text(
-                                            'Ngày bắt đầu: ${dateFinished}',
+                                            'Ngày Kết thúc: ${dateFinished}',
                                             style: TextStyle(
                                               fontSize: 16,
                                               decoration: TextDecoration.none,
@@ -1636,7 +1639,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         });
   }
 
-  _showMorePopup() {
+  _showMorePopup(int medicalInstructionId, String medicalInstructionTypeName) {
     showModalBottomSheet(
         isScrollControlled: false,
         context: this.context,
@@ -1653,12 +1656,12 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                       padding: EdgeInsets.only(left: 10),
                     ),
                     Container(
-                      height: 270,
+                      height: 200,
                       width: MediaQuery.of(context).size.width - 20,
                       child: Column(
                         children: <Widget>[
                           Container(
-                            height: 170,
+                            height: 100,
                             decoration: BoxDecoration(
                               color: DefaultTheme.WHITE.withOpacity(0.8),
                               borderRadius: BorderRadius.circular(10),
@@ -1669,7 +1672,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   padding: EdgeInsets.only(
                                       top: 30, left: 10, right: 10),
                                   child: Text(
-                                    'Phiếu bệnh...',
+                                    'Y lệnh: $medicalInstructionId - $medicalInstructionTypeName',
                                     style: TextStyle(
                                         color: DefaultTheme.GREY_TEXT),
                                     maxLines: 2,
@@ -1683,25 +1686,200 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   height: 0.5,
                                 ),
                                 ButtonHDr(
-                                  label: 'Chi tiết',
-                                  height: 60,
-                                  labelColor: DefaultTheme.BLUE_TEXT,
-                                  style: BtnStyle.BUTTON_IN_LIST,
-                                  onTap: () {
-                                    //
-                                  },
-                                ),
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 0.5,
-                                ),
-                                ButtonHDr(
                                   label: 'Xoá',
                                   height: 60,
                                   labelColor: DefaultTheme.RED_TEXT,
                                   style: BtnStyle.BUTTON_IN_LIST,
                                   onTap: () {
                                     Navigator.of(context).pop();
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return Center(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15)),
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 25, sigmaY: 25),
+                                              child: Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 10,
+                                                    top: 10,
+                                                    right: 10),
+                                                width: 250,
+                                                height: 185,
+                                                decoration: BoxDecoration(
+                                                  color: DefaultTheme.WHITE
+                                                      .withOpacity(0.7),
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 10, top: 10),
+                                                      child: Text(
+                                                        'Cảnh báo',
+                                                        style: TextStyle(
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .none,
+                                                          color: DefaultTheme
+                                                              .BLACK,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 20,
+                                                          right: 20,
+                                                          top: 15),
+                                                      child: Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          'Bạn có chắc chắn muốn xoá y lệnh khỏi hồ sơ này?',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .none,
+                                                            color: DefaultTheme
+                                                                .GREY_TEXT,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Divider(
+                                                      height: 1,
+                                                      color: DefaultTheme
+                                                          .GREY_TOP_TAB_BAR,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FlatButton(
+                                                          height: 40,
+                                                          minWidth:
+                                                              250 / 2 - 10.5,
+                                                          child: Text('Không',
+                                                              style: TextStyle(
+                                                                  color: DefaultTheme
+                                                                      .BLUE_TEXT)),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        Container(
+                                                          height: 40,
+                                                          width: 0.5,
+                                                          color: DefaultTheme
+                                                              .GREY_TOP_TAB_BAR,
+                                                        ),
+                                                        FlatButton(
+                                                          height: 40,
+                                                          minWidth:
+                                                              250 / 2 - 10.5,
+                                                          child: Text('Có',
+                                                              style: TextStyle(
+                                                                  color: DefaultTheme
+                                                                      .RED_TEXT)),
+                                                          onPressed: () async {
+                                                            //
+                                                            Navigator.pop(
+                                                                context);
+                                                            showDialog(
+                                                              barrierDismissible:
+                                                                  false,
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return Center(
+                                                                  child:
+                                                                      ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(5)),
+                                                                    child:
+                                                                        BackdropFilter(
+                                                                      filter: ImageFilter.blur(
+                                                                          sigmaX:
+                                                                              25,
+                                                                          sigmaY:
+                                                                              25),
+                                                                      child:
+                                                                          Container(
+                                                                        width:
+                                                                            250,
+                                                                        height:
+                                                                            180,
+                                                                        decoration: BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(10),
+                                                                            color: DefaultTheme.WHITE.withOpacity(0.8)),
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.center,
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width: 150,
+                                                                              height: 120,
+                                                                              child: Image.asset('assets/images/loading.gif'),
+                                                                            ),
+                                                                            Text(
+                                                                              'Vui lòng chờ trong giây lát hệ thống đang xoá y lệnh',
+                                                                              style: TextStyle(color: DefaultTheme.GREY_TEXT, fontSize: 15, fontWeight: FontWeight.w400, decoration: TextDecoration.none),
+                                                                            ),
+                                                                            Spacer(),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+                                                            medicalInstructionRepository
+                                                                .deleteMedicalInstruction(
+                                                                    medicalInstructionId)
+                                                                .then((value) {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              _pullRefresh();
+                                                            });
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
                                   },
                                 ),
                               ],
