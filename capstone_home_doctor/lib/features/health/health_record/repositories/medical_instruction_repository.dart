@@ -306,14 +306,15 @@ class MedicalInstructionRepository extends BaseApiClient {
 
   Future<bool> deleteMedicalInstruction(int medicalInstructionID) async {
     try {
-      final String url = '/MedicalInstructions';
-      // final response = await getApi(url, null);
-      // if (response.statusCode == 200) {
-      //   MedicalInstructionDTO data =
-      //       MedicalInstructionDTO.fromJson(jsonDecode(response.body));
-      //   return data;
-      // }
-      return false;
+      final String url =
+          '/MedicalInstructions/DeleteMedicalInstruction?medicalInstructionId=${medicalInstructionID}';
+      final response = await postApi(url, null, null);
+      print(response.statusCode);
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       print('deleteMedicalInstruction: $e');
       return false;

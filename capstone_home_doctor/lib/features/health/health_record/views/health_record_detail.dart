@@ -866,22 +866,22 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     ),
                   ],
                 ),
-                // (dto.status.contains('PATIENT'))
-                //     ? Positioned(
-                //         width: 35,
-                //         height: 35,
-                //         top: 7,
-                //         right: 0,
-                //         child: ButtonHDr(
-                //           style: BtnStyle.BUTTON_IMAGE,
-                //           image: Image.asset('assets/images/ic-more.png'),
-                //           onTap: () {
-                //             _showMorePopup(dto.medicalInstructionId,
-                //                 dto.medicalInstructionType);
-                //           },
-                //         ),
-                //       )
-                //     : Container(),
+                (dto.status.contains('PATIENT'))
+                    ? Positioned(
+                        width: 35,
+                        height: 35,
+                        top: 7,
+                        right: 0,
+                        child: ButtonHDr(
+                          style: BtnStyle.BUTTON_IMAGE,
+                          image: Image.asset('assets/images/ic-more.png'),
+                          onTap: () {
+                            _showMorePopup(dto.medicalInstructionId,
+                                dto.medicalInstructionType);
+                          },
+                        ),
+                      )
+                    : Container(),
               ],
             ),
           ),
@@ -1860,10 +1860,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                                 );
                                                               },
                                                             );
-                                                            medicalInstructionRepository
+                                                            await medicalInstructionRepository
                                                                 .deleteMedicalInstruction(
                                                                     medicalInstructionId)
                                                                 .then((value) {
+                                                              print(value);
                                                               Navigator.pop(
                                                                   context);
                                                               _pullRefresh();

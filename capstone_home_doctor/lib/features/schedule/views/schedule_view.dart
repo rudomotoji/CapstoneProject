@@ -350,6 +350,7 @@ class _ScheduleView extends State<ScheduleView>
                       // (event.status.contains('CANCEL'))
                       //     ? Container()
                       //     : _buttonChangeDate(event, context),
+                      //
                     ],
                   ),
                 ),
