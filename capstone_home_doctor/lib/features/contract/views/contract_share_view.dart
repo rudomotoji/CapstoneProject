@@ -1334,7 +1334,10 @@ class _ContractShareView extends State<ContractShareView>
                     } else {
                       int totalHeader = 0;
                       List<int> listCountItemHeader = [];
+
                       if (isAddNewList) {
+                        ////////
+                        insideCount = 0;
                         listMi.clear();
                         diseaseMedicalInstructionsSelected.clear();
                         diseaseMedicalInstructionsSelected.add(
@@ -1428,317 +1431,325 @@ class _ContractShareView extends State<ContractShareView>
                                   color: DefaultTheme.GREY_TOP_TAB_BAR,
                                   height: 1,
                                 ),
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: state
-                                      .list[index].medicalInstructions.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index2) {
-                                    insideCount++;
-                                    int insideCountNow = insideCount;
-                                    return Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.only(
-                                                  top: 15, bottom: 10),
-                                              child: Text(
-                                                '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: DefaultTheme.BLACK,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
+                                (state.list[index].medicalInstructions.length >
+                                        0)
+                                    ? ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemCount: state.list[index]
+                                            .medicalInstructions.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index2) {
+                                          insideCount++;
+                                          int insideCountNow = insideCount;
+                                          return Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                        top: 15, bottom: 10),
+                                                    child: Text(
+                                                      '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        color:
+                                                            DefaultTheme.BLACK,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 2,
+                                                    ),
+                                                  ),
+                                                  Spacer(),
+                                                  ButtonHDr(
+                                                      onTap: () async {
+                                                        await _medicalShareBloc.add(
+                                                            MedicalShareEventGet(
+                                                                patientId:
+                                                                    _patientId,
+                                                                medicalInstructionType: state
+                                                                    .list[index]
+                                                                    .medicalInstructions[
+                                                                        index2]
+                                                                    .medicalInstructionTypeId,
+                                                                diseaseId: state
+                                                                    .list[index]
+                                                                    .diseaseId,
+                                                                medicalInstructionIds: []));
+
+                                                        print(
+                                                            'inside count now: ${insideCountNow}');
+                                                        _showMedicalShare(
+                                                            state
+                                                                .list[index]
+                                                                .medicalInstructions[
+                                                                    index2]
+                                                                .medicalInstructionTypeName,
+                                                            (insideCountNow -
+                                                                1),
+                                                            state.list[index]
+                                                                .diseaseId);
+                                                      },
+                                                      style:
+                                                          BtnStyle.BUTTON_IMAGE,
+                                                      image: Image.asset(
+                                                          'assets/images/ic-add-more-mi.png')),
+                                                ],
                                               ),
-                                            ),
-                                            Spacer(),
-                                            ButtonHDr(
-                                                onTap: () async {
-                                                  await _medicalShareBloc.add(
-                                                      MedicalShareEventGet(
-                                                          patientId: _patientId,
-                                                          medicalInstructionType: state
-                                                              .list[index]
-                                                              .medicalInstructions[
-                                                                  index2]
-                                                              .medicalInstructionTypeId,
-                                                          diseaseId: state
-                                                              .list[index]
-                                                              .diseaseId,
-                                                          medicalInstructionIds: []));
-
-                                                  print(
-                                                      'inside count now: ${insideCountNow}');
-                                                  _showMedicalShare(
-                                                      state
-                                                          .list[index]
-                                                          .medicalInstructions[
-                                                              index2]
-                                                          .medicalInstructionTypeName,
-                                                      (insideCountNow - 1),
-                                                      state.list[index]
-                                                          .diseaseId);
-                                                },
-                                                style: BtnStyle.BUTTON_IMAGE,
-                                                image: Image.asset(
-                                                    'assets/images/ic-add-more-mi.png')),
-                                          ],
-                                        ),
-                                        (listMi[insideCountNow - 1] != null &&
-                                                listMi[insideCountNow - 1]
-                                                    .isNotEmpty)
-                                            ? Container(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                height: 200,
-                                                child: ListView.builder(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  itemCount:
+                                              (listMi[insideCountNow - 1] !=
+                                                          null &&
                                                       listMi[insideCountNow - 1]
-                                                          .length,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index3) {
-                                                    //
-
-                                                    return Container(
-                                                      width: 150,
+                                                          .isNotEmpty)
+                                                  ? Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
                                                       height: 200,
-                                                      margin: EdgeInsets.only(
-                                                          right: 20),
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          print('tap');
+                                                      child: ListView.builder(
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        itemCount: listMi[
+                                                                insideCountNow -
+                                                                    1]
+                                                            .length,
+                                                        itemBuilder:
+                                                            (BuildContext
+                                                                    context,
+                                                                int index3) {
+                                                          //
 
-                                                          if (listMi[insideCountNow -
-                                                                              1]
-                                                                          [
-                                                                          index3]
-                                                                      .images ==
-                                                                  null ||
-                                                              listMi[insideCountNow -
-                                                                      1][index3]
-                                                                  .images
-                                                                  .isEmpty) {
-                                                            _showDetailVitalSign(listMi[
-                                                                    insideCountNow -
-                                                                        1][index3]
-                                                                .medicalInstructionId);
-                                                          } else {
-                                                            showFullDetailComponent(
-                                                                listMi[insideCountNow -
-                                                                            1]
-                                                                        [index3]
-                                                                    .images,
-                                                                '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
-                                                                '${listMi[insideCountNow - 1][index3].dateCreate}',
-                                                                '${listMi[insideCountNow - 1][index3].diagnose}');
-                                                          }
-                                                        },
-                                                        child: (listMi[insideCountNow -
+                                                          return Container(
+                                                            width: 150,
+                                                            height: 200,
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    right: 20),
+                                                            child: InkWell(
+                                                              onTap: () {
+                                                                print('tap');
+
+                                                                if (listMi[insideCountNow - 1][index3]
+                                                                            .images ==
+                                                                        null ||
+                                                                    listMi[insideCountNow -
                                                                                 1]
                                                                             [
                                                                             index3]
-                                                                        .images ==
-                                                                    null ||
-                                                                listMi[insideCountNow -
-                                                                            1]
-                                                                        [index3]
-                                                                    .images
-                                                                    .isEmpty)
-                                                            ? Stack(
-                                                                children: [
-                                                                  Container(
-                                                                    width: 150,
-                                                                    height: 200,
-                                                                    color: DefaultTheme
-                                                                        .GREY_TOP_TAB_BAR
-                                                                        .withOpacity(
-                                                                            0.6),
-                                                                  ),
-                                                                  Container(
-                                                                    width: 150,
-                                                                    height: 200,
-                                                                    color: DefaultTheme
-                                                                        .BLACK_BUTTON
-                                                                        .withOpacity(
-                                                                            0.4),
-                                                                  ),
-                                                                  Positioned(
-                                                                    bottom: 0,
-                                                                    child:
+                                                                        .images
+                                                                        .isEmpty) {
+                                                                  _showDetailVitalSign(listMi[insideCountNow -
+                                                                              1]
+                                                                          [
+                                                                          index3]
+                                                                      .medicalInstructionId);
+                                                                } else {
+                                                                  showFullDetailComponent(
+                                                                      listMi[insideCountNow - 1]
+                                                                              [
+                                                                              index3]
+                                                                          .images,
+                                                                      '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
+                                                                      '${listMi[insideCountNow - 1][index3].dateCreate}',
+                                                                      '${listMi[insideCountNow - 1][index3].diagnose}');
+                                                                }
+                                                              },
+                                                              child: (listMi[insideCountNow - 1][index3]
+                                                                              .images ==
+                                                                          null ||
+                                                                      listMi[insideCountNow - 1]
+                                                                              [
+                                                                              index3]
+                                                                          .images
+                                                                          .isEmpty)
+                                                                  ? Stack(
+                                                                      children: [
                                                                         Container(
-                                                                      width:
-                                                                          150,
-                                                                      height:
-                                                                          200,
-                                                                      color: DefaultTheme
-                                                                          .GREY_TOP_TAB_BAR
-                                                                          .withOpacity(
-                                                                              0.3),
-                                                                      child: Center(
-                                                                          child: (listMi[insideCountNow - 1][index3].images == null || listMi[insideCountNow - 1][index3].images.length < 2)
-                                                                              ? Text('')
-                                                                              : Text(
-                                                                                  '${listMi[insideCountNow - 1][index3].images.length}+',
-                                                                                  style: TextStyle(fontWeight: FontWeight.w600, color: DefaultTheme.WHITE, fontSize: 25),
-                                                                                )),
-                                                                    ),
-                                                                  ),
-                                                                  Positioned(
-                                                                    bottom: 0,
-                                                                    child:
-                                                                        Container(
-                                                                      width:
-                                                                          150,
-                                                                      height:
-                                                                          50,
-                                                                      color: DefaultTheme
-                                                                          .BLACK_BUTTON
-                                                                          .withOpacity(
-                                                                              0.5),
-                                                                      child:
-                                                                          Center(
-                                                                        child:
-                                                                            Column(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.center,
-                                                                          children: [
-                                                                            Text(
-                                                                              '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
-                                                                              style: TextStyle(color: DefaultTheme.WHITE),
-                                                                              maxLines: 1,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ),
-                                                                            Text(
-                                                                              'Ngày tạo: ${listMi[insideCountNow - 1][index3].dateCreate}',
-                                                                              style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
-                                                                              maxLines: 1,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ),
-                                                                          ],
+                                                                          width:
+                                                                              150,
+                                                                          height:
+                                                                              200,
+                                                                          color: DefaultTheme
+                                                                              .GREY_TOP_TAB_BAR
+                                                                              .withOpacity(0.6),
                                                                         ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                            : Stack(
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: 150,
-                                                                    height: 200,
-                                                                    child: Image
-                                                                        .network(
-                                                                      'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMi[insideCountNow - 1][index3].images.first}',
-                                                                      fit: BoxFit
-                                                                          .fill,
-                                                                    ),
-                                                                  ),
-                                                                  Container(
-                                                                    width: 150,
-                                                                    height: 200,
-                                                                    color: DefaultTheme
-                                                                        .BLACK_BUTTON
-                                                                        .withOpacity(
-                                                                            0.4),
-                                                                  ),
-                                                                  Positioned(
-                                                                    bottom: 0,
-                                                                    child:
                                                                         Container(
-                                                                      width:
-                                                                          150,
-                                                                      height:
-                                                                          200,
-                                                                      color: DefaultTheme
-                                                                          .GREY_TOP_TAB_BAR
-                                                                          .withOpacity(
-                                                                              0.3),
-                                                                      child: Center(
-                                                                          child: (listMi[insideCountNow - 1][index3].images == null || listMi[insideCountNow - 1][index3].images.length < 2)
-                                                                              ? Text('')
-                                                                              : Text(
-                                                                                  '${listMi[insideCountNow - 1][index3].images.length}+',
-                                                                                  style: TextStyle(fontWeight: FontWeight.w600, color: DefaultTheme.WHITE, fontSize: 25),
-                                                                                )),
-                                                                    ),
-                                                                  ),
-                                                                  Positioned(
-                                                                    bottom: 0,
-                                                                    child:
-                                                                        Container(
-                                                                      width:
-                                                                          150,
-                                                                      height:
-                                                                          50,
-                                                                      color: DefaultTheme
-                                                                          .BLACK_BUTTON
-                                                                          .withOpacity(
-                                                                              0.5),
-                                                                      child:
-                                                                          Center(
-                                                                        child:
-                                                                            Column(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.center,
-                                                                          children: [
-                                                                            Text(
-                                                                              '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
-                                                                              style: TextStyle(color: DefaultTheme.WHITE),
-                                                                              maxLines: 1,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ),
-                                                                            Text(
-                                                                              'Ngày tạo: ${listMi[insideCountNow - 1][index3].dateCreate}',
-                                                                              style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
-                                                                              maxLines: 1,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ),
-                                                                          ],
+                                                                          width:
+                                                                              150,
+                                                                          height:
+                                                                              200,
+                                                                          color: DefaultTheme
+                                                                              .BLACK_BUTTON
+                                                                              .withOpacity(0.4),
                                                                         ),
-                                                                      ),
+                                                                        Positioned(
+                                                                          bottom:
+                                                                              0,
+                                                                          child:
+                                                                              Container(
+                                                                            width:
+                                                                                150,
+                                                                            height:
+                                                                                200,
+                                                                            color:
+                                                                                DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.3),
+                                                                            child: Center(
+                                                                                child: (listMi[insideCountNow - 1][index3].images == null || listMi[insideCountNow - 1][index3].images.length < 2)
+                                                                                    ? Text('')
+                                                                                    : Text(
+                                                                                        '${listMi[insideCountNow - 1][index3].images.length}+',
+                                                                                        style: TextStyle(fontWeight: FontWeight.w600, color: DefaultTheme.WHITE, fontSize: 25),
+                                                                                      )),
+                                                                          ),
+                                                                        ),
+                                                                        Positioned(
+                                                                          bottom:
+                                                                              0,
+                                                                          child:
+                                                                              Container(
+                                                                            width:
+                                                                                150,
+                                                                            height:
+                                                                                50,
+                                                                            color:
+                                                                                DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
+                                                                            child:
+                                                                                Center(
+                                                                              child: Column(
+                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                children: [
+                                                                                  Text(
+                                                                                    '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
+                                                                                    style: TextStyle(color: DefaultTheme.WHITE),
+                                                                                    maxLines: 1,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                  ),
+                                                                                  Text(
+                                                                                    'Ngày tạo: ${listMi[insideCountNow - 1][index3].dateCreate}',
+                                                                                    style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
+                                                                                    maxLines: 1,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                  : Stack(
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                              150,
+                                                                          height:
+                                                                              200,
+                                                                          child:
+                                                                              Image.network(
+                                                                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMi[insideCountNow - 1][index3].images.first}',
+                                                                            fit:
+                                                                                BoxFit.fill,
+                                                                          ),
+                                                                        ),
+                                                                        Container(
+                                                                          width:
+                                                                              150,
+                                                                          height:
+                                                                              200,
+                                                                          color: DefaultTheme
+                                                                              .BLACK_BUTTON
+                                                                              .withOpacity(0.4),
+                                                                        ),
+                                                                        Positioned(
+                                                                          bottom:
+                                                                              0,
+                                                                          child:
+                                                                              Container(
+                                                                            width:
+                                                                                150,
+                                                                            height:
+                                                                                200,
+                                                                            color:
+                                                                                DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.3),
+                                                                            child: Center(
+                                                                                child: (listMi[insideCountNow - 1][index3].images == null || listMi[insideCountNow - 1][index3].images.length < 2)
+                                                                                    ? Text('')
+                                                                                    : Text(
+                                                                                        '${listMi[insideCountNow - 1][index3].images.length}+',
+                                                                                        style: TextStyle(fontWeight: FontWeight.w600, color: DefaultTheme.WHITE, fontSize: 25),
+                                                                                      )),
+                                                                          ),
+                                                                        ),
+                                                                        Positioned(
+                                                                          bottom:
+                                                                              0,
+                                                                          child:
+                                                                              Container(
+                                                                            width:
+                                                                                150,
+                                                                            height:
+                                                                                50,
+                                                                            color:
+                                                                                DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
+                                                                            child:
+                                                                                Center(
+                                                                              child: Column(
+                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                children: [
+                                                                                  Text(
+                                                                                    '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
+                                                                                    style: TextStyle(color: DefaultTheme.WHITE),
+                                                                                    maxLines: 1,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                  ),
+                                                                                  Text(
+                                                                                    'Ngày tạo: ${listMi[insideCountNow - 1][index3].dateCreate}',
+                                                                                    style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
+                                                                                    maxLines: 1,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                  ),
-                                                                ],
-                                                              ),
+                                                            ),
+                                                          );
+                                                        },
                                                       ),
-                                                    );
-                                                  },
+                                                    )
+                                                  : Container(),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: 5, bottom: 5),
+                                                child: Divider(
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR,
+                                                  height: 1,
                                                 ),
                                               )
-                                            : Container(),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 5, bottom: 5),
-                                          child: Divider(
-                                            color:
-                                                DefaultTheme.GREY_TOP_TAB_BAR,
-                                            height: 1,
-                                          ),
-                                        )
-                                      ],
-                                    );
-                                  },
-                                ),
+                                            ],
+                                          );
+                                        },
+                                      )
+                                    : Container(),
                               ],
                             ),
                           );
                         },
                       );
+
                       // Container(
                       //   padding: EdgeInsets.only(bottom: 10, top: 10),
                       //   margin: EdgeInsets.only(left: 20, right: 20),
@@ -2090,21 +2101,27 @@ class _ContractShareView extends State<ContractShareView>
                                               child: ButtonHDr(
                                                 style: BtnStyle.BUTTON_BLACK,
                                                 label: 'Xong',
-                                                onTap: () {
+                                                onTap: () async {
                                                   print(
                                                       'list disease lv3  selected ids: ${_listLv3IdSelected}');
 
                                                   ///
-                                                  listMi.clear();
+                                                  if (listMi.length > 0) {
+                                                    listMi.clear();
+                                                  }
                                                   isAddNewList = true;
-                                                  Future.delayed(
+                                                  await Future.delayed(
                                                       const Duration(
-                                                          seconds: 1), () {
-                                                    _medInsTypeReqListBloc.add(
-                                                        MedInsTypeReqEventGet(
-                                                            diseaseIds:
-                                                                _listLv3IdSelected));
-                                                
+                                                          seconds: 1),
+                                                      () async {
+                                                    if (_listLv3IdSelected
+                                                            .length >
+                                                        0) {
+                                                      _medInsTypeReqListBloc.add(
+                                                          MedInsTypeReqEventGet(
+                                                              diseaseIds:
+                                                                  _listLv3IdSelected));
+                                                    }
                                                   });
 
                                                   ///
