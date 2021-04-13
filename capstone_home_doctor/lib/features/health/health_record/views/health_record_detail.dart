@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
+import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -62,17 +63,10 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   MedInsCreateBloc _medInsCreateBloc;
   MedicalShareInsBloc _medicalShareInsBloc;
 
-  List<MedicalInstructionDTO> listMedicalIns = [];
-  // List<MedicalInstructionDTO> listMedicalInsShared = [];
-  HealthRecordDTO _healthRecordDTO = HealthRecordDTO(
-      contractId: 0,
-      dateCreated: '',
-      description: '',
-      // disease: '',
-      // doctorName: '',
-      healthRecordId: 0,
-      personalHealthRecordId: 0,
-      place: '');
+  // List<MedicalInstructionDTO> listMedicalIns = [];
+  List<MedicalInsGroup> listGroupMedIns = [];
+  HealthRecordDTO _healthRecordDTO;
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -80,7 +74,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
     // controller = new TabController(length: 1, vsync: this);
 
-    listMedicalIns = [];
+    // listMedicalIns = [];
     _healthRecordDetailBloc = BlocProvider.of(context);
     _medicalInstructionListBloc = BlocProvider.of(context);
     _medInsCreateBloc = BlocProvider.of(context);
@@ -130,83 +124,68 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                   isMainView: false,
                   buttonHeaderType: ButtonHeaderType.CREATE_HEALTH_RECORD,
                 ),
-                BlocBuilder<HealthRecordDetailBloc, HealthRecordDetailState>(
-                  builder: (context, state) {
-                    if (state is HealthRecordDetailStateLoading) {
-                      return Container(
-                        width: 200,
-                        height: 200,
-                        child: SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Image.asset('assets/images/loading.gif'),
-                        ),
-                      );
-                    }
-                    if (state is HealthRecordDetailStateFailure) {
-                      return Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Center(
+                RefreshIndicator(
+                  child: Container(
+                    child: (_healthRecordDTO != null)
+                        ? Container(
+                            height: MediaQuery.of(context).size.height * 0.80,
+                            child: CustomScrollView(
+                              physics: NeverScrollableScrollPhysics(),
+                              slivers: [
+                                buildSliverToBoxAdapterHeader(),
+                                buildSliverAppBarCollepse(),
+                                buildTabbarViewHasContract(),
+                              ],
+                            ),
+                          )
+                        : Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Center(
                               child: Text(
-                                  'Kiểm tra lại đường truyền kết nối mạng')));
-                    }
-                    if (state is HealthRecordDetailStateSuccess) {
-                      if (state.healthRecordDTO != null) {
-                        _healthRecordDTO = state.healthRecordDTO;
-                      }
-                      return RefreshIndicator(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.80,
-                          child: CustomScrollView(
-                            physics: NeverScrollableScrollPhysics(),
-                            slivers: [
-                              buildSliverToBoxAdapterHeader(),
-                              buildSliverAppBarCollepse(),
-                              buildTabbarViewHasContract(),
-                            ],
+                                'Không thể tải danh sách hồ sơ',
+                              ),
+                            ),
                           ),
-                        ),
-                        onRefresh: _pullRefresh,
-                      );
-                    }
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Center(
-                        child: Text(
-                          'Không thể tải danh sách hồ sơ',
-                        ),
-                      ),
-                    );
-                  },
+                  ),
+                  onRefresh: _pullRefresh,
                 ),
               ],
             ),
           ),
-          floatingActionButton: (_healthRecordDTO.contractId != null)
-              ? FloatingActionButton.extended(
-                  elevation: 3,
-                  label: Text('Y lệnh mới',
-                      style: TextStyle(color: DefaultTheme.BLUE_DARK)),
-                  backgroundColor: DefaultTheme.GREY_VIEW,
-                  icon: SizedBox(
-                    width: 20,
-                    height: 20,
-                    child:
-                        Image.asset('assets/images/ic-medical-instruction.png'),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
-                            arguments: _healthRecordDTO.diseases)
-                        .then((value) async {
-                      await _pullRefresh();
-                    });
-                  },
-                )
-              : Container(),
+          floatingActionButton: buttonAddMedicalIns(),
         ),
       ),
     );
+  }
+
+  buttonAddMedicalIns() {
+    print('_healthRecordDTO: ${_healthRecordDTO}');
+
+    if (_healthRecordDTO == null) {
+      return Container();
+    } else if (_healthRecordDTO.contractId == null) {
+      return FloatingActionButton.extended(
+        elevation: 3,
+        label:
+            Text('Y lệnh mới', style: TextStyle(color: DefaultTheme.BLUE_DARK)),
+        backgroundColor: DefaultTheme.GREY_VIEW,
+        icon: SizedBox(
+          width: 20,
+          height: 20,
+          child: Image.asset('assets/images/ic-medical-instruction.png'),
+        ),
+        onPressed: () {
+          Navigator.of(context)
+              .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
+                  arguments: _healthRecordDTO.diseases)
+              .then((value) async {
+            await _pullRefresh();
+          });
+        },
+      );
+    } else {
+      return Container();
+    }
   }
 
   SliverAppBar buildSliverAppBarCollepse() {
@@ -515,18 +494,47 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
           }
           if (state is MedicalInstructionListStateSuccess) {
             if (state.listMedIns != null || state.listMedIns.isNotEmpty) {
-              listMedicalIns.clear();
-              listMedicalIns = state.listMedIns;
-              // listMedicalInsShared.clear();
-              // for (var medicalIns in state.listMedIns) {
-              //   if (medicalIns.status != null) {
-              //     if (medicalIns.status.contains('DOCTOR')) {
-              //       listMedicalIns.add(medicalIns);
-              //     } else {
-              //       listMedicalInsShared.add(medicalIns);
-              //     }
-              //   }
-              // }
+              // listMedicalIns.clear();
+              listGroupMedIns.clear();
+              // listMedicalIns = state.listMedIns;
+              //
+              List<MedicalInsGroup> listGroupMed = [];
+              List<MedicalInstructionDTO> _listMedIns = [];
+              for (var item in state.listMedIns) {
+                MedicalInsGroup _medicalGroupItem = null;
+                if (listGroupMed.length <= 0) {
+                  _listMedIns = [];
+                  _listMedIns.add(item);
+                  _medicalGroupItem = MedicalInsGroup(
+                      type: item.medicalInstructionType,
+                      medicalInstructionTypeId: item.medicalInstructionTypeId,
+                      listMedicalIns: _listMedIns);
+
+                  listGroupMed.add(_medicalGroupItem);
+                } else {
+                  for (var element in listGroupMed) {
+                    _listMedIns = [];
+                    _listMedIns.add(item);
+                    _medicalGroupItem = null;
+                    //
+                    if (element.medicalInstructionTypeId ==
+                        item.medicalInstructionTypeId) {
+                      element.listMedicalIns.add(item);
+                    } else {
+                      _medicalGroupItem = MedicalInsGroup(
+                          type: item.medicalInstructionType,
+                          medicalInstructionTypeId:
+                              item.medicalInstructionTypeId,
+                          listMedicalIns: _listMedIns);
+                    }
+                  }
+                  if (_medicalGroupItem != null) {
+                    listGroupMed.add(_medicalGroupItem);
+                  }
+                }
+              }
+
+              listGroupMedIns = listGroupMed;
             }
           }
           return TabBarView(
@@ -605,37 +613,33 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   // }
 
   Widget _medicalShare() {
-    if (listMedicalIns != null) {
-      return (listMedicalIns.length != 0)
-          ? ListView.builder(
-              scrollDirection: Axis.vertical,
-              // shrinkWrap: true,
-              // physics: NeverScrollableScrollPhysics(),
-              itemCount: listMedicalIns.length,
-              itemBuilder: (BuildContext context, int index) {
-                // print(index);
-                return _itemRow(listMedicalIns[index]);
-              },
-            )
-          : Container(
-              width: MediaQuery.of(context).size.width,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                        width: 25,
-                        height: 25,
-                        child: Image.asset(
-                            'assets/images/ic-medical-instruction.png')),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 20),
-                    ),
-                    Text('Bạn chưa có phiếu nào')
-                  ],
-                ),
-              ),
-            );
+    if (listGroupMedIns.length > 0) {
+      return ListView.builder(
+        scrollDirection: Axis.vertical,
+        itemCount: listGroupMedIns.length,
+        itemBuilder: (BuildContext context, int index) {
+          var itemGroup = listGroupMedIns[index];
+          return ExpansionTile(
+              title: Text('${itemGroup.type}'),
+              trailing: Icon(Icons.expand_more),
+              children: itemGroup.listMedicalIns.map((e) {
+                return _itemRow(e);
+              }).toList()
+
+              // ListView.builder(
+              //   scrollDirection: Axis.vertical,
+              //   shrinkWrap: true,
+              //   physics: NeverScrollableScrollPhysics(),
+              //   itemCount: itemGroup.listMedicalIns.length,
+              //   itemBuilder: (BuildContext context, int index) {
+              //     // print(index);
+              //     return _itemRow(itemGroup.listMedicalIns[index]);
+              //   },
+              // )
+
+              );
+        },
+      );
     } else {
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -657,6 +661,58 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         ),
       );
     }
+    // if (listMedicalIns != null) {
+    //   return (listMedicalIns.length != 0)
+    // ? ListView.builder(
+    //     scrollDirection: Axis.vertical,
+    //     // shrinkWrap: true,
+    //     // physics: NeverScrollableScrollPhysics(),
+    //     itemCount: listMedicalIns.length,
+    //     itemBuilder: (BuildContext context, int index) {
+    //       // print(index);
+    //       return _itemRow(listMedicalIns[index]);
+    //     },
+    //   )
+    //       : Container(
+    //           width: MediaQuery.of(context).size.width,
+    //           child: Center(
+    //             child: Column(
+    //               mainAxisAlignment: MainAxisAlignment.center,
+    //               children: [
+    //                 SizedBox(
+    //                     width: 25,
+    //                     height: 25,
+    //                     child: Image.asset(
+    //                         'assets/images/ic-medical-instruction.png')),
+    //                 Padding(
+    //                   padding: EdgeInsets.only(bottom: 20),
+    //                 ),
+    //                 Text('Bạn chưa có phiếu nào')
+    //               ],
+    //             ),
+    //           ),
+    //         );
+    // } else {
+    // return Container(
+    //   width: MediaQuery.of(context).size.width,
+    //   child: Center(
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: [
+    //         SizedBox(
+    //             width: 25,
+    //             height: 25,
+    //             child:
+    //                 Image.asset('assets/images/ic-medical-instruction.png')),
+    //         Padding(
+    //           padding: EdgeInsets.only(bottom: 20),
+    //         ),
+    //         Text('Bạn chưa có phiếu nào')
+    //       ],
+    //     ),
+    //   ),
+    // );
+    // }
   }
 
   Widget _itemRow(MedicalInstructionDTO dto) {
@@ -704,7 +760,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             RoutesHDr.MEDICAL_HISTORY_DETAIL,
                                             arguments: dto.medicalInstructionId)
                                         .then((value) async {
-                                      await _pullRefresh();
+                                      // await _pullRefresh();
                                     });
                                   } else if (dto.medicalInstructionTypeId ==
                                       8) {
@@ -736,24 +792,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       )
                                     : Stack(
                                         children: [
-                                          // (dto?.image.length <= 0)
-                                          //     ? Container(
-                                          //         width: (70 * 1.5),
-                                          //         height: (70 * 1.5),
-                                          //         color: DefaultTheme
-                                          //             .GREY_TOP_TAB_BAR)
-                                          //     : Container(
-                                          //         width: (70 * 1.5),
-                                          //         height: (70 * 1.5),
-                                          //         color: DefaultTheme
-                                          //             .GREY_TOP_TAB_BAR,
-                                          //         child: (dto?.image == null)
-                                          //             ? Container
-                                          //             : Image.network(
-                                          //                 'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto?.image.first}',
-                                          //                 fit: BoxFit.fill,
-                                          //               ),
-                                          //       ),
                                           Container(
                                             width: (70 * 1.5),
                                             height: (70 * 1.5),
@@ -1168,11 +1206,12 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             .vitalSignScheduleRespone
                                             .timeCanceled,
                                       };
+                                      Navigator.pop(context);
                                       Navigator.pushNamed(context,
                                               RoutesHDr.VITAL_SIGN_CHART_DETAIL,
                                               arguments: arguments)
                                           .then((value) async {
-                                        await _pullRefresh();
+                                        // await _pullRefresh();
                                       });
                                     },
                                   ),
@@ -1489,13 +1528,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     child: InkWell(
                                       onTap: () {
                                         setModalState(() {
-                                          // if (positionImage == imgs.length) {
-                                          //   positionImage = 0;
-                                          // } else if (positionImage < imgs.length - 1) {
-                                          //   positionImage--;
-                                          // } else {
-                                          //   positionImage = 0;
-                                          // }
                                           if (positionImage == 0) {
                                             positionImage = imgs.length - 1;
                                           } else {
@@ -1924,7 +1956,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
   getHRId() async {
     await _healthRecordHelper.getHRId().then(
-      (value) {
+      (value) async {
         print('HR ID NOW $_hrId');
 
         setState(() {
@@ -1935,6 +1967,46 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
             _medicalInstructionListBloc
                 .add(MedicalInstructionListEventGetList(hrId: _hrId));
           }
+
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      width: 300,
+                      height: 300,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: DefaultTheme.WHITE.withOpacity(0.8)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 200,
+                            height: 200,
+                            child: Image.asset('assets/images/loading.gif'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        });
+
+        await healthRecordRepository.getHealthRecordById(value).then((value) {
+          Navigator.pop(context);
+          setState(() {
+            _healthRecordDTO = value;
+          });
         });
       },
     );
@@ -1959,3 +2031,11 @@ final Shader _normalHealthColors = LinearGradient(
     DefaultTheme.GRADIENT_2,
   ],
 ).createShader(new Rect.fromLTWH(0.0, 0.0, 200.0, 90.0));
+
+class MedicalInsGroup {
+  String type;
+  int medicalInstructionTypeId;
+  List<MedicalInstructionDTO> listMedicalIns;
+  MedicalInsGroup(
+      {this.type, this.medicalInstructionTypeId, this.listMedicalIns});
+}
