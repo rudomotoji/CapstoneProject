@@ -74,6 +74,7 @@ dev_dependencies:
   tesseract_ocr: ^0.3.1
   sentry_flutter: ^4.0.6
   flutter_cupertino_localizations: ^1.0.1
+  webview_flutter: ^1.0.7
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -90,6 +91,7 @@ flutter:
   assets:
     - assets/
     - assets/tessdata/
+    - assets/images/vnpay.png
     - assets/images/avatar-default.jpg
     - assets/images/logo-home-doctor.png
     - assets/images/ic-pop.png
