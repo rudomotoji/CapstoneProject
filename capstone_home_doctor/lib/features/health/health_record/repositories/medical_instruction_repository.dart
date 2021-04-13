@@ -229,7 +229,7 @@ class MedicalInstructionRepository extends BaseApiClient {
         });
       }
       strSymptom = strSymptom.replaceAll(
-          new RegExp(r'[!@#$%^&*().?":{}|<>\`~wzjWZJ©=——,—°";†_¬‡…ÿ›]+'), '');
+          new RegExp(r'[!@#$%^&*().?":{}|<>\`~wzjfWZJF©=——,—°";†_¬‡…ÿ›]+'), '');
 
       return ImageScannerDTO(
           symptom: strSymptom.trim(),

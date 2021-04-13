@@ -102,11 +102,11 @@ class _CreateMedicalInstructionViewState
       for (var item in arguments) {
         Disease dto = Disease.fromJson(item);
         listDisease.add(dto);
-        listDiseaseSelected.add(dto);
+        // listDiseaseSelected.add(dto);
       }
-      setState(() {
-        _diseaseIds = listDisease.map((e) => e.diseaseId).toList();
-      });
+      // setState(() {
+      //   _diseaseIds = listDisease.map((e) => e.diseaseId).toList();
+      // });
     }
   }
 
@@ -465,7 +465,10 @@ class _CreateMedicalInstructionViewState
                 ],
               ),
             ),
-            (_dianoseController.text == '' || listImage.length <= 0)
+            (_dianoseController.text == '' ||
+                    listImage.length <= 0 ||
+                    (_diseaseIds.length <= 0 &&
+                        selectType.status.contains('SCOPE')))
                 ? Container()
                 : Positioned(
                     child: Padding(
@@ -477,7 +480,6 @@ class _CreateMedicalInstructionViewState
                         onTap: () async {
                           if (_patientId != 0) {
                             MedicalInstructionDTO medInsDTO;
-
                             if (selectType.status.contains('SCOPE')) {
                               if (_diseaseIds.length == listDisease.length ||
                                   _diseaseIds.length <= 0) {
@@ -851,6 +853,13 @@ class _CreateMedicalInstructionViewState
                                             fontSize: 22,
                                             fontWeight: FontWeight.w600),
                                       ),
+                                      // Text(
+                                      //   'Hãy chọn 1 bệnh lý trong danh sách này',
+                                      //   style: TextStyle(
+                                      //       color: DefaultTheme.BLACK,
+                                      //       fontSize: 16,
+                                      //       fontWeight: FontWeight.w600),
+                                      // ),
                                       Padding(
                                         padding: EdgeInsets.only(bottom: 20),
                                       ),
@@ -934,24 +943,30 @@ class _CreateMedicalInstructionViewState
                                                                   setState(
                                                                     () {
                                                                       if (checkTemp) {
-                                                                        _diseaseIds.removeWhere((item) =>
-                                                                            item ==
-                                                                            e.diseaseId);
+                                                                        // _diseaseIds.removeWhere((item) =>
+                                                                        //     item ==
+                                                                        //     e.diseaseId);
+                                                                        //
+                                                                        _diseaseIds
+                                                                            .clear();
                                                                         _diseaseIds
                                                                             .add(e.diseaseId);
 
-                                                                        listDiseaseSelected.removeWhere((item) =>
-                                                                            item.diseaseId ==
-                                                                            e.diseaseId);
+                                                                        // listDiseaseSelected.removeWhere((item) =>
+                                                                        //     item.diseaseId ==
+                                                                        //     e.diseaseId);
+                                                                        //
+                                                                        listDiseaseSelected
+                                                                            .clear();
                                                                         listDiseaseSelected
                                                                             .add(e);
                                                                       } else {
-                                                                        _diseaseIds.removeWhere((item) =>
-                                                                            item ==
-                                                                            e.diseaseId);
-                                                                        listDiseaseSelected.removeWhere((item) =>
-                                                                            item.diseaseId ==
-                                                                            e.diseaseId);
+                                                                        // _diseaseIds.removeWhere((item) =>
+                                                                        //     item ==
+                                                                        //     e.diseaseId);
+                                                                        // listDiseaseSelected.removeWhere((item) =>
+                                                                        //     item.diseaseId ==
+                                                                        //     e.diseaseId);
                                                                       }
                                                                     },
                                                                   );

@@ -254,6 +254,10 @@ void checkNotifiMedical() async {
     MINUTES = session['minutes'];
   }
 
+  if (appointment == null) {
+    await getCalendarAppointment();
+  }
+
   if (hour == MORNING && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('morning').then((value) {
       if (value.length > 0) {
@@ -805,17 +809,19 @@ getCalendarAppointment() async {
     });
   } else {
     await authenHelper.getAccountId().then((value) {
-      _appointmentRepository.getAppointment(value, '').then((value) {
-        for (var item in value) {
-          DateTime dateCheck =
-              new DateFormat('dd/MM/yyyy').parse(item.dateExamination);
-          if (dateCheck.millisecondsSinceEpoch ==
-              curentDateNow.millisecondsSinceEpoch) {
-            appointment = item;
-            break;
+      if (value != 0) {
+        _appointmentRepository.getAppointment(value, '').then((value) {
+          for (var item in value) {
+            DateTime dateCheck =
+                new DateFormat('dd/MM/yyyy').parse(item.dateExamination);
+            if (dateCheck.millisecondsSinceEpoch ==
+                curentDateNow.millisecondsSinceEpoch) {
+              appointment = item;
+              break;
+            }
           }
-        }
-      });
+        });
+      }
     });
   }
 }
