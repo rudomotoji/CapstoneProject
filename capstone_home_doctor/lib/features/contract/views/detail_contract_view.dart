@@ -511,7 +511,7 @@ class _DetailContractView extends State<DetailContractView>
                                       contractId: _contractId,
                                       doctorId: _doctorId,
                                       patientId: _patientId,
-                                      status: 'ACTIVE',
+                                      status: 'SIGNED',
                                     );
                                     return showDialog(
                                         barrierDismissible: false,
@@ -2176,7 +2176,7 @@ class _DetailContractView extends State<DetailContractView>
                                         ContractUpdateDTO contractUpdateDTO =
                                             ContractUpdateDTO(
                                           contractId: _contractId,
-                                          doctorId: 1,
+                                          doctorId: _doctorId,
                                           patientId: _patientId,
                                           status: 'SIGNED',
                                         );

@@ -2095,12 +2095,17 @@ class _ContractShareView extends State<ContractShareView>
                                                       'list disease lv3  selected ids: ${_listLv3IdSelected}');
 
                                                   ///
-                                                  _medInsTypeReqListBloc.add(
-                                                      MedInsTypeReqEventGet(
-                                                          diseaseIds:
-                                                              _listLv3IdSelected));
-
+                                                  listMi.clear();
                                                   isAddNewList = true;
+                                                  Future.delayed(
+                                                      const Duration(
+                                                          seconds: 1), () {
+                                                    _medInsTypeReqListBloc.add(
+                                                        MedInsTypeReqEventGet(
+                                                            diseaseIds:
+                                                                _listLv3IdSelected));
+                                                
+                                                  });
 
                                                   ///
                                                   ///PROCESS REQUIRED MEDICAL INSTRUCTIONC HERE.

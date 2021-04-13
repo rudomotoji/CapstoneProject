@@ -16,6 +16,10 @@
         {
           "medicalInstructionTypeId": 6,
           "medicalInstructionTypeName": "Phiếu điện tim"
+        },
+        {
+          "medicalInstructionTypeId": 4,
+          "medicalInstructionTypeName": "Phiếu X-Quang"
         }
     ]
   },
@@ -26,6 +30,10 @@
         {
           "medicalInstructionTypeId": 6,
           "medicalInstructionTypeName": "Phiếu điện tim"
+        },
+        {
+          "medicalInstructionTypeId": 4,
+          "medicalInstructionTypeName": "Phiếu X-Quang"
         }
     ]
   },

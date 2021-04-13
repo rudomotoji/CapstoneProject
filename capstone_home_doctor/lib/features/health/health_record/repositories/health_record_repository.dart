@@ -96,8 +96,8 @@ class HealthRecordRepository extends BaseApiClient {
     try {
       //
       final request = await postApi(url, null, medicalInstructionIds);
-      // print('${request.request}');
-      // print('${request.body}');
+      print('${request.headers}');
+      print('${request.body}');
       if (request.statusCode == 200) {
         final responseData = json.decode(request.body) as List;
         List<MedicalShareDTO> list = responseData.map((dto) {
@@ -105,7 +105,7 @@ class HealthRecordRepository extends BaseApiClient {
         }).toList();
         return list;
       } else {
-        return null;
+        return List<MedicalShareDTO>();
       }
     } catch (e) {
       print('ERROR AT getListMedicalShare: ${e}');

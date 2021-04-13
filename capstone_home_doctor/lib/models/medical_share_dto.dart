@@ -53,7 +53,12 @@ class MedicalInstructions {
 
   MedicalInstructions.fromJson(Map<String, dynamic> json) {
     medicalInstructionId = json['medicalInstructionId'];
-    diseases = json['diseases'];
+    if (json['diseases'] == null) {
+      diseases = [];
+    } else {
+      diseases = json['diseases'].cast<String>();
+    }
+
     images = json['images'].cast<String>();
     dateCreate = json['dateCreate'];
     diagnose = json['diagnose'];
