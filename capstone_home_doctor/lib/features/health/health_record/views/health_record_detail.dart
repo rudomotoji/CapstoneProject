@@ -610,7 +610,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               // physics: NeverScrollableScrollPhysics(),
               itemCount: listMedicalIns.length,
               itemBuilder: (BuildContext context, int index) {
-                print(index);
+                // print(index);
                 return _itemRow(listMedicalIns[index]);
               },
             )
