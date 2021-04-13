@@ -156,17 +156,19 @@ class MedicalInstructionRepository extends BaseApiClient {
       request.fields['PatientId'] = '${dto.patientId}';
       request.fields['Description'] = '${dto.description}';
       request.fields['Diagnose'] = '${dto.diagnose}';
+      request.fields['DiseaseId'] = '${dto.diseaseIds}';
 
-      if (dto.diseaseIds == null) {
-        print('null');
-        request.fields['DiseaseIds'] = '';
-      } else {
-        print('not null');
-        for (String itemDisease in dto.diseaseIds) {
-          request.files
-              .add(http.MultipartFile.fromString('DiseaseIds', itemDisease));
-        }
-      }
+      // if (dto.diseaseIds == null) {
+      //   print('null');
+      //   request.fields['DiseaseId'] = '';
+      // } else {
+      //   print('not null');
+      //   for (String itemDisease in dto.diseaseIds) {
+      //     request.fields['DiseaseId'] = '${itemDisease}';
+      //     // request.files
+      //     //     .add(http.MultipartFile.fromString('DiseaseIds', itemDisease));
+      //   }
+      // }
 
       for (var imageItem in dto.imageFile) {
         String fileName = imageItem.split("/").last;
@@ -229,7 +231,8 @@ class MedicalInstructionRepository extends BaseApiClient {
         });
       }
       strSymptom = strSymptom.replaceAll(
-          new RegExp(r'[!@#$%^&*().?":{}|<>\`~wzjfWZJF©=——,—°";†_¬‡…ÿ›]+'), '');
+          new RegExp(r'[!@#$%^&*().?":{}|<>\`~wzjfWZJF©=——,—°";†_¬‡…ÿ›Ƒ]+'),
+          '');
 
       return ImageScannerDTO(
           symptom: strSymptom.trim(),

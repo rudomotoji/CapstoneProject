@@ -499,7 +499,7 @@ class _CreateMedicalInstructionViewState
                                   patientId: _patientId,
                                   description: _note,
                                   diagnose: _dianoseController.text,
-                                  diseaseIds: _diseaseIds,
+                                  diseaseIds: _diseaseIds.first,
                                   imageFile: listImage,
                                 );
                               }
