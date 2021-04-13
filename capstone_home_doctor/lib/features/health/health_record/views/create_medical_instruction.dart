@@ -465,7 +465,10 @@ class _CreateMedicalInstructionViewState
                 ],
               ),
             ),
-            (_dianoseController.text == '' || listImage.length <= 0)
+            (_dianoseController.text == '' ||
+                    listImage.length <= 0 ||
+                    (_diseaseIds.length <= 0 &&
+                        selectType.status.contains('SCOPE')))
                 ? Container()
                 : Positioned(
                     child: Padding(
@@ -477,7 +480,6 @@ class _CreateMedicalInstructionViewState
                         onTap: () async {
                           if (_patientId != 0) {
                             MedicalInstructionDTO medInsDTO;
-
                             if (selectType.status.contains('SCOPE')) {
                               if (_diseaseIds.length == listDisease.length ||
                                   _diseaseIds.length <= 0) {
@@ -959,12 +961,12 @@ class _CreateMedicalInstructionViewState
                                                                         listDiseaseSelected
                                                                             .add(e);
                                                                       } else {
-                                                                        _diseaseIds.removeWhere((item) =>
-                                                                            item ==
-                                                                            e.diseaseId);
-                                                                        listDiseaseSelected.removeWhere((item) =>
-                                                                            item.diseaseId ==
-                                                                            e.diseaseId);
+                                                                        // _diseaseIds.removeWhere((item) =>
+                                                                        //     item ==
+                                                                        //     e.diseaseId);
+                                                                        // listDiseaseSelected.removeWhere((item) =>
+                                                                        //     item.diseaseId ==
+                                                                        //     e.diseaseId);
                                                                       }
                                                                     },
                                                                   );
