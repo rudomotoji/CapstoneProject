@@ -222,11 +222,13 @@ class _DashboardState extends State<DashboardPage>
   _getPeripheralInfo() async {
     await peripheralHelper.getPeripheralId().then((peripheralId) async {
       if (peripheralId != '') {
-        await peripheralHelper
-            .isPeripheralConnected()
-            .then((isConnected) async {
-          _isConnectedWithPeripheral = isConnected;
-          _peripheralId = peripheralId;
+        setState(() {
+          _isConnectedWithPeripheral = true;
+        });
+        _peripheralId = peripheralId;
+      } else {
+        setState(() {
+          _isConnectedWithPeripheral = false;
         });
       }
     });
@@ -235,13 +237,13 @@ class _DashboardState extends State<DashboardPage>
   _getPeopleStatus() async {
     await vitalSignHelper.getPeopleStatus().then((value) async {
       //
-      // setState(() {
-      if (value == 'DANGER') {
-        checkPeopleStatusLocal = true;
-      } else {
-        checkPeopleStatusLocal = false;
-      }
-      // });
+      setState(() {
+        if (value == 'DANGER') {
+          checkPeopleStatusLocal = true;
+        } else {
+          checkPeopleStatusLocal = false;
+        }
+      });
     });
   }
   //   const oneSec = const Duration(seconds: 60);
@@ -507,7 +509,7 @@ class _DashboardState extends State<DashboardPage>
               Padding(
                 padding: EdgeInsets.only(left: 20),
               ),
-              Text('Bạn có lịch dùng thuốc vào buổi tối',
+              Text('Bạn có lịch dùng thuốc vào buổi trưa',
                   style: TextStyle(color: DefaultTheme.BLACK))
             ],
           ),
@@ -712,7 +714,18 @@ class _DashboardState extends State<DashboardPage>
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () async {
+                  await peripheralHelper.getPeripheralId().then((peripheralId) {
+                    //
+                    Navigator.of(context)
+                        .pushNamed(RoutesHDr.INTRO_CONNECT_PERIPHERAL);
+                    if (peripheralId == '') {
+                    } else {
+                      Navigator.of(context)
+                          .pushNamed(RoutesHDr.PERIPHERAL_SERVICE);
+                    }
+                  });
+                },
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.2,
                   height: 80,
@@ -1049,6 +1062,7 @@ class _DashboardState extends State<DashboardPage>
           ),
           Container(
             height: 90,
+            margin: EdgeInsets.only(left: 20, right: 20),
             width: MediaQuery.of(context).size.width,
             child: Stack(
               children: <Widget>[
