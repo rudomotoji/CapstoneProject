@@ -208,6 +208,7 @@ class _CreateMedicalInstructionViewState
                                             // _imgString = '';
                                             _imgFile = null;
                                             listImage = [];
+                                            listImage64Bit = [];
                                             _dianoseController.text = '';
                                             _medInsTypeId =
                                                 _.medicalInstructionTypeId;
@@ -489,7 +490,7 @@ class _CreateMedicalInstructionViewState
                                   patientId: _patientId,
                                   description: _note,
                                   diagnose: _dianoseController.text,
-                                  diseaseIds: null,
+                                  diseaseIds: '',
                                   imageFile: listImage,
                                 );
                               } else {
@@ -510,7 +511,7 @@ class _CreateMedicalInstructionViewState
                                 patientId: _patientId,
                                 description: _note,
                                 diagnose: _dianoseController.text,
-                                diseaseIds: null,
+                                diseaseIds: '',
                                 imageFile: listImage,
                               );
                             }
