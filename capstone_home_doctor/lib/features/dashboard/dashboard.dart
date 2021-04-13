@@ -443,7 +443,7 @@ class _DashboardState extends State<DashboardPage>
           _showAppointmentNoti(),
           _buildReminder(),
           _buildShorcut(),
-          _buildVitalSign(),
+          //  _buildVitalSign(),
           //
           //
           //

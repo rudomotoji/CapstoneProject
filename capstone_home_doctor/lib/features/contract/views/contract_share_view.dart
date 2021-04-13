@@ -1324,6 +1324,9 @@ class _ContractShareView extends State<ContractShareView>
             ? Container(
                 child: BlocBuilder<MedInsTypeReqListBloc, MedInsTypeReqState>(
                 builder: (context, state) {
+                  if (isAddNewList) {
+                    insideCount = 0;
+                  }
                   if (state is MedInsTypeReqStateLoading) {}
                   if (state is MedInsTypeReqStateFailure) {
                     return Container(child: Text('FAILED'));
@@ -1369,386 +1372,362 @@ class _ContractShareView extends State<ContractShareView>
                       print(
                           'length ofdiseaseMedicalInstructionsSelected now: ${diseaseMedicalInstructionsSelected.length}');
                       isAddNewList = false;
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: state.list.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            padding: EdgeInsets.only(
-                                bottom: 10, top: 10, left: 20, right: 20),
-                            margin: EdgeInsets.only(
-                                left: 20, right: 20, bottom: 20),
-                            decoration: BoxDecoration(
-                                color: DefaultTheme.GREY_VIEW,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  child: Row(
+                      return (state.list.length > 0)
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: state.list.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  padding: EdgeInsets.only(
+                                      bottom: 10, top: 10, left: 20, right: 20),
+                                  margin: EdgeInsets.only(
+                                      left: 20, right: 20, bottom: 20),
+                                  decoration: BoxDecoration(
+                                      color: DefaultTheme.GREY_VIEW,
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: Image.asset(
-                                            'assets/images/ic-add-disease.png'),
+                                      Container(
+                                        child: Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: Image.asset(
+                                                  'assets/images/ic-add-disease.png'),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                            ),
+                                            Text(
+                                              'Mã bệnh ${state.list[index].diseaseId}',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: DefaultTheme.BLUE_DARK,
+                                                  fontWeight: FontWeight.w500),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                            ),
+                                            Spacer(),
+                                            Container(
+                                                padding: EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                    color: DefaultTheme
+                                                        .BLUE_DARK
+                                                        .withOpacity(0.4),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50)),
+                                                child: Center(
+                                                  child: Text(
+                                                      '${state.list[index].medicalInstructions.length} phiếu yêu cầu',
+                                                      style: TextStyle(
+                                                          color: DefaultTheme
+                                                              .WHITE)),
+                                                )),
+                                          ],
+                                        ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.only(left: 10),
+                                        padding: EdgeInsets.only(bottom: 5),
                                       ),
-                                      Text(
-                                        'Mã bệnh ${state.list[index].diseaseId}',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: DefaultTheme.BLUE_DARK,
-                                            fontWeight: FontWeight.w500),
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
+                                      Divider(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        height: 1,
                                       ),
-                                      Spacer(),
-                                      Container(
-                                          padding: EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                              color: DefaultTheme.BLUE_DARK
-                                                  .withOpacity(0.4),
-                                              borderRadius:
-                                                  BorderRadius.circular(50)),
-                                          child: Center(
-                                            child: Text(
-                                                '${state.list[index].medicalInstructions.length} phiếu yêu cầu',
-                                                style: TextStyle(
-                                                    color: DefaultTheme.WHITE)),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(bottom: 5),
-                                ),
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                (state.list[index].medicalInstructions.length >
-                                        0)
-                                    ? ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemCount: state.list[index]
-                                            .medicalInstructions.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index2) {
-                                          insideCount++;
-                                          int insideCountNow = insideCount;
-                                          return Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    padding: EdgeInsets.only(
-                                                        top: 15, bottom: 10),
-                                                    child: Text(
-                                                      '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        color:
-                                                            DefaultTheme.BLACK,
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 2,
-                                                    ),
-                                                  ),
-                                                  Spacer(),
-                                                  ButtonHDr(
-                                                      onTap: () async {
-                                                        await _medicalShareBloc.add(
-                                                            MedicalShareEventGet(
-                                                                patientId:
-                                                                    _patientId,
-                                                                medicalInstructionType: state
-                                                                    .list[index]
-                                                                    .medicalInstructions[
-                                                                        index2]
-                                                                    .medicalInstructionTypeId,
-                                                                diseaseId: state
-                                                                    .list[index]
-                                                                    .diseaseId,
-                                                                medicalInstructionIds: []));
-
-                                                        print(
-                                                            'inside count now: ${insideCountNow}');
-                                                        _showMedicalShare(
-                                                            state
-                                                                .list[index]
-                                                                .medicalInstructions[
-                                                                    index2]
-                                                                .medicalInstructionTypeName,
-                                                            (insideCountNow -
-                                                                1),
-                                                            state.list[index]
-                                                                .diseaseId);
-                                                      },
-                                                      style:
-                                                          BtnStyle.BUTTON_IMAGE,
-                                                      image: Image.asset(
-                                                          'assets/images/ic-add-more-mi.png')),
-                                                ],
-                                              ),
-                                              (listMi[insideCountNow - 1] !=
-                                                          null &&
-                                                      listMi[insideCountNow - 1]
-                                                          .isNotEmpty)
-                                                  ? Container(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width,
-                                                      height: 200,
-                                                      child: ListView.builder(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        itemCount: listMi[
-                                                                insideCountNow -
-                                                                    1]
-                                                            .length,
-                                                        itemBuilder:
-                                                            (BuildContext
-                                                                    context,
-                                                                int index3) {
-                                                          //
-
-                                                          return Container(
-                                                            width: 150,
-                                                            height: 200,
-                                                            margin:
-                                                                EdgeInsets.only(
-                                                                    right: 20),
-                                                            child: InkWell(
-                                                              onTap: () {
-                                                                print('tap');
-
-                                                                if (listMi[insideCountNow - 1][index3]
-                                                                            .images ==
-                                                                        null ||
-                                                                    listMi[insideCountNow -
-                                                                                1]
-                                                                            [
-                                                                            index3]
-                                                                        .images
-                                                                        .isEmpty) {
-                                                                  _showDetailVitalSign(listMi[insideCountNow -
-                                                                              1]
-                                                                          [
-                                                                          index3]
-                                                                      .medicalInstructionId);
-                                                                } else {
-                                                                  showFullDetailComponent(
-                                                                      listMi[insideCountNow - 1]
-                                                                              [
-                                                                              index3]
-                                                                          .images,
-                                                                      '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
-                                                                      '${listMi[insideCountNow - 1][index3].dateCreate}',
-                                                                      '${listMi[insideCountNow - 1][index3].diagnose}');
-                                                                }
-                                                              },
-                                                              child: (listMi[insideCountNow - 1][index3]
-                                                                              .images ==
-                                                                          null ||
-                                                                      listMi[insideCountNow - 1]
-                                                                              [
-                                                                              index3]
-                                                                          .images
-                                                                          .isEmpty)
-                                                                  ? Stack(
-                                                                      children: [
-                                                                        Container(
-                                                                          width:
-                                                                              150,
-                                                                          height:
-                                                                              200,
-                                                                          color: DefaultTheme
-                                                                              .GREY_TOP_TAB_BAR
-                                                                              .withOpacity(0.6),
-                                                                        ),
-                                                                        Container(
-                                                                          width:
-                                                                              150,
-                                                                          height:
-                                                                              200,
-                                                                          color: DefaultTheme
-                                                                              .BLACK_BUTTON
-                                                                              .withOpacity(0.4),
-                                                                        ),
-                                                                        Positioned(
-                                                                          bottom:
-                                                                              0,
-                                                                          child:
-                                                                              Container(
-                                                                            width:
-                                                                                150,
-                                                                            height:
-                                                                                200,
-                                                                            color:
-                                                                                DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.3),
-                                                                            child: Center(
-                                                                                child: (listMi[insideCountNow - 1][index3].images == null || listMi[insideCountNow - 1][index3].images.length < 2)
-                                                                                    ? Text('')
-                                                                                    : Text(
-                                                                                        '${listMi[insideCountNow - 1][index3].images.length}+',
-                                                                                        style: TextStyle(fontWeight: FontWeight.w600, color: DefaultTheme.WHITE, fontSize: 25),
-                                                                                      )),
-                                                                          ),
-                                                                        ),
-                                                                        Positioned(
-                                                                          bottom:
-                                                                              0,
-                                                                          child:
-                                                                              Container(
-                                                                            width:
-                                                                                150,
-                                                                            height:
-                                                                                50,
-                                                                            color:
-                                                                                DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
-                                                                            child:
-                                                                                Center(
-                                                                              child: Column(
-                                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                                children: [
-                                                                                  Text(
-                                                                                    '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
-                                                                                    style: TextStyle(color: DefaultTheme.WHITE),
-                                                                                    maxLines: 1,
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                  ),
-                                                                                  Text(
-                                                                                    'Ngày tạo: ${listMi[insideCountNow - 1][index3].dateCreate}',
-                                                                                    style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
-                                                                                    maxLines: 1,
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    )
-                                                                  : Stack(
-                                                                      children: [
-                                                                        SizedBox(
-                                                                          width:
-                                                                              150,
-                                                                          height:
-                                                                              200,
-                                                                          child:
-                                                                              Image.network(
-                                                                            'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMi[insideCountNow - 1][index3].images.first}',
-                                                                            fit:
-                                                                                BoxFit.fill,
-                                                                          ),
-                                                                        ),
-                                                                        Container(
-                                                                          width:
-                                                                              150,
-                                                                          height:
-                                                                              200,
-                                                                          color: DefaultTheme
-                                                                              .BLACK_BUTTON
-                                                                              .withOpacity(0.4),
-                                                                        ),
-                                                                        Positioned(
-                                                                          bottom:
-                                                                              0,
-                                                                          child:
-                                                                              Container(
-                                                                            width:
-                                                                                150,
-                                                                            height:
-                                                                                200,
-                                                                            color:
-                                                                                DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.3),
-                                                                            child: Center(
-                                                                                child: (listMi[insideCountNow - 1][index3].images == null || listMi[insideCountNow - 1][index3].images.length < 2)
-                                                                                    ? Text('')
-                                                                                    : Text(
-                                                                                        '${listMi[insideCountNow - 1][index3].images.length}+',
-                                                                                        style: TextStyle(fontWeight: FontWeight.w600, color: DefaultTheme.WHITE, fontSize: 25),
-                                                                                      )),
-                                                                          ),
-                                                                        ),
-                                                                        Positioned(
-                                                                          bottom:
-                                                                              0,
-                                                                          child:
-                                                                              Container(
-                                                                            width:
-                                                                                150,
-                                                                            height:
-                                                                                50,
-                                                                            color:
-                                                                                DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
-                                                                            child:
-                                                                                Center(
-                                                                              child: Column(
-                                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                                children: [
-                                                                                  Text(
-                                                                                    '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
-                                                                                    style: TextStyle(color: DefaultTheme.WHITE),
-                                                                                    maxLines: 1,
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                  ),
-                                                                                  Text(
-                                                                                    'Ngày tạo: ${listMi[insideCountNow - 1][index3].dateCreate}',
-                                                                                    style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
-                                                                                    maxLines: 1,
-                                                                                    overflow: TextOverflow.ellipsis,
-                                                                                  ),
-                                                                                ],
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
+                                      (state.list[index].medicalInstructions
+                                                  .length >
+                                              0)
+                                          ? ListView.builder(
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              itemCount: state.list[index]
+                                                  .medicalInstructions.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index2) {
+                                                insideCount++;
+                                                int insideCountNow =
+                                                    insideCount;
+                                                return Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 15,
+                                                                  bottom: 10),
+                                                          child: Text(
+                                                            '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              color:
+                                                                  DefaultTheme
+                                                                      .BLACK,
                                                             ),
-                                                          );
-                                                        },
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 2,
+                                                          ),
+                                                        ),
+                                                        Spacer(),
+                                                        ButtonHDr(
+                                                            onTap: () async {
+                                                              await _medicalShareBloc.add(MedicalShareEventGet(
+                                                                  patientId:
+                                                                      _patientId,
+                                                                  medicalInstructionType: state
+                                                                      .list[
+                                                                          index]
+                                                                      .medicalInstructions[
+                                                                          index2]
+                                                                      .medicalInstructionTypeId,
+                                                                  diseaseId: state
+                                                                      .list[
+                                                                          index]
+                                                                      .diseaseId,
+                                                                  medicalInstructionIds: []));
+
+                                                              print(
+                                                                  'inside count now: ${insideCountNow}');
+                                                              _showMedicalShare(
+                                                                  state
+                                                                      .list[
+                                                                          index]
+                                                                      .medicalInstructions[
+                                                                          index2]
+                                                                      .medicalInstructionTypeName,
+                                                                  (insideCountNow -
+                                                                      1),
+                                                                  state
+                                                                      .list[
+                                                                          index]
+                                                                      .diseaseId);
+                                                            },
+                                                            style: BtnStyle
+                                                                .BUTTON_IMAGE,
+                                                            image: Image.asset(
+                                                                'assets/images/ic-add-more-mi.png')),
+                                                      ],
+                                                    ),
+                                                    (listMi[insideCountNow -
+                                                                    1] !=
+                                                                null &&
+                                                            listMi[insideCountNow -
+                                                                    1]
+                                                                .isNotEmpty)
+                                                        ? Container(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            height: 200,
+                                                            child: ListView
+                                                                .builder(
+                                                              scrollDirection:
+                                                                  Axis.horizontal,
+                                                              itemCount: listMi[
+                                                                      insideCountNow -
+                                                                          1]
+                                                                  .length,
+                                                              itemBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      int index3) {
+                                                                //
+
+                                                                return Container(
+                                                                  width: 150,
+                                                                  height: 200,
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          right:
+                                                                              20),
+                                                                  child:
+                                                                      InkWell(
+                                                                    onTap: () {
+                                                                      print(
+                                                                          'tap');
+
+                                                                      if (listMi[insideCountNow - 1][index3].images ==
+                                                                              null ||
+                                                                          listMi[insideCountNow - 1][index3]
+                                                                              .images
+                                                                              .isEmpty) {
+                                                                        _showDetailVitalSign(listMi[insideCountNow -
+                                                                                1][index3]
+                                                                            .medicalInstructionId);
+                                                                      } else {
+                                                                        showFullDetailComponent(
+                                                                            listMi[insideCountNow - 1][index3].images,
+                                                                            '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
+                                                                            '${listMi[insideCountNow - 1][index3].dateCreate}',
+                                                                            '${listMi[insideCountNow - 1][index3].diagnose}');
+                                                                      }
+                                                                    },
+                                                                    child: (listMi[insideCountNow - 1][index3].images ==
+                                                                                null ||
+                                                                            listMi[insideCountNow - 1][index3].images.isEmpty)
+                                                                        ? Stack(
+                                                                            children: [
+                                                                              Container(
+                                                                                width: 150,
+                                                                                height: 200,
+                                                                                color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.6),
+                                                                              ),
+                                                                              Container(
+                                                                                width: 150,
+                                                                                height: 200,
+                                                                                color: DefaultTheme.BLACK_BUTTON.withOpacity(0.4),
+                                                                              ),
+                                                                              Positioned(
+                                                                                bottom: 0,
+                                                                                child: Container(
+                                                                                  width: 150,
+                                                                                  height: 200,
+                                                                                  color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.3),
+                                                                                  child: Center(
+                                                                                      child: (listMi[insideCountNow - 1][index3].images == null || listMi[insideCountNow - 1][index3].images.length < 2)
+                                                                                          ? Text('')
+                                                                                          : Text(
+                                                                                              '${listMi[insideCountNow - 1][index3].images.length}+',
+                                                                                              style: TextStyle(fontWeight: FontWeight.w600, color: DefaultTheme.WHITE, fontSize: 25),
+                                                                                            )),
+                                                                                ),
+                                                                              ),
+                                                                              Positioned(
+                                                                                bottom: 0,
+                                                                                child: Container(
+                                                                                  width: 150,
+                                                                                  height: 50,
+                                                                                  color: DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
+                                                                                  child: Center(
+                                                                                    child: Column(
+                                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                                      children: [
+                                                                                        Text(
+                                                                                          '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
+                                                                                          style: TextStyle(color: DefaultTheme.WHITE),
+                                                                                          maxLines: 1,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        ),
+                                                                                        Text(
+                                                                                          'Ngày tạo: ${listMi[insideCountNow - 1][index3].dateCreate}',
+                                                                                          style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
+                                                                                          maxLines: 1,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          )
+                                                                        : Stack(
+                                                                            children: [
+                                                                              SizedBox(
+                                                                                width: 150,
+                                                                                height: 200,
+                                                                                child: Image.network(
+                                                                                  'http://45.76.186.233:8000/api/v1/Images?pathImage=${listMi[insideCountNow - 1][index3].images.first}',
+                                                                                  fit: BoxFit.fill,
+                                                                                ),
+                                                                              ),
+                                                                              Container(
+                                                                                width: 150,
+                                                                                height: 200,
+                                                                                color: DefaultTheme.BLACK_BUTTON.withOpacity(0.4),
+                                                                              ),
+                                                                              Positioned(
+                                                                                bottom: 0,
+                                                                                child: Container(
+                                                                                  width: 150,
+                                                                                  height: 200,
+                                                                                  color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.3),
+                                                                                  child: Center(
+                                                                                      child: (listMi[insideCountNow - 1][index3].images == null || listMi[insideCountNow - 1][index3].images.length < 2)
+                                                                                          ? Text('')
+                                                                                          : Text(
+                                                                                              '${listMi[insideCountNow - 1][index3].images.length}+',
+                                                                                              style: TextStyle(fontWeight: FontWeight.w600, color: DefaultTheme.WHITE, fontSize: 25),
+                                                                                            )),
+                                                                                ),
+                                                                              ),
+                                                                              Positioned(
+                                                                                bottom: 0,
+                                                                                child: Container(
+                                                                                  width: 150,
+                                                                                  height: 50,
+                                                                                  color: DefaultTheme.BLACK_BUTTON.withOpacity(0.5),
+                                                                                  child: Center(
+                                                                                    child: Column(
+                                                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                                                      children: [
+                                                                                        Text(
+                                                                                          '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
+                                                                                          style: TextStyle(color: DefaultTheme.WHITE),
+                                                                                          maxLines: 1,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        ),
+                                                                                        Text(
+                                                                                          'Ngày tạo: ${listMi[insideCountNow - 1][index3].dateCreate}',
+                                                                                          style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
+                                                                                          maxLines: 1,
+                                                                                          overflow: TextOverflow.ellipsis,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          )
+                                                        : Container(),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 5, bottom: 5),
+                                                      child: Divider(
+                                                        color: DefaultTheme
+                                                            .GREY_TOP_TAB_BAR,
+                                                        height: 1,
                                                       ),
                                                     )
-                                                  : Container(),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 5, bottom: 5),
-                                                child: Divider(
-                                                  color: DefaultTheme
-                                                      .GREY_TOP_TAB_BAR,
-                                                  height: 1,
-                                                ),
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      )
-                                    : Container(),
-                              ],
-                            ),
-                          );
-                        },
-                      );
+                                                  ],
+                                                );
+                                              },
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                );
+                              },
+                            )
+                          : Container();
 
                       // Container(
                       //   padding: EdgeInsets.only(bottom: 10, top: 10),
@@ -2501,7 +2480,8 @@ class _ContractShareView extends State<ContractShareView>
                                       );
                                     }
                                     if (state is MedicalShareStateSuccess) {
-                                      if (state.listMedicalShare == null) {
+                                      if (state.listMedicalShare == null ||
+                                          state.listMedicalShare.isEmpty) {
                                         return Container(
                                           child: Center(
                                             child: Column(
@@ -2573,177 +2553,179 @@ class _ContractShareView extends State<ContractShareView>
                                             ),
                                           ),
                                         );
+                                      } else {
+                                        print('OK');
+                                        print(
+                                            '${state.listMedicalShare[0].healthRecordPlace}');
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                'Danh sách phiếu ${nameOfList}',
+                                                style: TextStyle(
+                                                    color: DefaultTheme.BLACK,
+                                                    fontSize: 22,
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                              Container(
+                                                margin: EdgeInsets.only(
+                                                    right: 20, top: 5),
+                                                child: Text(
+                                                    'Danh sách dưới đây tương ứng với hồ sơ sức khoẻ và phiếu y lệnh mà bạn đã thêm vào các hồ sơ trước đó.',
+                                                    style: TextStyle(
+                                                        color: DefaultTheme
+                                                            .GREY_TEXT)),
+                                              ),
+                                              Expanded(
+                                                child: ListView(
+                                                  children: <Widget>[
+                                                    //
+                                                    Column(
+                                                      children: state
+                                                          .listMedicalShare
+                                                          .map((group) {
+                                                        //
+                                                        int index = state
+                                                            .listMedicalShare
+                                                            .indexOf(group);
+                                                        return ExpandableGroup(
+                                                          collapsedIcon: SizedBox(
+                                                              width: 20,
+                                                              height: 20,
+                                                              child: Image.asset(
+                                                                  'assets/images/ic-navigator.png')),
+                                                          expandedIcon: SizedBox(
+                                                              width: 20,
+                                                              height: 20,
+                                                              child: Image.asset(
+                                                                  'assets/images/ic-down.png')),
+                                                          isExpanded: false,
+                                                          header: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              SizedBox(
+                                                                width: 30,
+                                                                height: 30,
+                                                                child: Image.asset(
+                                                                    'assets/images/ic-health-record.png'),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left:
+                                                                            10),
+                                                              ),
+                                                              Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  //
+                                                                  Container(
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width -
+                                                                        132,
+                                                                    child: Text(
+                                                                      'Hồ sơ tại ${group.healthRecordPlace}',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              13,
+                                                                          fontWeight:
+                                                                              FontWeight.w500),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      maxLines:
+                                                                          2,
+                                                                    ),
+                                                                  ),
+                                                                  // Padding(
+                                                                  //   padding: EdgeInsets
+                                                                  //       .only(
+                                                                  //           bottom:
+                                                                  //               3),
+                                                                  // ),
+                                                                  Container(
+                                                                    width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width -
+                                                                        132,
+                                                                    child: Text(
+                                                                      'Ngày tạo: ${group.dateCreate}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            11,
+                                                                      ),
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      maxLines:
+                                                                          1,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        bottom:
+                                                                            5),
+                                                                  ),
+                                                                  _genderDiseaseCheckBox(
+                                                                      group
+                                                                          .diseases),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          items: _buildMedInsRequired(
+                                                              context,
+                                                              group
+                                                                  .medicalInstructions,
+                                                              setModalState,
+                                                              nameOfList,
+                                                              indexItemNow,
+                                                              diseaseIdFromSelected),
+                                                        );
+                                                      }).toList(),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
+                                              //
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                margin:
+                                                    EdgeInsets.only(bottom: 30),
+                                                child: ButtonHDr(
+                                                  style: BtnStyle.BUTTON_BLACK,
+                                                  label: 'Xong',
+                                                  onTap: () {
+                                                    print(
+                                                        'list medical ins selected ids: ${medicalInstructionIdsSelected}');
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
                                       }
                                       //
-                                      print('OK');
-                                      print(
-                                          '${state.listMedicalShare[0].healthRecordPlace}');
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 20, right: 20),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Text(
-                                              'Danh sách phiếu ${nameOfList}',
-                                              style: TextStyle(
-                                                  color: DefaultTheme.BLACK,
-                                                  fontSize: 22,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(
-                                                  right: 20, top: 5),
-                                              child: Text(
-                                                  'Danh sách dưới đây tương ứng với hồ sơ sức khoẻ và phiếu y lệnh mà bạn đã thêm vào các hồ sơ trước đó.',
-                                                  style: TextStyle(
-                                                      color: DefaultTheme
-                                                          .GREY_TEXT)),
-                                            ),
-                                            Expanded(
-                                              child: ListView(
-                                                children: <Widget>[
-                                                  //
-                                                  Column(
-                                                    children: state
-                                                        .listMedicalShare
-                                                        .map((group) {
-                                                      //
-                                                      int index = state
-                                                          .listMedicalShare
-                                                          .indexOf(group);
-                                                      return ExpandableGroup(
-                                                        collapsedIcon: SizedBox(
-                                                            width: 20,
-                                                            height: 20,
-                                                            child: Image.asset(
-                                                                'assets/images/ic-navigator.png')),
-                                                        expandedIcon: SizedBox(
-                                                            width: 20,
-                                                            height: 20,
-                                                            child: Image.asset(
-                                                                'assets/images/ic-down.png')),
-                                                        isExpanded: false,
-                                                        header: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            SizedBox(
-                                                              width: 30,
-                                                              height: 30,
-                                                              child: Image.asset(
-                                                                  'assets/images/ic-health-record.png'),
-                                                            ),
-                                                            Padding(
-                                                              padding: EdgeInsets
-                                                                  .only(
-                                                                      left: 10),
-                                                            ),
-                                                            Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                //
-                                                                Container(
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width -
-                                                                      132,
-                                                                  child: Text(
-                                                                    'Hồ sơ tại ${group.healthRecordPlace}',
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                        fontWeight:
-                                                                            FontWeight.w500),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 2,
-                                                                  ),
-                                                                ),
-                                                                // Padding(
-                                                                //   padding: EdgeInsets
-                                                                //       .only(
-                                                                //           bottom:
-                                                                //               3),
-                                                                // ),
-                                                                Container(
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width -
-                                                                      132,
-                                                                  child: Text(
-                                                                    'Ngày tạo: ${group.dateCreate}',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          11,
-                                                                    ),
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 1,
-                                                                  ),
-                                                                ),
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .only(
-                                                                          bottom:
-                                                                              5),
-                                                                ),
-                                                                _genderDiseaseCheckBox(
-                                                                    group
-                                                                        .diseases),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        items: _buildMedInsRequired(
-                                                            context,
-                                                            group
-                                                                .medicalInstructions,
-                                                            setModalState,
-                                                            nameOfList,
-                                                            indexItemNow,
-                                                            diseaseIdFromSelected),
-                                                      );
-                                                    }).toList(),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-
-                                            //
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              margin:
-                                                  EdgeInsets.only(bottom: 30),
-                                              child: ButtonHDr(
-                                                style: BtnStyle.BUTTON_BLACK,
-                                                label: 'Xong',
-                                                onTap: () {
-                                                  print(
-                                                      'list medical ins selected ids: ${medicalInstructionIdsSelected}');
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
                                     }
                                     return Container();
                                   }),
