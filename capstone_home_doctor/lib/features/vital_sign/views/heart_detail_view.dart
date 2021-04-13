@@ -651,17 +651,17 @@ class _HeartDetailView extends State<HeartDetailView>
         Padding(
           padding: EdgeInsets.only(bottom: 20),
         ),
-        Container(
-          width: MediaQuery.of(context).size.width - 40,
-          height: 45,
-          child: ButtonHDr(
-            style: BtnStyle.BUTTON_BLACK,
-            label: 'Hiển thị thêm dữ liệu đo',
-            onTap: () {
-              Navigator.pushNamed(context, RoutesHDr.VITALSIGN_HISTORY);
-            },
-          ),
-        ),
+        // Container(
+        //   width: MediaQuery.of(context).size.width - 40,
+        //   height: 45,
+        //   child: ButtonHDr(
+        //     style: BtnStyle.BUTTON_BLACK,
+        //     label: 'Hiển thị thêm dữ liệu đo',
+        //     onTap: () {
+        //       Navigator.pushNamed(context, RoutesHDr.VITALSIGN_HISTORY);
+        //     },
+        //   ),
+        // ),
         Padding(
           padding: EdgeInsets.only(bottom: 20),
         ),
