@@ -1,3 +1,4 @@
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class SuccessNotification extends StatelessWidget {
@@ -28,7 +29,12 @@ class SuccessNotification extends StatelessWidget {
             color: Colors.red,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                RoutesHDr.MAIN_HOME,
+                (Route<dynamic> route) => false,
+              );
+            },
             child: Text(
               'Done',
               style: TextStyle(

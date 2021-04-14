@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class PaymentRepository extends BaseApiClient {
-  final http.Client httpClient;
-  //constructor
-  PaymentRepository({@required this.httpClient}) : assert(httpClient != null);
+  // final http.Client httpClient;
+  // //constructor
+  // PaymentRepository({@required this.httpClient}) : assert(httpClient != null);
 
   Future<http.Response> vnpay(String contract) async {
     // final response = await http.post(
@@ -30,6 +30,7 @@ class PaymentRepository extends BaseApiClient {
       }
     } catch (e) {
       print('error payment repo: $e');
+      throw Exception('Failed to fetch paymentL $e');
     }
   }
 }

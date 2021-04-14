@@ -328,4 +328,29 @@ class MedicalInstructionRepository extends BaseApiClient {
       return false;
     }
   }
+
+  Future<bool> checkImageExist(
+      String path, int healthRecordID, int medicaltypeID) async {
+    try {
+      var uri = Uri.parse(
+          'http://45.76.186.233:8000/api/v1/Images/CheckExistImage?healthRecordId=$healthRecordID&medicalInstructionTypeId=$medicaltypeID');
+      var request = new http.MultipartRequest('POST', uri);
+
+      String fileName = path.split("/").last;
+      var length = await File(path).lengthSync(); //imageFile is your image file
+      var stream = File(path).readAsBytes().asStream();
+      // multipart that takes file
+      var multipartFileSign =
+          new http.MultipartFile('image', stream, length, filename: fileName);
+
+      request.files.add(multipartFileSign);
+
+      final response = await request.send();
+      if (response.statusCode == 200) return true;
+      return false;
+    } catch (e) {
+      print('createMedicalInstruction: $e');
+      return false;
+    }
+  }
 }

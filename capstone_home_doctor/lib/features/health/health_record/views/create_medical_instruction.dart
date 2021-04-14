@@ -27,6 +27,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+// import 'package:diff_image/diff_image.dart';
+// import 'package:image/image.dart' as imgs;
 
 class CreateMedicalInstructionView extends StatefulWidget {
   @override
@@ -46,7 +48,7 @@ class _CreateMedicalInstructionViewState
   String _note = '';
   double titleCompare;
   // String _imgString = '';
-  String nowDate = '${DateTime.now()}';
+  // String nowDate = '${DateTime.now()}';
   List<MedicalInstructionTypeDTO> _listMedInsType = [];
   double percenntCompare = 100;
   var f = NumberFormat("###.0#", "en_US");
@@ -1111,30 +1113,45 @@ class _CreateMedicalInstructionViewState
 
       bool load = false;
       if (pickedFile != null) {
+        // for (var item in listImage) {
+        //   goo(item, pickedFile.path);
+        // }
+
         String fileName = pickedFile.path.split("/").last;
         print('fileName: $fileName');
         //
-        setState(() {
-          _imgFile = pickedFile;
-          if (!listImage.contains(fileName)) {
-            listImage.add(pickedFile.path);
-            listImage64Bit.add(ImageUltility.base64String(
-                File(pickedFile.path).readAsBytesSync()));
-            load = true;
+        //
+        await _medicalInstructionRepository
+            .checkImageExist(
+                pickedFile.path, _hrId, selectType.medicalInstructionTypeId)
+            .then((compare) {
+          if (compare) {
+            setState(() {
+              _imgFile = pickedFile;
+              if (!listImage.contains(fileName)) {
+                listImage.add(pickedFile.path);
+                listImage64Bit.add(ImageUltility.base64String(
+                    File(pickedFile.path).readAsBytesSync()));
+                load = true;
+              }
+            });
+            if (titleCompare == null) {
+              deteckImage();
+            } else {
+              if (titleCompare >= percenntCompare) {
+                print('titleCompare >= percenntCompare');
+              } else {
+                if (_imgFile.path != null && _imgFile.path != '' && load) {
+                  print('titleCompare < percenntCompare');
+                  deteckImage();
+                }
+              }
+            }
+          } else {
+            alertError(
+                'Đã tồn tại hình này trong loại y lệnh này, vui lòng chọn hình ảnh khác');
           }
         });
-        if (titleCompare == null) {
-          deteckImage();
-        } else {
-          if (titleCompare >= percenntCompare) {
-            print('titleCompare >= percenntCompare');
-          } else {
-            if (_imgFile.path != null && _imgFile.path != '' && load) {
-              print('titleCompare < percenntCompare');
-              deteckImage();
-            }
-          }
-        }
       } else {
         print('No image selected.');
       }
@@ -1263,4 +1280,25 @@ class _CreateMedicalInstructionViewState
       },
     );
   }
+
+  // void goo(String firstImg, String secondImg) {
+  //   var firstImageFromMemory = imgs.decodeImage(
+  //     File(
+  //       firstImg,
+  //     ).readAsBytesSync(),
+  //   );
+  //   var secondImageFromMemory = imgs.decodeImage(
+  //     File(
+  //       secondImg,
+  //     ).readAsBytesSync(),
+  //   );
+
+  //   try {
+  //     var diff = DiffImage.compareFromMemory(
+  //         firstImageFromMemory, secondImageFromMemory);
+  //     print('The difference between images is: ${diff.diffValue} %');
+  //   } catch (e) {
+  //     print('goo error: $e');
+  //   }
+  // }
 }

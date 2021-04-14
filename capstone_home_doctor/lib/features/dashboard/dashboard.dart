@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -12,7 +10,10 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/silver_floating_header.dart';
 import 'package:capstone_home_doctor/commons/widgets/silver_pin_box_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/payment_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
+import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
+import 'package:capstone_home_doctor/features/global/repositories/system_repository.dart';
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
 import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
@@ -112,6 +113,9 @@ class _DashboardState extends State<DashboardPage>
   AppointmentBloc _appointmentBloc;
   TokenDeviceBloc _tokenDeviceBloc;
   VitalSignBloc _vitalSignBloc;
+
+  SystemRepository _systemRepository =
+      SystemRepository(httpClient: http.Client());
 
   //
   String vitalType = 'HEART_RATE';
@@ -333,6 +337,17 @@ class _DashboardState extends State<DashboardPage>
   }
 
   _getPatientId() async {
+    await _systemRepository.getTimeSystem().then((value) {
+      if (value != null && value != '' && value.isNotEmpty) {
+        String nowSystem = value.toString().trim().replaceAll('"', '');
+
+        setState(() {
+          curentDateNow = DateFormat('yyyy-MM-dd').parse(nowSystem);
+        });
+        // print('curentDateNow: ${curentDateNow}');
+      }
+    });
+
     await _authenticateHelper.getPatientId().then((value) {
       _patientId = value;
     });
@@ -340,7 +355,7 @@ class _DashboardState extends State<DashboardPage>
       _accountId = value;
     });
     if (_patientId != 0) {
-      DateTime curentDateNow = new DateTime.now();
+      // DateTime curentDateNow = new DateTime.now();
       _vitalSignBloc
           .add(VitalSignEventGetList(type: vitalType, patientId: _patientId));
       _prescriptionListBloc
@@ -800,6 +815,25 @@ class _DashboardState extends State<DashboardPage>
           ),
         ),
         Divider(color: DefaultTheme.GREY_TOP_TAB_BAR, height: 1),
+        //thanh toán vnpay
+        // ButtonHDr(
+        //   style: BtnStyle.BUTTON_BLACK,
+        //   label: 'thanh toan vnpay',
+        //   onTap: () {
+        //     PaymentBloc paymentBloc;
+        //     paymentBloc = PaymentBloc.getInstance();
+        //     paymentBloc.paymentSink.add('1230');
+        //     //
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => VNPayWebView(
+        //           url: paymentBloc.paymentUrl,
+        //         ),
+        //       ),
+        //     );
+        //   },
+        // ),
       ],
     );
   }
@@ -852,7 +886,7 @@ class _DashboardState extends State<DashboardPage>
         listAppointmentDetailSortedDate.clear();
         if (stateAppointment.listAppointment != null &&
             stateAppointment.listAppointment.isNotEmpty) {
-          print('current: $curentDateNow');
+          // print('current: $curentDateNow');
           for (AppointmentDTO dto in stateAppointment.listAppointment) {
             if (_dateValidator
                     .parseStringToDateApnt(dto.dateExamination)
@@ -2282,13 +2316,13 @@ class _DashboardState extends State<DashboardPage>
         if (stateAppointment is AppointmentStateSuccess) {
           listAppointment = stateAppointment.listAppointment;
           if (stateAppointment.listAppointment != null) {
-            DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
-                .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
+            DateTime curentNow = new DateFormat('dd/MM/yyyy')
+                .parse(DateFormat('yyyy-MM-dd').format(curentDateNow));
             for (var appointment in stateAppointment.listAppointment) {
               DateTime dateAppointment = new DateFormat("dd/MM/yyyy")
                   .parse(appointment.dateExamination);
               if (dateAppointment.millisecondsSinceEpoch ==
-                  curentDateNow.millisecondsSinceEpoch) {
+                  curentNow.millisecondsSinceEpoch) {
                 _appointmentDTO = appointment;
               }
               // _appointmentDTO = appointment;
