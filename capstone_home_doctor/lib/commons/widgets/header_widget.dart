@@ -125,6 +125,11 @@ class _HeaderWidget extends State<HeaderWidget> {
                         RoutesHDr.MAIN_HOME,
                         (Route<dynamic> route) => false,
                       );
+                    } else if (_title.contains('Hợp đồng'.trim())) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        RoutesHDr.MAIN_HOME,
+                        (Route<dynamic> route) => false,
+                      );
                     } else if (_title.contains('Tạo hồ sơ sức khỏe'.trim())) {
                       await _medicalInstructionHelper
                           .getCreateHRFromDetail()

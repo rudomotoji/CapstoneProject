@@ -19,15 +19,18 @@ class MedInsTypeEventGetList extends MedInsTypeEvent {
 //
 class MedInsTypeEventGetListToShare extends MedInsTypeEvent {
   final int patientId;
+  final String diseaseId;
   final List<int> medicalInstructionsIds;
 
-  const MedInsTypeEventGetListToShare(
-      {@required this.patientId, @required this.medicalInstructionsIds})
-      : assert(patientId != null && medicalInstructionsIds != null);
+  const MedInsTypeEventGetListToShare({
+    @required this.patientId,
+    @required this.diseaseId,
+    @required this.medicalInstructionsIds,
+  });
 
   @override
   // TODO: implement props
-  List<Object> get props => [patientId, medicalInstructionsIds];
+  List<Object> get props => [patientId, diseaseId, medicalInstructionsIds];
 }
 
 // class MedInsTypeRequiredEventGet extends MedInsTypeEvent {

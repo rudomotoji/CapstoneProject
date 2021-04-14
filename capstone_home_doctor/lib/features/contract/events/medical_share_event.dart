@@ -15,11 +15,11 @@ class MedicalShareEventGet extends MedicalShareEvent {
       {@required this.patientId,
       @required this.medicalInstructionType,
       @required this.diseaseId,
-      this.medicalInstructionIds})
-      : assert(patientId != null &&
-            medicalInstructionType != null &&
-            diseaseId != null &&
-            medicalInstructionIds != null);
+      this.medicalInstructionIds});
+  // : assert(patientId != null &&
+  //       medicalInstructionType != null &&
+  //       diseaseId != null &&
+  //       medicalInstructionIds != null);
 
   @override
   // TODO: implement props

@@ -209,6 +209,7 @@ class _DashboardState extends State<DashboardPage>
 
   _getBluetoothConnection() async {
     await _reminderHelper.isBluetoothConnection().then((value) {
+      if (!mounted) return;
       setState(() {
         if (value) {
           isBluetoothConnection = true;
@@ -221,6 +222,7 @@ class _DashboardState extends State<DashboardPage>
 
   _getPeripheralInfo() async {
     await peripheralHelper.getPeripheralId().then((peripheralId) async {
+      if (!mounted) return;
       if (peripheralId != '') {
         setState(() {
           _isConnectedWithPeripheral = true;
@@ -236,7 +238,7 @@ class _DashboardState extends State<DashboardPage>
 
   _getPeopleStatus() async {
     await vitalSignHelper.getPeopleStatus().then((value) async {
-      //
+      if (!mounted) return;
       setState(() {
         if (value == 'DANGER') {
           checkPeopleStatusLocal = true;
@@ -304,6 +306,7 @@ class _DashboardState extends State<DashboardPage>
   _updateTokenDevice() async {
     await _mobileDeviceHelper.getTokenDevice().then((value) {
       //
+      if (!mounted) return;
       setState(() {
         _tokenDevice = value;
       });
@@ -348,11 +351,17 @@ class _DashboardState extends State<DashboardPage>
       await contractRepository.getListContract(_patientId).then((value) async {
         //
         listContract = value;
+        //listContract=  listContract.where((item) => item.status=='APPROVED');
+
         for (ContractListDTO contract in listContract) {
           if (contract.status == 'APPROVED') {
+            if (!mounted) return;
             setState(() {
               isContractApproved = true;
             });
+            break;
+          } else {
+            isContractApproved = false;
           }
         }
       });
@@ -360,6 +369,7 @@ class _DashboardState extends State<DashboardPage>
     // await _authenticateHelper.getAccountId().then((value) {
     //   print('ACCOUNT ID ${value}');
     // });
+    // //////this is comment for real
   }
 
   @override
@@ -443,7 +453,11 @@ class _DashboardState extends State<DashboardPage>
           // ),
           // Text('$percent%'),
           _showAppointmentNoti(),
-          _buildReminder(),
+          ((listPrescription != null && listPrescription.isNotEmpty) ||
+                  !_isConnectedWithPeripheral ||
+                  isContractApproved)
+              ? _buildReminder()
+              : Container(),
           _buildShorcut(),
           //  _buildVitalSign(),
           //
@@ -492,28 +506,31 @@ class _DashboardState extends State<DashboardPage>
             ),
           ),
         ),
-        Container(
-          margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
-          padding: EdgeInsets.only(left: 10, right: 20, bottom: 10, top: 10),
-          decoration: BoxDecoration(
-            color: DefaultTheme.GREY_VIEW,
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 20,
-                height: 20,
-                child: Image.asset('assets/images/ic-medicine.png'),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 20),
-              ),
-              Text('Bạn có lịch dùng thuốc vào buổi trưa',
-                  style: TextStyle(color: DefaultTheme.BLACK))
-            ],
-          ),
-        ),
+        (listPrescription != null && listPrescription.isNotEmpty)
+            ? Container(
+                margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                padding:
+                    EdgeInsets.only(left: 10, right: 20, bottom: 10, top: 10),
+                decoration: BoxDecoration(
+                  color: DefaultTheme.GREY_VIEW,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: Image.asset('assets/images/ic-medicine.png'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20),
+                    ),
+                    Text('Bạn có lịch dùng thuốc vào buổi trưa',
+                        style: TextStyle(color: DefaultTheme.BLACK))
+                  ],
+                ),
+              )
+            : Container(),
         //
         (isContractApproved)
             ? Container(
@@ -760,7 +777,7 @@ class _DashboardState extends State<DashboardPage>
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset('assets/images/ic-health-selected.png',
+                      Image.asset('assets/images/ic-all-vital.png',
                           width: 30, height: 30),
                       Padding(
                         padding: EdgeInsets.only(bottom: 3),

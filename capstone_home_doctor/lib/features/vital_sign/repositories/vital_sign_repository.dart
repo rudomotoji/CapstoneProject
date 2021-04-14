@@ -42,6 +42,7 @@ class VitalSignRepository {
       BluetoothCharacteristic _characteristic;
       List<BluetoothService> services = await discoverServices(device);
       services.forEach((service) {
+        /////////////
         if (service.uuid == PeripheralServices.SERVICE_HEART_RATE) {
           var characteristics = service.characteristics;
           for (BluetoothCharacteristic ch in characteristics) {

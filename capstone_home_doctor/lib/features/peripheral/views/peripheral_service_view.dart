@@ -75,6 +75,7 @@ class _PeripheralService extends State<PeripheralService>
           RoutesHDr.MAIN_HOME,
           (Route<dynamic> route) => false,
         );
+        return new Future(() => false);
       },
       child: StreamBuilder<BluetoothState>(
           stream: FlutterBlue.instance.state,
