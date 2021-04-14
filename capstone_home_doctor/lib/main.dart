@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'dart:async';
-import 'package:capstone_home_doctor/features/contract/repositories/payment_repository.dart';
 import 'package:intl/intl.dart';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -407,6 +406,12 @@ var uuid = Uuid();
 DateValidator _dateValidator = DateValidator();
 AppointmentDTO appointment;
 
+// Timer _timer;
+// const oneSec = const Duration(seconds: 1);
+// int _start = 10;
+
+// DateTime today = DateTime.now();
+
 /////////
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -420,6 +425,13 @@ void main() async {
   _getAccountId();
   await _getPatientId();
   await getCalendarAppointment();
+
+  // _timer = new Timer.periodic(
+  //   oneSec,
+  //   (Timer timer) {
+  //     today = today.add(Duration(seconds: 1));
+  //   },
+  // );
 
   //connect device for 1st time and when bluetooth is on
   FlutterBlue.instance.state.listen((state) async {

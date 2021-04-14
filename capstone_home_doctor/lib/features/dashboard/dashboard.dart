@@ -19,6 +19,7 @@ import 'package:capstone_home_doctor/features/information/events/patient_event.d
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
 import 'package:capstone_home_doctor/features/login/blocs/token_device_bloc.dart';
 import 'package:capstone_home_doctor/features/login/events/token_device_event.dart';
+import 'package:capstone_home_doctor/features/payment/repositories/payment_repository.dart';
 import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
@@ -108,6 +109,8 @@ class _DashboardState extends State<DashboardPage>
       PrescriptionRepository(httpClient: http.Client());
   ContractRepository contractRepository =
       ContractRepository(httpClient: http.Client());
+  PaymentRepository paymentRepository =
+      PaymentRepository(httpClient: http.Client());
 
   PrescriptionListBloc _prescriptionListBloc;
   AppointmentBloc _appointmentBloc;
@@ -337,15 +340,17 @@ class _DashboardState extends State<DashboardPage>
   }
 
   _getPatientId() async {
-    await _systemRepository.getTimeSystem().then((value) {
-      if (value != null && value != '' && value.isNotEmpty) {
-        String nowSystem = value.toString().trim().replaceAll('"', '');
-
-        setState(() {
-          curentDateNow = DateFormat('yyyy-MM-dd').parse(nowSystem);
-        });
-        // print('curentDateNow: ${curentDateNow}');
-      }
+    // await _systemRepository.getTimeSystem().then((value) {
+    //   if (value != null && value != '' && value.isNotEmpty) {
+    //     String nowSystem = value.toString().trim().replaceAll('"', '');
+    //     // curentDateNow = DateFormat('yyyy-MM-dd').parse(nowSystem);
+    //     // print('curentDateNow: ${curentDateNow}');
+    //     //
+    //   }
+    // });
+    setState(() {
+      curentDateNow = new DateFormat('dd/MM/yyyy')
+          .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
     });
 
     await _authenticateHelper.getPatientId().then((value) {
@@ -820,18 +825,25 @@ class _DashboardState extends State<DashboardPage>
         //   style: BtnStyle.BUTTON_BLACK,
         //   label: 'thanh toan vnpay',
         //   onTap: () {
-        //     PaymentBloc paymentBloc;
-        //     paymentBloc = PaymentBloc.getInstance();
-        //     paymentBloc.paymentSink.add('1230');
-        //     //
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //         builder: (context) => VNPayWebView(
-        //           url: paymentBloc.paymentUrl,
-        //         ),
-        //       ),
-        //     );
+        //     paymentRepository
+        //         .vnpay(123000, 'thanh toans')
+        //         .then(
+        //           (value) => {
+        //             Navigator.push(
+        //               context,
+        //               MaterialPageRoute(
+        //                 builder: (context) => VNPayWebView(
+        //                   // url:
+        //                   //     'http://sandbox.vnpayment.vn/tryitnow/Home/CreateOrder',
+        //                   url: value.body,
+        //                 ),
+        //               ),
+        //             ),
+        //           },
+        //         )
+        //         .catchError((e) {
+        //       print('getPaymentUrl error');
+        //     });
         //   },
         // ),
       ],

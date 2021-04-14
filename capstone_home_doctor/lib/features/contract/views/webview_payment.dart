@@ -33,7 +33,7 @@ class _VNPayWebViewState extends State<VNPayWebView> {
                     {_webViewController = webViewController},
                 navigationDelegate: (navigation) {
                   if (navigation.url.contains('https://vnpay.vn/')) {
-                    print(_webViewController.toString());
+                    print('RESULT: ${_webViewController.toString()}');
                     Navigator.push(
                         context,
                         MaterialPageRoute(
