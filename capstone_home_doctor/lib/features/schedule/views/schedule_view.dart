@@ -6,6 +6,7 @@ import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/features/global/repositories/system_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/appointment_event.dart';
@@ -41,7 +42,7 @@ class _ScheduleView extends State<ScheduleView>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   //
   DateValidator _dateValidator = DateValidator();
-  MedicalInstructionDTO _currentPrescription = MedicalInstructionDTO();
+  // MedicalInstructionDTO _currentPrescription = MedicalInstructionDTO();
   //
   List<MedicalInstructionDTO> listPrescription = [];
   PrescriptionRepository prescriptionRepository =
@@ -61,6 +62,9 @@ class _ScheduleView extends State<ScheduleView>
   var datechoice;
   var timechoice;
   final AppointmentHelper _appointmentHelper = AppointmentHelper();
+
+  SystemRepository _systemRepository =
+      SystemRepository(httpClient: http.Client());
 
   //use for calendar
   Map<DateTime, List> _events = {};
@@ -820,8 +824,8 @@ class _ScheduleView extends State<ScheduleView>
               listPrescriptions.add(element);
             }
           }
-          if (listPrescriptions.length > 0)
-            _currentPrescription = listPrescriptions[0];
+          // if (listPrescriptions.length > 0)
+          //   _currentPrescription = listPrescriptions[0];
         }
         return RefreshIndicator(
           onRefresh: _getPatientId,
@@ -1412,6 +1416,19 @@ class _ScheduleView extends State<ScheduleView>
   }
 
   Future<void> _getPatientId() async {
+    await _systemRepository.getTimeSystem().then((value) {
+      if (value != null && value != '' && value.isNotEmpty) {
+        String nowSystem = _dateValidator.convertDateCreate(
+            value.toString().trim().replaceAll('"', ''),
+            'dd/MM/yyyy',
+            'yyyy-MM-dd');
+
+        setState(() {
+          curentDateNow = DateFormat('dd/MM/yyyy').parse(nowSystem);
+        });
+      }
+    });
+
     await _authenticateHelper.getPatientId().then((value) async {
       await setState(() {
         _patientId = value;

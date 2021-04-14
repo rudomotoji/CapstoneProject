@@ -132,7 +132,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                           child: (_healthRecordDTO != null)
                               ? Container(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.80,
+                                      MediaQuery.of(context).size.height * 0.85,
                                   child: CustomScrollView(
                                     physics: NeverScrollableScrollPhysics(),
                                     slivers: [
@@ -835,10 +835,10 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('${dto.medicalInstructionType}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                      )),
+                                  // Text('${dto.medicalInstructionType}',
+                                  //     style: TextStyle(
+                                  //       fontWeight: FontWeight.w600,
+                                  //     )),
                                   Text(
                                     'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(dateCreated)}',
                                     style: TextStyle(
