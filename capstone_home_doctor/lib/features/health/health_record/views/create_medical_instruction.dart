@@ -466,149 +466,158 @@ class _CreateMedicalInstructionViewState
                 ],
               ),
             ),
-            (_dianoseController.text == '' ||
-                    listImage.length <= 0 ||
-                    (_diseaseIds.length <= 0 &&
-                        selectType.status.contains('SCOPE')))
-                ? Container()
-                : Positioned(
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 10),
-                      child: ButtonHDr(
-                        width: MediaQuery.of(context).size.width - 40,
-                        style: BtnStyle.BUTTON_BLACK,
-                        label: 'Thêm',
-                        onTap: () async {
-                          if (_patientId != 0) {
-                            MedicalInstructionDTO medInsDTO;
-                            if (selectType.status.contains('SCOPE')) {
-                              if (_diseaseIds.length == listDisease.length ||
-                                  _diseaseIds.length <= 0) {
-                                medInsDTO = MedicalInstructionDTO(
-                                  medicalInstructionTypeId: _medInsTypeId,
-                                  healthRecordId: _hrId,
-                                  patientId: _patientId,
-                                  description: _note,
-                                  diagnose: _dianoseController.text,
-                                  diseaseIds: '',
-                                  imageFile: listImage,
-                                );
-                              } else {
-                                medInsDTO = MedicalInstructionDTO(
-                                  medicalInstructionTypeId: _medInsTypeId,
-                                  healthRecordId: _hrId,
-                                  patientId: _patientId,
-                                  description: _note,
-                                  diagnose: _dianoseController.text,
-                                  diseaseIds: _diseaseIds.first,
-                                  imageFile: listImage,
-                                );
-                              }
-                            } else {
-                              medInsDTO = MedicalInstructionDTO(
-                                medicalInstructionTypeId: _medInsTypeId,
-                                healthRecordId: _hrId,
-                                patientId: _patientId,
-                                description: _note,
-                                diagnose: _dianoseController.text,
-                                diseaseIds: '',
-                                imageFile: listImage,
-                              );
-                            }
+            // (_dianoseController.text == '' ||
+            //         listImage.length <= 0 ||
+            //         (_diseaseIds.length <= 0 &&
+            //             selectType.status.contains('SCOPE')))
+            //     ? Container()
+            //     :
+            Positioned(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: ButtonHDr(
+                  width: MediaQuery.of(context).size.width - 40,
+                  style: BtnStyle.BUTTON_BLACK,
+                  label: 'Thêm',
+                  onTap: () async {
+                    if (selectType == null) {
+                      alertError('Hãy chọn loại bệnh lý');
+                    } else if (listImage.length <= 0 ||
+                        listImage64Bit.length <= 0) {
+                      alertError('Hãy thêm hình ảnh của y lệnh');
+                    } else if (_dianoseController.text == '' ||
+                        _dianoseController.text.isEmpty ||
+                        _dianoseController.text == null) {
+                      alertError('Vui lòng điền thêm chẩn đoán bệnh');
+                    } else if (_diseaseIds.length <= 0 &&
+                        selectType.status.contains('SCOPE')) {
+                      alertError('Vui lòng chọn thêm triệu chứng của bệnh');
+                    } else if (_patientId != 0) {
+                      MedicalInstructionDTO medInsDTO;
+                      if (selectType.status.contains('SCOPE')) {
+                        if (_diseaseIds.length == listDisease.length ||
+                            _diseaseIds.length <= 0) {
+                          medInsDTO = MedicalInstructionDTO(
+                            medicalInstructionTypeId: _medInsTypeId,
+                            healthRecordId: _hrId,
+                            patientId: _patientId,
+                            description: _note,
+                            diagnose: _dianoseController.text,
+                            diseaseIds: '',
+                            imageFile: listImage,
+                          );
+                        } else {
+                          medInsDTO = MedicalInstructionDTO(
+                            medicalInstructionTypeId: _medInsTypeId,
+                            healthRecordId: _hrId,
+                            patientId: _patientId,
+                            description: _note,
+                            diagnose: _dianoseController.text,
+                            diseaseIds: _diseaseIds.first,
+                            imageFile: listImage,
+                          );
+                        }
+                      } else {
+                        medInsDTO = MedicalInstructionDTO(
+                          medicalInstructionTypeId: _medInsTypeId,
+                          healthRecordId: _hrId,
+                          patientId: _patientId,
+                          description: _note,
+                          diagnose: _dianoseController.text,
+                          diseaseIds: '',
+                          imageFile: listImage,
+                        );
+                      }
 
-                            setState(() {
-                              showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return Center(
-                                    child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                      child: BackdropFilter(
-                                        filter: ImageFilter.blur(
-                                            sigmaX: 25, sigmaY: 25),
-                                        child: Container(
-                                          width: 300,
-                                          height: 300,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: DefaultTheme.WHITE
-                                                  .withOpacity(0.8)),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              SizedBox(
-                                                width: 200,
-                                                height: 200,
-                                                child: Image.asset(
-                                                    'assets/images/loading.gif'),
-                                              ),
-                                              Text(
-                                                'Vui lòng chờ trong giây lát chúng tôi đang tạo y lệnh cho bạn',
-                                                style: TextStyle(
-                                                    color:
-                                                        DefaultTheme.GREY_TEXT,
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w400,
-                                                    decoration:
-                                                        TextDecoration.none),
-                                              ),
-                                            ],
-                                          ),
+                      setState(() {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Center(
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+                                child: BackdropFilter(
+                                  filter:
+                                      ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                                  child: Container(
+                                    width: 300,
+                                    height: 300,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: DefaultTheme.WHITE
+                                            .withOpacity(0.8)),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: 200,
+                                          height: 200,
+                                          child: Image.asset(
+                                              'assets/images/loading.gif'),
                                         ),
-                                      ),
+                                        Text(
+                                          'Vui lòng chờ trong giây lát chúng tôi đang tạo y lệnh cho bạn',
+                                          style: TextStyle(
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              decoration: TextDecoration.none),
+                                        ),
+                                      ],
                                     ),
-                                  );
-                                },
-                              );
-                            });
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      });
 
-                            if (titleCompare < percenntCompare) {
-                              showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: new Text(
-                                      "Cảnh báo",
-                                      style: TextStyle(
-                                          color: DefaultTheme.RED_TEXT,
-                                          fontSize: 18),
-                                    ),
-                                    content: new Text(
-                                        "Bạn đã chắc chắn thông tin bạn thêm vào là chính xác"),
-                                    actions: <Widget>[
-                                      new FlatButton(
-                                        child: new Text("Không"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      new FlatButton(
-                                        child: new Text("Đúng"),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                          _createMedIns(medInsDTO);
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            } else {
-                              _createMedIns(medInsDTO);
-                            }
-                          }
-                        },
-                      ),
-                    ),
-                  ),
+                      if (titleCompare < percenntCompare) {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: new Text(
+                                "Cảnh báo",
+                                style: TextStyle(
+                                    color: DefaultTheme.RED_TEXT, fontSize: 18),
+                              ),
+                              content: new Text(
+                                  "Bạn đã chắc chắn thông tin bạn thêm vào là chính xác"),
+                              actions: <Widget>[
+                                new FlatButton(
+                                  child: new Text("Không"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                new FlatButton(
+                                  child: new Text("Đúng"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    _createMedIns(medInsDTO);
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        _createMedIns(medInsDTO);
+                      }
+                    }
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -667,53 +676,7 @@ class _CreateMedicalInstructionViewState
           // Navigator.of(context).pop();
           // });
         } else {
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (BuildContext context) {
-              return Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                    child: Container(
-                      width: 200,
-                      height: 200,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: DefaultTheme.WHITE.withOpacity(0.8)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: Image.asset('assets/images/ic-failed.png'),
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Không thể tạo bệnh án, vui lòng tạo lại',
-                              style: TextStyle(
-                                  color: DefaultTheme.GREY_TEXT,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  decoration: TextDecoration.none),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-          Future.delayed(const Duration(seconds: 2), () {
-            Navigator.of(context).pop();
-          });
+          alertError('Không thể tạo bệnh án, vui lòng tạo lại');
         }
       });
     });
@@ -728,6 +691,56 @@ class _CreateMedicalInstructionViewState
     //     );
     //   },
     // );
+  }
+
+  alertError(String title) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: DefaultTheme.WHITE.withOpacity(0.8)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: Image.asset('assets/images/ic-failed.png'),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            decoration: TextDecoration.none),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    Future.delayed(const Duration(seconds: 2), () {
+      Navigator.of(context).pop();
+    });
   }
 
   _selectBoxDissease() {
