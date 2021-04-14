@@ -12,7 +12,9 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/silver_floating_header.dart';
 import 'package:capstone_home_doctor/commons/widgets/silver_pin_box_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/payment_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
+import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
 import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
@@ -783,6 +785,25 @@ class _DashboardState extends State<DashboardPage>
           ),
         ),
         Divider(color: DefaultTheme.GREY_TOP_TAB_BAR, height: 1),
+        //thanh toán vnpay
+        // ButtonHDr(
+        //   style: BtnStyle.BUTTON_BLACK,
+        //   label: 'thanh toan vnpay',
+        //   onTap: () {
+        //     PaymentBloc paymentBloc;
+        //     paymentBloc = PaymentBloc.getInstance();
+        //     paymentBloc.paymentSink.add('1230');
+        //     //
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //         builder: (context) => VNPayWebView(
+        //           url: paymentBloc.paymentUrl,
+        //         ),
+        //       ),
+        //     );
+        //   },
+        // ),
       ],
     );
   }

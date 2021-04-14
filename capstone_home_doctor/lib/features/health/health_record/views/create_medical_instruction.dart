@@ -27,6 +27,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+// import 'package:diff_image/diff_image.dart';
+// import 'package:image/image.dart' as imgs;
 
 class CreateMedicalInstructionView extends StatefulWidget {
   @override
@@ -1111,6 +1113,10 @@ class _CreateMedicalInstructionViewState
 
       bool load = false;
       if (pickedFile != null) {
+        // for (var item in listImage) {
+        //   goo(item, pickedFile.path);
+        // }
+
         String fileName = pickedFile.path.split("/").last;
         print('fileName: $fileName');
         //
@@ -1263,4 +1269,25 @@ class _CreateMedicalInstructionViewState
       },
     );
   }
+
+  // void goo(String firstImg, String secondImg) {
+  //   var firstImageFromMemory = imgs.decodeImage(
+  //     File(
+  //       firstImg,
+  //     ).readAsBytesSync(),
+  //   );
+  //   var secondImageFromMemory = imgs.decodeImage(
+  //     File(
+  //       secondImg,
+  //     ).readAsBytesSync(),
+  //   );
+
+  //   try {
+  //     var diff = DiffImage.compareFromMemory(
+  //         firstImageFromMemory, secondImageFromMemory);
+  //     print('The difference between images is: ${diff.diffValue} %');
+  //   } catch (e) {
+  //     print('goo error: $e');
+  //   }
+  // }
 }

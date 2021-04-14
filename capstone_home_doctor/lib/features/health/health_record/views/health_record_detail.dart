@@ -124,30 +124,37 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                   isMainView: false,
                   buttonHeaderType: ButtonHeaderType.CREATE_HEALTH_RECORD,
                 ),
-                RefreshIndicator(
-                  child: Container(
-                    child: (_healthRecordDTO != null)
-                        ? Container(
-                            height: MediaQuery.of(context).size.height * 0.80,
-                            child: CustomScrollView(
-                              physics: NeverScrollableScrollPhysics(),
-                              slivers: [
-                                buildSliverToBoxAdapterHeader(),
-                                buildSliverAppBarCollepse(),
-                                buildTabbarViewHasContract(),
-                              ],
-                            ),
-                          )
-                        : Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Center(
-                              child: Text(
-                                'Không thể tải danh sách hồ sơ',
-                              ),
-                            ),
-                          ),
+                Expanded(
+                  child: RefreshIndicator(
+                    child: ListView(
+                      children: [
+                        Container(
+                          child: (_healthRecordDTO != null)
+                              ? Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.80,
+                                  child: CustomScrollView(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    slivers: [
+                                      buildSliverToBoxAdapterHeader(),
+                                      buildSliverAppBarCollepse(),
+                                      buildTabbarViewHasContract(),
+                                    ],
+                                  ),
+                                )
+                              : Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Center(
+                                    child: Text(
+                                      'Không thể tải danh sách hồ sơ',
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
+                    onRefresh: _pullRefresh,
                   ),
-                  onRefresh: _pullRefresh,
                 ),
               ],
             ),
@@ -907,7 +914,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     ),
                   ],
                 ),
-                (dto.status.contains('PATIENT'))
+                (dto.status.contains('PATIENT') &&
+                        _healthRecordDTO.contractId == null)
                     ? Positioned(
                         width: 35,
                         height: 35,
