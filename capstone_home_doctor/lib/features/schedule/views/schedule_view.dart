@@ -289,7 +289,8 @@ class _ScheduleView extends State<ScheduleView>
   }
 
   void _getEvent(List<AppointmentDTO> listAppointment) {
-    final _selectedDay = DateTime.now();
+    // final _selectedDay = DateTime.now();
+    final _selectedDay = curentDateNow;
 
     for (var item in listAppointment) {
       DateTime dateAppointment =
@@ -496,13 +497,11 @@ class _ScheduleView extends State<ScheduleView>
                                             DateTime newDateTime =
                                                 await showRoundedDatePicker(
                                                     context: context,
-                                                    initialDate: DateTime.now(),
+                                                    initialDate: curentDateNow,
                                                     firstDate: DateTime(
-                                                        DateTime.now().year -
-                                                            1),
+                                                        curentDateNow.year - 1),
                                                     lastDate: DateTime(
-                                                        DateTime.now().year +
-                                                            1),
+                                                        curentDateNow.year + 1),
                                                     borderRadius: 16,
                                                     theme: ThemeData.dark());
                                             if (newDateTime != null) {

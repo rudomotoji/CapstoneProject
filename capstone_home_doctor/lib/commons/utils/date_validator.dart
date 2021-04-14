@@ -174,8 +174,10 @@ class DateValidator {
     //
     double value = timeAgo;
     int minutes = value.toInt();
-    if (minutes <= 1) {
+    if (minutes <= 1 && minutes > 0) {
       result = 'vài giây trước';
+    } else if (minutes <= 0) {
+      result = '';
     } else if (minutes < 60 && minutes > 1) {
       result = '${minutes} phút trước';
     } else if (minutes <= 1440 && minutes >= 60) {
