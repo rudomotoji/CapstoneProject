@@ -3,8 +3,11 @@ import 'dart:ui';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/success.dart';
+import 'package:capstone_home_doctor/services/payment_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+final PaymentHelper _paymentHelper = PaymentHelper();
 
 class VNPayWebView extends StatefulWidget {
   final String url;
@@ -85,6 +88,7 @@ class _VNPayWebViewState extends State<VNPayWebView> {
                     // );
 
                     Future.delayed(const Duration(seconds: 2), () {
+                      _paymentHelper.updatePaymentCheck(true);
                       Navigator.of(context).pop();
                     });
                     return NavigationDecision.navigate;

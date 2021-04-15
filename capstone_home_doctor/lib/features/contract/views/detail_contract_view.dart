@@ -33,6 +33,7 @@ import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
+import 'package:capstone_home_doctor/services/payment_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -44,6 +45,7 @@ final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final ContractHelper _contractHelper = ContractHelper();
 final DateValidator _dateValidator = DateValidator();
 final ArrayValidator _arrayValidator = ArrayValidator();
+final PaymentHelper _paymentHelper = PaymentHelper();
 
 final Shader _normalHealthColors = LinearGradient(
   colors: <Color>[
@@ -3737,10 +3739,12 @@ class _DetailContractView extends State<DetailContractView>
                                                                                 TextStyle(color: DefaultTheme.BLUE_TEXT)),
                                                                         onPressed:
                                                                             () {
+                                                                          print(
+                                                                              'TIEN: ${_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense} ');
                                                                           Navigator.of(context)
                                                                               .pop();
                                                                           paymentRepository
-                                                                              .vnpay(123000, 'Thanh toán hợp đồng')
+                                                                              .vnpay((_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense), 'Thanh toán hợp đồng')
                                                                               .then(
                                                                                 (value) => {
                                                                                   Navigator.push(
@@ -3750,7 +3754,17 @@ class _DetailContractView extends State<DetailContractView>
                                                                                         url: value.body,
                                                                                       ),
                                                                                     ),
-                                                                                  ),
+                                                                                  ).then((value) {
+                                                                                    _paymentHelper.isPaymentCheck().then((isChecked) {
+                                                                                      if (isChecked) {
+                                                                                        _contractUpdateBloc.add(ContractUpdateEventUpdate(dto: dto));
+                                                                                        Future.delayed(const Duration(seconds: 2), () {
+                                                                                          _refreshData();
+                                                                                        });
+                                                                                        _paymentHelper.updatePaymentCheck(false);
+                                                                                      }
+                                                                                    });
+                                                                                  }),
                                                                                 },
                                                                               )
                                                                               .catchError((e) {
