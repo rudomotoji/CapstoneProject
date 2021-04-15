@@ -222,7 +222,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                       child: InkWell(
                           splashColor: DefaultTheme.TRANSPARENT,
                           highlightColor: DefaultTheme.TRANSPARENT,
-                          onTap: _kickHRCOn,
+                          onTap: _onMeasuring,
                           child: Row(
                             children: [
                               Image.asset(
@@ -656,6 +656,78 @@ class _HeaderWidget extends State<HeaderWidget> {
     await _medicalInstructionHelper.updateCreateHRFromDetail(false);
     Navigator.of(context).pushNamedAndRemoveUntil(
         RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+  }
+
+  void _onMeasuring() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: DefaultTheme.TRANSPARENT,
+      builder: (context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+          child: Stack(
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.height * 0.85,
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.05),
+                color: DefaultTheme.TRANSPARENT,
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(15)),
+                    color: DefaultTheme.WHITE.withOpacity(0.9),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      //////
+                      ///
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              child: Image.asset(
+                                'assets/images/ic-mesuring.gif',
+                                height:
+                                    MediaQuery.of(context).size.height * 0.8,
+                              ),
+                            ),
+                            Positioned(
+                              top: 20,
+                              child: Container(
+                                child: Text('Đang đo'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 23,
+                left: MediaQuery.of(context).size.width * 0.3,
+                height: 5,
+                child: Container(
+                  padding: EdgeInsets.only(
+                      left: MediaQuery.of(context).size.width * 0.3),
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  height: 15,
+                  decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(50)),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _onButtonShowModelSheet() {
