@@ -19,11 +19,13 @@ import 'package:capstone_home_doctor/features/information/events/patient_event.d
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
 import 'package:capstone_home_doctor/features/login/blocs/token_device_bloc.dart';
 import 'package:capstone_home_doctor/features/login/events/token_device_event.dart';
+import 'package:capstone_home_doctor/features/payment/repositories/payment_repository.dart';
 import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/appointment_event.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
+import 'package:capstone_home_doctor/features/schedule/repositories/appointment_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/appointment_state.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
@@ -111,6 +113,8 @@ class _DashboardState extends State<DashboardPage>
       PrescriptionRepository(httpClient: http.Client());
   ContractRepository contractRepository =
       ContractRepository(httpClient: http.Client());
+  PaymentRepository paymentRepository =
+      PaymentRepository(httpClient: http.Client());
 
   PrescriptionListBloc _prescriptionListBloc;
   AppointmentBloc _appointmentBloc;
@@ -345,17 +349,16 @@ class _DashboardState extends State<DashboardPage>
   }
 
   _getPatientId() async {
-    await _systemRepository.getTimeSystem().then((value) {
-      if (value != null && value != '' && value.isNotEmpty) {
-        String nowSystem = value.toString().trim().replaceAll('"', '');
-        if (!mounted) return;
-        // setState(() {
-        //   curentDateNow = DateFormat('yyyy-MM-dd').parse(nowSystem);
-        // });
-
-        // print('curentDateNow: ${curentDateNow}');
-      }
-    });
+    // await _systemRepository.getTimeSystem().then((value) {
+    // if (!mounted) return;
+    //   if (value != null && value != '' && value.isNotEmpty) {
+    //     String nowSystem = value.toString().trim().replaceAll('"', '');
+    //     // curentDateNow = DateFormat('yyyy-MM-dd').parse(nowSystem);
+    //     // print('curentDateNow: ${curentDateNow}');
+    //     //
+    //   }
+    // });
+    // });
 
     await _authenticateHelper.getPatientId().then((value) {
       _patientId = value;
@@ -374,6 +377,36 @@ class _DashboardState extends State<DashboardPage>
       _appointmentBloc.add(AppointmentGetListEvent(
           patientId: _accountId,
           date: '${curentDateNow.year}/${curentDateNow.month}'));
+
+      await prescriptionRepository
+          .getListPrecription(_patientId)
+          .then((value) async {
+        List<MedicalInstructionDTO> _listPrescription = [];
+        if (value != null) {
+          value.sort((a, b) =>
+              b.medicalInstructionId.compareTo(a.medicalInstructionId));
+          value.sort((a, b) => a.medicationsRespone.dateStarted
+              .compareTo(b.medicationsRespone.dateStarted));
+
+          for (var schedule in value) {
+            MedicalInstructionDTO _prescription = MedicalInstructionDTO();
+            if (schedule.medicationsRespone.dateFinished != null) {
+              DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
+                  .parse(schedule.medicationsRespone.dateFinished);
+              if (tempDate2.millisecondsSinceEpoch >=
+                      curentDateNow.millisecondsSinceEpoch &&
+                  schedule.medicationsRespone.status.contains('ACTIVE')) {
+                schedule.medicationsRespone.medicalResponseID =
+                    schedule.medicalInstructionId;
+                _prescription = schedule;
+                _listPrescription.add(_prescription);
+              }
+            }
+          }
+          listPrescription = _listPrescription;
+        }
+        await handlingMEdicalResponse();
+      });
       await contractRepository.getListContract(_patientId).then((value) async {
         //
         listContract = value;
@@ -836,25 +869,6 @@ class _DashboardState extends State<DashboardPage>
           ),
         ),
         Divider(color: DefaultTheme.GREY_TOP_TAB_BAR, height: 1),
-        //thanh toán vnpay
-        // ButtonHDr(
-        //   style: BtnStyle.BUTTON_BLACK,
-        //   label: 'thanh toan vnpay',
-        //   onTap: () {
-        //     PaymentBloc paymentBloc;
-        //     paymentBloc = PaymentBloc.getInstance();
-        //     paymentBloc.paymentSink.add('1230');
-        //     //
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //         builder: (context) => VNPayWebView(
-        //           url: paymentBloc.paymentUrl,
-        //         ),
-        //       ),
-        //     );
-        //   },
-        // ),
       ],
     );
   }
@@ -2627,7 +2641,6 @@ class _DashboardState extends State<DashboardPage>
   handlingMEdicalResponse() async {
     await _sqfLiteHelper.cleanDatabase();
     for (var schedule in listPrescription) {
-      MedicalInstructionDTO _prescription = MedicalInstructionDTO();
       if (schedule.medicationsRespone.dateFinished != null) {
         DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
             .parse(schedule.medicationsRespone.dateFinished);
@@ -2638,7 +2651,6 @@ class _DashboardState extends State<DashboardPage>
               schedule.medicalInstructionId;
           await _sqfLiteHelper
               .insertMedicalResponse(schedule.medicationsRespone);
-          _prescription = schedule;
 
           for (var item in schedule.medicationsRespone.medicationSchedules) {
             item.medicalResponseID = schedule.medicalInstructionId;
@@ -2647,10 +2659,13 @@ class _DashboardState extends State<DashboardPage>
         }
       }
     }
+
+    // getLocalStorage();
   }
 
   getLocalStorage() async {
     List<PrescriptionDTO> data = await _sqfLiteHelper.getMedicationsRespone();
+    print('getLocalStorage: ${data.length}');
     List<MedicalInstructionDTO> _listPrescription = [];
     for (var itemPrescription in data) {
       MedicalInstructionDTO _prescription = MedicalInstructionDTO();
@@ -2673,9 +2688,9 @@ class _DashboardState extends State<DashboardPage>
       }
     }
 
-    setState(() {
-      listPrescription = _listPrescription;
-    });
+    // setState(() {
+    //   listPrescription = _listPrescription;
+    // });
   }
 
   Future<void> _pullRefresh() async {
