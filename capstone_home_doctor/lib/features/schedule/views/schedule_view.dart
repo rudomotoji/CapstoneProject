@@ -1415,17 +1415,22 @@ class _ScheduleView extends State<ScheduleView>
   }
 
   Future<void> _getPatientId() async {
-    await _systemRepository.getTimeSystem().then((value) {
-      if (value != null && value != '' && value.isNotEmpty) {
-        String nowSystem = _dateValidator.convertDateCreate(
-            value.toString().trim().replaceAll('"', ''),
-            'dd/MM/yyyy',
-            'yyyy-MM-dd');
+    // await _systemRepository.getTimeSystem().then((value) {
+    //   if (value != null && value != '' && value.isNotEmpty) {
+    //     String nowSystem = _dateValidator.convertDateCreate(
+    //         value.toString().trim().replaceAll('"', ''),
+    //         'dd/MM/yyyy',
+    //         'yyyy-MM-dd');
 
-        setState(() {
-          curentDateNow = DateFormat('dd/MM/yyyy').parse(nowSystem);
-        });
-      }
+    //     setState(() {
+    //       curentDateNow = DateFormat('dd/MM/yyyy').parse(nowSystem);
+    //     });
+    //   }
+    // });
+    //
+    setState(() {
+      curentDateNow = new DateFormat('dd/MM/yyyy')
+          .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
     });
 
     await _authenticateHelper.getPatientId().then((value) async {

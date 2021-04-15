@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'dart:async';
-import 'package:capstone_home_doctor/features/contract/repositories/payment_repository.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/blood_bloc.dart';
 import 'package:capstone_home_doctor/services/payment_helper.dart';
+import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
 import 'package:intl/intl.dart';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -16,13 +16,11 @@ import 'package:capstone_home_doctor/features/activity/repository/activity_repos
 import 'package:capstone_home_doctor/features/activity/view/activity_time.dart';
 import 'package:capstone_home_doctor/features/activity/view/activity_view.dart';
 import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
-import 'package:capstone_home_doctor/features/chat/chat.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_checking_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/update_health_record.dart';
-import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_sync_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_sync_repository.dart';
 import 'package:capstone_home_doctor/models/appointment_dto.dart';
@@ -410,6 +408,12 @@ var uuid = Uuid();
 DateValidator _dateValidator = DateValidator();
 AppointmentDTO appointment;
 
+// Timer _timer;
+// const oneSec = const Duration(seconds: 1);
+// int _start = 10;
+
+// DateTime today = DateTime.now();
+
 /////////
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -423,6 +427,13 @@ void main() async {
   _getAccountId();
   await _getPatientId();
   await getCalendarAppointment();
+
+  // _timer = new Timer.periodic(
+  //   oneSec,
+  //   (Timer timer) {
+  //     today = today.add(Duration(seconds: 1));
+  //   },
+  // );
 
   //connect device for 1st time and when bluetooth is on
   FlutterBlue.instance.state.listen((state) async {
@@ -1995,6 +2006,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.ACTIVITY_TIME_VIEW: (context) => ActivityTimeView(),
                 RoutesHDr.VITAL_SIGN_CHART_DETAIL: (context) =>
                     VitalSignChartDetail(),
+                RoutesHDr.PAYMENT: (context) => VNPayWebView(),
               },
               localizationsDelegates: [
                 // ... app-specific localization delegate[s] here

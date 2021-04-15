@@ -24,6 +24,8 @@ import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dar
 import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
+import 'package:capstone_home_doctor/features/payment/blocs/payment_bloc.dart';
+import 'package:capstone_home_doctor/features/payment/repositories/payment_repository.dart';
 import 'package:capstone_home_doctor/models/contract_full_dto.dart';
 import 'package:capstone_home_doctor/models/contract_update_dto.dart';
 import 'package:capstone_home_doctor/models/doctor_dto.dart';
@@ -76,6 +78,8 @@ class _DetailContractView extends State<DetailContractView>
       DoctorRepository(httpClient: http.Client());
   PatientRepository patientRepository =
       PatientRepository(httpClient: http.Client());
+  PaymentRepository paymentRepository =
+      PaymentRepository(httpClient: http.Client());
   //
 
   Stream<ReceiveNotification> _notificationsStream;
@@ -3735,30 +3739,23 @@ class _DetailContractView extends State<DetailContractView>
                                                                             () {
                                                                           Navigator.of(context)
                                                                               .pop();
-                                                                          // _contractUpdateBloc
-                                                                          //     .add(ContractUpdateEventUpdate(dto: dto));
-                                                                          // Future.delayed(
-                                                                          //     const Duration(seconds: 2),
-                                                                          //     () {
-                                                                          //   _refreshData();
-                                                                          // });
-                                                                          PaymentBloc
-                                                                              paymentBloc;
-                                                                          paymentBloc =
-                                                                              PaymentBloc.getInstance();
-                                                                          paymentBloc
-                                                                              .paymentSink
-                                                                              .add('1230');
-                                                                          //
-                                                                          Navigator
-                                                                              .push(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                              builder: (context) => VNPayWebView(
-                                                                                url: paymentBloc.paymentUrl,
-                                                                              ),
-                                                                            ),
-                                                                          );
+                                                                          paymentRepository
+                                                                              .vnpay(123000, 'Thanh toán hợp đồng')
+                                                                              .then(
+                                                                                (value) => {
+                                                                                  Navigator.push(
+                                                                                    context,
+                                                                                    MaterialPageRoute(
+                                                                                      builder: (context) => VNPayWebView(
+                                                                                        url: value.body,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                },
+                                                                              )
+                                                                              .catchError((e) {
+                                                                            print('getPaymentUrl error');
+                                                                          });
                                                                         },
                                                                       ),
                                                                     ],

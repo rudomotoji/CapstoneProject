@@ -1,46 +1,46 @@
-import 'dart:async';
+// import 'dart:async';
 
-import 'package:capstone_home_doctor/features/contract/repositories/payment_repository.dart';
+// import 'package:capstone_home_doctor/features/contract/repositories/payment_repository.dart';
 
-class PaymentBloc {
-  static PaymentBloc paymentBloc;
-  static PaymentBloc getInstance() {
-    return paymentBloc ?? (paymentBloc = PaymentBloc());
-  }
+// class PaymentBloc {
+//   static PaymentBloc paymentBloc;
+//   static PaymentBloc getInstance() {
+//     return paymentBloc ?? (paymentBloc = PaymentBloc());
+//   }
 
-  PaymentBloc() {
-    paymentController.stream.listen(_handlePayment);
-  }
+//   PaymentBloc() {
+//     paymentController.stream.listen(_handlePayment);
+//   }
 
-  String _paymentUrl = "";
-  String get paymentUrl => _paymentUrl;
+//   String _paymentUrl = "";
+//   String get paymentUrl => _paymentUrl;
 
-  Sink<String> get paymentSink => paymentController.sink;
-  var paymentController = StreamController<String>();
+//   Sink<String> get paymentSink => paymentController.sink;
+//   var paymentController = StreamController<String>();
 
-  Stream<String> get vnPayStream => vnPayController.stream;
-  var vnPayController = StreamController<String>();
+//   Stream<String> get vnPayStream => vnPayController.stream;
+//   var vnPayController = StreamController<String>();
 
-  PaymentRepository paymentRepository;
+//   PaymentRepository paymentRepository;
 
-  void getPaymentUrl(String contract) {
-    paymentRepository
-        .vnpay(contract)
-        .then((value) => {
-              _paymentUrl = value.body,
-            })
-        .catchError((e) {
-      print('getPaymentUrl error');
-    });
-  }
+//   void getPaymentUrl(int amount, String description) {
+//     paymentRepository
+//         .vnpay(amount, description)
+//         .then((value) => {
+//               _paymentUrl = value.body,
+//             })
+//         .catchError((e) {
+//       print('getPaymentUrl error');
+//     });
+//   }
 
-  void _handlePayment(String contract) {
-    getPaymentUrl(contract);
-    vnPayController.sink.add(_paymentUrl);
-  }
+//   void _handlePayment(int amount, String description) {
+//     getPaymentUrl(amount, description);
+//     vnPayController.sink.add(_paymentUrl);
+//   }
 
-  void dispose() {
-    paymentController.close();
-    vnPayController.close();
-  }
-}
+//   void dispose() {
+//     paymentController.close();
+//     vnPayController.close();
+//   }
+// }

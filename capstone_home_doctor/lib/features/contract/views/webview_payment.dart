@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/success.dart';
 import 'package:flutter/material.dart';
@@ -33,11 +36,57 @@ class _VNPayWebViewState extends State<VNPayWebView> {
                     {_webViewController = webViewController},
                 navigationDelegate: (navigation) {
                   if (navigation.url.contains('https://vnpay.vn/')) {
-                    print(_webViewController.toString());
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => SuccessNotification()));
+                    print('RESULT: ${_webViewController.toString()}');
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => SuccessNotification()));
+                    //
+                    // showDialog(
+                    //   barrierDismissible: false,
+                    //   context: context,
+                    //   builder: (BuildContext context) {
+                    //     return Center(
+                    //       child: ClipRRect(
+                    //         borderRadius: BorderRadius.all(Radius.circular(5)),
+                    //         child: BackdropFilter(
+                    //           filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    //           child: Container(
+                    //             width: 200,
+                    //             height: 200,
+                    //             decoration: BoxDecoration(
+                    //                 borderRadius: BorderRadius.circular(10),
+                    //                 color: DefaultTheme.WHITE.withOpacity(0.8)),
+                    //             child: Column(
+                    //               mainAxisAlignment: MainAxisAlignment.center,
+                    //               crossAxisAlignment: CrossAxisAlignment.center,
+                    //               children: [
+                    //                 SizedBox(
+                    //                   width: 100,
+                    //                   height: 100,
+                    //                   child: Image.asset(
+                    //                       'assets/images/ic-checked.png'),
+                    //                 ),
+                    //                 Text(
+                    //                   'Thanh toán thành công',
+                    //                   style: TextStyle(
+                    //                       color: DefaultTheme.GREY_TEXT,
+                    //                       fontSize: 15,
+                    //                       fontWeight: FontWeight.w400,
+                    //                       decoration: TextDecoration.none),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     );
+                    //   },
+                    // );
+
+                    Future.delayed(const Duration(seconds: 2), () {
+                      Navigator.of(context).pop();
+                    });
                     return NavigationDecision.navigate;
                   }
                   _webViewController.loadUrl(navigation.url);
