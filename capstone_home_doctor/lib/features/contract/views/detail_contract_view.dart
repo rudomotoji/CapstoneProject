@@ -10,6 +10,7 @@ import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.
 import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/contract_update_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/payment_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/events/contract_full_event.dart';
 import 'package:capstone_home_doctor/features/contract/events/contract_update_event.dart';
 import 'package:capstone_home_doctor/features/contract/events/doctor_info_event.dart';
@@ -17,6 +18,7 @@ import 'package:capstone_home_doctor/features/contract/repositories/contract_rep
 import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
 import 'package:capstone_home_doctor/features/contract/states/contract_full_state_dto.dart';
 import 'package:capstone_home_doctor/features/contract/states/doctor_info_state.dart';
+import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
 import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
@@ -3584,7 +3586,7 @@ class _DetailContractView extends State<DetailContractView>
                                                                           context)
                                                                       .size
                                                                       .height *
-                                                                  0.5,
+                                                                  0.35,
                                                               decoration:
                                                                   BoxDecoration(
                                                                 color: DefaultTheme
@@ -3602,27 +3604,56 @@ class _DetailContractView extends State<DetailContractView>
                                                                 children: <
                                                                     Widget>[
                                                                   Container(
-                                                                    padding: EdgeInsets.only(
-                                                                        bottom:
-                                                                            5,
-                                                                        top:
-                                                                            20),
-                                                                    child: Text(
-                                                                      'Xác nhận hợp đồng',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        decoration:
-                                                                            TextDecoration.none,
-                                                                        color: DefaultTheme
-                                                                            .BLACK,
-                                                                        fontWeight:
-                                                                            FontWeight.w600,
-                                                                        fontSize:
-                                                                            25,
-                                                                      ),
+                                                                      padding: EdgeInsets.only(
+                                                                          bottom:
+                                                                              5,
+                                                                          top:
+                                                                              20),
+                                                                      child:
+                                                                          Row(
+                                                                        children: [
+                                                                          Padding(
+                                                                            padding:
+                                                                                EdgeInsets.only(left: 20),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                30,
+                                                                            height:
+                                                                                30,
+                                                                            child:
+                                                                                Image.asset('assets/images/ic-money.png'),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                EdgeInsets.only(left: 20),
+                                                                          ),
+                                                                          Text(
+                                                                            'Xác nhận thanh toán',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              decoration: TextDecoration.none,
+                                                                              color: DefaultTheme.BLACK,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              fontSize: 25,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      )),
+                                                                  Padding(
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .only(
+                                                                      bottom:
+                                                                          10,
+                                                                      top: 10,
                                                                     ),
+                                                                    child: Divider(
+                                                                        color: DefaultTheme
+                                                                            .GREY_TOP_TAB_BAR,
+                                                                        height:
+                                                                            1),
                                                                   ),
-                                                                  Spacer(),
                                                                   Container(
                                                                     padding: EdgeInsets.only(
                                                                         left:
@@ -3640,9 +3671,10 @@ class _DetailContractView extends State<DetailContractView>
                                                                               TextSpan(text: 'Khi ký hợp đồng này, đồng nghĩa với việc bạn phải trả '),
                                                                               TextSpan(text: '${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)}', style: TextStyle(color: DefaultTheme.SUCCESS_STATUS, fontWeight: FontWeight.w600)),
                                                                               TextSpan(text: '.\nSố tiền này sẽ không được hoàn trả.'),
-                                                                              TextSpan(text: '\nHợp đồng có hiệu lực từ ngày '),
+                                                                              TextSpan(text: '\nHợp đồng có hiệu lực:'),
+                                                                              TextSpan(text: '\nTừ ngày: '),
                                                                               TextSpan(text: '${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)}', style: TextStyle(color: DefaultTheme.BLUE_TEXT)),
-                                                                              TextSpan(text: ' đến ngày '),
+                                                                              TextSpan(text: '\nĐến ngày: '),
                                                                               TextSpan(text: '${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}', style: TextStyle(color: DefaultTheme.BLUE_TEXT)),
                                                                               TextSpan(text: '.'),
                                                                             ],
@@ -3696,20 +3728,37 @@ class _DetailContractView extends State<DetailContractView>
                                                                             (MediaQuery.of(context).size.width - 60.5) /
                                                                                 2,
                                                                         child: Text(
-                                                                            'Đồng ý',
+                                                                            'Thanh toán',
                                                                             style:
                                                                                 TextStyle(color: DefaultTheme.BLUE_TEXT)),
                                                                         onPressed:
                                                                             () {
                                                                           Navigator.of(context)
                                                                               .pop();
-                                                                          _contractUpdateBloc
-                                                                              .add(ContractUpdateEventUpdate(dto: dto));
-                                                                          Future.delayed(
-                                                                              const Duration(seconds: 2),
-                                                                              () {
-                                                                            _refreshData();
-                                                                          });
+                                                                          // _contractUpdateBloc
+                                                                          //     .add(ContractUpdateEventUpdate(dto: dto));
+                                                                          // Future.delayed(
+                                                                          //     const Duration(seconds: 2),
+                                                                          //     () {
+                                                                          //   _refreshData();
+                                                                          // });
+                                                                          PaymentBloc
+                                                                              paymentBloc;
+                                                                          paymentBloc =
+                                                                              PaymentBloc.getInstance();
+                                                                          paymentBloc
+                                                                              .paymentSink
+                                                                              .add('1230');
+                                                                          //
+                                                                          Navigator
+                                                                              .push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder: (context) => VNPayWebView(
+                                                                                url: paymentBloc.paymentUrl,
+                                                                              ),
+                                                                            ),
+                                                                          );
                                                                         },
                                                                       ),
                                                                     ],

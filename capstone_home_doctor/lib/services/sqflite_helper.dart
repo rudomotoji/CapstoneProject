@@ -336,6 +336,28 @@ class SQFLiteHelper {
     }
   }
 
+  Future<List<VitalSignDTO>> getListBloodVitalSign(
+      String value_type, int patient_id) async {
+    var dbClient = await database;
+    try {
+      //
+      var maps = await dbClient.rawQuery(
+          'SELECT * FROM $VITAL_SIGN_TABLE WHERE value_type = ? AND patient_id = ?',
+          [value_type, patient_id]);
+      List<VitalSignDTO> listVitalSign = [];
+      if (maps.length > 0) {
+        for (int i = 0; i < maps.length; i++) {
+          listVitalSign.add(VitalSignDTO.fromMapSQL(maps[i]));
+        }
+        // print(
+        //     'GET LIST Vital Sign type ${value_type} successful at ${DateTime.now()}');
+        return listVitalSign;
+      }
+    } catch (e) {
+      print('ERROR at get heart rate list ${e}');
+    }
+  }
+
   Future<bool> deleteRecordsVitalSign(String valueType, int patientId) async {
     var dbClient = await database;
     try {

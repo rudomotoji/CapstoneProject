@@ -138,7 +138,7 @@ class _HeartDetailView extends State<HeartDetailView>
             HeaderWidget(
               title: 'Nhịp tim',
               isMainView: false,
-              buttonHeaderType: ButtonHeaderType.BACK_HOME,
+              buttonHeaderType: ButtonHeaderType.HEART_RATE_MEASURE,
             ),
             Padding(
               padding: EdgeInsets.only(bottom: 10),
@@ -159,7 +159,7 @@ class _HeartDetailView extends State<HeartDetailView>
                     child: Container(
                       width: 150,
                       height: 30,
-                      margin: EdgeInsets.only(left: 30, top: 5),
+                      margin: EdgeInsets.only(left: 30),
                       padding: EdgeInsets.only(
                         left: 10,
                         right: 10,
@@ -184,7 +184,7 @@ class _HeartDetailView extends State<HeartDetailView>
                               style: TextStyle(
                                 color: DefaultTheme.BLACK,
                                 fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w400,
                               ))
                         ],
                       ),
@@ -206,19 +206,19 @@ class _HeartDetailView extends State<HeartDetailView>
                               children: [
                                 Container(
                                   height: 30,
-                                  margin: EdgeInsets.only(top: 5),
+                                  margin: EdgeInsets.only(top: 2),
                                   padding: EdgeInsets.only(left: 20, right: 20),
                                   decoration: BoxDecoration(
-                                      color: DefaultTheme.GREY_TOP_TAB_BAR
-                                          .withOpacity(0.6),
+                                      color: DefaultTheme.ORANGE_TEXT
+                                          .withOpacity(0.5),
                                       borderRadius: BorderRadius.circular(6)),
                                   child: Center(
                                     child: Text(
                                         'Ngày ${_dateValidator.parseToDateView3(_dateView)}',
                                         style: TextStyle(
-                                          color: DefaultTheme.BLACK,
+                                          color: DefaultTheme.WHITE,
                                           fontSize: 16,
-                                          fontWeight: FontWeight.w400,
+                                          fontWeight: FontWeight.w500,
                                         )),
                                   ),
                                 ),

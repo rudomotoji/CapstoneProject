@@ -3,6 +3,8 @@ import 'dart:io';
 import 'dart:ui';
 import 'dart:async';
 import 'package:capstone_home_doctor/features/contract/repositories/payment_repository.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/blood_bloc.dart';
+import 'package:capstone_home_doctor/services/payment_helper.dart';
 import 'package:intl/intl.dart';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -147,6 +149,7 @@ final AppointmentHelper _appointmentHelper = AppointmentHelper();
 final MedicalInstructionHelper _medicalInstructionHelper =
     MedicalInstructionHelper();
 final DoctorHelper _doctorHelper = DoctorHelper();
+final PaymentHelper _paymentHelper = PaymentHelper();
 //
 /////////////////////
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
@@ -382,7 +385,7 @@ void checkNotifiMedical() async {
       }
     });
   }
-  print('body: $body');
+  //print('body: $body');
   if ((hour == MORNING || hour == NOON || hour == AFTERNOON || hour == NIGHT) &&
       minute == MINUTES &&
       body != null &&
@@ -1628,6 +1631,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     if (!prefs.containsKey('BLUETOOTH_CONNECTION')) {
       _reminderHelper.initialBluetoothConnection();
     }
+    if (!prefs.containsKey('PAYMENT_CHECK')) {
+      _paymentHelper.initialPaymentCheck();
+    }
   }
 
   @override
@@ -1902,6 +1908,11 @@ class _HomeDoctorState extends State<HomeDoctor> {
           BlocProvider<MedInsTypeReqListBloc>(
             create: (BuildContext context) => MedInsTypeReqListBloc(
                 medicalInstructionRepository: _medicalInstructionRepository),
+          ),
+          BlocProvider<VitalSignBloodBloc>(
+            create: (BuildContext context) => VitalSignBloodBloc(
+                vitalSignRepository: _vitalSignRepository,
+                sqfLiteHelper: _sqfLiteHelper),
           ),
         ],
         child: GestureDetector(

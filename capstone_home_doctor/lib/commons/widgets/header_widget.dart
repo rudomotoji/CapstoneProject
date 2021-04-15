@@ -14,6 +14,7 @@ import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral
 import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/models/patient_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
@@ -40,6 +41,7 @@ final MedicalInstructionHelper _medicalInstructionHelper =
     MedicalInstructionHelper();
 final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 final ReminderHelper _reminderHelper = ReminderHelper();
+final VitalSignRepository _vitalSignRepository = VitalSignRepository();
 //
 final ArrayValidator _arrayValidator = ArrayValidator();
 
@@ -49,6 +51,7 @@ enum ButtonHeaderType {
   NEW_MESSAGE,
   DETAIL,
   BACK_HOME,
+  HEART_RATE_MEASURE,
   CREATE_HEALTH_RECORD,
 }
 
@@ -200,6 +203,43 @@ class _HeaderWidget extends State<HeaderWidget> {
                 color: DefaultTheme.BLACK,
               ),
             ),
+            if (_buttonHeaderType == ButtonHeaderType.HEART_RATE_MEASURE)
+              (Expanded(
+                flex: 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(padding: EdgeInsets.only(left: 20)),
+                    Container(
+                      padding: EdgeInsets.only(
+                          left: 10, right: 10, bottom: 5, top: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: DefaultTheme.WHITE,
+                        border: Border.all(
+                            color: DefaultTheme.GREY_TOP_TAB_BAR, width: 0.5),
+                      ),
+                      child: InkWell(
+                          splashColor: DefaultTheme.TRANSPARENT,
+                          highlightColor: DefaultTheme.TRANSPARENT,
+                          onTap: _kickHRCOn,
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                'assets/images/ic-heart-dangerous.gif',
+                                width: 30,
+                                height: 30,
+                              ),
+                              Container(
+                                child: Text('Đo nhịp tim'),
+                              ),
+                            ],
+                          )),
+                    ),
+                  ],
+                ),
+              )),
+
             //
             if (_buttonHeaderType == ButtonHeaderType.CREATE_HEALTH_RECORD)
               (Expanded(
@@ -412,6 +452,14 @@ class _HeaderWidget extends State<HeaderWidget> {
         ),
       ),
     );
+  }
+
+  _kickHRCOn() async {
+    await _peripheralHelper.getPeripheralId().then((id) async {
+      if (id != '') {
+        await _vitalSignRepository.kickHRCOn(id);
+      }
+    });
   }
 
   _getPatientId() async {

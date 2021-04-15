@@ -12,6 +12,9 @@ class PeripheralCharacteristics {
   static final Guid HEART_RATE_MEASUREMENT =
       Guid("00002a37-0000-1000-8000-00805f9b34fb");
 
+  static final Guid HEART_RATE_CONTROL_POINT =
+      Guid("00002a39-0000-1000-8000-00805f9b34fb");
+
   static final Guid ACTIVITY = Guid("00000007-0000-3512-2118-0009af100700");
 
   static final Guid BATTERY_INFORMATION =

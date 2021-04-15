@@ -86,10 +86,9 @@ class _PressureDetailView extends State<PressureDetailView> {
           children: <Widget>[
             //
             HeaderWidget(
-              title: 'Huyết áp',
-              isMainView: false,
-              buttonHeaderType: ButtonHeaderType.BACK_HOME,
-            ),
+                title: 'Huyết áp',
+                isMainView: false,
+                buttonHeaderType: ButtonHeaderType.BACK_HOME),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _getPatientId,
@@ -117,17 +116,7 @@ class _PressureDetailView extends State<PressureDetailView> {
                     BlocBuilder<VitalSignBloc, VitalSignState>(
                         builder: (context, state) {
                       //
-                      if (state is VitalSignStateLoading) {
-                        return Container(
-                          width: 200,
-                          height: 200,
-                          child: SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: Image.asset('assets/images/loading.gif'),
-                          ),
-                        );
-                      }
+
                       if (state is VitalSignStateFailure) {
                         return Container(
                             width: MediaQuery.of(context).size.width,

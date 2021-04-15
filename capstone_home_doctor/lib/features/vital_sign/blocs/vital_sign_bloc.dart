@@ -1,5 +1,7 @@
+import 'package:capstone_home_doctor/features/vital_sign/events/blood_event.dart';
 import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
+import 'package:capstone_home_doctor/features/vital_sign/states/blood_state.dart';
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
@@ -27,7 +29,6 @@ class VitalSignBloc extends Bloc<VitalSignEvent, VitalSignState> {
       } catch (e) {
         yield VitalSignStateFailure();
       }
-      return;
     }
   }
 }
