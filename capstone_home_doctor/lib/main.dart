@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'dart:async';
+import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
 import 'package:intl/intl.dart';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -1996,6 +1997,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.ACTIVITY_TIME_VIEW: (context) => ActivityTimeView(),
                 RoutesHDr.VITAL_SIGN_CHART_DETAIL: (context) =>
                     VitalSignChartDetail(),
+                RoutesHDr.PAYMENT: (context) => VNPayWebView(),
               },
               localizationsDelegates: [
                 // ... app-specific localization delegate[s] here

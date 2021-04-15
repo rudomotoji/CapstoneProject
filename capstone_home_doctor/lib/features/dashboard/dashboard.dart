@@ -851,7 +851,7 @@ class _DashboardState extends State<DashboardPage>
           ),
         ),
         Divider(color: DefaultTheme.GREY_TOP_TAB_BAR, height: 1),
-        //thanh toán vnpay
+        // //thanh toán vnpay
         // ButtonHDr(
         //   style: BtnStyle.BUTTON_BLACK,
         //   label: 'thanh toan vnpay',
@@ -864,8 +864,6 @@ class _DashboardState extends State<DashboardPage>
         //               context,
         //               MaterialPageRoute(
         //                 builder: (context) => VNPayWebView(
-        //                   // url:
-        //                   //     'http://sandbox.vnpayment.vn/tryitnow/Home/CreateOrder',
         //                   url: value.body,
         //                 ),
         //               ),
