@@ -53,18 +53,18 @@ class VitalSignDeviceBloc extends Bloc<VitalSignEvent, VitalSignState> {
       }
       return;
     }
-    if (event is VitalSignEventGetHeartRateFromDevice) {
-      yield VitalSignStateLoading();
-      try {
-        final int valueHRFromDevice = await vitalSignRepository
-            .getHeartRateValueFromDevice(event.peripheralId);
+    // if (event is VitalSignEventGetHeartRateFromDevice) {
+    //   yield VitalSignStateLoading();
+    //   try {
+    //     final int valueHRFromDevice = await vitalSignRepository
+    //         .getHeartRateValueFromDevice(event.peripheralId);
 
-        yield VitalSignStateSuccess(valueFromDevice: valueHRFromDevice);
-      } catch (e) {
-        yield VitalSignStateFailure();
-      }
-      return;
-    }
+    //     yield VitalSignStateSuccess(valueFromDevice: valueHRFromDevice);
+    //   } catch (e) {
+    //     yield VitalSignStateFailure();
+    //   }
+    //   return;
+    // }
   }
 }
 

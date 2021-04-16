@@ -846,7 +846,7 @@ _saveVitalSignScheduleOffline() async {
       .getVitalSignSchedule(_patientId)
       .then((scheduleDTO) async {
     //insert schedule vitalsign into local db
-    if (_vitalSignScheduleDTO != null) {
+    if (scheduleDTO != null) {
       await _sqfLiteHelper.deleteVitalSignSchedule();
       _vitalSignScheduleDTO = scheduleDTO;
       for (VitalSigns x in scheduleDTO.vitalSigns) {
@@ -1769,10 +1769,10 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
 
     _saveVitalSignScheduleOffline();
-    if (notiData.body.contains('Bạn có một lịch đo sinh hiệu mới')) {
-      _saveVitalSignScheduleOffline();
-      print('CATCHED THIS NOTI TO DOWNLOAD NEW SCHEDULE');
-    }
+    // if (notiData.body.contains('Bạn có một lịch đo sinh hiệu mới')) {
+    //   _saveVitalSignScheduleOffline();
+    //   print('CATCHED THIS NOTI TO DOWNLOAD NEW SCHEDULE');
+    // }
     //
     //
   }

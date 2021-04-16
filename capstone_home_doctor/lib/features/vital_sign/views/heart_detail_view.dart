@@ -9,6 +9,7 @@ import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
+import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
 import 'package:capstone_home_doctor/features/peripheral/blocs/hr_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_sync_bloc.dart';
@@ -31,9 +32,12 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final DateValidator _dateValidator = DateValidator();
+final BackgroundRepository _backgroundRepository =
+    BackgroundRepository(httpClient: http.Client());
 
 class HeartDetailView extends StatefulWidget {
   @override
@@ -98,13 +102,24 @@ class _HeartDetailView extends State<HeartDetailView>
 
   _getsOffline() async {
     await _sqfLiteHelper.getVitalSignScheduleOffline().then((sOffline) async {
-      if (sOffline.isNotEmpty) {
+      if (sOffline.isNotEmpty && sOffline != null) {
         //
         VitalSigns heartRateSchedule =
             sOffline.where((item) => item.vitalSignType == 'Nhịp tim').first;
         setState(() {
           minL = heartRateSchedule.numberMin;
           maxL = heartRateSchedule.numberMax;
+        });
+      } else {
+        await _backgroundRepository
+            .getSafeScopeHeartRate()
+            .then((safeScopeHR) async {
+          print(
+              'safe scope hr: ${safeScopeHR.minSafeHeartRate} - ${safeScopeHR.maxSafeHeartRate}');
+          setState(() {
+            minL = safeScopeHR.minSafeHeartRate;
+            maxL = safeScopeHR.maxSafeHeartRate;
+          });
         });
       }
     });

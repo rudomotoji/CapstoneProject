@@ -274,6 +274,7 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
           image: Image.asset('assets/images/ic-reload.png'),
           label: 'Quét lại',
           onTap: () async {
+            await FlutterBlue.instance.stopScan();
             await _scanBluetoothDevice();
           },
         ),

@@ -72,8 +72,8 @@ class PeripheralRepository {
         return true;
       }
       if (e.toString().contains('could not find callback wrapper')) {
-        stopScanning();
-        device.disconnect();
+        await stopScanning();
+        await device.disconnect();
         await device.connect();
         await _peripheralHelper.updatePeripheralChecking(
             true, device.id.toString());
@@ -128,8 +128,9 @@ class PeripheralRepository {
             break;
           }
           if (r.device.id.toString() == peripheralId) {
+            await stopScanning();
             await connectDevice1stTime(r);
-            stopScanning();
+
             print('Re-connect peripheral device successful');
             await _peripheralHelper.updatePeripheralChecking(
                 true, peripheralId);
@@ -139,7 +140,7 @@ class PeripheralRepository {
             await _peripheralHelper.updatePeripheralChecking(
                 false, peripheralId);
             check = false;
-            stopScanning();
+            await stopScanning();
           }
         }
       });
@@ -169,8 +170,18 @@ class PeripheralRepository {
   //discover services
   Future<List<BluetoothService>> discoverServices(
       BluetoothDevice device) async {
-    List<BluetoothService> services = await device.discoverServices();
-    return services;
+    try {
+      List<BluetoothService> services = await device.discoverServices();
+      return services;
+    } catch (e) {
+      if (e.toString().contains('could not find callback wrapper')) {
+        await stopScanning();
+        Future.delayed(const Duration(seconds: 2), () async {
+          //
+          await discoverServices(device);
+        });
+      }
+    }
   }
 
   //get battery device

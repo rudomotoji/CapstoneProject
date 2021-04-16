@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:capstone_home_doctor/commons/constants/peripheral_services.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/real_time_vt_bloc.dart';
 import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_push_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
@@ -16,6 +18,7 @@ import 'package:http/http.dart' as http;
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
 
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
+//final RealTimeHeartRateBloc _realTimeHeartRateBloc = RealTimeHeartRateBloc();
 
 class VitalSignRepository {
   final flutterBlue = FlutterBlue.instance;
@@ -23,35 +26,95 @@ class VitalSignRepository {
   final VitalSignHelper vitalSignHelper = VitalSignHelper();
   VitalSignRepository();
 
+  RealTimeHeartRateBloc realtimeBloc = new RealTimeHeartRateBloc();
+
   //discover services
   Future<List<BluetoothService>> discoverServices(
       BluetoothDevice device) async {
-    List<BluetoothService> services = await device.discoverServices();
-    return services;
+    try {
+      List<BluetoothService> services = await device.discoverServices();
+      return services;
+    } catch (e) {
+      if (e.toString().contains('could not find callback wrapper')) {
+        await stopScanning();
+        Future.delayed(const Duration(seconds: 2), () async {
+          //
+          await discoverServices(device);
+        });
+      }
+    }
   }
 
   //kick Heart Rate Control Point on.
   Future<void> kickHRCOn(String peripheralId) async {
     try {
-      await flutterBlue.stopScan();
+      List<BluetoothService> listService = [];
 
+      await flutterBlue.stopScan();
       await peripheralRepository
           .findScanResultById(peripheralId)
           .then((device) async {
         await device.disconnect();
         await device.connect();
         await peripheralRepository.discoverServices(device).then((list) async {
-          for (BluetoothService service in list) {
-            for (BluetoothCharacteristic ch in service.characteristics) {
-              if (ch.uuid == PeripheralCharacteristics.HEART_RATE_CONTROL_POINT) {
-                print('WRITE HR CONTROL POINT');
-                await ch
-                    .write(PeripheralCommand.START_HEART_RATE_MORNITORING)
-                    .then((value) async {
-                 // print('VALUE WHEN WRITTING 2A39 NOW: $value');
-                });
-              }
-            }
+          listService = list;
+          // for (BluetoothService service in list) {
+          //   for (BluetoothCharacteristic ch in service.characteristics) {
+          //     if (ch.uuid ==
+          //         PeripheralCharacteristics.HEART_RATE_CONTROL_POINT) {
+          //       print('WRITE HR CONTROL POINT');
+          //       await ch
+          //           .write(PeripheralCommand.START_HEART_RATE_MORNITORING)
+          //           .then((value) async {
+          //         // print('VALUE WHEN WRITTING 2A39 NOW: $value');
+          //       });
+          //     }
+          //   }
+          // }
+          BluetoothService heartRateService = listService
+              .where(
+                  (item) => item.uuid == PeripheralServices.SERVICE_HEART_RATE)
+              .toList()
+              .first;
+          for (BluetoothCharacteristic ch in heartRateService.characteristics) {
+            BluetoothCharacteristic heartRateControlPoint = heartRateService
+                .characteristics
+                .where((item) =>
+                    item.uuid ==
+                    PeripheralCharacteristics.HEART_RATE_CONTROL_POINT)
+                .toList()
+                .first;
+            BluetoothCharacteristic heartRateMeasurement = heartRateService
+                .characteristics
+                .where((item) =>
+                    item.uuid ==
+                    PeripheralCharacteristics.HEART_RATE_MEASUREMENT)
+                .toList()
+                .first;
+            await heartRateControlPoint
+                .write(PeripheralCommand.START_HEART_RATE_MORNITORING)
+                .then((_) async {
+              await heartRateMeasurement.setNotifyValue(true);
+
+              await heartRateMeasurement.value.listen((heartRateValue) async {
+                if (heartRateValue.isNotEmpty) {
+                  //real time heart rate showing
+                  await realtimeHeartRateBloc.realtimeHrSink
+                      .add(heartRateValue[1]);
+                  // ReceiveNotification notiData = ReceiveNotification(
+                  //     id: 0,
+                  //     title: "realtime heart rate",
+                  //     body: "${heartRateValue[1]}",
+                  //     payload: "");
+                  // HeartRealTimeBloc.instance.newNotification(notiData);
+
+                  print(
+                      'Heart rate on control point recently at ${DateTime.now()} is ${heartRateValue[1]}');
+                } else {
+                  // print('Empty heart rate');
+                }
+              });
+            });
           }
         });
       });
@@ -76,6 +139,7 @@ class VitalSignRepository {
       //     }
       //   }
       // });
+
     } catch (e) {
       if (e.toString().contains(
           'PlatformException(already_connected, connection with device already exists, null, null)')) {
@@ -90,7 +154,7 @@ class VitalSignRepository {
       }
       if (e.toString().contains(
           'Unhandled Exception: Exception: Another scan is already in progress')) {
-        stopScanning();
+        await stopScanning();
         await flutterBlue.stopScan();
         BluetoothDevice device =
             await peripheralRepository.findScanResultById(peripheralId);
@@ -110,10 +174,9 @@ class VitalSignRepository {
     }
   }
 
-  //get heart rate characteristic
+  // get heart rate characteristic
   Future<int> getHeartRateValueFromDevice(String peripheralId) async {
     int heartRateValue = 0;
-
     try {
       await flutterBlue.stopScan();
       BluetoothDevice device =
@@ -138,6 +201,7 @@ class VitalSignRepository {
           'bluetooth HeartRate_Characteristic set notify ${_characteristic.isNotifying}');
       _characteristic.value.listen((value) async {
         if (value.isNotEmpty) {
+          await realtimeHeartRateBloc.realtimeHrSink.add(value[1]);
           print('Heart rate recently at ${DateTime.now()} is ${value[1]}');
           heartRateValue = value[1];
           await vitalSignHelper.updateHeartValue(value[1]);
@@ -158,6 +222,7 @@ class VitalSignRepository {
       return heartRateValue;
     } catch (e) {
       await vitalSignHelper.updateHeartValue(0);
+      await flutterBlue.stopScan();
       print('error at getHeartRateValueFromDevice ${e}');
       if (e.toString().contains(
           'PlatformException(already_connected, connection with device already exists, null, null)')) {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/numeral_ui.dart';
@@ -14,6 +15,7 @@ import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral
 import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/real_time_vt_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/models/patient_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
@@ -44,6 +46,7 @@ final ReminderHelper _reminderHelper = ReminderHelper();
 final VitalSignRepository _vitalSignRepository = VitalSignRepository();
 //
 final ArrayValidator _arrayValidator = ArrayValidator();
+//final RealTimeHeartRateBloc _realTimeHeartRateBloc = RealTimeHeartRateBloc();
 
 enum ButtonHeaderType {
   NONE,
@@ -77,6 +80,7 @@ class HeaderWidget extends StatefulWidget {
 }
 
 class _HeaderWidget extends State<HeaderWidget> {
+  Stream<ReceiveNotification> _realTimeHeartRateStream;
   String _title;
   ButtonHeaderType _buttonHeaderType;
   bool _isMainView;
@@ -104,6 +108,12 @@ class _HeaderWidget extends State<HeaderWidget> {
     _getPatientId();
     _patientBloc = BlocProvider.of(context);
     _prescriptionListBloc = BlocProvider.of(context);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -214,8 +224,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                       padding: EdgeInsets.only(
                           left: 10, right: 10, bottom: 5, top: 5),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        color: DefaultTheme.WHITE,
+                        borderRadius: BorderRadius.circular(20),
+                        color: DefaultTheme.RED_CALENDAR.withOpacity(0.2),
                         border: Border.all(
                             color: DefaultTheme.GREY_TOP_TAB_BAR, width: 0.5),
                       ),
@@ -231,7 +241,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                                 height: 30,
                               ),
                               Container(
-                                child: Text('Đo nhịp tim'),
+                                child: Text('Đo'),
                               ),
                             ],
                           )),
@@ -658,74 +668,197 @@ class _HeaderWidget extends State<HeaderWidget> {
         RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
   }
 
-  void _onMeasuring() {
+  _onMeasuring() async {
+    //String heartRateData = 'Đang đo';
+    await realtimeHeartRateBloc.realtimeHrSink.add(0);
+    bool isMeasureOff = false;
+    List<int> listHeartRate = [];
+    // List<int> listValueMeasure = [];
+    // listValueMeasure.clear();
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Material(
+            color: DefaultTheme.TRANSPARENT,
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    width: 250,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.7),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 130,
+                          // height: 100,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                        // Spacer(),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Đang kích hoạt',
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.GREY_TEXT,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+    await _kickHRCOn();
+    Navigator.of(context).pop();
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
       backgroundColor: DefaultTheme.TRANSPARENT,
       builder: (context) {
-        return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height * 0.85,
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.05),
-                color: DefaultTheme.TRANSPARENT,
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.8,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(15)),
-                    color: DefaultTheme.WHITE.withOpacity(0.9),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      //////
-                      ///
-                      Expanded(
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              child: Image.asset(
-                                'assets/images/ic-mesuring.gif',
-                                height:
-                                    MediaQuery.of(context).size.height * 0.8,
-                              ),
-                            ),
-                            Positioned(
-                              top: 20,
-                              child: Container(
-                                child: Text('Đang đo'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 23,
-                left: MediaQuery.of(context).size.width * 0.3,
-                height: 5,
-                child: Container(
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setModalState) {
+          Future.delayed(Duration(seconds: 30), () {
+            setModalState(() {
+              if (!mounted) return;
+              isMeasureOff = true;
+            });
+          });
+          // if (isMeasureOff == false) {
+          //   _realTimeHeartRateStream =
+          //       HeartRealTimeBloc.instance.notificationsStream;
+          //   _realTimeHeartRateStream.listen((_) {
+          //     if (_.title.contains('realtime heart rate')) {
+          //       //
+          //       setModalState(() {
+          //         if (mounted == true) {
+          //           heartRateData = _.body;
+          //           listValueMeasure.add(int.tryParse(_.body));
+          //         } else {
+          //           return;
+          //         }
+          //       });
+          //     }
+          //   });
+          // }
+
+          // _timerHR = new Timer.periodic(
+          //     const Duration(seconds: 30),
+          //     (_) => setModalState(() {
+          //           //
+          //           if (!mounted) return;
+          //           if (mounted == true) {
+          //             isMeasureOff = true;
+          //             listValueMeasure.sort((a, b) => a.compareTo(b));
+          //             heartRateData =
+          //                 'Nhịp tim khoảng ${listValueMeasure.first}-${listValueMeasure.last}';
+          //             super.dispose();
+          //             _timerHR.cancel();
+          //             return;
+          //           }
+          //         }));
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.85,
                   padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.3),
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  height: 15,
-                  decoration: BoxDecoration(
-                      color: DefaultTheme.WHITE.withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(50)),
+                      top: MediaQuery.of(context).size.height * 0.05),
+                  color: DefaultTheme.TRANSPARENT,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(15)),
+                      color: DefaultTheme.WHITE.withOpacity(0.9),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        //////
+                        ///
+                        Expanded(
+                          child: Column(
+                            children: [
+                              (isMeasureOff)
+                                  ? Container()
+                                  : Image.asset(
+                                      'assets/images/ic-mesuring.gif',
+                                      height: 300,
+                                    ),
+                              (isMeasureOff)
+                                  ? Container(
+                                      child: Text(
+                                          'Nhịp tim trong khoảng: ${listHeartRate}'))
+                                  : StreamBuilder<int>(
+                                      stream: realtimeHeartRateBloc
+                                          .realtimeHrStream,
+                                      builder: (context, snapshot) {
+                                        // if (snapshot.hasData == null) {
+                                        //   return Container(
+                                        //       child: Text('Đang đo'));
+                                        // } else
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Container(
+                                              child: Text('Đang đo'));
+                                        }
+                                        print(
+                                            'snap shot connection state ${snapshot.connectionState}');
+                                        if (snapshot.hasData) {
+                                          listHeartRate.add(snapshot.data);
+                                          return Container(
+                                            child: Text((snapshot.data == 0)
+                                                ? 'Đang đo '
+                                                : '${snapshot.data}'),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Container(
+                                              child: Text('Error Loading'));
+                                        }
+                                        print(
+                                            'snap shot connection state after if else ${snapshot.connectionState}');
+                                        return Container();
+                                      }),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
+                Positioned(
+                  top: 23,
+                  left: MediaQuery.of(context).size.width * 0.3,
+                  height: 5,
+                  child: Container(
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.3),
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    height: 15,
+                    decoration: BoxDecoration(
+                        color: DefaultTheme.WHITE.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(50)),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
       },
     );
   }

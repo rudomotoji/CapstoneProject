@@ -612,9 +612,12 @@ class _ManageContract extends State<ManageContract> {
                                                                       index]
                                                                   .contractId);
                                                       Navigator.pushNamed(
-                                                          context,
-                                                          RoutesHDr
-                                                              .DETAIL_CONTRACT_VIEW);
+                                                              context,
+                                                              RoutesHDr
+                                                                  .DETAIL_CONTRACT_VIEW)
+                                                          .then((value) {
+                                                        _getPatientId();
+                                                      });
                                                     },
                                                   ),
                                                 ],
@@ -961,9 +964,12 @@ class _ManageContract extends State<ManageContract> {
                                                                       index]
                                                                   .contractId);
                                                       Navigator.pushNamed(
-                                                          context,
-                                                          RoutesHDr
-                                                              .DETAIL_CONTRACT_VIEW);
+                                                              context,
+                                                              RoutesHDr
+                                                                  .DETAIL_CONTRACT_VIEW)
+                                                          .then((value) {
+                                                        _getPatientId();
+                                                      });
                                                     },
                                                   ),
                                                 ],
@@ -1043,36 +1049,7 @@ class _ManageContract extends State<ManageContract> {
                                     ),
                                   ),
                                 ),
-                                (_listCancel.length != 0)
-                                    ? Container()
-                                    : Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 100,
-                                        child: Center(
-                                            child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(
-                                              width: 30,
-                                              height: 30,
-                                              child: Image.asset(
-                                                  'assets/images/ic-contract-empty.png'),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(bottom: 10),
-                                            ),
-                                            Text(
-                                              'Không có hợp đồng nào trong danh sách này',
-                                              style: TextStyle(
-                                                  color:
-                                                      DefaultTheme.GREY_TEXT),
-                                            ),
-                                          ],
-                                        )),
-                                      ),
+
                                 /////List here
                                 (_listCancel.length != 0)
                                     ? Container(
@@ -1321,9 +1298,12 @@ class _ManageContract extends State<ManageContract> {
                                                               _listCancel[index]
                                                                   .contractId);
                                                       Navigator.pushNamed(
-                                                          context,
-                                                          RoutesHDr
-                                                              .DETAIL_CONTRACT_VIEW);
+                                                              context,
+                                                              RoutesHDr
+                                                                  .DETAIL_CONTRACT_VIEW)
+                                                          .then((value) {
+                                                        _getPatientId();
+                                                      });
                                                     },
                                                   ),
                                                 ],

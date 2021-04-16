@@ -53,9 +53,6 @@ class _PeripheralService extends State<PeripheralService>
     _peripheralBloc = BlocProvider.of(context);
     _batteryDeviceBloc = BlocProvider.of(context);
     _getPeripheralId();
-
-    // const oneSec = const Duration(minutes: 1);
-    // new Timer.periodic(oneSec, (Timer t) => hrBloc.updateHR(tmpHR));
   }
 
   Future _getPeripheralId() async {
