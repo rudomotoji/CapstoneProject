@@ -391,9 +391,22 @@ class _DashboardState extends State<DashboardPage>
           for (var schedule in value) {
             MedicalInstructionDTO _prescription = MedicalInstructionDTO();
             if (schedule.medicationsRespone.dateFinished != null) {
-              DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
-                  .parse(schedule.medicationsRespone.dateFinished);
-              if (tempDate2.millisecondsSinceEpoch >=
+              // DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
+              //     .parse(schedule.medicationsRespone.dateFinished);
+              //
+              DateTime dateFinished = new DateFormat('dd/MM/yyyy').parse(
+                  _dateValidator.convertDateCreate(
+                      schedule.medicationsRespone.dateFinished,
+                      'dd/MM/yyyy',
+                      'yyyy-MM-dd'));
+              DateTime dateStarted = new DateFormat('dd/MM/yyyy').parse(
+                  _dateValidator.convertDateCreate(
+                      schedule.medicationsRespone.dateStarted,
+                      'dd/MM/yyyy',
+                      'yyyy-MM-dd'));
+              if (dateFinished.millisecondsSinceEpoch >=
+                      curentDateNow.millisecondsSinceEpoch &&
+                  dateStarted.millisecondsSinceEpoch <=
                       curentDateNow.millisecondsSinceEpoch &&
                   schedule.medicationsRespone.status.contains('ACTIVE')) {
                 schedule.medicationsRespone.medicalResponseID =
@@ -2642,9 +2655,19 @@ class _DashboardState extends State<DashboardPage>
     await _sqfLiteHelper.cleanDatabase();
     for (var schedule in listPrescription) {
       if (schedule.medicationsRespone.dateFinished != null) {
-        DateTime tempDate2 = new DateFormat("yyyy-MM-dd")
-            .parse(schedule.medicationsRespone.dateFinished);
-        if (tempDate2.millisecondsSinceEpoch >=
+        DateTime dateFinished = new DateFormat('dd/MM/yyyy').parse(
+            _dateValidator.convertDateCreate(
+                schedule.medicationsRespone.dateFinished,
+                'dd/MM/yyyy',
+                'yyyy-MM-dd'));
+        DateTime dateStarted = new DateFormat('dd/MM/yyyy').parse(
+            _dateValidator.convertDateCreate(
+                schedule.medicationsRespone.dateStarted,
+                'dd/MM/yyyy',
+                'yyyy-MM-dd'));
+        if (dateFinished.millisecondsSinceEpoch >=
+                curentDateNow.millisecondsSinceEpoch &&
+            dateStarted.millisecondsSinceEpoch <=
                 curentDateNow.millisecondsSinceEpoch &&
             schedule.medicationsRespone.status.contains('ACTIVE')) {
           schedule.medicationsRespone.medicalResponseID =

@@ -153,7 +153,7 @@ class MedicalInstructionRepository extends BaseApiClient {
   Future<bool> createMedicalInstruction(MedicalInstructionDTO dto) async {
     try {
       var uri = Uri.parse(
-          'http://45.76.186.233:8000/api/v1/MedicalInstructions/InsertMedicalInstructionOld');
+          'http://45.76.186.233:8000/api/v1/MedicalInstructions/InsertMedicalInstructionOld?fromBy=PATIENT');
       var request = new http.MultipartRequest('POST', uri);
       request.fields['MedicalInstructionTypeId'] =
           '${dto.medicalInstructionTypeId}';

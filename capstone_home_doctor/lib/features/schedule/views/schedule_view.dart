@@ -808,10 +808,10 @@ class _ScheduleView extends State<ScheduleView>
                 Center(child: Text('Kiểm tra lại đường truyền kết nối mạng')));
       }
       if (state is PrescriptionListStateSuccess) {
-        listPrescription = state.listPrescription;
         List<MedicalInstructionDTO> listPrescriptions = [];
 
         if (state.listPrescription != null) {
+          listPrescription = state.listPrescription;
           listPrescription.sort((a, b) =>
               b.medicalInstructionId.compareTo(a.medicalInstructionId));
           listPrescription.sort((a, b) => b.medicationsRespone.dateFinished
@@ -819,7 +819,21 @@ class _ScheduleView extends State<ScheduleView>
         }
         if (listPrescription.isNotEmpty) {
           for (var element in listPrescription) {
-            if (element.medicationsRespone.status.contains('ACTIVE')) {
+            DateTime dateFinished = new DateFormat('dd/MM/yyyy').parse(
+                _dateValidator.convertDateCreate(
+                    element.medicationsRespone.dateFinished,
+                    'dd/MM/yyyy',
+                    'yyyy-MM-dd'));
+            DateTime dateStarted = new DateFormat('dd/MM/yyyy').parse(
+                _dateValidator.convertDateCreate(
+                    element.medicationsRespone.dateStarted,
+                    'dd/MM/yyyy',
+                    'yyyy-MM-dd'));
+            if (element.medicationsRespone.status.contains('ACTIVE') &&
+                dateFinished.millisecondsSinceEpoch >=
+                    curentDateNow.millisecondsSinceEpoch &&
+                dateStarted.millisecondsSinceEpoch <=
+                    curentDateNow.millisecondsSinceEpoch) {
               listPrescriptions.add(element);
             }
           }
@@ -828,8 +842,15 @@ class _ScheduleView extends State<ScheduleView>
         }
         return RefreshIndicator(
           onRefresh: _getPatientId,
-          child:
-              (state.listPrescription == null || state.listPrescription.isEmpty)
+          child: (state.listPrescription == null ||
+                  state.listPrescription.isEmpty)
+              ? Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                    child: Text('Hiện chưa có lịch dùng thuốc'),
+                  ),
+                )
+              : (listPrescriptions.length <= 0)
                   ? Container(
                       width: MediaQuery.of(context).size.width,
                       child: Center(
