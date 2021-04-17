@@ -141,10 +141,6 @@ class _DashboardState extends State<DashboardPage>
   bool isBluetoothConnection = false;
   bool isContractApproved = false;
 
-  //animation controller
-  // AnimationController _animationController;
-  // bool isDJOn = false;
-
   //
   List<VitalSignDTO> listVitalSignDangerous = [];
 
@@ -191,23 +187,6 @@ class _DashboardState extends State<DashboardPage>
     _updateAvailableContract();
     _updateTokenDevice();
     _getPeripheralInfo();
-
-    // _getHeartRateValue();
-    //
-    // _animationController = new AnimationController(
-    //   duration: const Duration(milliseconds: 1000),
-    //   vsync: this,
-    // );
-    // _animationController.addListener(() {
-    //   setState(() {
-    //     isDJOn = !isDJOn;
-    //   });
-    // });
-    // _animationController.forward();
-
-    // selectNotificationSubject.stream.listen((String payload) async {
-    //   await _pullRefresh();
-    // });
 
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((notification) {
@@ -270,46 +249,7 @@ class _DashboardState extends State<DashboardPage>
       });
     });
   }
-  //   const oneSec = const Duration(seconds: 60);
 
-  //   // Timer.periodic(oneSec, (Timer t) async {
-  //   await vitalSignHelper.getPeopleStatus().then((value) async {
-  //     print('EVERY 1 MINUTES. CHECK STATUS PEOPLE LOCAL');
-  //     print('people status is ${value}');
-  //     if (value == 'DANGER') {
-  //       if (mounted) {
-  //         _changeDangerView();
-  //         // setState(() {
-  //         checkPeopleStatusLocal = true;
-  //         // });
-  //       }
-  //       //this is comment
-  //     } else {
-  //       if (mounted) {
-  //         // setState(() {
-  //         checkPeopleStatusLocal = false;
-  //         // });
-  //       }
-  //     }
-  //   });
-  //   //  });
-  // }
-
-  // _changeDangerView() {
-  //   const oneSec = const Duration(milliseconds: 500);
-  //   Timer.periodic(oneSec, (Timer t) {
-  //     //
-
-  //     if (!mounted) return;
-  //     setState(() {
-  //       dangerKickedOn = !dangerKickedOn;
-  //     });
-  //   });
-  //   //
-  // }
-
-//reload
-//dispose
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);

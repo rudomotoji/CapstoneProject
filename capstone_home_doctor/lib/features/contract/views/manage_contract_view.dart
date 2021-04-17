@@ -71,6 +71,8 @@ class _ManageContract extends State<ManageContract> {
   int _patientId = 0;
   int _contractId = 0;
 
+  int _listIndex = 0;
+
   Stream<ReceiveNotification> _notificationsStream;
 
   @override
@@ -190,7 +192,7 @@ class _ManageContract extends State<ManageContract> {
                             bottom: 30, top: 20, left: 20, right: 20),
                         child: Divider(
                           color: DefaultTheme.GREY_TOP_TAB_BAR,
-                          height: 2,
+                          height: 3,
                         ),
                       ),
 
@@ -321,6 +323,174 @@ class _ManageContract extends State<ManageContract> {
                                       child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(
+                                          'Danh sách hợp đồng',
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      )),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _listIndex = 0;
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15,
+                                              right: 15,
+                                              top: 8,
+                                              bottom: 8),
+                                          height: 40,
+                                          decoration: (_listIndex == 0)
+                                              ? BoxDecoration(
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR,
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                )
+                                              : BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: DefaultTheme
+                                                          .GREY_TOP_TAB_BAR),
+                                                  color: DefaultTheme.WHITE,
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                ),
+                                          child: Center(
+                                            child: Text('Đang diễn ra',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        (_listIndex == 0)
+                                                            ? FontWeight.w500
+                                                            : FontWeight.normal,
+                                                    color: DefaultTheme.BLACK,
+                                                    fontSize: 16)),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _listIndex = 1;
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15,
+                                              right: 15,
+                                              top: 8,
+                                              bottom: 8),
+                                          height: 40,
+                                          decoration: (_listIndex == 1)
+                                              ? BoxDecoration(
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR,
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                )
+                                              : BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: DefaultTheme
+                                                          .GREY_TOP_TAB_BAR),
+                                                  color: DefaultTheme.WHITE,
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                ),
+                                          child: Center(
+                                            child: Text('Đã kết thúc',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        (_listIndex == 1)
+                                                            ? FontWeight.w500
+                                                            : FontWeight.normal,
+                                                    color: DefaultTheme.BLACK,
+                                                    fontSize: 16)),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _listIndex = 2;
+                                          });
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              left: 15,
+                                              right: 15,
+                                              top: 8,
+                                              bottom: 8),
+                                          height: 40,
+                                          decoration: (_listIndex == 2)
+                                              ? BoxDecoration(
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR,
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                )
+                                              : BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: DefaultTheme
+                                                          .GREY_TOP_TAB_BAR),
+                                                  color: DefaultTheme.WHITE,
+                                                  borderRadius:
+                                                      BorderRadius.circular(30),
+                                                ),
+                                          child: Center(
+                                            child: Text('Đã huỷ',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        (_listIndex == 2)
+                                                            ? FontWeight.w500
+                                                            : FontWeight.normal,
+                                                    color: DefaultTheme.BLACK,
+                                                    fontSize: 16)),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 20),
+                                  ),
+                                  _buildDescription(_listIndex),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 20),
+                                  ),
+                                  _buildComponent(_listExecuting),
+
+                                  ///
+                                  Padding(
+                                      padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          bottom: 5,
+                                          top: 50),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
                                           'Hợp đồng đang diễn ra',
                                           textAlign: TextAlign.start,
                                           style: TextStyle(
@@ -402,15 +572,14 @@ class _ManageContract extends State<ManageContract> {
                                                 margin:
                                                     EdgeInsets.only(left: 10),
                                                 decoration: BoxDecoration(
-                                                    color:
-                                                        DefaultTheme.GREY_VIEW,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    border: Border.all(
-                                                        width: 1,
-                                                        color: DefaultTheme
-                                                            .GREY_TOP_TAB_BAR)),
+                                                  color: DefaultTheme.GREY_VIEW,
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  // border: Border.all(
+                                                  //     width: 1,
+                                                  //     color: DefaultTheme
+                                                  //         .GREY_TOP_TAB_BAR),
+                                                ),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -1397,6 +1566,184 @@ class _ManageContract extends State<ManageContract> {
         ),
       ),
     );
+  }
+
+  _buildDescription(int index) {
+    if (index == 0) {
+      return Container(
+        padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+        width: MediaQuery.of(context).size.width - 40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: DefaultTheme.GREY_TOP_TAB_BAR, width: 1),
+        ),
+        child: Center(
+          child: Text(
+              'Danh sách hợp đồng đang trong các trạng thái chờ xét duyệt, đã chấp thuận, đã ký nhận và đang hiện hành.'),
+        ),
+      );
+    } else if (index == 1) {
+      return Container(
+        padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+        width: MediaQuery.of(context).size.width - 40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: DefaultTheme.GREY_TOP_TAB_BAR, width: 1),
+        ),
+        child: Center(
+          child: Text(
+              'Danh sách hợp đồng mà thời gian theo dõi và chăm khám đã kết thúc.'),
+        ),
+      );
+    } else {
+      return Container(
+        padding: EdgeInsets.only(left: 20, right: 20, top: 10, bottom: 10),
+        width: MediaQuery.of(context).size.width - 40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: DefaultTheme.GREY_TOP_TAB_BAR, width: 1),
+        ),
+        child: Center(
+          child:
+              Text('Danh sách hợp đồng đã huỷ hoặc bác sĩ từ chối xét duyệt.'),
+        ),
+      );
+    }
+  }
+
+  _buildComponent(List<ContractListDTO> listItemBuild) {
+    //
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: listItemBuild.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          margin: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+          padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+          decoration: BoxDecoration(
+            color: DefaultTheme.GREY_VIEW,
+            border: Border(
+              left: BorderSide(
+                  width: 2.0,
+                  color: _getColorContract(listItemBuild[index].status)),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              //
+              Container(
+                height: 30,
+                child: Text('Hợp đồng',
+                    style: TextStyle(
+                      fontSize: 18,
+                    )),
+              ),
+              Divider(
+                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                height: 1,
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 5),
+              ),
+              Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                              color: DefaultTheme.BLACK, fontSize: 13),
+                          children: <TextSpan>[
+                            TextSpan(text: 'Trạng thái: '),
+                            TextSpan(
+                              text:
+                                  '${_getStatusContract(listItemBuild[index].status)}',
+                              style: TextStyle(
+                                color: _getColorContract(
+                                    listItemBuild[index].status),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 5),
+                      ),
+                      Text(
+                        'Bác sĩ: ${listItemBuild[index].fullNameDoctor}',
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 5),
+                      ),
+                      Text(
+                        'Tạo ngày: ${_dateValidator.parseToDateView(listItemBuild[index].dateCreated)}',
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 5, right: 5),
+                    width: 1,
+                    height: 50,
+                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                  ),
+                  Column(),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  String _getStatusContract(String status) {
+    String result = '';
+    if (status == 'PENDING') {
+      result = 'Chờ xét duyệt';
+    } else if (status == 'APPROVED') {
+      result = 'Đã chấp thuận';
+    } else if (status == 'SIGNED') {
+      result = 'Đã ký';
+    } else if (status == 'ACTIVE') {
+      result = 'Đang hiện hành';
+    } else if (status == 'FINISHED') {
+      result = 'Đã kết thúc';
+    } else if (status == 'CANCELP') {
+      result = 'Đã huỷ';
+    } else if (status == 'CANCELD') {
+      result = 'Bị từ chối';
+    }
+    return result;
+  }
+
+  Color _getColorContract(String status) {
+    Color result;
+    if (status == 'PENDING') {
+      result = DefaultTheme.ORANGE_TEXT;
+    } else if (status == 'APPROVED') {
+      result = DefaultTheme.RED_CALENDAR;
+    } else if (status == 'SIGNED') {
+      result = DefaultTheme.BLUE_TEXT;
+    } else if (status == 'ACTIVE') {
+      result = DefaultTheme.SUCCESS_STATUS;
+    } else if (status == 'FINISHED') {
+      result = DefaultTheme.BLUE_DARK;
+    } else if (status == 'CANCELP') {
+      result = DefaultTheme.BLACK;
+    } else if (status == 'CANCELD') {
+      result = DefaultTheme.BLACK;
+    }
+    return result;
   }
 
   _showInputIdDoctor(BuildContext currentContext) {

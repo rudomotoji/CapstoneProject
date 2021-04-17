@@ -3799,108 +3799,28 @@ class _DetailContractView extends State<DetailContractView>
                                                                           await paymentRepository
                                                                               .vnpay(money, 'Thanh toán hợp đồng')
                                                                               .then(
-                                                                                (value) => {
-                                                                                  Future.delayed(const Duration(seconds: 3), () {
-                                                                                    if (value != null) {
-                                                                                      Navigator.of(context).pop();
-                                                                                      Navigator.push(
-                                                                                        context,
-                                                                                        MaterialPageRoute(
-                                                                                          builder: (context) => VNPayWebView(
-                                                                                            url: value.body,
-                                                                                          ),
-                                                                                        ),
-                                                                                      ).then((value) {
-                                                                                        _paymentHelper.isPaymentCheck().then((isChecked) {
-                                                                                          if (isChecked) {
-                                                                                            _contractUpdateBloc.add(ContractUpdateEventUpdate(dto: dto));
-                                                                                            Future.delayed(const Duration(seconds: 2), () {
-                                                                                              _refreshData();
-                                                                                            });
-                                                                                            _paymentHelper.updatePaymentCheck(false);
-                                                                                          }
-                                                                                        });
-                                                                                      });
-                                                                                    } else {
-                                                                                      Navigator.of(context).pop();
-                                                                                      showDialog(
-                                                                                        barrierDismissible: false,
-                                                                                        context: context,
-                                                                                        builder: (BuildContext context) {
-                                                                                          return Material(
-                                                                                            color: DefaultTheme.TRANSPARENT,
-                                                                                            child: Center(
-                                                                                              child: ClipRRect(
-                                                                                                borderRadius: BorderRadius.all(Radius.circular(15)),
-                                                                                                child: BackdropFilter(
-                                                                                                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                                                                                                  child: Container(
-                                                                                                    padding: EdgeInsets.only(left: 10, top: 10, right: 10),
-                                                                                                    width: 250,
-                                                                                                    height: 150,
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      color: DefaultTheme.WHITE.withOpacity(0.7),
-                                                                                                    ),
-                                                                                                    child: Column(
-                                                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                                      children: <Widget>[
-                                                                                                        Container(
-                                                                                                          padding: EdgeInsets.only(bottom: 10, top: 10),
-                                                                                                          child: Text(
-                                                                                                            'Lỗi',
-                                                                                                            style: TextStyle(
-                                                                                                              decoration: TextDecoration.none,
-                                                                                                              color: DefaultTheme.BLACK,
-                                                                                                              fontWeight: FontWeight.w600,
-                                                                                                              fontSize: 18,
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                        Container(
-                                                                                                          padding: EdgeInsets.only(left: 20, right: 20),
-                                                                                                          child: Align(
-                                                                                                            alignment: Alignment.center,
-                                                                                                            child: Text(
-                                                                                                              'Có vấn đề xảy ra trong quá trình thanh toán. Xin vui lòng thử lại.',
-                                                                                                              textAlign: TextAlign.center,
-                                                                                                              style: TextStyle(
-                                                                                                                decoration: TextDecoration.none,
-                                                                                                                color: DefaultTheme.GREY_TEXT,
-                                                                                                                fontWeight: FontWeight.w400,
-                                                                                                                fontSize: 13,
-                                                                                                              ),
-                                                                                                            ),
-                                                                                                          ),
-                                                                                                        ),
-                                                                                                        Spacer(),
-                                                                                                        Divider(
-                                                                                                          height: 1,
-                                                                                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                                                                                        ),
-                                                                                                        ButtonHDr(
-                                                                                                          height: 40,
-                                                                                                          style: BtnStyle.BUTTON_TRANSPARENT,
-                                                                                                          label: 'OK',
-                                                                                                          labelColor: DefaultTheme.BLUE_TEXT,
-                                                                                                          onTap: () {
-                                                                                                            Navigator.of(context).pop();
-                                                                                                          },
-                                                                                                        ),
-                                                                                                      ],
-                                                                                                    ),
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),
-                                                                                            ),
-                                                                                          );
-                                                                                        },
-                                                                                      );
-                                                                                    }
-                                                                                  }),
-                                                                                },
-                                                                              )
-                                                                              .catchError((e) {
+                                                                            (value) async {
+                                                                              Navigator.of(context).pop();
+                                                                              Navigator.push(
+                                                                                context,
+                                                                                MaterialPageRoute(
+                                                                                  builder: (context) => VNPayWebView(
+                                                                                    url: value.body,
+                                                                                  ),
+                                                                                ),
+                                                                              ).then((value) {
+                                                                                _paymentHelper.isPaymentCheck().then((isChecked) {
+                                                                                  if (isChecked) {
+                                                                                    _contractUpdateBloc.add(ContractUpdateEventUpdate(dto: dto));
+                                                                                    Future.delayed(const Duration(seconds: 2), () {
+                                                                                      _refreshData();
+                                                                                    });
+                                                                                    _paymentHelper.updatePaymentCheck(false);
+                                                                                  }
+                                                                                });
+                                                                              });
+                                                                            },
+                                                                          ).catchError((e) {
                                                                             print('getPaymentUrl error');
                                                                           });
                                                                         },

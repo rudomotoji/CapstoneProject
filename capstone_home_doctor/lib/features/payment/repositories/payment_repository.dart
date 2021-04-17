@@ -13,9 +13,10 @@ class PaymentRepository extends BaseApiClient {
           '/Payments/GetURLPayment?Amount=$amount&OrderDescription=$description&BankCode=NCB';
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
+        print('response payment:${response.statusCode}');
         return response;
       } else {
-        return null;
+        throw Exception('Failed to fetch paymentL');
       }
     } catch (e) {
       print('error payment repo: $e');
