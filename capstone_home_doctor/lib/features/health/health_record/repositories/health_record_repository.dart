@@ -83,6 +83,12 @@ class HealthRecordRepository extends BaseApiClient {
     }
   }
 
+  ///commenttttt kajshdkashdlkh lksh
+  ///kjzxckznxlc nzclkxnjc kjhx
+  ///commmentttttttttt jkansdkak jds
+  ///
+  ///
+  ///
   //get medicalShare to Create contract
   Future<List<MedicalShareDTO>> getListMedicalShare(
       int patientId,
@@ -92,7 +98,7 @@ class HealthRecordRepository extends BaseApiClient {
     // final String url =
     //     '/MedicalInstructions/GetMedicalInstructionToCreateContract?patientId=${patientId}&medicalInstructionType=${medicalInstructionType}';
     final String url =
-        '/MedicalInstructions/GetMedicalInstructionToCreateContract?patientId=${patientId}&diseaseId=${diseaseId}&medicalInstructionType=${medicalInstructionType}';
+        '/MedicalInstructions/GetMedicalInstructionToCreateContract?patientId=${patientId}&diseaseId=${diseaseId}&medicalInstructionTypeId=${medicalInstructionType}';
     try {
       //
       final request = await postApi(url, null, medicalInstructionIds);

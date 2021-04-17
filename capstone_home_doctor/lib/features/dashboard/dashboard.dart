@@ -58,6 +58,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
+//////////////
+///
+///
+///
+///
+///COMMENT COMMENT COMMETNOKJAOISJ AISHFKASGFKJ ABSJHBASF
 //
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final MobileDeviceHelper _mobileDeviceHelper = MobileDeviceHelper();

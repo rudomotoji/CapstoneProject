@@ -1744,7 +1744,7 @@ class _ContractShareView extends State<ContractShareView>
                                                                   top: 15,
                                                                   bottom: 10),
                                                           child: Text(
-                                                            '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName} -id: ${state.list[index].medicalInstructions[index2].medicalInstructionTypeId} - index: ${insideCountNow}',
+                                                            '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
                                                             style: TextStyle(
                                                               fontSize: 16,
                                                               color:
@@ -1760,6 +1760,8 @@ class _ContractShareView extends State<ContractShareView>
                                                         Spacer(),
                                                         ButtonHDr(
                                                             onTap: () async {
+                                                              print(
+                                                                  '---------------------\n type id: ${state.list[index].medicalInstructions[index2].medicalInstructionTypeId}, p ID: ${_patientId}, diseaseId: ${state.list[index].diseaseId}');
                                                               await _medicalShareBloc.add(MedicalShareEventGet(
                                                                   patientId:
                                                                       _patientId,
