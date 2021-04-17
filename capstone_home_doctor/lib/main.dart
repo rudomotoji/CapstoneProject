@@ -757,36 +757,42 @@ void main() async {
         await _sqfLiteHelper
             .getVitalSignScheduleOffline()
             .then((sOffline) async {
-          VitalSigns pressureSchedule =
-              sOffline.where((item) => item.vitalSignType == 'Huyết áp').first;
-          print(
-              'Time start of a day for pressure: ${pressureSchedule.timeStart}');
-          //
-          if (pressureSchedule.timeStart != null) {
-            if (pressureSchedule.timeStart.isNotEmpty) {
-              //
-              int hour = int.tryParse(pressureSchedule.timeStart.split(':')[0]);
-              int minute =
-                  int.tryParse(pressureSchedule.timeStart.split(':')[1]);
-              String now = DateTime.now().toString();
-              String timeNow = now.split(' ')[1];
-              int hourNow = int.tryParse(timeNow.split(':')[0]);
-              int minuteNow = int.tryParse(timeNow.split(':')[1].split('.')[0]);
-              if (hour == hourNow && minute == minuteNow) {
-                var dangerousNotification = {
-                  "notification": {
-                    "title": "Nhắc nhở đo sinh hiệu",
-                    "body":
-                        "Bác sĩ nhắc bạn đo và ghi nhận huyết áp vào khoảng thời gian này.",
-                  },
-                  "data": {
-                    "NAVIGATE_TO_SCREEN": RoutesHDr.PRESSURE_CHART_VIEW,
-                  }
-                };
-                _handleGeneralMessage(dangerousNotification);
+          if (sOffline.isNotEmpty && sOffline != null) {
+            VitalSigns pressureSchedule = sOffline
+                .where((item) => item.vitalSignType == 'Huyết áp')
+                .first;
+            print(
+                'Time start of a day for pressure: ${pressureSchedule.timeStart}');
+            //
+            if (pressureSchedule.timeStart != null) {
+              if (pressureSchedule.timeStart.isNotEmpty) {
+                //
+                int hour =
+                    int.tryParse(pressureSchedule.timeStart.split(':')[0]);
+                int minute =
+                    int.tryParse(pressureSchedule.timeStart.split(':')[1]);
+                String now = DateTime.now().toString();
+                String timeNow = now.split(' ')[1];
+                int hourNow = int.tryParse(timeNow.split(':')[0]);
+                int minuteNow =
+                    int.tryParse(timeNow.split(':')[1].split('.')[0]);
+                if (hour == hourNow && minute == minuteNow) {
+                  var dangerousNotification = {
+                    "notification": {
+                      "title": "Nhắc nhở đo sinh hiệu",
+                      "body":
+                          "Bác sĩ nhắc bạn đo và ghi nhận huyết áp vào khoảng thời gian này.",
+                    },
+                    "data": {
+                      "NAVIGATE_TO_SCREEN": RoutesHDr.PRESSURE_CHART_VIEW,
+                    }
+                  };
+                  _handleGeneralMessage(dangerousNotification);
+                }
               }
             }
           }
+
           countNotiSchedule++;
         });
       }
@@ -846,7 +852,7 @@ _saveVitalSignScheduleOffline() async {
       .getVitalSignSchedule(_patientId)
       .then((scheduleDTO) async {
     //insert schedule vitalsign into local db
-    if (scheduleDTO != null) {
+    if (scheduleDTO.vitalSignScheduleId != null) {
       await _sqfLiteHelper.deleteVitalSignSchedule();
       _vitalSignScheduleDTO = scheduleDTO;
       for (VitalSigns x in scheduleDTO.vitalSigns) {

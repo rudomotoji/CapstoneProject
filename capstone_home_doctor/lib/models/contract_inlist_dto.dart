@@ -8,7 +8,7 @@ class ContractListDTO {
   String note;
   String status;
   String nameLicense;
-  int priceLicense;
+  double priceLicense;
   int daysOfTracking;
   List<Diseases> diseases;
   String dateCreated;
@@ -80,13 +80,9 @@ class ContractListDTO {
 
 class Diseases {
   String diseaseId;
-
   String name;
 
-  Diseases({
-    this.diseaseId,
-    this.name,
-  });
+  Diseases({this.diseaseId, this.name});
 
   Diseases.fromJson(Map<String, dynamic> json) {
     diseaseId = json['diseaseId'];

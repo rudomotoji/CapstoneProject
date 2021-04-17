@@ -11,6 +11,8 @@ import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dar
 import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
 import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
 import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
+import 'package:capstone_home_doctor/features/login/blocs/token_device_bloc.dart';
+import 'package:capstone_home_doctor/features/login/events/token_device_event.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
 import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
@@ -18,6 +20,7 @@ import 'package:capstone_home_doctor/features/schedule/events/prescription_list_
 import 'package:capstone_home_doctor/features/vital_sign/blocs/real_time_vt_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/models/patient_dto.dart';
+import 'package:capstone_home_doctor/models/token_device_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
@@ -93,7 +96,7 @@ class _HeaderWidget extends State<HeaderWidget> {
   PatientBloc _patientBloc;
   PatientDTO _patientDTO = PatientDTO(fullName: 'User Full Name');
   PrescriptionListBloc _prescriptionListBloc;
-
+  TokenDeviceBloc _tokenDeviceBloc;
   @override
   _HeaderWidget(
     this._title,
@@ -108,6 +111,7 @@ class _HeaderWidget extends State<HeaderWidget> {
     _getPatientId();
     _patientBloc = BlocProvider.of(context);
     _prescriptionListBloc = BlocProvider.of(context);
+    _tokenDeviceBloc = BlocProvider.of(context);
   }
 
   @override
@@ -475,6 +479,7 @@ class _HeaderWidget extends State<HeaderWidget> {
   _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) {
       setState(() {
+        if (!mounted) return;
         _patientId = value;
         if (_patientId != 0) {
           _patientBloc.add(PatientEventSetId(id: _patientId));
@@ -589,6 +594,16 @@ class _HeaderWidget extends State<HeaderWidget> {
                                       }
                                     });
                                   }
+                                });
+                                await _authenticateHelper
+                                    .getAccountId()
+                                    .then((accountId) async {
+                                  TokenDeviceDTO _tokenDeviceDTO =
+                                      TokenDeviceDTO(
+                                          accountId: accountId,
+                                          tokenDevice: '');
+                                  _tokenDeviceBloc.add(TokenDeviceEventUpdate(
+                                      dto: _tokenDeviceDTO));
                                 });
                                 //
                                 await _vitalSignHelper
@@ -750,7 +765,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                           Container(
                             padding: EdgeInsets.only(bottom: 10, top: 10),
                             child: Text(
-                              'Gửi yêu cầu thất bại',
+                              'Không thể đo',
                               style: TextStyle(
                                 decoration: TextDecoration.none,
                                 color: DefaultTheme.BLACK,
@@ -764,7 +779,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                             child: Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'Vui lòng kết nối với thiết bị',
+                                'Vui lòng kết nối với thiết bị đeo.',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   decoration: TextDecoration.none,
@@ -1653,6 +1668,7 @@ class _Header extends State<Header> {
   PatientRepository patientRepository =
       PatientRepository(httpClient: http.Client());
   PrescriptionListBloc _prescriptionListBloc;
+  TokenDeviceBloc _tokenDeviceBloc;
   @override
   _Header(this._maxHeight, this._minHeight);
 
@@ -1660,12 +1676,14 @@ class _Header extends State<Header> {
   void initState() {
     patientBloc = BlocProvider.of(context);
     _prescriptionListBloc = BlocProvider.of(context);
+    _tokenDeviceBloc = BlocProvider.of(context);
     _getPatientId();
   }
 
   _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) {
       setState(() {
+        if (!mounted) return;
         _patientId = value;
         if (_patientId != 0) {
           patientBloc.add(PatientEventSetId(id: _patientId));
@@ -1775,7 +1793,7 @@ class _Header extends State<Header> {
                   child: Padding(
                     padding: EdgeInsets.only(
                         top: 10, bottom: 10, left: 20, right: 20),
-                    child: Text('',
+                    child: Text('User Fullname',
                         style: TextStyle(
                           color: DefaultTheme.GREY_TEXT,
                           fontSize: 12,
@@ -2361,7 +2379,17 @@ class _Header extends State<Header> {
                                         .newNotification(notiData);
                                   }
                                 });
-
+                                await _authenticateHelper
+                                    .getAccountId()
+                                    .then((accountId) async {
+                                  TokenDeviceDTO _tokenDeviceDTO =
+                                      TokenDeviceDTO(
+                                          accountId: accountId,
+                                          tokenDevice: '');
+                                  _tokenDeviceBloc.add(TokenDeviceEventUpdate(
+                                      dto: _tokenDeviceDTO));
+                                  print('udpate token becomes null successful');
+                                });
                                 await _sqfLiteHelper
                                     .deleteVitalSignSchedule()
                                     .then((isDeleted) async {

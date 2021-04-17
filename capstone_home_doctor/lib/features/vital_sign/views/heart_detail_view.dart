@@ -173,13 +173,12 @@ class _HeartDetailView extends State<HeartDetailView>
                     },
                     child: Container(
                       width: 150,
-                      height: 30,
+                      height: 35,
                       margin: EdgeInsets.only(left: 30),
                       padding: EdgeInsets.only(
                         left: 10,
                         right: 10,
                       ),
-                      // width: 100,
                       decoration: BoxDecoration(
                           color: DefaultTheme.GREY_TOP_TAB_BAR,
                           borderRadius: BorderRadius.circular(100)),
@@ -220,18 +219,18 @@ class _HeartDetailView extends State<HeartDetailView>
                             child: Stack(
                               children: [
                                 Container(
-                                  height: 30,
-                                  margin: EdgeInsets.only(top: 2),
+                                  height: 35,
+                                  // margin: EdgeInsets.only(top: 2),
                                   padding: EdgeInsets.only(left: 20, right: 20),
                                   decoration: BoxDecoration(
-                                      color: DefaultTheme.ORANGE_TEXT
-                                          .withOpacity(0.5),
+                                      color: DefaultTheme.BLUE_REFERENCE
+                                          .withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(6)),
                                   child: Center(
                                     child: Text(
                                         'Ngày ${_dateValidator.parseToDateView3(_dateView)}',
                                         style: TextStyle(
-                                          color: DefaultTheme.WHITE,
+                                          color: DefaultTheme.BLUE_REFERENCE,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
                                         )),
