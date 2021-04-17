@@ -19,7 +19,7 @@ class ContractFullDTO {
   String note;
   String status;
   String nameLicense;
-  int priceLicense;
+  double priceLicense;
   int daysOfTracking;
   List<String> diseaseContracts;
   List<MedicalInstructionDiseases> medicalInstructionDiseases;

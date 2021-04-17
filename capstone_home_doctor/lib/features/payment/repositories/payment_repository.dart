@@ -7,7 +7,7 @@ class PaymentRepository extends BaseApiClient {
   //constructor
   PaymentRepository({@required this.httpClient}) : assert(httpClient != null);
 
-  Future<http.Response> vnpay(int amount, String description) async {
+  Future<http.Response> vnpay(double amount, String description) async {
     try {
       String url =
           '/Payments/GetURLPayment?Amount=$amount&OrderDescription=$description&BankCode=NCB';
