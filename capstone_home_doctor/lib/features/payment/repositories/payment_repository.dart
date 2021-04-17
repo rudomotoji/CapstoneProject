@@ -15,7 +15,7 @@ class PaymentRepository extends BaseApiClient {
       if (response.statusCode == 200) {
         return response;
       } else {
-        throw Exception('Failed to fetch payment');
+        return null;
       }
     } catch (e) {
       print('error payment repo: $e');
