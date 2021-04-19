@@ -68,6 +68,22 @@ class HealthRecordRepository extends BaseApiClient {
     }
   }
 
+  //delete health record
+  Future<bool> deleteHealthRecord(int healthrecordID) async {
+    String url = '/HealthRecords/${healthrecordID}';
+    try {
+      // final response = await postApi(url, null, null);
+      // if (response.statusCode == 204) {
+      //   return true;
+      // } else {
+      return false;
+      // }
+    } catch (e) {
+      print('ERROR AT DELETE HEALTH RECORD ${e}');
+      return false;
+    }
+  }
+
   //create new healthRecord
   Future<int> createHealthRecord(HealthRecordDTO dto) async {
     final String url = '/HealthRecords';

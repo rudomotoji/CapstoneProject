@@ -1013,48 +1013,48 @@ class _DashboardState extends State<DashboardPage>
                                     in listAppointmentCurrentSortedDate[index]
                                         .appointments)
                                   Container(
-                                      margin:
-                                          EdgeInsets.only(bottom: 5, top: 5),
-                                      padding: EdgeInsets.only(left: 5),
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                        left: BorderSide(
-                                            width: 2.0,
-                                            color: DefaultTheme.RED_CALENDAR),
-                                      )),
-                                      width: MediaQuery.of(context).size.width -
-                                          (40 + 20 + 50 + 2 + 10),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                              'Bác sĩ ${detail.fullNameDoctor} lên lịch tái khám cho bạn.'),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                              top: 3,
-                                            ),
+                                    margin: EdgeInsets.only(bottom: 5, top: 5),
+                                    padding: EdgeInsets.only(left: 5),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                      left: BorderSide(
+                                          width: 2.0,
+                                          color: DefaultTheme.RED_CALENDAR),
+                                    )),
+                                    width: MediaQuery.of(context).size.width -
+                                        (40 + 20 + 50 + 2 + 10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                            'Bác sĩ ${detail.fullNameDoctor} lên lịch tái khám cho bạn.'),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 3,
                                           ),
-                                          Text(
-                                            'Thời gian: ${detail.dateExamination.split('T')[1].split(':')[0]}:${detail.dateExamination.split('T')[1].split(':')[1]}',
-                                            style: TextStyle(
-                                              color: DefaultTheme.GREY_TEXT,
-                                            ),
+                                        ),
+                                        Text(
+                                          'Thời gian: ${detail.dateExamination.split('T')[1].split(':')[0]}:${detail.dateExamination.split('T')[1].split(':')[1]}',
+                                          style: TextStyle(
+                                            color: DefaultTheme.GREY_TEXT,
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                              top: 3,
-                                            ),
-                                            child: Divider(
-                                              height: 2,
-                                              color:
-                                                  DefaultTheme.GREY_TOP_TAB_BAR,
-                                            ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 3,
                                           ),
-                                        ],
-                                      ))
+                                          child: Divider(
+                                            height: 2,
+                                            color:
+                                                DefaultTheme.GREY_TOP_TAB_BAR,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                               ],
                             ),
                           ],
