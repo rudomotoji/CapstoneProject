@@ -2,6 +2,7 @@ import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/material.dart';
 
 class IntroConnectDevice extends StatefulWidget {
@@ -13,6 +14,12 @@ class IntroConnectDevice extends StatefulWidget {
 
 class _IntroConnectDevice extends State<IntroConnectDevice>
     with WidgetsBindingObserver {
+  @override
+  void dispose() {
+    NotificationsSelectBloc.instance.newNotification('');
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

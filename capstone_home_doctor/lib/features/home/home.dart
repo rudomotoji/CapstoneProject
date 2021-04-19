@@ -27,6 +27,7 @@ import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
+import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
@@ -83,7 +84,9 @@ class _MainHomeState extends State<MainHome> {
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   Stream<ReceiveNotification> _notificationsStream;
+  Stream<String> _notificationsSelectStream;
   final ContractHelper _contractHelper = ContractHelper();
+  HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
 
   @override
   void initState() {
@@ -95,17 +98,17 @@ class _MainHomeState extends State<MainHome> {
     _getPatientId();
     _getAccountId();
 
-    //
-
-    selectNotificationSubject.stream.listen((String payload) async {
-      // var navigate = jsonDecode(payload);
+    _notificationsSelectStream =
+        NotificationsSelectBloc.instance.notificationsSelectStream;
+    _notificationsSelectStream.listen((payload) {
       print('payload home page: $payload');
-      Map<String, dynamic> navigate = jsonDecode(payload);
       if (payload.contains('NAVIGATE_TO_SCREEN')) {
-        await Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
+        Map<String, dynamic> navigate = jsonDecode(payload);
+        Navigator.pushNamed(context, navigate['NAVIGATE_TO_SCREEN']);
       }
-
       if (payload.contains('notiTypeId')) {
+        Map<String, dynamic> navigate = jsonDecode(payload);
+
         var notificationType = navigate['notiTypeId'];
         var contractId = navigate['contractId'];
         var medicalInstructionId = navigate['medicalInstructionId'];
@@ -115,10 +118,11 @@ class _MainHomeState extends State<MainHome> {
             int.parse(notificationType) == 4 ||
             int.parse(notificationType) == 5 ||
             int.parse(notificationType) == 9 ||
-            int.parse(notificationType) == 10) {
+            int.parse(notificationType) == 10 ||
+            int.parse(notificationType) == 20) {
           //Navigate hợp đồng detail
           if (int.parse(contractId) != null) {
-            await _contractHelper.updateContractId(int.parse(contractId));
+            _contractHelper.updateContractId(int.parse(contractId));
 
             Navigator.of(context).pushNamed(RoutesHDr.DETAIL_CONTRACT_VIEW);
           }
@@ -137,7 +141,9 @@ class _MainHomeState extends State<MainHome> {
           //
           Navigator.pushNamed(context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
               arguments: int.parse(medicalInstructionId));
-        } else if (int.parse(notificationType) == 8) {
+        } else if (int.parse(notificationType) == 8 ||
+            int.parse(notificationType) == 13 ||
+            int.parse(notificationType) == 23) {
           //Navigate hẹn detail
           //
           int _indexPage = 1;
@@ -146,11 +152,23 @@ class _MainHomeState extends State<MainHome> {
         } else if (int.parse(notificationType) == 12) {
           //Navigate share medical instruction
           //
-
         } else if (int.parse(notificationType) == 11) {
           //Navigate connect device screen
           //
           Navigator.of(context).pushNamed(RoutesHDr.INTRO_CONNECT_PERIPHERAL);
+        } else if (int.parse(notificationType) == 18) {
+          //hợp đồng hoàn thành
+          //
+          Navigator.of(context).pushNamed(RoutesHDr.MANAGE_CONTRACT);
+        } else if (int.parse(notificationType) == 21) {
+          //khóa hợp đồng
+          //
+          Navigator.of(context).pushNamed(RoutesHDr.MANAGE_CONTRACT);
+        } else if (int.parse(notificationType) == 25) {
+          //Bác sĩ đã thêm y lệnh
+          //
+          // _healthRecordHelper.setHealthReCordId(dto.healthRecordId);
+          // Navigator.of(context).pushNamed(RoutesHDr.HEALTH_RECORD_DETAIL);
         }
       }
     });
@@ -219,7 +237,7 @@ class _MainHomeState extends State<MainHome> {
 
   @override
   void dispose() {
-    selectNotificationSubject.close();
+    // selectNotificationSubject.close();
     super.dispose();
   }
 

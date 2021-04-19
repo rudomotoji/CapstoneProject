@@ -49,7 +49,8 @@ class ManageContract extends StatefulWidget {
   }
 }
 
-class _ManageContract extends State<ManageContract> {
+class _ManageContract extends State<ManageContract>
+    with WidgetsBindingObserver {
   ContractRepository contractRepository =
       ContractRepository(httpClient: http.Client());
   List<ContractListDTO> _listExecuting = List<ContractListDTO>();
@@ -87,6 +88,12 @@ class _ManageContract extends State<ManageContract> {
     });
   }
 
+  @override
+  void dispose() {
+    NotificationsSelectBloc.instance.newNotification('');
+    super.dispose();
+  }
+
   Future _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) async {
       setState(() {
@@ -102,11 +109,14 @@ class _ManageContract extends State<ManageContract> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
+        NotificationsSelectBloc.instance.newNotification('');
         Navigator.of(context).pushNamedAndRemoveUntil(
-          RoutesHDr.MAIN_HOME,
-          (Route<dynamic> route) => false,
-        );
-        return new Future(() => false);
+            RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+        // Navigator.of(context).pushNamedAndRemoveUntil(
+        //   RoutesHDr.MAIN_HOME,
+        //   (Route<dynamic> route) => false,
+        // );
+        // return new Future(() => false);
       },
       child: Scaffold(
         body: SafeArea(

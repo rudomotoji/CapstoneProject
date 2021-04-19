@@ -22,6 +22,28 @@ class NotificationsBloc {
   }
 }
 
+class NotificationsSelectBloc {
+  NotificationsSelectBloc._internal();
+
+  static final NotificationsSelectBloc instance =
+      NotificationsSelectBloc._internal();
+
+  final BehaviorSubject<String> _notificationsStreamController =
+      BehaviorSubject<String>();
+
+  Stream<String> get notificationsSelectStream {
+    return _notificationsStreamController;
+  }
+
+  void newNotification(String notification) {
+    _notificationsStreamController.sink.add(notification);
+  }
+
+  void dispose() {
+    _notificationsStreamController?.close();
+  }
+}
+
 class HeartRefreshBloc {
   HeartRefreshBloc._internal();
 

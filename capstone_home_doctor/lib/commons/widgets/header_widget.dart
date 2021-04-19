@@ -695,6 +695,7 @@ class _HeaderWidget extends State<HeaderWidget> {
   }
 
   _backToHome() async {
+    NotificationsSelectBloc.instance.newNotification('');
     await _medicalInstructionHelper.updateCheckToCreateOrList(false);
     await _medicalInstructionHelper.updateCreateHRFromDetail(false);
     Navigator.of(context).pushNamedAndRemoveUntil(

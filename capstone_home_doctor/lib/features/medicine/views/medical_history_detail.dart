@@ -7,6 +7,7 @@ import 'package:capstone_home_doctor/features/health/health_record/events/med_in
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_get_by_id_state.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -38,6 +39,7 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    NotificationsSelectBloc.instance.newNotification('');
   }
 
   @override
