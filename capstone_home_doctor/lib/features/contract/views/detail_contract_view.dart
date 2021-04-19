@@ -1140,7 +1140,7 @@ class _DetailContractView extends State<DetailContractView>
                                                 100 -
                                                 40,
                                             child: Text(
-                                              '${_contractFullDTO.genderPatient}',
+                                              '${_getGender(_contractFullDTO.genderPatient)}',
                                             ),
                                           ),
                                         ],
@@ -4103,7 +4103,7 @@ class _DetailContractView extends State<DetailContractView>
                         width:
                             MediaQuery.of(context).size.width - (40 + 120 + 20),
                         child: Text(
-                          '${state4.dto.gender}',
+                          '${_getGender(state4.dto.gender)}',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 3,
                           style: TextStyle(
@@ -4732,5 +4732,17 @@ class _DetailContractView extends State<DetailContractView>
             //
           });
         });
+  }
+
+  String _getGender(String gender) {
+    String result = '';
+    if (gender.trim().toLowerCase() == 'male') {
+      result = 'Nam';
+    } else if (gender.trim().toLowerCase() == 'female') {
+      result = 'Nữ';
+    } else {
+      result = gender;
+    }
+    return result;
   }
 }

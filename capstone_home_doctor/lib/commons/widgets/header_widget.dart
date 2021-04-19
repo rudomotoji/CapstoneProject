@@ -642,6 +642,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                                         .updateCheckToNormal(false);
                                     await _vitalSignHelper
                                         .updateCountToNormal(0);
+                                    await _vitalSignHelper
+                                        .updateSendSMSTurnOffStatus(false);
                                     await _contractHelper
                                         .updateAvailableDay('');
                                     await _medicalInstructionHelper
@@ -2411,6 +2413,8 @@ class _Header extends State<Header> {
                                         .updateCheckToNormal(false);
                                     await _vitalSignHelper
                                         .updateCountToNormal(0);
+                                    await _vitalSignHelper
+                                        .updateSendSMSTurnOffStatus(false);
                                     await _contractHelper
                                         .updateAvailableDay('');
                                     await _medicalInstructionHelper

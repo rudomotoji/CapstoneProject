@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'dart:async';
+import 'package:capstone_home_doctor/features/sms/repositories/sms_repositories.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/blood_bloc.dart';
 import 'package:capstone_home_doctor/services/payment_helper.dart';
 import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
@@ -158,6 +159,7 @@ final VitalSignServerRepository _vitalSignServerRepository =
     VitalSignServerRepository(httpClient: http.Client());
 
 //repo for blocs
+SMSRepository _smsRepository = SMSRepository(httpClient: http.Client());
 HealthRecordRepository _healthRecordRepository =
     HealthRecordRepository(httpClient: http.Client());
 PrescriptionRepository _prescriptionRepository =
@@ -516,7 +518,8 @@ void main() async {
                               .then((sOffline) async {
                             scheduleOffline = sOffline;
                           });
-                          if (scheduleOffline.isNotEmpty) {
+                          if (scheduleOffline.isNotEmpty &&
+                              scheduleOffline != null) {
                             //DANGEROUS IS COUNTING BUT LOSE DEVICE CONNECTION
                             //
                             VitalSigns heartRateSchedule = scheduleOffline
@@ -603,6 +606,33 @@ void main() async {
                                         print(
                                             'update people to danger successful');
                                       }
+
+                                      ///SEND SMS HERE
+                                      _vitalSignHelper
+                                          .isSendSMSTurnOff()
+                                          .then((isSMSOff) async {
+                                        //
+                                        if (isSMSOff == false) {
+                                          //SEND SMS TO RELATIVE AND DOCTOR
+                                          await _smsRepository.sendSmsMessage(
+                                              _accountId,
+                                              _vitalSignScheduleDTO
+                                                  .doctorAccountId);
+                                          //
+                                          //UPDATE STATUS SMS IS SENT
+                                          _vitalSignHelper
+                                              .updateSendSMSTurnOffStatus(true)
+                                              .then((isUpdated) {
+                                            if (isUpdated) {
+                                              print(
+                                                  'TURN SMS SENDING OFF----------------------');
+                                            }
+                                          });
+                                        } else {
+                                          print(
+                                              'SMS IS SENT FOR THE FIRST TIME');
+                                        }
+                                      });
                                     });
                                   }
                                   // // set into 0 when normal
@@ -1351,6 +1381,34 @@ _connectInBackground(int timeInsert) async {
                             //KICK VARIABLE CHECK DANGER TO NORMAL
                             await _vitalSignHelper.updateCheckToNormal(true);
                             print('update people to danger successful');
+
+                            ///
+
+                            ///SEND SMS HERE
+                            _vitalSignHelper
+                                .isSendSMSTurnOff()
+                                .then((isSMSOff) async {
+                              //
+                              if (isSMSOff == false) {
+                                //SEND SMS TO RELATIVE AND DOCTOR
+                                await _smsRepository.sendSmsMessage(_accountId,
+                                    _vitalSignScheduleDTO.doctorAccountId);
+                                //
+                                //UPDATE STATUS SMS IS SENT
+                                _vitalSignHelper
+                                    .updateSendSMSTurnOffStatus(true)
+                                    .then((isUpdated) {
+                                  if (isUpdated) {
+                                    print(
+                                        'TURN SMS SENDING OFF----------------------');
+                                  }
+                                });
+                              } else {
+                                print('SMS IS SENT FOR THE FIRST TIME');
+                              }
+                            });
+
+                            ///
                           }
                         });
 
@@ -1435,6 +1493,16 @@ _connectInBackground(int timeInsert) async {
                                     .pushNotification(notiPushDTO);
                                 await _vitalSignHelper
                                     .updateCheckToNormal(false);
+
+                                ////UPDATE SEND SMS TURN ON
+                                _vitalSignHelper
+                                    .updateSendSMSTurnOffStatus(false)
+                                    .then((isUpdated) {
+                                  if (isUpdated) {
+                                    print(
+                                        'TURN ON SEND SMS PENDING-------------');
+                                  }
+                                });
                               }
                             });
                           }
@@ -1512,6 +1580,33 @@ _connectInBackground(int timeInsert) async {
                             await notificationRepository
                                 .pushNotification(notiPushDTO);
                             print('update people to danger successful');
+
+                            //
+                            ///SEND SMS HERE
+                            _vitalSignHelper
+                                .isSendSMSTurnOff()
+                                .then((isSMSOff) async {
+                              //
+                              if (isSMSOff == false) {
+                                //SEND SMS TO RELATIVE AND DOCTOR
+                                await _smsRepository.sendSmsMessage(_accountId,
+                                    _vitalSignScheduleDTO.doctorAccountId);
+                                //
+                                //UPDATE STATUS SMS IS SENT
+                                _vitalSignHelper
+                                    .updateSendSMSTurnOffStatus(true)
+                                    .then((isUpdated) {
+                                  if (isUpdated) {
+                                    print(
+                                        'TURN SMS SENDING OFF----------------------');
+                                  }
+                                });
+                              } else {
+                                print('SMS IS SENT FOR THE FIRST TIME');
+                              }
+                            });
+
+                            //
                           }
                         });
 
@@ -1650,6 +1745,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('PAYMENT_CHECK')) {
       _paymentHelper.initialPaymentCheck();
+    }
+    if (!prefs.containsKey('SMS_TURN_OFF')) {
+      _vitalSignHelper.initialSendSMS();
     }
   }
 

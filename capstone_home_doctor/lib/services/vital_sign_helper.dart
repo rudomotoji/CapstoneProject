@@ -157,5 +157,29 @@ class VitalSignHelper {
     }
     return prefs.getString('STATUS_PEOPLE');
   }
+
   //
+  //
+  //CHECK TO SEND SMS
+  Future<void> initialSendSMS() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('SMS_TURN_OFF', false);
+  }
+
+  Future<bool> updateSendSMSTurnOffStatus(bool isSendSMSTurnOff) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('SMS_TURN_OFF')) {
+      initialSendSMS();
+    }
+    prefs.setBool('SMS_TURN_OFF', isSendSMSTurnOff);
+    return true;
+  }
+
+  Future<bool> isSendSMSTurnOff() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('SMS_TURN_OFF')) {
+      initialSendSMS();
+    }
+    return prefs.getBool('SMS_TURN_OFF');
+  }
 }

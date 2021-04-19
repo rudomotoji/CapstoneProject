@@ -187,6 +187,8 @@ flutter:
     - assets/images/ic-mesuring.gif
     - assets/images/ic-reload-black.png
     - assets/images/ic-reload-blue.png
+    - assets/images/bg_bmi.png
+    - assets/images/bg-vital-sign.png
 
 
   

@@ -7,6 +7,9 @@ class DateValidator {
     String result = '';
     String day, month, year;
     String date = dateString.split('T')[0];
+    if (!dateString.contains('T')) {
+      return result;
+    }
     day = date.split('-')[2];
     month = date.split('-')[1];
     year = date.split('-')[0];

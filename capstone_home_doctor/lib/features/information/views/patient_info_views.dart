@@ -135,12 +135,6 @@ class _PatientInformation extends State<PatientInformation>
             ),
           );
         }
-        String _gender = '';
-        if (state.dto.gender == 'Nam') {
-          _gender = 'Nam';
-        } else {
-          _gender = 'Nữ';
-        }
 
         //
         return ListView(
@@ -345,7 +339,7 @@ class _PatientInformation extends State<PatientInformation>
                               width: MediaQuery.of(context).size.width -
                                   (120 + 50),
                               child: Text(
-                                '${_gender}',
+                                '${_getGender(state.dto.gender)}',
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 3,
                                 style: TextStyle(
@@ -780,5 +774,17 @@ class _PatientInformation extends State<PatientInformation>
                 ),
               ));
         });
+  }
+
+  String _getGender(String gender) {
+    String result = '';
+    if (gender.trim().toLowerCase() == 'male') {
+      result = 'Nam';
+    } else if (gender.trim().toLowerCase() == 'female') {
+      result = 'Nữ';
+    } else {
+      result = gender;
+    }
+    return result;
   }
 }
