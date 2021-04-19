@@ -285,6 +285,7 @@ class _OverviewTabState extends State<OverviewTab> {
 
   _getListTimeToSchedule(String timeStart, int minuteAgain) {
     //
+    String timeStartString = timeStart.split('T')[1];
   }
 
   _buildVitalSign(List<VitalSigns> list) {
