@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 
@@ -66,6 +68,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   // List<MedicalInstructionDTO> listMedicalIns = [];
   List<MedicalInsGroup> listGroupMedIns = [];
   HealthRecordDTO _healthRecordDTO;
+  Stream<ReceiveNotification> _notificationsStream;
 
   @override
   void initState() {
@@ -80,6 +83,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     _medInsCreateBloc = BlocProvider.of(context);
     _medicalShareInsBloc = BlocProvider.of(context);
     getHRId();
+
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((notification) {
+      _pullRefresh();
+    });
   }
 
   @override
@@ -2023,10 +2031,12 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   String getDisease(List<dynamic> listDisease) {
     String str = '';
     for (var i = 0; i < listDisease.length; i++) {
+      String diseaseStr =
+          listDisease[i]['diseaseId'] + ' - ' + listDisease[i]['diseaseName'];
       if (i == (listDisease.length - 1)) {
-        str += '- ' + listDisease[i]['diseaseName'];
+        str += '+ ' + diseaseStr;
       } else {
-        str += '- ' + listDisease[i]['diseaseName'] + '\n';
+        str += '+ ' + diseaseStr + '\n';
       }
     }
     return str;

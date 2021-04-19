@@ -10,6 +10,7 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/hr_list_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
+import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_list_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/views/create_health_record.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
@@ -33,6 +34,8 @@ final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   HealthRecordRepository healthRecordRepository =
       HealthRecordRepository(httpClient: http.Client());
+  MedicalInstructionRepository medicalInstructionRepository =
+      MedicalInstructionRepository(httpClient: http.Client());
   List<HealthRecordDTO> listHealthRecord = [];
   // List<HealthRecordDTO> listHealthRecordOld = [];
   // List<HealthRecordDTO> listHealthRecordSystem = [];
@@ -507,12 +510,12 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                       padding: EdgeInsets.only(left: 10),
                     ),
                     Container(
-                      height: 200,
+                      height: 260,
                       width: MediaQuery.of(context).size.width - 20,
                       child: Column(
                         children: <Widget>[
                           Container(
-                            height: 100,
+                            height: 160,
                             decoration: BoxDecoration(
                               color: DefaultTheme.WHITE.withOpacity(0.8),
                               borderRadius: BorderRadius.circular(10),
@@ -561,22 +564,217 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                         .then((value) => refreshListHR());
                                   },
                                 ),
-                                // Divider(
-                                //   color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                //   height: 0.5,
-                                // ),
-                                // ButtonHDr(
-                                //   label: 'Xoá',
-                                //   height: 60,
-                                //   labelColor: DefaultTheme.RED_TEXT,
-                                //   style: BtnStyle.BUTTON_IN_LIST,
-                                //   onTap: () {
-                                //     // _sqfLiteHelper
-                                //     //     .deleteHealthRecord(healthRecordId);
-                                //     // refreshListHR();
-                                //     Navigator.of(context).pop();
-                                //   },
-                                // ),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 0.5,
+                                ),
+                                ButtonHDr(
+                                  label: 'Xoá',
+                                  height: 60,
+                                  labelColor: DefaultTheme.RED_TEXT,
+                                  style: BtnStyle.BUTTON_IN_LIST,
+                                  onTap: () {
+                                    // _sqfLiteHelper
+                                    //     .deleteHealthRecord(healthRecordId);
+                                    // refreshListHR();
+                                    Navigator.of(context).pop();
+                                    // medicalInstructionRepository.getListMedicalInstruction(healthRecordId).then((value) {
+                                    //   if(value!=null||value.isNotEmpty){
+
+                                    //   }
+                                    // });
+                                    //
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (context) {
+                                        return Center(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(15)),
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 25, sigmaY: 25),
+                                              child: Container(
+                                                padding: EdgeInsets.only(
+                                                    left: 10,
+                                                    top: 10,
+                                                    right: 10),
+                                                width: 250,
+                                                height: 185,
+                                                decoration: BoxDecoration(
+                                                  color: DefaultTheme.WHITE
+                                                      .withOpacity(0.7),
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 10, top: 10),
+                                                      child: Text(
+                                                        'Cảnh báo',
+                                                        style: TextStyle(
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .none,
+                                                          color: DefaultTheme
+                                                              .BLACK,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 20,
+                                                          right: 20,
+                                                          top: 15),
+                                                      child: Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          'Trong hồ sơ có thể đang chứa các phiếu y lệnh\n Bạn có chắc chắn muốn xóa hồ sơ này hay không!',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .none,
+                                                            color: DefaultTheme
+                                                                .GREY_TEXT,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Spacer(),
+                                                    Divider(
+                                                      height: 1,
+                                                      color: DefaultTheme
+                                                          .GREY_TOP_TAB_BAR,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FlatButton(
+                                                          height: 40,
+                                                          minWidth:
+                                                              250 / 2 - 10.5,
+                                                          child: Text('Không',
+                                                              style: TextStyle(
+                                                                  color: DefaultTheme
+                                                                      .BLUE_TEXT)),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        Container(
+                                                          height: 40,
+                                                          width: 0.5,
+                                                          color: DefaultTheme
+                                                              .GREY_TOP_TAB_BAR,
+                                                        ),
+                                                        FlatButton(
+                                                          height: 40,
+                                                          minWidth:
+                                                              250 / 2 - 10.5,
+                                                          child: Text('Có',
+                                                              style: TextStyle(
+                                                                  color: DefaultTheme
+                                                                      .RED_TEXT)),
+                                                          onPressed: () async {
+                                                            //
+                                                            Navigator.pop(
+                                                                context);
+                                                            showDialog(
+                                                              barrierDismissible:
+                                                                  false,
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return Center(
+                                                                  child:
+                                                                      ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(5)),
+                                                                    child:
+                                                                        BackdropFilter(
+                                                                      filter: ImageFilter.blur(
+                                                                          sigmaX:
+                                                                              25,
+                                                                          sigmaY:
+                                                                              25),
+                                                                      child:
+                                                                          Container(
+                                                                        width:
+                                                                            300,
+                                                                        height:
+                                                                            300,
+                                                                        decoration: BoxDecoration(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(10),
+                                                                            color: DefaultTheme.WHITE.withOpacity(0.8)),
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.center,
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width: 200,
+                                                                              height: 200,
+                                                                              child: Image.asset('assets/images/loading.gif'),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+                                                            healthRecordRepository
+                                                                .deleteHealthRecord(
+                                                                    healthRecordId)
+                                                                .then(
+                                                                    (res) async {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              await refreshListHR();
+//                                                               if (res) {
+
+//                                                               } else {
+// //
+//                                                               }
+                                                            });
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
                               ],
                             ),
                           ),
@@ -624,10 +822,12 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   String getDisease(List<dynamic> listDisease) {
     String str = '';
     for (var i = 0; i < listDisease.length; i++) {
+      String diseaseStr =
+          listDisease[i]['diseaseId'] + ' - ' + listDisease[i]['diseaseName'];
       if (i == (listDisease.length - 1)) {
-        str += listDisease[i]['diseaseName'];
+        str += diseaseStr;
       } else {
-        str += listDisease[i]['diseaseName'] + '\n';
+        str += diseaseStr + '\n';
       }
     }
     return str;

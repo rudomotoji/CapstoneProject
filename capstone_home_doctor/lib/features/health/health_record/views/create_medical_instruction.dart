@@ -55,7 +55,7 @@ class _CreateMedicalInstructionViewState
 
   //
   List<String> listImage = [];
-  List<String> listImage64Bit = [];
+  // List<String> listImage64Bit = [];
 
 //triệu chứng bệnh đối với các bệnh scrope
   List<Disease> listDisease = [];
@@ -210,7 +210,7 @@ class _CreateMedicalInstructionViewState
                                             // _imgString = '';
                                             _imgFile = null;
                                             listImage = [];
-                                            listImage64Bit = [];
+                                            // listImage64Bit = [];
                                             _dianoseController.text = '';
                                             _medInsTypeId =
                                                 _.medicalInstructionTypeId;
@@ -402,7 +402,7 @@ class _CreateMedicalInstructionViewState
                         Padding(
                           padding: EdgeInsets.only(bottom: 10),
                         ),
-                        (listImage64Bit.length <= 0)
+                        (listImage.length <= 0)
                             ? Container()
                             : Container(
                                 width: MediaQuery.of(context).size.width - 10,
@@ -410,7 +410,7 @@ class _CreateMedicalInstructionViewState
                                   gridDelegate:
                                       SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 3),
-                                  itemCount: listImage64Bit.length,
+                                  itemCount: listImage.length,
                                   physics: NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
                                   itemBuilder: (context, index) {
@@ -418,15 +418,20 @@ class _CreateMedicalInstructionViewState
                                       margin: EdgeInsets.only(right: 10),
                                       child: Stack(
                                         children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                          Container(
+                                            // borderRadius:
+                                            //     BorderRadius.circular(10),
                                             child: SizedBox(
-                                                width: 120,
-                                                height: 120,
-                                                child: ImageUltility
-                                                    .imageFromBase64String(
-                                                        listImage64Bit[index])),
+                                              width: 120,
+                                              height: 120,
+                                              child: Image.file(
+                                                File(listImage[index]),
+                                                fit: BoxFit.fill,
+                                              ),
+                                              // child: ImageUltility
+                                              //     .imageFromBase64String(
+                                              //         listImage64Bit[index])
+                                            ),
                                           ),
                                           Positioned(
                                             top: 0,
@@ -435,8 +440,8 @@ class _CreateMedicalInstructionViewState
                                               onTap: () {
                                                 setState(() {
                                                   listImage.removeAt(index);
-                                                  listImage64Bit
-                                                      .removeAt(index);
+                                                  // listImage64Bit
+                                                  //     .removeAt(index);
 
                                                   if (listImage.length == 0) {
                                                     titleCompare = null;
@@ -484,8 +489,10 @@ class _CreateMedicalInstructionViewState
                   onTap: () async {
                     if (selectType == null) {
                       alertError('Hãy chọn loại bệnh lý');
-                    } else if (listImage.length <= 0 ||
-                        listImage64Bit.length <= 0) {
+                    } else if (listImage.length <= 0
+                        //  ||
+                        //     listImage64Bit.length <= 0
+                        ) {
                       alertError('Hãy thêm hình ảnh của y lệnh');
                     } else if (_dianoseController.text == '' ||
                         _dianoseController.text.isEmpty ||
@@ -1130,8 +1137,8 @@ class _CreateMedicalInstructionViewState
               _imgFile = pickedFile;
               if (!listImage.contains(fileName)) {
                 listImage.add(pickedFile.path);
-                listImage64Bit.add(ImageUltility.base64String(
-                    File(pickedFile.path).readAsBytesSync()));
+                // listImage64Bit.add(ImageUltility.base64String(
+                //     File(pickedFile.path).readAsBytesSync()));
                 load = true;
               }
             });
@@ -1236,7 +1243,7 @@ class _CreateMedicalInstructionViewState
                           _dianoseController.text = strDiseaseDraft;
 
                           listImage.removeLast();
-                          listImage64Bit.removeLast();
+                          // listImage64Bit.removeLast();
                           if (listImage.length == 0) {
                             titleCompare = null;
                             _dianoseController.text = strDiseaseDraft;
