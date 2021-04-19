@@ -98,6 +98,13 @@ class _ScheduleView extends State<ScheduleView>
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((notification) {
       _getPatientId();
+      // var navigate = jsonDecode(notification.payload);
+      // var notificationType = navigate['notiTypeId'];
+      // if (int.parse(notificationType) == 8 ||
+      //     int.parse(notificationType) == 13 ||
+      //     int.parse(notificationType) == 23) {
+      //   _getPatientId();
+      // }
     });
 
     _animationController.forward();
@@ -117,6 +124,7 @@ class _ScheduleView extends State<ScheduleView>
     // TODO: implement dispose
     _animationController.dispose();
     _calendarController.dispose();
+    NotificationsSelectBloc.instance.newNotification('');
     super.dispose();
   }
 

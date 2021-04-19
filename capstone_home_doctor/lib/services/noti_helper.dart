@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
-
-final BehaviorSubject<String> selectNotificationSubject =
-    BehaviorSubject<String>();
 
 class NotiHelper {
   // static final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
@@ -64,19 +62,20 @@ class NotiHelper {
   // setNotificationnOnClick(Function onNotificationOnClick) async {
   //   await _plugin.initialize(initSetting,
   //       onSelectNotification: (String payload) async {
-  //     onNotificationOnClick(payload);
+
   //   });
   // }
   //
   Future selectNotification(String payload) async {
-    selectNotificationSubject.add(payload);
+    print('selectNotification $payload');
+    NotificationsSelectBloc.instance.newNotification(payload);
   }
 
-  setOnNotificationReceive(Function onNotificationReceive) {
-    didReceiveNotificationSubject.listen((nontification) {
-      onNotificationReceive(nontification);
-    });
-  }
+  // setOnNotificationReceive(Function onNotificationReceive) {
+  //   didReceiveNotificationSubject.listen((nontification) {
+  //     onNotificationReceive(nontification);
+  //   });
+  // }
 
   // setNotificationnOnClick(BehaviorSubject selectNotificationSubject) async {
   //   await _plugin.initialize(initSetting,
