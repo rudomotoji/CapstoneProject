@@ -102,7 +102,8 @@ class _CreateMedicalInstructionViewState
       listDisease.clear();
       listDiseaseSelected.clear();
       for (var item in arguments) {
-        Disease dto = Disease.fromJson(item);
+        Disease dto =
+            Disease(diseaseId: item.diseaseId, diseaseName: item.diseaseName);
         listDisease.add(dto);
         // listDiseaseSelected.add(dto);
       }
