@@ -11,6 +11,7 @@ import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.da
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/events/appointment_event.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
+import 'package:capstone_home_doctor/features/schedule/repositories/appointment_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/states/appointment_state.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
@@ -66,6 +67,8 @@ class _ScheduleView extends State<ScheduleView>
 
   SystemRepository _systemRepository =
       SystemRepository(httpClient: http.Client());
+  AppointmentRepository _appointmentRepository =
+      AppointmentRepository(httpClient: http.Client());
 
   //use for calendar
   Map<DateTime, List> _events = {};
@@ -156,7 +159,8 @@ class _ScheduleView extends State<ScheduleView>
                     : Column(
                         mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
-                          _buildTableCalendar(),
+                          // _buildTableCalendar(),
+                          _buildCalendar(),
                           const SizedBox(height: 8.0),
                           Expanded(child: _buildEventList(context)),
                         ],
@@ -304,7 +308,8 @@ class _ScheduleView extends State<ScheduleView>
               state.listAppointment != null) {
             _events = {};
             _getEvent(state.listAppointment);
-            return _buildCalendar();
+            return Container();
+            // return _buildCalendar();
           }
         }
         return Container(
@@ -375,8 +380,10 @@ class _ScheduleView extends State<ScheduleView>
         }
       }
     }
-
-    _selectedEvents = _events[_selectedDay] ?? [];
+    setState(() {
+      _selectedEvents = _events[_selectedDay] ?? [];
+    });
+    // _selectedEvents = _events[_selectedDay] ?? [];
   }
 
   Widget _buildEventList(BuildContext context) {
@@ -1572,6 +1579,10 @@ class _ScheduleView extends State<ScheduleView>
     _appointmentBloc.add(AppointmentGetListEvent(
         patientId: _accountId,
         date: '${curentDateNow.year}/${curentDateNow.month}'));
+
+    _appointmentRepository.getAppointment(_accountId, '').then((value) {
+      _getEvent(value);
+    });
   }
 
   void _onDaySelected(DateTime day, List events, List holidays) {

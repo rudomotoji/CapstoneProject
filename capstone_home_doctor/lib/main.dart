@@ -258,9 +258,9 @@ void checkNotifiMedical() async {
     MINUTES = session['minutes'];
   }
 
-  if (appointment == null) {
-    await getCalendarAppointment();
-  }
+  // if (appointment == null) {
+  //   await getCalendarAppointment();
+  // }
 
   if (hour == MORNING && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('morning').then((value) {
@@ -276,28 +276,28 @@ void checkNotifiMedical() async {
       }
     });
 
-    if (appointment != null) {
-      for (var item in appointment.appointments) {
-        DateTime timeDate =
-            new DateFormat('yyyy-MM-ddThh:mm:ss').parse(item.dateExamination);
-        int hourAppointment = timeDate.hour;
-        int minuteAppointment = timeDate.minute;
-        if (MORNING <= hourAppointment && hourAppointment <= NOON) {
-          print('MORNING: $hourAppointment');
-          var messageAppointment = {
-            "notification": {
-              "title": "LỊCH TÁI KHÁM",
-              "body":
-                  'Hôm nay bạn có lịch hẹn với ${item.fullNameDoctor} lúc ${hourAppointment}:${minuteAppointment}',
-              "data": {
-                "notiTypeId": '8',
-              }
-            }
-          };
-          _handleGeneralMessage(messageAppointment);
-        }
-      }
-    }
+    // if (appointment != null) {
+    //   for (var item in appointment.appointments) {
+    //     DateTime timeDate =
+    //         new DateFormat('yyyy-MM-ddThh:mm:ss').parse(item.dateExamination);
+    //     int hourAppointment = timeDate.hour;
+    //     int minuteAppointment = timeDate.minute;
+    //     if (MORNING <= hourAppointment && hourAppointment <= NOON) {
+    //       print('MORNING: $hourAppointment');
+    //       var messageAppointment = {
+    //         "notification": {
+    //           "title": "LỊCH TÁI KHÁM",
+    //           "body":
+    //               'Hôm nay bạn có lịch hẹn với ${item.fullNameDoctor} lúc ${hourAppointment}:${minuteAppointment}',
+    //           "data": {
+    //             "notiTypeId": '8',
+    //           }
+    //         }
+    //       };
+    //       _handleGeneralMessage(messageAppointment);
+    //     }
+    //   }
+    // }
   }
   if (hour == NOON && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('noon').then((value) {
@@ -312,28 +312,28 @@ void checkNotifiMedical() async {
         }
       }
     });
-    if (appointment != null) {
-      for (var item in appointment.appointments) {
-        DateTime timeDate =
-            new DateFormat('yyyy-MM-ddThh:mm:ss').parse(item.dateExamination);
-        int hourAppointment = timeDate.hour;
-        int minuteAppointment = timeDate.minute;
-        if (NOON <= hourAppointment && hourAppointment <= AFTERNOON) {
-          print('NOON: $hourAppointment');
-          var messageAppointment = {
-            "notification": {
-              "title": "LỊCH TÁI KHÁM",
-              "body":
-                  'Hôm nay bạn có lịch hẹn với ${item.fullNameDoctor} lúc ${hourAppointment}:${minuteAppointment}',
-              "data": {
-                "notiTypeId": '8',
-              }
-            }
-          };
-          _handleGeneralMessage(messageAppointment);
-        }
-      }
-    }
+    // if (appointment != null) {
+    //   for (var item in appointment.appointments) {
+    //     DateTime timeDate =
+    //         new DateFormat('yyyy-MM-ddThh:mm:ss').parse(item.dateExamination);
+    //     int hourAppointment = timeDate.hour;
+    //     int minuteAppointment = timeDate.minute;
+    //     if (NOON <= hourAppointment && hourAppointment <= AFTERNOON) {
+    //       print('NOON: $hourAppointment');
+    //       var messageAppointment = {
+    //         "notification": {
+    //           "title": "LỊCH TÁI KHÁM",
+    //           "body":
+    //               'Hôm nay bạn có lịch hẹn với ${item.fullNameDoctor} lúc ${hourAppointment}:${minuteAppointment}',
+    //           "data": {
+    //             "notiTypeId": '8',
+    //           }
+    //         }
+    //       };
+    //       _handleGeneralMessage(messageAppointment);
+    //     }
+    //   }
+    // }
   }
   if (hour == AFTERNOON && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('afterNoon').then((value) {
@@ -348,28 +348,28 @@ void checkNotifiMedical() async {
         }
       }
     });
-    if (appointment != null) {
-      for (var item in appointment.appointments) {
-        DateTime timeDate =
-            new DateFormat('yyyy-MM-ddThh:mm:ss').parse(item.dateExamination);
-        int hourAppointment = timeDate.hour;
-        int minuteAppointment = timeDate.minute;
-        if (AFTERNOON <= hourAppointment && hourAppointment <= NIGHT) {
-          print('AFTERNOON: $hourAppointment');
-          var messageAppointment = {
-            "notification": {
-              "title": "LỊCH TÁI KHÁM",
-              "body":
-                  'Hôm nay bạn có lịch hẹn với ${item.fullNameDoctor} lúc ${hourAppointment}:${minuteAppointment}',
-              "data": {
-                "notiTypeId": '8',
-              }
-            }
-          };
-          _handleGeneralMessage(messageAppointment);
-        }
-      }
-    }
+    // if (appointment != null) {
+    //   for (var item in appointment.appointments) {
+    //     DateTime timeDate =
+    //         new DateFormat('yyyy-MM-ddThh:mm:ss').parse(item.dateExamination);
+    //     int hourAppointment = timeDate.hour;
+    //     int minuteAppointment = timeDate.minute;
+    //     if (AFTERNOON <= hourAppointment && hourAppointment <= NIGHT) {
+    //       print('AFTERNOON: $hourAppointment');
+    //       var messageAppointment = {
+    //         "notification": {
+    //           "title": "LỊCH TÁI KHÁM",
+    //           "body":
+    //               'Hôm nay bạn có lịch hẹn với ${item.fullNameDoctor} lúc ${hourAppointment}:${minuteAppointment}',
+    //           "data": {
+    //             "notiTypeId": '8',
+    //           }
+    //         }
+    //       };
+    //       _handleGeneralMessage(messageAppointment);
+    //     }
+    //   }
+    // }
   }
   if (hour == NIGHT && minute == MINUTES) {
     await _sqLiteHelper.getAllBy('night').then((value) {
@@ -408,7 +408,7 @@ int _patientId = 0;
 int _accountId = 0;
 var uuid = Uuid();
 DateValidator _dateValidator = DateValidator();
-AppointmentDTO appointment;
+// AppointmentDTO appointment;
 
 // Timer _timer;
 // const oneSec = const Duration(seconds: 1);
@@ -428,7 +428,7 @@ void main() async {
   ));
   _getAccountId();
   await _getPatientId();
-  await getCalendarAppointment();
+  // await getCalendarAppointment();
 
   // _timer = new Timer.periodic(
   //   oneSec,
@@ -843,39 +843,39 @@ _getPatientId() async {
   });
 }
 
-getCalendarAppointment() async {
-  DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
-      .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
-  if (_accountId != 0) {
-    await _appointmentRepository.getAppointment(_accountId, '').then((value) {
-      for (var item in value) {
-        DateTime dateCheck =
-            new DateFormat('dd/MM/yyyy').parse(item.dateExamination);
-        if (dateCheck.millisecondsSinceEpoch ==
-            curentDateNow.millisecondsSinceEpoch) {
-          appointment = item;
-          break;
-        }
-      }
-    });
-  } else {
-    await authenHelper.getAccountId().then((value) {
-      if (value != 0) {
-        _appointmentRepository.getAppointment(value, '').then((value) {
-          for (var item in value) {
-            DateTime dateCheck =
-                new DateFormat('dd/MM/yyyy').parse(item.dateExamination);
-            if (dateCheck.millisecondsSinceEpoch ==
-                curentDateNow.millisecondsSinceEpoch) {
-              appointment = item;
-              break;
-            }
-          }
-        });
-      }
-    });
-  }
-}
+// getCalendarAppointment() async {
+//   DateTime curentDateNow = new DateFormat('dd/MM/yyyy')
+//       .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
+//   if (_accountId != 0) {
+//     await _appointmentRepository.getAppointment(_accountId, '').then((value) {
+//       for (var item in value) {
+//         DateTime dateCheck =
+//             new DateFormat('dd/MM/yyyy').parse(item.dateExamination);
+//         if (dateCheck.millisecondsSinceEpoch ==
+//             curentDateNow.millisecondsSinceEpoch) {
+//           appointment = item;
+//           break;
+//         }
+//       }
+//     });
+//   } else {
+//     await authenHelper.getAccountId().then((value) {
+//       if (value != 0) {
+//         _appointmentRepository.getAppointment(value, '').then((value) {
+//           for (var item in value) {
+//             DateTime dateCheck =
+//                 new DateFormat('dd/MM/yyyy').parse(item.dateExamination);
+//             if (dateCheck.millisecondsSinceEpoch ==
+//                 curentDateNow.millisecondsSinceEpoch) {
+//               appointment = item;
+//               break;
+//             }
+//           }
+//         });
+//       }
+//     });
+//   }
+// }
 
 _saveVitalSignScheduleOffline() async {
   await _vitalSignServerRepository
@@ -1869,7 +1869,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
 
     if (notiData.title.toLowerCase().contains('lịch') ||
         notiData.title.toLowerCase().contains('hẹn')) {
-      getCalendarAppointment();
+      // getCalendarAppointment();
     }
 
     _saveVitalSignScheduleOffline();
