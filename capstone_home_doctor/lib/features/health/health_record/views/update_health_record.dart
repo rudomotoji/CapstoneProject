@@ -139,12 +139,12 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
         if (value != null && _healthRecordDTO == null) {
           _placeController.text = value.place;
           _noteController.text = value.description;
+          List<Diseases> listDiseases = value.diseases;
+          // var listDiseases = value.diseases.map((dto) {
+          // return Disease.fromJson(dto);
+          // }).toList();
 
-          var listDiseases = value.diseases.map((dto) {
-            return Disease.fromJson(dto);
-          }).toList();
-
-          if (value.diseases.first['diseaseId'].contains('-')) {
+          if (value.diseases.first.diseaseId.contains('-')) {
             //bệnh khác
             setState(() {
               _valueTypeIns = _listType.last;

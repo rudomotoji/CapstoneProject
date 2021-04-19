@@ -232,52 +232,6 @@ class _ManageContract extends State<ManageContract> {
                             );
                           }
                           if (state is ListContractStateSuccess) {
-                            print('GO INTO STATE SUCCESS');
-
-                            // for (var i = 0; i < state.listContract.length; i++) {
-                            //   if (state.listContract[i].status
-                            //           .contains('PENDING') ||
-                            //       // state.listContract[i].status
-                            //       //     .contains('ACTIVE') ||
-                            //       state.listContract[i].status
-                            //           .contains('APPROVED')) {
-                            //     _listExecuting.add(ContractListDTO(
-                            //         contractId: state.listContract[i].contractId,
-                            //         contractCode:
-                            //             state.listContract[i].contractCode,
-                            //         daysOfTracking:
-                            //             state.listContract[i].daysOfTracking,
-                            //         fullNameDoctor:
-                            //             state.listContract[i].fullNameDoctor,
-                            //         dateCreated:
-                            //             state.listContract[i].dateCreated,
-                            //         dateFinished:
-                            //             state.listContract[i].dateFinished,
-                            //         dateStarted:
-                            //             state.listContract[i].dateStarted,
-                            //         status: state.listContract[i].status));
-                            //   }
-                            // }
-
-                            // for (var i = 0; i < state.listContract.length; i++) {
-                            //   if (state.listContract[i].status
-                            //       .contains('FINISHED')) {
-                            //     _listAcitved.add(ContractListDTO(
-                            //         contractId: state.listContract[i].contractId,
-                            //         contractCode:
-                            //             state.listContract[i].contractCode,
-                            //         daysOfTracking:
-                            //             state.listContract[i].daysOfTracking,
-                            //         fullNameDoctor:
-                            //             state.listContract[i].fullNameDoctor,
-                            //         dateCreated:
-                            //             state.listContract[i].dateCreated,
-                            //         dateFinished:
-                            //             state.listContract[i].dateFinished,
-                            //         dateStarted:
-                            //             state.listContract[i].dateStarted,
-                            //         status: state.listContract[i].status));
-                            //   }
                             if (state.listContract != null &&
                                 state.listContract.isNotEmpty) {
                               _listPending = state.listContract

@@ -360,9 +360,11 @@ class _OverviewTabState extends State<OverviewTab> {
               margin: EdgeInsets.only(right: 10),
               padding: EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
               decoration: BoxDecoration(
-                color: DefaultTheme.RED_CALENDAR.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(30),
+                color: DefaultTheme.RED_CALENDAR.withOpacity(0.7),
               ),
-              child: Text('${listTime[index]}'),
+              child: Text('${listTime[index]}',
+                  style: TextStyle(color: DefaultTheme.WHITE)),
             ),
           );
         },

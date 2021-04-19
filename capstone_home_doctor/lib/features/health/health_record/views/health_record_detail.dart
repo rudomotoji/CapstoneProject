@@ -2028,11 +2028,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     );
   }
 
-  String getDisease(List<dynamic> listDisease) {
+  String getDisease(List<Diseases> listDisease) {
     String str = '';
     for (var i = 0; i < listDisease.length; i++) {
       String diseaseStr =
-          listDisease[i]['diseaseId'] + ' - ' + listDisease[i]['diseaseName'];
+          listDisease[i].diseaseId + ' - ' + listDisease[i].diseaseName;
       if (i == (listDisease.length - 1)) {
         str += '+ ' + diseaseStr;
       } else {

@@ -273,22 +273,38 @@ class _HeaderWidget extends State<HeaderWidget> {
                       },
                       child: Container(
                         padding: EdgeInsets.only(
-                            left: 15, right: 15, bottom: 5, top: 5),
+                            left: 15, right: 15, bottom: 10, top: 10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(50),
                           color: DefaultTheme.GREY_VIEW,
+                          boxShadow: [
+                            BoxShadow(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR
+                                  .withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset:
+                                  Offset(0, 1), // changes position of shadow
+                            ),
+                          ],
                         ),
                         child: Row(
                           children: [
                             SizedBox(
-                              width: 25,
-                              height: 25,
-                              child: Image.asset('assets/images/ic-create.png'),
+                              width: 20,
+                              height: 20,
+                              child:
+                                  Image.asset('assets/images/ic-create-hr.png'),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10),
                             ),
                             Text(
                               'Hồ sơ mới',
                               style: TextStyle(
-                                  color: DefaultTheme.BLUE_DARK, fontSize: 16),
+                                  color: DefaultTheme.BLACK,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
@@ -408,7 +424,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                       child: Padding(
                         padding: EdgeInsets.only(
                             top: 10, bottom: 10, left: 20, right: 20),
-                        child: Text('',
+                        child: Text('User Fullname',
                             style: TextStyle(
                               color: DefaultTheme.GREY_TEXT,
                               fontSize: 12,

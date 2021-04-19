@@ -15,9 +15,7 @@ class HealthRecordDTO {
   int patientId;
   //list diseaseId to insert
   List<String> diceaseIds;
-  //list diseases to get
-  List<dynamic> diseases;
-
+  List<Diseases> diseases;
   String status;
 
   //constructor
@@ -62,7 +60,12 @@ class HealthRecordDTO {
   HealthRecordDTO.fromJson(Map<String, dynamic> json) {
     patientId = json['patientId'];
     healthRecordId = json['healthRecordId'];
-    diseases = json['diseases'];
+    if (json['diseases'] != null) {
+      diseases = new List<Diseases>();
+      json['diseases'].forEach((v) {
+        diseases.add(new Diseases.fromJson(v));
+      });
+    }
     diceaseIds = json['diceaseIds'];
     place = json['place'];
     description = json['description'];
@@ -75,7 +78,9 @@ class HealthRecordDTO {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['patientId'] = this.patientId;
     data['personalHealthRecordId'] = this.personalHealthRecordId;
-    data['diseases'] = this.diseases;
+    if (this.diseases != null) {
+      data['diseases'] = this.diseases.map((v) => v.toJson()).toList();
+    }
     data['diceaseIds'] = this.diceaseIds;
     data['place'] = this.place;
     data['description'] = this.description;
@@ -88,6 +93,25 @@ class HealthRecordDTO {
     data['place'] = this.place;
     data['description'] = this.description;
     data['diseases'] = this.diceaseIds;
+    return data;
+  }
+}
+
+class Diseases {
+  String diseaseId;
+  String diseaseName;
+
+  Diseases({this.diseaseId, this.diseaseName});
+
+  Diseases.fromJson(Map<String, dynamic> json) {
+    diseaseId = json['diseaseId'];
+    diseaseName = json['diseaseName'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['diseaseId'] = this.diseaseId;
+    data['diseaseName'] = this.diseaseName;
     return data;
   }
 }
