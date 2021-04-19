@@ -70,13 +70,16 @@ class HealthRecordRepository extends BaseApiClient {
 
   //delete health record
   Future<bool> deleteHealthRecord(int healthrecordID) async {
-    String url = '/HealthRecords/${healthrecordID}';
+    String url =
+        'http://45.76.186.233:8000/api/v1/HealthRecords/DeleteHealthRecord?healthRecordId=${healthrecordID}';
     try {
-      // final response = await postApi(url, null, null);
-      // if (response.statusCode == 204) {
+      final response = await http.put(url);
+      // final response = await putApi(url, null, null);
+      print('response: ${response.statusCode}');
+      // if (response.statusCode == 200) {
       //   return true;
       // } else {
-      return false;
+      return true;
       // }
     } catch (e) {
       print('ERROR AT DELETE HEALTH RECORD ${e}');
