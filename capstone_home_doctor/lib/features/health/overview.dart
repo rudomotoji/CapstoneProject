@@ -129,153 +129,62 @@ class _OverviewTabState extends State<OverviewTab> {
             return Container();
           } else {
             _saveVitalSignScheduleOffline(state.dto);
-            return Stack(
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      'assets/images/bg-vital-sign.png',
-                      fit: BoxFit.cover,
+            return Container(
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        'assets/images/bg-vital-sign.png',
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).size.width - 40,
+                        // height: 250,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    child: Container(
                       width: MediaQuery.of(context).size.width - 40,
-                      height: 250,
+                      margin: EdgeInsets.only(left: 20),
+                      padding: EdgeInsets.only(left: 20, right: 20),
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //
+                          Padding(
+                            padding: EdgeInsets.only(top: 20),
+                          ),
+                          Text(
+                            'Bác sĩ đã đặt cho bạn các thông số sinh hiệu',
+                            style: TextStyle(
+                              color: DefaultTheme.WHITE,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            'Bắt đầu từ ngày: ${_dateValidator.parseToDateView(state.dto.dateStarted)}',
+                            style: TextStyle(
+                              color: DefaultTheme.GREY_VIEW,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 20),
+                          ),
+                          _buildVitalSign(state.dto.vitalSigns),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 0,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 40,
-                    margin: EdgeInsets.only(left: 20),
-                    padding: EdgeInsets.only(left: 20, right: 20),
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //
-                        Padding(
-                          padding: EdgeInsets.only(top: 20),
-                        ),
-                        Text(
-                          'Bác sĩ đã đặt cho bạn các thông số sinh hiệu',
-                          style: TextStyle(
-                            color: DefaultTheme.WHITE,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          'Bắt đầu từ ngày: ${_dateValidator.parseToDateView(state.dto.dateStarted)}',
-                          style: TextStyle(
-                            color: DefaultTheme.GREY_VIEW,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 20),
-                        ),
-                        _buildVitalSign(state.dto.vitalSigns),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             );
-
-            // Container(
-            //   margin: EdgeInsets.only(left: 20, right: 20),
-            //   padding:
-            //       EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 10),
-            //   width: MediaQuery.of(context).size.width,
-            //   decoration: BoxDecoration(
-            //     color: DefaultTheme.GREY_VIEW,
-            //     borderRadius: BorderRadius.circular(10),
-            //   ),
-            //   child: Column(
-            //     mainAxisAlignment: MainAxisAlignment.start,
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: <Widget>[
-            //       //
-            //       Container(
-            //         width: MediaQuery.of(context).size.width,
-            //         child: Text('Bác sĩ đã đặt các chỉ số đo sinh hiệu',
-            //             style: TextStyle(
-            //               color: DefaultTheme.BLACK,
-            //               fontWeight: FontWeight.w500,
-            //               fontSize: 16,
-            //             )),
-            //       ),
-            //       Container(
-            //         width: MediaQuery.of(context).size.width,
-            //         child: (state.dto.dateStarted != null)
-            //             ? Text(
-            //                 'Bắt đầu từ ngày ${_dateValidator.parseToDateView(state.dto.dateStarted)}',
-            //                 style: TextStyle(color: DefaultTheme.GREY_TEXT))
-            //             : Container(),
-            //       ),
-            //       Padding(
-            //         padding: EdgeInsets.only(bottom: 20),
-            //       ),
-            //       ListView.builder(
-            //         shrinkWrap: true,
-            //         physics: NeverScrollableScrollPhysics(),
-            //         itemCount: state.dto.vitalSigns.length,
-            //         itemBuilder: (BuildContext context, int index) {
-            //           return Container(
-            //             child: Column(
-            //               children: [
-            //                 Row(
-            //                   children: [
-            //                     SizedBox(
-            //                       height: 20,
-            //                       width: 20,
-            //                       child: (state.dto.vitalSigns[index]
-            //                                   .vitalSignType ==
-            //                               'Nhịp tim')
-            //                           ? Image.asset(
-            //                               'assets/images/ic-heart-rate.png')
-            //                           : (state.dto.vitalSigns[index]
-            //                                       .vitalSignType ==
-            //                                   'Huyết áp')
-            //                               ? Image.asset(
-            //                                   'assets/images/ic-blood-pressure.png')
-            //                               : Image.asset(
-            //                                   'assets/images/ic-health-selected.png'),
-            //                     ),
-            //                     Padding(
-            //                       padding: EdgeInsets.only(left: 10),
-            //                     ),
-            //                     Text(
-            //                       '${state.dto.vitalSigns[index].vitalSignType}',
-            //                       style: TextStyle(
-            //                           color: DefaultTheme.RED_CALENDAR,
-            //                           fontSize: 16),
-            //                     ),
-            //                   ],
-            //                 ),
-            //                 Padding(
-            //                   padding: EdgeInsets.only(bottom: 5),
-            //                 ),
-            //                 (state.dto.vitalSigns[index].vitalSignType ==
-            //                         'Nhịp tim')
-            //                     ? Text(
-            //                         'Nhịp tim của bạn an toàn trong khoảng ${state.dto.vitalSigns[index].numberMin} - ${state.dto.vitalSigns[index].numberMax}')
-            //                     : (state.dto.vitalSigns[index].vitalSignType ==
-            //                             'Huyết áp')
-            //                         ? Text(
-            //                             'Huyết áp  được đo bắt đầu vào ${state.dto.vitalSigns[index].timeStart} giờ mỗi ngày.')
-            //                         : Text(''),
-            //               ],
-            //             ),
-            //           );
-            //         },
-            //       ),
-            //     ],
-            //   ),
-            // );
-
           }
         }
         return Container();
@@ -283,9 +192,73 @@ class _OverviewTabState extends State<OverviewTab> {
     );
   }
 
-  _getListTimeToSchedule(String timeStart, int minuteAgain) {
+  List<String> _getListTimeToSchedule(String timeStart, int minuteAgain) {
+    //list result with format ['6:00','7:00']
+    List<String> listTime = [];
+    //list time double to execute [6.0, 7.5];
+    List<double> listTimeDouble = [];
     //
+
+    //Cut day format.
     String timeStartString = timeStart.split('T')[1];
+
+    //from String '-6:--' to 6.0
+    double hourDouble = double.tryParse(timeStartString.split(':')[0]);
+    //from string '--:30' to .5
+    double minuteDouble = double.tryParse(timeStartString.split(':')[1]) / 60;
+    //merge 2 value above. It's from '06:30' to 6.5
+    double timeStartDouble = hourDouble + minuteDouble;
+
+    //at the first value 6.5
+    listTimeDouble.add(timeStartDouble);
+
+    // from 360 to 6.0
+    double minuteAgainDouble = minuteAgain / 60;
+
+    //execute
+    // while (timeStartDouble + minuteAgainDouble <= 23.5) {
+    //   //
+    //   double value = timeStartDouble + minuteAgainDouble;
+    //   listTimeDouble.add(value);
+    //   timeStartDouble = value;
+    // }
+    //
+    for (int i = 0; i <= 24; i++) {
+      if (timeStartDouble + minuteAgainDouble <= 23.5) {
+        // print('=== timeStart double ${timeStartDouble}');
+        // print('=== minute again double ${minuteAgainDouble}');
+        // print(
+        //     '=== timeStart double operation: ${timeStartDouble + minuteAgainDouble}');
+        timeStartDouble = timeStartDouble + minuteAgainDouble;
+        listTimeDouble.add(timeStartDouble);
+      } else {
+        break;
+      }
+    }
+    // print('--------list time double now: ${listTimeDouble}');
+
+    //
+    //list TimeDouble becomes [6.5, 9.0, 12.5]...
+    for (double x in listTimeDouble) {
+      double minute = (x % 1) * 6;
+      int minuteToString = minute.floor();
+      if (x.floor().toString().characters.length == 1) {
+        if (minuteToString.toString().characters.length == 1) {
+          listTime.add('0${x.floor()}:${minuteToString}0');
+        } else {
+          listTime.add('0${x.floor()}:${minuteToString}');
+        }
+      } else {
+        if (minuteToString.toString().characters.length == 1) {
+          listTime.add('${x.floor()}:${minuteToString}0');
+        } else {
+          listTime.add('${x.floor()}:${minuteToString}');
+        }
+      }
+    }
+    // print('------------list time now: ${listTime}');
+    //
+    return listTime;
   }
 
   _buildVitalSign(List<VitalSigns> list) {
@@ -303,7 +276,10 @@ class _OverviewTabState extends State<OverviewTab> {
               Padding(
                 padding: EdgeInsets.only(left: 10),
               ),
-              _buildVitalSignDescription(list[index]),
+              Container(
+                width: MediaQuery.of(context).size.width - 130,
+                child: _buildVitalSignDescription(list[index]),
+              ),
             ],
           ),
         );
@@ -314,29 +290,83 @@ class _OverviewTabState extends State<OverviewTab> {
   Widget _buildVitalSignDescription(VitalSigns dto) {
     if (dto.vitalSignType.trim().toLowerCase().contains('nhịp tim')) {
       return Container(
-        height: 40,
         width: MediaQuery.of(context).size.width - 130,
+        padding: EdgeInsets.only(top: 10, bottom: 10, left: 20),
         decoration: BoxDecoration(
           color: DefaultTheme.WHITE.withOpacity(0.9),
           borderRadius: BorderRadius.circular(5),
         ),
-        child: Center(
-          child: RichText(
-            text: TextSpan(
-                style: TextStyle(color: DefaultTheme.BLACK),
-                children: <TextSpan>[
-                  //
-                  TextSpan(text: 'Khoảng nhịp tim an toàn: '),
-                  TextSpan(
-                      text: '${dto.numberMin} - ${dto.numberMax}',
-                      style: TextStyle(color: DefaultTheme.RED_CALENDAR)),
-                  TextSpan(text: ' bpm'),
-                ]),
-          ),
+        child: RichText(
+          text: TextSpan(
+              style: TextStyle(color: DefaultTheme.BLACK),
+              children: <TextSpan>[
+                //
+                TextSpan(text: 'Khoảng nhịp tim an toàn: '),
+                TextSpan(
+                    text: '${dto.numberMin} - ${dto.numberMax}',
+                    style: TextStyle(color: DefaultTheme.RED_CALENDAR)),
+                TextSpan(text: ' bpm'),
+              ]),
         ),
       );
     } else {
+      if (dto.timeStart == null ||
+          dto.timeStart == '' ||
+          dto.minuteAgain == 0 ||
+          dto.minuteAgain == null) {
+        return Container();
+      } else {
+        return Container(
+          width: MediaQuery.of(context).size.width - 130,
+          padding: EdgeInsets.only(top: 5, bottom: 5, left: 20),
+          decoration: BoxDecoration(
+            color: DefaultTheme.WHITE.withOpacity(0.9),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                child: Text('${dto.vitalSignType} được đo vào lúc'),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width - 130,
+                height: 40,
+                child: _buildTimeSchedule(
+                  _getListTimeToSchedule(dto.timeStart, dto.minuteAgain),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildTimeSchedule(List<String> listTime) {
+    print('list time length: ${listTime.length}');
+    if (listTime.isEmpty || listTime == null) {
       return Container();
+    } else {
+      return ListView.builder(
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: listTime.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Center(
+            child: Container(
+              margin: EdgeInsets.only(right: 10),
+              padding: EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
+              decoration: BoxDecoration(
+                color: DefaultTheme.RED_CALENDAR.withOpacity(0.4),
+              ),
+              child: Text('${listTime[index]}'),
+            ),
+          );
+        },
+      );
     }
   }
 

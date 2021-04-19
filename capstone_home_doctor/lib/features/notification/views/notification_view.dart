@@ -86,7 +86,8 @@ class _NotificationState extends State<NotificationPage> {
                                 'Kiểm tra lại đường truyền kết nối mạng')));
                   }
                   if (state is NotificationListStateSuccess) {
-                    if (state.listNotification.isEmpty) {
+                    if (state.listNotification.isEmpty ||
+                        state.listNotification == null) {
                       return Container(
                           width: MediaQuery.of(context).size.width,
                           child: Center(

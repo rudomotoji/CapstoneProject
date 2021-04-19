@@ -1995,7 +1995,7 @@ class _ContractShareView extends State<ContractShareView>
                                         child: Row(
                                           children: [
                                             Text(
-                                              'Phiếu khác - index: ${insideCountOtherNow}',
+                                              'Phiếu khác',
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: DefaultTheme.GREY_TEXT,
