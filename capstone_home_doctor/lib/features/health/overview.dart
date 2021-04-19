@@ -135,7 +135,7 @@ class _OverviewTabState extends State<OverviewTab> {
                   Align(
                     alignment: Alignment.center,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                       child: Image.asset(
                         'assets/images/bg-vital-sign.png',
                         fit: BoxFit.cover,
@@ -420,7 +420,7 @@ class _OverviewTabState extends State<OverviewTab> {
                   Align(
                     alignment: Alignment.center,
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                       child: Image.asset(
                         'assets/images/bg_bmi.png',
                         fit: BoxFit.cover,

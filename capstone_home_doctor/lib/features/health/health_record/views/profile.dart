@@ -454,20 +454,23 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       //
-                      (dto.diseases == null)
-                          ? Text(
-                              'Hồ sơ',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontWeight: FontWeight.w500),
-                            )
-                          : Text(
-                              'Hồ sơ tại ${dto.place}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500, fontSize: 16),
-                            ),
+                      Container(
+                        padding: EdgeInsets.only(right: 15),
+                        child: (dto.diseases == null)
+                            ? Text(
+                                'Hồ sơ',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              )
+                            : Text(
+                                'Hồ sơ tại ${dto.place}',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500, fontSize: 16),
+                              ),
+                      ),
                       Padding(
                         padding: EdgeInsets.only(top: 5),
                       ),
@@ -546,7 +549,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
             child: Row(
               children: [
                 Container(
-                  width: 80,
+                  width: 65,
                   child: Text('${list[index].diseaseId}'),
                 ),
                 Container(

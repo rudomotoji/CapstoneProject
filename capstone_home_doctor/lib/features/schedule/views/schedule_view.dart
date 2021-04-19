@@ -40,6 +40,7 @@ class ScheduleView extends StatefulWidget {
 
 class _ScheduleView extends State<ScheduleView>
     with WidgetsBindingObserver, TickerProviderStateMixin {
+  int _listIndex = 0;
   //
   DateValidator _dateValidator = DateValidator();
   // MedicalInstructionDTO _currentPrescription = MedicalInstructionDTO();
@@ -145,78 +146,129 @@ class _ScheduleView extends State<ScheduleView>
                 isMainView: false,
                 buttonHeaderType: ButtonHeaderType.BACK_HOME,
               ),
+              _buildTab(),
               Padding(
-                padding: EdgeInsets.only(top: 5, bottom: 0),
-                child: Divider(
-                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                  height: 0.1,
-                ),
-              ),
-              TabBar(
-                  isScrollable: true,
-                  //labelColor: Colors.black,
-                  labelStyle: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      foreground: Paint()..shader = _normalHealthColors),
-                  indicatorPadding: EdgeInsets.only(left: 20),
-                  unselectedLabelStyle:
-                      TextStyle(color: DefaultTheme.BLACK.withOpacity(0.6)),
-                  indicatorColor: Colors.white.withOpacity(0.0),
-                  tabs: [
-                    Tab(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: 25,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Dùng thuốc',
-                          ),
-                        ),
-                      ),
-                    ),
-                    Tab(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        height: 25,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Tái khám',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ]),
-              Padding(
-                padding: EdgeInsets.only(bottom: 5),
-                child: Divider(
-                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                  height: 0.1,
-                ),
+                padding: EdgeInsets.only(bottom: 10),
               ),
               Expanded(
-                child: TabBarView(
-                  children: <Widget>[
-                    _getMedicineSchedule(),
-                    Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: <Widget>[
-                        _buildTableCalendar(),
-                        const SizedBox(height: 8.0),
-                        Expanded(
-                            child: _buildEventList(
-                          context,
-                        )),
-                      ],
-                    ),
-                  ],
-                ),
+                child: (_listIndex == 0)
+                    ? _getMedicineSchedule()
+                    : Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: <Widget>[
+                          _buildTableCalendar(),
+                          const SizedBox(height: 8.0),
+                          Expanded(child: _buildEventList(context)),
+                        ],
+                      ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  _buildTab() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(left: 20),
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                _listIndex = 0;
+              });
+            },
+            child: Container(
+              padding: EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 8),
+              height: 40,
+              decoration: (_listIndex == 0)
+                  ? BoxDecoration(
+                      color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(30),
+                    )
+                  : BoxDecoration(
+                      border: Border.all(
+                          width: 1, color: DefaultTheme.GREY_TOP_TAB_BAR),
+                      color: DefaultTheme.WHITE,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+              child: Center(
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: Image.asset('assets/images/ic-medicine.png'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10),
+                    ),
+                    Text('Lịch dùng thuốc',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontWeight: (_listIndex == 0)
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                            color: DefaultTheme.BLACK,
+                            fontSize: 16)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+          ),
+          InkWell(
+            onTap: () {
+              setState(() {
+                _listIndex = 1;
+              });
+            },
+            child: Container(
+              padding: EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 8),
+              height: 40,
+              decoration: (_listIndex == 1)
+                  ? BoxDecoration(
+                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                      borderRadius: BorderRadius.circular(30),
+                    )
+                  : BoxDecoration(
+                      border: Border.all(
+                          width: 1, color: DefaultTheme.GREY_TOP_TAB_BAR),
+                      color: DefaultTheme.WHITE,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+              child: Center(
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: Image.asset('assets/images/ic-appointment.png'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10),
+                    ),
+                    Text('Lịch khám',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontWeight: (_listIndex == 1)
+                                ? FontWeight.w500
+                                : FontWeight.normal,
+                            color: DefaultTheme.BLACK,
+                            fontSize: 16)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -248,11 +300,12 @@ class _ScheduleView extends State<ScheduleView>
           //     Navigator.pop(context);
           //   }
           // }
-          if (state.listAppointment.length > 0) {
+          if (state.listAppointment.isNotEmpty &&
+              state.listAppointment != null) {
             _events = {};
             _getEvent(state.listAppointment);
+            return _buildCalendar();
           }
-          return _buildCalendar();
         }
         return Container(
           width: MediaQuery.of(context).size.width,
@@ -267,7 +320,7 @@ class _ScheduleView extends State<ScheduleView>
   Widget _buildCalendar() {
     return TableCalendar(
       // locale: 'en-US',
-      // locale: 'vi-VN',
+      locale: 'vi-VN',
       calendarController: _calendarController,
       initialCalendarFormat: CalendarFormat.month,
       // availableGestures: AvailableGestures.none,
@@ -283,6 +336,7 @@ class _ScheduleView extends State<ScheduleView>
         centerHeaderTitle: true,
         formatButtonVisible: false,
       ),
+      formatAnimation: FormatAnimation.slide,
       onDaySelected: _onDaySelected,
       onVisibleDaysChanged: _onVisibleDaysChanged,
     );
@@ -321,6 +375,7 @@ class _ScheduleView extends State<ScheduleView>
         }
       }
     }
+
     _selectedEvents = _events[_selectedDay] ?? [];
   }
 
@@ -362,380 +417,382 @@ class _ScheduleView extends State<ScheduleView>
               );
             }).toList(),
           )
-        : Container();
+        : Container(
+            child: Text('???????'),
+          );
   }
 
-  Widget _buttonChangeDate(
-      AppointmentDetailDTO dto, BuildContext contextButton) {
-    DateTime timeEx = new DateFormat("yyyy-MM-dd").parse(dto.dateExamination);
-    DateTime dateAppointment = new DateFormat('dd/MM/yyyy')
-        .parse(DateFormat('dd/MM/yyyy').format(timeEx));
+  // Widget _buttonChangeDate(
+  //     AppointmentDetailDTO dto, BuildContext contextButton) {
+  //   DateTime timeEx = new DateFormat("yyyy-MM-dd").parse(dto.dateExamination);
+  //   DateTime dateAppointment = new DateFormat('dd/MM/yyyy')
+  //       .parse(DateFormat('dd/MM/yyyy').format(timeEx));
 
-    if ((dateAppointment.millisecondsSinceEpoch -
-                curentDateNow.millisecondsSinceEpoch) ==
-            (86400000 * dateChangeAppointment) &&
-        dto.status.contains('ACTIVE')) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: 20),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: DefaultTheme.GREY_VIEW),
-            child: FlatButton(
-              color: DefaultTheme.TRANSPARENT,
-              onPressed: () {
-                _popupChangeDate(dto.appointmentId, dto.contractId);
-              },
-              padding: null,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: Image.asset('assets/images/ic-contract.png'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 20),
-                  ),
-                  Text(
-                    'Đổi ngày',
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: DefaultTheme.BLACK,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      );
-    } else {
-      return Container();
-    }
-  }
+  //   if ((dateAppointment.millisecondsSinceEpoch -
+  //               curentDateNow.millisecondsSinceEpoch) ==
+  //           (86400000 * dateChangeAppointment) &&
+  //       dto.status.contains('ACTIVE')) {
+  //     return Row(
+  //       mainAxisAlignment: MainAxisAlignment.end,
+  //       children: [
+  //         Container(
+  //           margin: EdgeInsets.only(top: 20),
+  //           decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(12),
+  //               color: DefaultTheme.GREY_VIEW),
+  //           child: FlatButton(
+  //             color: DefaultTheme.TRANSPARENT,
+  //             onPressed: () {
+  //               _popupChangeDate(dto.appointmentId, dto.contractId);
+  //             },
+  //             padding: null,
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.start,
+  //               children: <Widget>[
+  //                 SizedBox(
+  //                   width: 20,
+  //                   height: 20,
+  //                   child: Image.asset('assets/images/ic-contract.png'),
+  //                 ),
+  //                 Padding(
+  //                   padding: EdgeInsets.only(left: 20),
+  //                 ),
+  //                 Text(
+  //                   'Đổi ngày',
+  //                   textAlign: TextAlign.left,
+  //                   style: TextStyle(
+  //                     fontSize: 14,
+  //                     color: DefaultTheme.BLACK,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     );
+  //   } else {
+  //     return Container();
+  //   }
+  // }
 
-  Widget _popupChangeDate(int appointmentId, int contractID) {
-    showModalBottomSheet(
-      isScrollControlled: true,
-      context: context,
-      backgroundColor: DefaultTheme.TRANSPARENT,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (BuildContext context2, StateSetter setModalState) {
-            return BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    height: 600,
-                    color: DefaultTheme.TRANSPARENT,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Container(
-                          height: 20,
-                          color: DefaultTheme.TRANSPARENT,
-                        ),
-                        Container(
-                          height: 580,
-                          padding: EdgeInsets.only(left: 20, right: 20),
-                          decoration: BoxDecoration(
-                            color: DefaultTheme.WHITE,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 40, left: 0),
-                                    child: Text(
-                                      'Đổi lịch tái khám',
-                                      style: TextStyle(
-                                        color: DefaultTheme.BLACK,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 10, bottom: 10),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Ngày tái khám:',
-                                          style: TextStyle(
-                                            color: DefaultTheme.BLACK,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                        FlatButton(
-                                          child: Text(
-                                            datechoice == null
-                                                ? 'Chọn ngày tái khám'
-                                                : DateFormat('dd/MM/yyyy')
-                                                    .format(DateTime.parse(
-                                                        datechoice)),
-                                            style: TextStyle(
-                                              color: DefaultTheme.BLACK,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            DateTime newDateTime =
-                                                await showRoundedDatePicker(
-                                                    context: context,
-                                                    initialDate: curentDateNow,
-                                                    firstDate: DateTime(
-                                                        curentDateNow.year - 1),
-                                                    lastDate: DateTime(
-                                                        curentDateNow.year + 1),
-                                                    borderRadius: 16,
-                                                    theme: ThemeData.dark());
-                                            if (newDateTime != null) {
-                                              setModalState(() {
-                                                datechoice =
-                                                    newDateTime.toString();
-                                              });
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Giờ tái khám:',
-                                          style: TextStyle(
-                                            color: DefaultTheme.BLACK,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                        FlatButton(
-                                          child: Text(
-                                            timechoice == null
-                                                ? 'Chọn giờ tái khám'
-                                                : timechoice,
-                                            style: TextStyle(
-                                              color: DefaultTheme.BLACK,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            final timePicked =
-                                                await showRoundedTimePicker(
-                                              context: context,
-                                              initialTime: TimeOfDay.now(),
-                                              theme: ThemeData.dark(),
-                                            );
-                                            if (timePicked != null) {
-                                              setModalState(() {
-                                                var hour = timePicked.hour < 10
-                                                    ? '0${timePicked.hour}'
-                                                    : '${timePicked.hour}';
-                                                var minutes = timePicked
-                                                            .minute <
-                                                        10
-                                                    ? '0${timePicked.minute}'
-                                                    : '${timePicked.minute}';
-                                                timechoice = '$hour:$minutes';
-                                              });
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              ButtonHDr(
-                                width: MediaQuery.of(context).size.width - 40,
-                                style: BtnStyle.BUTTON_BLACK,
-                                label: 'Gửi',
-                                onTap: () async {
-                                  setState(() {
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Center(
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(5)),
-                                            child: BackdropFilter(
-                                              filter: ImageFilter.blur(
-                                                  sigmaX: 25, sigmaY: 25),
-                                              child: Container(
-                                                width: 300,
-                                                height: 300,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    color: DefaultTheme.WHITE
-                                                        .withOpacity(0.8)),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 200,
-                                                      height: 200,
-                                                      child: Image.asset(
-                                                          'assets/images/loading.gif'),
-                                                    ),
-                                                    Text(
-                                                      'Đang gửi yêu cầu...',
-                                                      style: TextStyle(
-                                                          color: DefaultTheme
-                                                              .GREY_TEXT,
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .none),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  });
-                                  if (datechoice == null ||
-                                      timechoice == null) {
-                                    Future.delayed(Duration(seconds: 2), () {
-                                      Navigator.of(context).pop();
-                                      _showDialogFailed(
-                                          'Vui lòng chọn đủ ngày và giờ khám');
-                                    });
-                                  } else {
-                                    String dateAppointment =
-                                        DateFormat('yyyy-MM-dd').format(
-                                                DateTime.parse(datechoice)) +
-                                            'T${timechoice}:00';
-                                    _appointmentBloc.add(
-                                        AppointmentChangeDateEvent(
-                                            appointmentID: appointmentId,
-                                            contractID: contractID,
-                                            dateAppointment: dateAppointment));
-                                    Future.delayed(
-                                      const Duration(seconds: 3),
-                                      () {
-                                        _appointmentHelper
-                                            .getAppointmentChangeDate()
-                                            .then(
-                                          (value) {
-                                            Navigator.of(context).pop();
-                                            if (value) {
-                                              _showDialogSuccess();
-                                            } else {
-                                              _showDialogFailed(
-                                                  'Không thể gửi yêu cầu');
-                                            }
-                                          },
-                                        );
-                                      },
-                                    );
-                                  }
-                                },
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 25),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    left: MediaQuery.of(context).size.width * 0.3,
-                    height: 5,
-                    child: Container(
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.3),
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: 15,
-                      decoration: BoxDecoration(
-                          color: DefaultTheme.WHITE.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(50)),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+  // Widget _popupChangeDate(int appointmentId, int contractID) {
+  //   showModalBottomSheet(
+  //     isScrollControlled: true,
+  //     context: context,
+  //     backgroundColor: DefaultTheme.TRANSPARENT,
+  //     builder: (context) {
+  //       return StatefulBuilder(
+  //         builder: (BuildContext context2, StateSetter setModalState) {
+  //           return BackdropFilter(
+  //             filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+  //             child: Stack(
+  //               children: <Widget>[
+  //                 Container(
+  //                   height: 600,
+  //                   color: DefaultTheme.TRANSPARENT,
+  //                   child: Column(
+  //                     mainAxisAlignment: MainAxisAlignment.start,
+  //                     children: [
+  //                       Container(
+  //                         height: 20,
+  //                         color: DefaultTheme.TRANSPARENT,
+  //                       ),
+  //                       Container(
+  //                         height: 580,
+  //                         padding: EdgeInsets.only(left: 20, right: 20),
+  //                         decoration: BoxDecoration(
+  //                           color: DefaultTheme.WHITE,
+  //                           borderRadius: BorderRadius.circular(10),
+  //                         ),
+  //                         child: Column(
+  //                           mainAxisAlignment: MainAxisAlignment.start,
+  //                           crossAxisAlignment: CrossAxisAlignment.start,
+  //                           children: <Widget>[
+  //                             Row(
+  //                               mainAxisAlignment: MainAxisAlignment.center,
+  //                               crossAxisAlignment: CrossAxisAlignment.center,
+  //                               children: [
+  //                                 Padding(
+  //                                   padding: EdgeInsets.only(top: 40, left: 0),
+  //                                   child: Text(
+  //                                     'Đổi lịch tái khám',
+  //                                     style: TextStyle(
+  //                                       color: DefaultTheme.BLACK,
+  //                                       fontSize: 18,
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                             Padding(
+  //                               padding: EdgeInsets.only(top: 10, bottom: 10),
+  //                               child: Column(
+  //                                 children: [
+  //                                   Row(
+  //                                     children: [
+  //                                       Text(
+  //                                         'Ngày tái khám:',
+  //                                         style: TextStyle(
+  //                                           color: DefaultTheme.BLACK,
+  //                                           fontSize: 18,
+  //                                         ),
+  //                                       ),
+  //                                       FlatButton(
+  //                                         child: Text(
+  //                                           datechoice == null
+  //                                               ? 'Chọn ngày tái khám'
+  //                                               : DateFormat('dd/MM/yyyy')
+  //                                                   .format(DateTime.parse(
+  //                                                       datechoice)),
+  //                                           style: TextStyle(
+  //                                             color: DefaultTheme.BLACK,
+  //                                             fontSize: 18,
+  //                                           ),
+  //                                         ),
+  //                                         onPressed: () async {
+  //                                           DateTime newDateTime =
+  //                                               await showRoundedDatePicker(
+  //                                                   context: context,
+  //                                                   initialDate: curentDateNow,
+  //                                                   firstDate: DateTime(
+  //                                                       curentDateNow.year - 1),
+  //                                                   lastDate: DateTime(
+  //                                                       curentDateNow.year + 1),
+  //                                                   borderRadius: 16,
+  //                                                   theme: ThemeData.dark());
+  //                                           if (newDateTime != null) {
+  //                                             setModalState(() {
+  //                                               datechoice =
+  //                                                   newDateTime.toString();
+  //                                             });
+  //                                           }
+  //                                         },
+  //                                       ),
+  //                                     ],
+  //                                   ),
+  //                                   Row(
+  //                                     children: [
+  //                                       Text(
+  //                                         'Giờ tái khám:',
+  //                                         style: TextStyle(
+  //                                           color: DefaultTheme.BLACK,
+  //                                           fontSize: 18,
+  //                                         ),
+  //                                       ),
+  //                                       FlatButton(
+  //                                         child: Text(
+  //                                           timechoice == null
+  //                                               ? 'Chọn giờ tái khám'
+  //                                               : timechoice,
+  //                                           style: TextStyle(
+  //                                             color: DefaultTheme.BLACK,
+  //                                             fontSize: 18,
+  //                                           ),
+  //                                         ),
+  //                                         onPressed: () async {
+  //                                           final timePicked =
+  //                                               await showRoundedTimePicker(
+  //                                             context: context,
+  //                                             initialTime: TimeOfDay.now(),
+  //                                             theme: ThemeData.dark(),
+  //                                           );
+  //                                           if (timePicked != null) {
+  //                                             setModalState(() {
+  //                                               var hour = timePicked.hour < 10
+  //                                                   ? '0${timePicked.hour}'
+  //                                                   : '${timePicked.hour}';
+  //                                               var minutes = timePicked
+  //                                                           .minute <
+  //                                                       10
+  //                                                   ? '0${timePicked.minute}'
+  //                                                   : '${timePicked.minute}';
+  //                                               timechoice = '$hour:$minutes';
+  //                                             });
+  //                                           }
+  //                                         },
+  //                                       ),
+  //                                     ],
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                             ButtonHDr(
+  //                               width: MediaQuery.of(context).size.width - 40,
+  //                               style: BtnStyle.BUTTON_BLACK,
+  //                               label: 'Gửi',
+  //                               onTap: () async {
+  //                                 setState(() {
+  //                                   showDialog(
+  //                                     barrierDismissible: false,
+  //                                     context: context,
+  //                                     builder: (BuildContext context) {
+  //                                       return Center(
+  //                                         child: ClipRRect(
+  //                                           borderRadius: BorderRadius.all(
+  //                                               Radius.circular(5)),
+  //                                           child: BackdropFilter(
+  //                                             filter: ImageFilter.blur(
+  //                                                 sigmaX: 25, sigmaY: 25),
+  //                                             child: Container(
+  //                                               width: 300,
+  //                                               height: 300,
+  //                                               decoration: BoxDecoration(
+  //                                                   borderRadius:
+  //                                                       BorderRadius.circular(
+  //                                                           10),
+  //                                                   color: DefaultTheme.WHITE
+  //                                                       .withOpacity(0.8)),
+  //                                               child: Column(
+  //                                                 mainAxisAlignment:
+  //                                                     MainAxisAlignment.center,
+  //                                                 crossAxisAlignment:
+  //                                                     CrossAxisAlignment.center,
+  //                                                 children: [
+  //                                                   SizedBox(
+  //                                                     width: 200,
+  //                                                     height: 200,
+  //                                                     child: Image.asset(
+  //                                                         'assets/images/loading.gif'),
+  //                                                   ),
+  //                                                   Text(
+  //                                                     'Đang gửi yêu cầu...',
+  //                                                     style: TextStyle(
+  //                                                         color: DefaultTheme
+  //                                                             .GREY_TEXT,
+  //                                                         fontSize: 15,
+  //                                                         fontWeight:
+  //                                                             FontWeight.w400,
+  //                                                         decoration:
+  //                                                             TextDecoration
+  //                                                                 .none),
+  //                                                   ),
+  //                                                 ],
+  //                                               ),
+  //                                             ),
+  //                                           ),
+  //                                         ),
+  //                                       );
+  //                                     },
+  //                                   );
+  //                                 });
+  //                                 if (datechoice == null ||
+  //                                     timechoice == null) {
+  //                                   Future.delayed(Duration(seconds: 2), () {
+  //                                     Navigator.of(context).pop();
+  //                                     _showDialogFailed(
+  //                                         'Vui lòng chọn đủ ngày và giờ khám');
+  //                                   });
+  //                                 } else {
+  //                                   String dateAppointment =
+  //                                       DateFormat('yyyy-MM-dd').format(
+  //                                               DateTime.parse(datechoice)) +
+  //                                           'T${timechoice}:00';
+  //                                   _appointmentBloc.add(
+  //                                       AppointmentChangeDateEvent(
+  //                                           appointmentID: appointmentId,
+  //                                           contractID: contractID,
+  //                                           dateAppointment: dateAppointment));
+  //                                   Future.delayed(
+  //                                     const Duration(seconds: 3),
+  //                                     () {
+  //                                       _appointmentHelper
+  //                                           .getAppointmentChangeDate()
+  //                                           .then(
+  //                                         (value) {
+  //                                           Navigator.of(context).pop();
+  //                                           if (value) {
+  //                                             // _showDialogSuccess();
+  //                                           } else {
+  //                                             _showDialogFailed(
+  //                                                 'Không thể gửi yêu cầu');
+  //                                           }
+  //                                         },
+  //                                       );
+  //                                     },
+  //                                   );
+  //                                 }
+  //                               },
+  //                             ),
+  //                             Padding(
+  //                               padding: EdgeInsets.only(bottom: 25),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 Positioned(
+  //                   top: 0,
+  //                   left: MediaQuery.of(context).size.width * 0.3,
+  //                   height: 5,
+  //                   child: Container(
+  //                     padding: EdgeInsets.only(
+  //                         left: MediaQuery.of(context).size.width * 0.3),
+  //                     width: MediaQuery.of(context).size.width * 0.4,
+  //                     height: 15,
+  //                     decoration: BoxDecoration(
+  //                         color: DefaultTheme.WHITE.withOpacity(0.8),
+  //                         borderRadius: BorderRadius.circular(50)),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
-  _showDialogSuccess() {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: DefaultTheme.WHITE.withOpacity(0.8)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: Image.asset('assets/images/ic-checked.png'),
-                    ),
-                    Text(
-                      'Gửi yêu cầu thành công',
-                      style: TextStyle(
-                          color: DefaultTheme.GREY_TEXT,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          decoration: TextDecoration.none),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
-      _getPatientId();
-    });
-  }
+  // _showDialogSuccess() {
+  //   showDialog(
+  //     barrierDismissible: false,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Center(
+  //         child: ClipRRect(
+  //           borderRadius: BorderRadius.all(Radius.circular(5)),
+  //           child: BackdropFilter(
+  //             filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+  //             child: Container(
+  //               width: 200,
+  //               height: 200,
+  //               decoration: BoxDecoration(
+  //                   borderRadius: BorderRadius.circular(10),
+  //                   color: DefaultTheme.WHITE.withOpacity(0.8)),
+  //               child: Column(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 crossAxisAlignment: CrossAxisAlignment.center,
+  //                 children: [
+  //                   SizedBox(
+  //                     width: 100,
+  //                     height: 100,
+  //                     child: Image.asset('assets/images/ic-checked.png'),
+  //                   ),
+  //                   Text(
+  //                     'Gửi yêu cầu thành công',
+  //                     style: TextStyle(
+  //                         color: DefaultTheme.GREY_TEXT,
+  //                         fontSize: 15,
+  //                         fontWeight: FontWeight.w400,
+  //                         decoration: TextDecoration.none),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  //   Future.delayed(const Duration(seconds: 2), () {
+  //     Navigator.of(context).pop();
+  //     Navigator.of(context).pop();
+  //     _getPatientId();
+  //   });
+  // }
 
   _showDialogFailed(String title) {
     showDialog(
@@ -788,152 +845,197 @@ class _ScheduleView extends State<ScheduleView>
   }
 
   _getMedicineSchedule() {
-    return BlocBuilder<PrescriptionListBloc, PrescriptionListState>(
-        builder: (context, state) {
-      if (state is PrescriptionListStateLoading) {
-        return Container(
-          width: 200,
-          height: 200,
-          child: SizedBox(
-            width: 100,
-            height: 100,
-            child: Image.asset('assets/images/loading.gif'),
+    return ListView(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(bottom: 20),
+        ),
+        InkWell(
+          onTap: () {
+            Navigator.of(context).pushNamed(RoutesHDr.HISTORY_PRESCRIPTION);
+          },
+          child: Container(
+            width: MediaQuery.of(context).size.width - 40,
+            margin: EdgeInsets.only(left: 20, right: 20),
+            decoration: BoxDecoration(
+              color: DefaultTheme.GREY_VIEW,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            height: 50,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Image.asset('assets/images/ic-history-medicine.png'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                  ),
+                  Text(
+                    'Lịch sử đơn thuốc',
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ],
+              ),
+            ),
           ),
-        );
-      }
-      if (state is PrescriptionListStateFailure) {
-        return Container(
-            width: MediaQuery.of(context).size.width,
-            child:
-                Center(child: Text('Kiểm tra lại đường truyền kết nối mạng')));
-      }
-      if (state is PrescriptionListStateSuccess) {
-        List<MedicalInstructionDTO> listPrescriptions = [];
-
-        if (state.listPrescription != null) {
-          listPrescription = state.listPrescription;
-          listPrescription.sort((a, b) =>
-              b.medicalInstructionId.compareTo(a.medicalInstructionId));
-          listPrescription.sort((a, b) => b.medicationsRespone.dateFinished
-              .compareTo(a.medicationsRespone.dateFinished));
-        }
-        if (listPrescription.isNotEmpty) {
-          for (var element in listPrescription) {
-            DateTime dateFinished = new DateFormat('dd/MM/yyyy').parse(
-                _dateValidator.convertDateCreate(
-                    element.medicationsRespone.dateFinished,
-                    'dd/MM/yyyy',
-                    'yyyy-MM-dd'));
-            DateTime dateStarted = new DateFormat('dd/MM/yyyy').parse(
-                _dateValidator.convertDateCreate(
-                    element.medicationsRespone.dateStarted,
-                    'dd/MM/yyyy',
-                    'yyyy-MM-dd'));
-            if (element.medicationsRespone.status.contains('ACTIVE') &&
-                dateFinished.millisecondsSinceEpoch >=
-                    curentDateNow.millisecondsSinceEpoch &&
-                dateStarted.millisecondsSinceEpoch <=
-                    curentDateNow.millisecondsSinceEpoch) {
-              listPrescriptions.add(element);
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: BlocBuilder<PrescriptionListBloc, PrescriptionListState>(
+              builder: (context, state) {
+            if (state is PrescriptionListStateLoading) {
+              return Container(
+                width: 200,
+                height: 200,
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Image.asset('assets/images/loading.gif'),
+                ),
+              );
             }
-          }
-          // if (listPrescriptions.length > 0)
-          //   _currentPrescription = listPrescriptions[0];
-        }
-        return RefreshIndicator(
-          onRefresh: _getPatientId,
-          child: (state.listPrescription == null ||
-                  state.listPrescription.isEmpty)
-              ? Container(
+            if (state is PrescriptionListStateFailure) {
+              return Container(
                   width: MediaQuery.of(context).size.width,
                   child: Center(
-                    child: Text('Hiện chưa có lịch dùng thuốc'),
-                  ),
-                )
-              : (listPrescriptions.length <= 0)
-                  ? Container(
-                      width: MediaQuery.of(context).size.width,
-                      child: Center(
-                        child: Text('Hiện chưa có lịch dùng thuốc'),
-                      ),
-                    )
-                  : ListView(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(top: 20),
+                      child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+            }
+            if (state is PrescriptionListStateSuccess) {
+              List<MedicalInstructionDTO> listPrescriptions = [];
+
+              if (state.listPrescription != null) {
+                listPrescription = state.listPrescription;
+                listPrescription.sort((a, b) =>
+                    b.medicalInstructionId.compareTo(a.medicalInstructionId));
+                listPrescription.sort((a, b) => b
+                    .medicationsRespone.dateFinished
+                    .compareTo(a.medicationsRespone.dateFinished));
+              }
+              if (listPrescription.isNotEmpty) {
+                for (var element in listPrescription) {
+                  DateTime dateFinished = new DateFormat('dd/MM/yyyy').parse(
+                      _dateValidator.convertDateCreate(
+                          element.medicationsRespone.dateFinished,
+                          'dd/MM/yyyy',
+                          'yyyy-MM-dd'));
+                  DateTime dateStarted = new DateFormat('dd/MM/yyyy').parse(
+                      _dateValidator.convertDateCreate(
+                          element.medicationsRespone.dateStarted,
+                          'dd/MM/yyyy',
+                          'yyyy-MM-dd'));
+                  if (element.medicationsRespone.status.contains('ACTIVE') &&
+                      dateFinished.millisecondsSinceEpoch >=
+                          curentDateNow.millisecondsSinceEpoch &&
+                      dateStarted.millisecondsSinceEpoch <=
+                          curentDateNow.millisecondsSinceEpoch) {
+                    listPrescriptions.add(element);
+                  }
+                }
+                // if (listPrescriptions.length > 0)
+                //   _currentPrescription = listPrescriptions[0];
+              }
+              return RefreshIndicator(
+                onRefresh: _getPatientId,
+                child: (state.listPrescription == null ||
+                        state.listPrescription.isEmpty)
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Center(
+                          child: Text('Hiện chưa có lịch dùng thuốc'),
                         ),
-                        Container(
-                          width: MediaQuery.of(context).size.width - 40,
-                          decoration: BoxDecoration(
-                              color: DefaultTheme.GREY_BUTTON,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: ButtonHDr(
-                            style: BtnStyle.BUTTON_IN_LIST,
-                            label: 'Lịch sử các đơn thuốc',
-                            image: Image.asset('assets/images/ic-medicine.png'),
-                            onTap: () {
-                              Navigator.of(context)
-                                  .pushNamed(RoutesHDr.HISTORY_PRESCRIPTION);
-                            },
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: 30, left: 0, right: 0, bottom: 20),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Đơn thuốc hiện hành',
-                              style: TextStyle(
-                                color: DefaultTheme.BLACK,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                              ),
+                      )
+                    : (listPrescriptions.length <= 0)
+                        ? Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Center(
+                              child: Text('Hiện chưa có lịch dùng thuốc'),
                             ),
+                          )
+                        : Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: 30, left: 20, right: 0, bottom: 20),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Đơn thuốc hiện hành',
+                                    style: TextStyle(
+                                      color: DefaultTheme.BLACK,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              //
+                              //
+                              ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: listPrescriptions.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(
+                                      margin: EdgeInsets.only(top: 10),
+                                      child: _buildPrescription(
+                                          listPrescriptions[index]),
+                                    );
+                                  }),
+
+                              // _itemSchedule(_currentPrescription),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 20),
+                              ),
+                            ],
                           ),
-                        ),
-
-                        ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: listPrescriptions.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: _itemSchedule(listPrescriptions[index]),
-                              );
-                            }),
-
-                        // _itemSchedule(_currentPrescription),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 20),
-                        ),
-                      ],
-                    ),
-        );
-      }
-      return Container(
-        width: MediaQuery.of(context).size.width,
-        child: Center(
-          child: Text('Không thể lấy dữ liệu'),
+              );
+            }
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              child: Center(
+                child: Text('Không thể lấy dữ liệu'),
+              ),
+            );
+          }),
         ),
-      );
-    });
+      ],
+    );
   }
 
-  Widget _itemSchedule(MedicalInstructionDTO medicalInstructionDTO) {
-    print(medicalInstructionDTO.placeHealthRecord);
+  Widget _buildPrescription(MedicalInstructionDTO medicalInstructionDTO) {
     return Container(
-      padding: EdgeInsets.only(top: 30, bottom: 10),
+      margin: EdgeInsets.only(left: 20, right: 20),
+      padding: EdgeInsets.only(bottom: 10),
       width: MediaQuery.of(context).size.width - 40,
       decoration: BoxDecoration(
-          color: DefaultTheme.GREY_VIEW,
-          borderRadius: BorderRadius.circular(10)),
+        color: DefaultTheme.GREY_VIEW,
+        // borderRadius: BorderRadius.circular(10),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(20),
+                topLeft: Radius.circular(10),
+              ),
+              color: DefaultTheme.WHITE,
+              border: Border(
+                top: BorderSide(width: 2.0, color: DefaultTheme.RED_CALENDAR),
+              ),
+            ),
+            child: Row(),
+          ),
           Row(
             children: [
               Container(
@@ -1473,6 +1575,7 @@ class _ScheduleView extends State<ScheduleView>
   }
 
   void _onDaySelected(DateTime day, List events, List holidays) {
+    print('DAY EVENTS=========: ${_selectedEvents}');
     setState(() {
       _selectedEvents = events;
     });

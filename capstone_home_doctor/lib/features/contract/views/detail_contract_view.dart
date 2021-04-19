@@ -2365,7 +2365,7 @@ class _DetailContractView extends State<DetailContractView>
                                                                     250 / 2 -
                                                                         10.5,
                                                                 child: Text(
-                                                                    'HUỶ',
+                                                                    'XÁC NHẬN',
                                                                     style: TextStyle(
                                                                         color: DefaultTheme
                                                                             .RED_TEXT)),

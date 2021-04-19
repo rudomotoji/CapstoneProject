@@ -189,6 +189,8 @@ flutter:
     - assets/images/ic-reload-blue.png
     - assets/images/bg_bmi.png
     - assets/images/bg-vital-sign.png
+    - assets/images/ic-appointment.png
+    - assets/images/ic-history-medicine.png
 
 
   
