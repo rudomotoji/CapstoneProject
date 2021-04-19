@@ -2369,7 +2369,8 @@ class _DetailContractView extends State<DetailContractView>
                                                                     style: TextStyle(
                                                                         color: DefaultTheme
                                                                             .RED_TEXT)),
-                                                                onPressed: () {
+                                                                onPressed:
+                                                                    () async {
                                                                   //
                                                                   Navigator.of(
                                                                           context)
@@ -2377,23 +2378,17 @@ class _DetailContractView extends State<DetailContractView>
                                                                   //
                                                                   print(
                                                                       'CONTRACT CANCEL DTO:\n contractId:${contractCancelDTO.contractId} -dateStart: ${contractCancelDTO.dateStart} -daysOfTracking: ${contractCancelDTO.daysOfTracking} - status:${contractCancelDTO.status} -patientId: ${contractCancelDTO.patientId} - doctorId: ${contractCancelDTO.doctorId} ');
-                                                                  _contractUpdateBloc.add(
+                                                                  await _contractUpdateBloc.add(
                                                                       ContractUpdateEventUpdate(
                                                                           dto:
                                                                               contractCancelDTO));
-                                                                  Future.delayed(
-                                                                      const Duration(
-                                                                          seconds:
-                                                                              1),
-                                                                      () {
-                                                                    //
-                                                                    Navigator.of(context).pushNamedAndRemoveUntil(
-                                                                        RoutesHDr
-                                                                            .MAIN_HOME,
-                                                                        (Route<dynamic>
-                                                                                route) =>
-                                                                            false);
-                                                                  });
+
+                                                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                                                      RoutesHDr
+                                                                          .MAIN_HOME,
+                                                                      (Route<dynamic>
+                                                                              route) =>
+                                                                          false);
                                                                 },
                                                               ),
                                                             ],

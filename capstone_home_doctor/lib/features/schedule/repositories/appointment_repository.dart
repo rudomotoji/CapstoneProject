@@ -47,6 +47,8 @@ class AppointmentRepository extends BaseApiClient {
     }
   }
 
+  //get appointment by appointment Id
+
   // Future<bool> cancelAppointment(int appointmentId, String reasonCancel) async {
   //   String url =
   //       '/Appointments/CancelAppointment?appointmentId=${appointmentId}&reasonCancel=${reasonCancel}';

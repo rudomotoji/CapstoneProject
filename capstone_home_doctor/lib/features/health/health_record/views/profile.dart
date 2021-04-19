@@ -82,7 +82,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     }
   }
 
-  _getPatientId() async {
+  Future _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) {
       setState(() {
         _patientId = value;
@@ -124,19 +124,22 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
               padding: EdgeInsets.only(bottom: 10),
             ),
             Expanded(
-              child: ListView(
-                children: <Widget>[
-                  //
+              child: RefreshIndicator(
+                onRefresh: refreshListHR,
+                child: ListView(
+                  children: <Widget>[
+                    //
 
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                  ),
-                  _buildDescription(_listIndex),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                  ),
-                  _buildListHealthRecord(),
-                ],
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                    ),
+                    _buildDescription(_listIndex),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                    ),
+                    _buildListHealthRecord(),
+                  ],
+                ),
               ),
             ),
           ],
@@ -880,7 +883,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
         });
   }
 
-  refreshListHR() async {
+  Future refreshListHR() async {
     await _getPatientId();
     if (_patientId != 0) {
       _healthRecordListBloc

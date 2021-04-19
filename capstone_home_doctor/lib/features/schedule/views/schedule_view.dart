@@ -277,50 +277,50 @@ class _ScheduleView extends State<ScheduleView>
     );
   }
 
-  // Simple TableCalendar configuration (using Styles)
-  Widget _buildTableCalendar() {
-    return BlocBuilder<AppointmentBloc, AppointmentState>(
-      builder: (context, state) {
-        if (state is AppointmentStateLoading) {
-          return Container(
-            width: 200,
-            height: 200,
-            child: SizedBox(
-              width: 100,
-              height: 100,
-              child: Image.asset('assets/images/loading.gif'),
-            ),
-          );
-        }
-        if (state is AppointmentStateFailure) {
-          return Container(
-              width: MediaQuery.of(context).size.width,
-              child: Center(
-                  child: Text('Kiểm tra lại đường truyền kết nối mạng')));
-        }
-        if (state is AppointmentStateSuccess) {
-          // if (state.isCancel != null) {
-          //   if (state.isCancel) {
-          //     Navigator.pop(context);
-          //   }
-          // }
-          if (state.listAppointment.isNotEmpty &&
-              state.listAppointment != null) {
-            _events = {};
-            _getEvent(state.listAppointment);
-            return Container();
-            // return _buildCalendar();
-          }
-        }
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          child: Center(
-            child: Text('Không thể lấy dữ liệu'),
-          ),
-        );
-      },
-    );
-  }
+  // // Simple TableCalendar configuration (using Styles)
+  // Widget _buildTableCalendar() {
+  //   return BlocBuilder<AppointmentBloc, AppointmentState>(
+  //     builder: (context, state) {
+  //       if (state is AppointmentStateLoading) {
+  //         return Container(
+  //           width: 200,
+  //           height: 200,
+  //           child: SizedBox(
+  //             width: 100,
+  //             height: 100,
+  //             child: Image.asset('assets/images/loading.gif'),
+  //           ),
+  //         );
+  //       }
+  //       if (state is AppointmentStateFailure) {
+  //         return Container(
+  //             width: MediaQuery.of(context).size.width,
+  //             child: Center(
+  //                 child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+  //       }
+  //       if (state is AppointmentStateSuccess) {
+  //         // if (state.isCancel != null) {
+  //         //   if (state.isCancel) {
+  //         //     Navigator.pop(context);
+  //         //   }
+  //         // }
+  //         if (state.listAppointment.isNotEmpty &&
+  //             state.listAppointment != null) {
+  //           _events = {};
+  //           _getEvent(state.listAppointment);
+  //           return Container();
+  //           // return _buildCalendar();
+  //         }
+  //       }
+  //       return Container(
+  //         width: MediaQuery.of(context).size.width,
+  //         child: Center(
+  //           child: Text('Không thể lấy dữ liệu'),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildCalendar() {
     return TableCalendar(
@@ -332,9 +332,10 @@ class _ScheduleView extends State<ScheduleView>
       events: _events,
       startingDayOfWeek: StartingDayOfWeek.monday,
       calendarStyle: CalendarStyle(
-        selectedColor: DefaultTheme.CHIP_BLUE,
-        todayColor: DefaultTheme.BLUE_REFERENCE,
-        markersColor: DefaultTheme.RED_CALENDAR,
+        selectedColor: DefaultTheme.SUCCESS_STATUS.withOpacity(0.5),
+        todayColor: DefaultTheme.SUCCESS_STATUS,
+        markersColor: DefaultTheme.BLUE_TEXT,
+        eventDayStyle: TextStyle(color: DefaultTheme.BLUE_TEXT),
         outsideDaysVisible: false,
       ),
       headerStyle: HeaderStyle(
@@ -397,8 +398,9 @@ class _ScheduleView extends State<ScheduleView>
               return Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  border: Border.all(width: 0.8),
-                  borderRadius: BorderRadius.circular(12.0),
+                  color: DefaultTheme.GREY_VIEW,
+                  //border: Border.all(width: 0.8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 margin:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -407,7 +409,7 @@ class _ScheduleView extends State<ScheduleView>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('Bạn có lịch tái khám:'),
+                      Text('Lịch khám'),
                       Text('Bác sĩ: ${event.fullNameDoctor}'),
                       Text('Thời gian: ${dateAppointment}'),
                       Text('Ghi chú: ${event.note}'),
@@ -1586,7 +1588,6 @@ class _ScheduleView extends State<ScheduleView>
   }
 
   void _onDaySelected(DateTime day, List events, List holidays) {
-    print('DAY EVENTS=========: ${_selectedEvents}');
     setState(() {
       _selectedEvents = events;
     });

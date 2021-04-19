@@ -519,7 +519,7 @@ class _OverviewTabState extends State<OverviewTab> {
                                         style: TextStyle(
                                             fontSize: 20,
                                             fontFamily: 'NewYork',
-                                            color: DefaultTheme.BLUE_REFERENCE,
+                                            color: DefaultTheme.ORANGE_TEXT,
                                             fontWeight: FontWeight.w600),
                                       ),
                                       Padding(
