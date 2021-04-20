@@ -352,7 +352,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
           if (state.listHealthRecord.isNotEmpty &&
               state.listHealthRecord != null) {
             state.listHealthRecord
-                .sort((a, b) => a.dateCreated.compareTo(b.dateCreated));
+                .sort((a, b) => b.dateCreated.compareTo(a.dateCreated));
             if (_listIndex == 0) {
               return _renderList(state.listHealthRecord);
             } else if (_listIndex == 1) {
@@ -553,7 +553,10 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
               children: [
                 Container(
                   width: 65,
-                  child: Text('${list[index].diseaseId}'),
+                  child: Text('${list[index].diseaseId}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                      )),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width - 200,

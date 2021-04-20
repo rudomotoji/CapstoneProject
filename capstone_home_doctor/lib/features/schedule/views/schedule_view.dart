@@ -7,12 +7,16 @@ import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/global/repositories/system_repository.dart';
+import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
+import 'package:capstone_home_doctor/features/schedule/blocs/appnt_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/appointment_bloc.dart';
 import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_bloc.dart';
+import 'package:capstone_home_doctor/features/schedule/events/appnt_event.dart';
 import 'package:capstone_home_doctor/features/schedule/events/appointment_event.dart';
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/appointment_repository.dart';
 import 'package:capstone_home_doctor/features/schedule/repositories/prescription_repository.dart';
+import 'package:capstone_home_doctor/features/schedule/states/appnt_state.dart';
 import 'package:capstone_home_doctor/features/schedule/states/appointment_state.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
 import 'package:capstone_home_doctor/models/appointment_dto.dart';
@@ -31,6 +35,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+MedicalInstructionRepository _medicalInstructionRepository =
+    MedicalInstructionRepository(httpClient: http.Client());
 
 class ScheduleView extends StatefulWidget {
   @override
@@ -50,6 +56,7 @@ class _ScheduleView extends State<ScheduleView>
   PrescriptionRepository prescriptionRepository =
       PrescriptionRepository(httpClient: http.Client());
   PrescriptionListBloc _prescriptionListBloc;
+  AppointDetailmentBloc _appointDetailmentBloc;
   //
   //
   int arguments = 0;
@@ -85,7 +92,7 @@ class _ScheduleView extends State<ScheduleView>
     super.initState();
     _prescriptionListBloc = BlocProvider.of(context);
     _appointmentBloc = BlocProvider.of(context);
-
+    _appointDetailmentBloc = BlocProvider.of(context);
     _calendarController = CalendarController();
     getDataFromJSONFile();
 
@@ -340,8 +347,9 @@ class _ScheduleView extends State<ScheduleView>
       events: _events,
       startingDayOfWeek: StartingDayOfWeek.monday,
       calendarStyle: CalendarStyle(
-        selectedColor: DefaultTheme.SUCCESS_STATUS.withOpacity(0.5),
-        todayColor: DefaultTheme.SUCCESS_STATUS,
+        weekendStyle: TextStyle(color: DefaultTheme.GREY_TEXT.withOpacity(0.6)),
+        selectedColor: DefaultTheme.BLUE_TEXT,
+        todayColor: DefaultTheme.BLUE_TEXT.withOpacity(0.6),
         markersColor: DefaultTheme.BLUE_TEXT,
         eventDayStyle: TextStyle(color: DefaultTheme.BLUE_TEXT),
         outsideDaysVisible: false,
@@ -399,31 +407,42 @@ class _ScheduleView extends State<ScheduleView>
     return _selectedEvents != null
         ? ListView(
             children: _selectedEvents.map((event) {
+              print('appointment ID now: ${event.appointmentId}');
               DateTime timeEx = new DateFormat("yyyy-MM-ddThh:mm")
                   .parse(event.dateExamination);
               var dateAppointment =
                   new DateFormat('dd/MM/yyyy, hh:mm a').format(timeEx);
-              return Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: DefaultTheme.GREY_VIEW,
-                  //border: Border.all(width: 0.8),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              return InkWell(
+                onTap: () {
+                  print('tapped');
+                  _appointDetailmentBloc.add(AppointmentGetDetailEvent(
+                      appointmentId: event.appointmentId));
+                  _showDetailAppointment();
+                },
                 child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      left: BorderSide(
+                          width: 2.0, color: DefaultTheme.RED_CALENDAR),
+                    ),
+                    color: DefaultTheme.GREY_VIEW,
+                    //border: Border.all(width: 0.8),
+                    // borderRadius: BorderRadius.circular(6),
+                  ),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 4.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      Text('Lịch khám'),
-                      Text('Bác sĩ: ${event.fullNameDoctor}'),
+                      Text(
+                          'Bác sĩ ${event.fullNameDoctor} lên lịch khám cho bạn'),
                       Text('Thời gian: ${dateAppointment}'),
-                      Text('Ghi chú: ${event.note}'),
-                      (event.status.contains('CANCEL'))
-                          ? Text('Lý do hủy lịch: ${event.reasonCanceled}')
-                          : Container(),
+
+                      // (event.status.contains('CANCEL'))
+                      //     ? Text('Lý do hủy lịch: ${event.reasonCanceled}')
+                      //     : Container(),
                       // (event.status.contains('CANCEL'))
                       //     ? Container()
                       //     : _buttonChangeDate(event, context),
@@ -434,9 +453,366 @@ class _ScheduleView extends State<ScheduleView>
               );
             }).toList(),
           )
-        : Container(
-            child: Text('???????'),
-          );
+        : Container();
+  }
+
+  _showDetailAppointment() {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        backgroundColor: DefaultTheme.TRANSPARENT,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+              child: Stack(
+                children: <Widget>[
+                  //
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.9,
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.05),
+                    color: DefaultTheme.TRANSPARENT,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.9,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(15)),
+                        color: DefaultTheme.GREY_VIEW,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(top: 30),
+                          ),
+                          Expanded(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: BlocBuilder<AppointDetailmentBloc,
+                                      AppointmentDetailState>(
+                                  builder: (context, state) {
+                                if (state is AppointmentDetailStateLoading) {}
+                                if (state is AppointmentDetailStateFailure) {}
+                                if (state is AppointmentDetailStateSuccess) {
+                                  if (state.dto != null) {
+                                    return ListView(
+                                      children: <Widget>[
+                                        Text(
+                                            'Bác sĩ: ${state.dto.fullNameDoctor}'),
+                                        Text(
+                                            'Bệnh nhân: ${state.dto.fullNamePatient}'),
+                                        Text('Chẩn đoán: ${state.dto.note}'),
+                                        Text('Trạng thái: ${state.dto.status}'),
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemCount: state
+                                              .dto.medicalInstructions.length,
+                                          itemBuilder:
+                                              (BuildContext contex, int index) {
+                                            return Container(
+                                              width: 60,
+                                              height: 60,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  _showDetailVitalSign(state
+                                                      .dto
+                                                      .medicalInstructions[
+                                                          index]
+                                                      .medicalInstructionId);
+                                                  //
+                                                },
+                                                child: Container(
+                                                  width: 60,
+                                                  height: 60,
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR,
+                                                  child: Center(
+                                                    child: Text(
+                                                        '${state.dto.medicalInstructions[index].medicalInstructionType}'),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  } else {}
+                                }
+                                return Container();
+                              }),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 23,
+                    left: MediaQuery.of(context).size.width * 0.3,
+                    height: 5,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.3),
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: 15,
+                      decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(50)),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          });
+        });
+  }
+
+  void _showDetailVitalSign(int medicalInstructionId) {
+    setState(() {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    width: 250,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.7),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 130,
+                          // height: 100,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                        // Spacer(),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Vui lòng chờ chút',
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.GREY_TEXT,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
+    });
+
+    _medicalInstructionRepository
+        .getMedicalInstructionById(medicalInstructionId)
+        .then((value) {
+      Navigator.pop(context);
+      if (value != null) {
+        if (value.medicationsRespone != null) {
+          Navigator.pushNamed(context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
+              arguments: value.medicalInstructionId);
+        } else {
+          var dateStarted = _dateValidator.convertDateCreate(
+              value.vitalSignScheduleRespone.timeStared,
+              'dd/MM/yyyy',
+              "yyyy-MM-dd");
+          var dateFinished = _dateValidator.convertDateCreate(
+              value.vitalSignScheduleRespone.timeCanceled,
+              'dd/MM/yyyy',
+              "yyyy-MM-dd");
+
+          setState(() {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width - 20,
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE.withOpacity(0.6),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(top: 20),
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                ),
+                                Text(
+                                  '${value.medicalInstructionType}',
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    decoration: TextDecoration.none,
+                                    color: DefaultTheme.BLACK,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    height: 0.25,
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 5)),
+                                  Text(
+                                    'Người đặt: ${value.placeHealthRecord}',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      decoration: TextDecoration.none,
+                                      color: DefaultTheme.GREY_TEXT,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 10)),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: value.vitalSignScheduleRespone
+                                          .vitalSigns.length,
+                                      itemBuilder: (context, index) {
+                                        var item = value
+                                            .vitalSignScheduleRespone
+                                            .vitalSigns[index];
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Divider(
+                                              color: DefaultTheme.GREY_TEXT,
+                                              height: 0.25,
+                                            ),
+                                            Text(
+                                              '${value.vitalSignScheduleRespone.vitalSigns[0].vitalSignType}',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Chỉ số an toàn:',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    decoration:
+                                                        TextDecoration.none,
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${value.vitalSignScheduleRespone.vitalSigns[0].numberMin} - ${value.vitalSignScheduleRespone.vitalSigns[0].numberMax}',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    decoration:
+                                                        TextDecoration.none,
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Text(
+                                              'Ngày bắt đầu: ${dateStarted}',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Ngày bắt đầu: ${dateFinished}',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                    ),
+                                  ),
+                                  ButtonHDr(
+                                    style: BtnStyle.BUTTON_BLACK,
+                                    label: 'Chi tiết',
+                                    onTap: () {
+                                      Map<String, dynamic> arguments = {
+                                        'healthRecordId': 0,
+                                        'medicalInstructionId':
+                                            medicalInstructionId,
+                                        "timeStared": value
+                                            .vitalSignScheduleRespone
+                                            .timeStared,
+                                        "timeCanceled": value
+                                            .vitalSignScheduleRespone
+                                            .timeCanceled,
+                                      };
+                                      Navigator.pushNamed(context,
+                                          RoutesHDr.VITAL_SIGN_CHART_DETAIL,
+                                          arguments: arguments);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 15),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          });
+        }
+      }
+    });
   }
 
   // Widget _buttonChangeDate(
@@ -811,55 +1187,55 @@ class _ScheduleView extends State<ScheduleView>
   //   });
   // }
 
-  _showDialogFailed(String title) {
-    showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: DefaultTheme.WHITE.withOpacity(0.8)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: Image.asset('assets/images/ic-failed.png'),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        '$title',
-                        style: TextStyle(
-                            color: DefaultTheme.GREY_TEXT,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            decoration: TextDecoration.none),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pop();
-    });
-  }
+  // _showDialogFailed(String title) {
+  //   showDialog(
+  //     barrierDismissible: false,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Center(
+  //         child: ClipRRect(
+  //           borderRadius: BorderRadius.all(Radius.circular(5)),
+  //           child: BackdropFilter(
+  //             filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+  //             child: Container(
+  //               width: 200,
+  //               height: 200,
+  //               decoration: BoxDecoration(
+  //                   borderRadius: BorderRadius.circular(10),
+  //                   color: DefaultTheme.WHITE.withOpacity(0.8)),
+  //               child: Column(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 crossAxisAlignment: CrossAxisAlignment.center,
+  //                 children: [
+  //                   SizedBox(
+  //                     width: 100,
+  //                     height: 100,
+  //                     child: Image.asset('assets/images/ic-failed.png'),
+  //                   ),
+  //                   Align(
+  //                     alignment: Alignment.center,
+  //                     child: Text(
+  //                       '$title',
+  //                       style: TextStyle(
+  //                           color: DefaultTheme.GREY_TEXT,
+  //                           fontSize: 15,
+  //                           fontWeight: FontWeight.w400,
+  //                           decoration: TextDecoration.none),
+  //                       textAlign: TextAlign.center,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  //   Future.delayed(const Duration(seconds: 2), () {
+  //     Navigator.of(context).pop();
+  //   });
+  // }
 
   _getMedicineSchedule() {
     return ListView(
@@ -875,8 +1251,12 @@ class _ScheduleView extends State<ScheduleView>
             width: MediaQuery.of(context).size.width - 40,
             margin: EdgeInsets.only(left: 20, right: 20),
             decoration: BoxDecoration(
-              color: DefaultTheme.GREY_VIEW,
-              borderRadius: BorderRadius.circular(6),
+              // color: DefaultTheme.GREY_VIEW,
+              image: DecorationImage(
+                image: AssetImage('assets/images/bg-medicine.png'),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(40),
             ),
             height: 50,
             child: Center(
@@ -885,16 +1265,19 @@ class _ScheduleView extends State<ScheduleView>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 40,
-                    height: 40,
+                    width: 20,
+                    height: 20,
                     child: Image.asset('assets/images/ic-history-medicine.png'),
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 10),
                   ),
                   Text(
-                    'Lịch sử đơn thuốc',
-                    style: TextStyle(fontSize: 15),
+                    'Danh sách đơn thuốc',
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: DefaultTheme.WHITE,
+                        fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -918,6 +1301,7 @@ class _ScheduleView extends State<ScheduleView>
             }
             if (state is PrescriptionListStateFailure) {
               return Container(
+                  height: 200,
                   width: MediaQuery.of(context).size.width,
                   child: Center(
                       child: Text('Kiểm tra lại đường truyền kết nối mạng')));
@@ -961,16 +1345,46 @@ class _ScheduleView extends State<ScheduleView>
                 child: (state.listPrescription == null ||
                         state.listPrescription.isEmpty)
                     ? Container(
+                        height: 200,
                         width: MediaQuery.of(context).size.width,
                         child: Center(
-                          child: Text('Hiện chưa có lịch dùng thuốc'),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: Image.asset(
+                                    'assets/images/ic-medicine.png'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 10),
+                              ),
+                              Text('Không có lịch dùng thuốc trong hôm nay')
+                            ],
+                          ),
                         ),
                       )
                     : (listPrescriptions.length <= 0)
                         ? Container(
+                            height: 200,
                             width: MediaQuery.of(context).size.width,
                             child: Center(
-                              child: Text('Hiện chưa có lịch dùng thuốc'),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: Image.asset(
+                                        'assets/images/ic-medicine.png'),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                  ),
+                                    Text('Không có lịch dùng thuốc trong hôm nay')
+                                ],
+                              ),
                             ),
                           )
                         : Column(

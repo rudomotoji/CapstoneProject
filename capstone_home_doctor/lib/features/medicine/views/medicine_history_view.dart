@@ -58,7 +58,7 @@ class _MedicineHistory extends State<MedicineHistory>
         child: Column(
           children: <Widget>[
             HeaderWidget(
-              title: 'Lịch sử đơn thuốc',
+              title: 'Danh sách đơn thuốc',
               isMainView: false,
               buttonHeaderType: ButtonHeaderType.NONE,
             ),

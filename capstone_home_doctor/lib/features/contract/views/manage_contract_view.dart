@@ -116,7 +116,7 @@ class _ManageContract extends State<ManageContract>
         //   RoutesHDr.MAIN_HOME,
         //   (Route<dynamic> route) => false,
         // );
-        // return new Future(() => false);
+        return new Future(() => false);
       },
       child: Scaffold(
         body: SafeArea(
@@ -517,7 +517,7 @@ class _ManageContract extends State<ManageContract>
 
   _buildComponent(List<ContractListDTO> listItemBuild) {
     //
-    listItemBuild.sort((a, b) => a.dateCreated.compareTo(b.dateCreated));
+    listItemBuild.sort((a, b) => b.dateCreated.compareTo(a.dateCreated));
     return (listItemBuild.length == 0 ||
             listItemBuild.isEmpty ||
             listItemBuild == null)

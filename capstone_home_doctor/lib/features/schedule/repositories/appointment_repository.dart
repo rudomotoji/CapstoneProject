@@ -48,6 +48,22 @@ class AppointmentRepository extends BaseApiClient {
   }
 
   //get appointment by appointment Id
+  Future<AppointmentDetailDTO> getAppointmentByAId(int appointmentId) async {
+    final String url =
+        '/Appointments/GetAppointmentById?appointmentId=${appointmentId}';
+    try {
+      //
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        AppointmentDetailDTO dto =
+            AppointmentDetailDTO.fromJson(jsonDecode(response.body));
+        return dto;
+      }
+      return null;
+    } catch (e) {
+      print('ERROR at getAppointmentByAId: $e');
+    }
+  }
 
   // Future<bool> cancelAppointment(int appointmentId, String reasonCancel) async {
   //   String url =

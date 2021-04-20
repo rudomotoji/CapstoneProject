@@ -404,11 +404,13 @@ class _HeaderWidget extends State<HeaderWidget> {
                     child: Padding(
                       padding: EdgeInsets.only(
                           top: 10, bottom: 10, left: 20, right: 20),
-                      child: Text('',
-                          style: TextStyle(
-                            color: DefaultTheme.GREY_TEXT,
-                            fontSize: 12,
-                          )),
+                      child: Center(
+                        child: Text('',
+                            style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 12,
+                            )),
+                      ),
                     ),
                   );
                 }
@@ -424,11 +426,13 @@ class _HeaderWidget extends State<HeaderWidget> {
                       child: Padding(
                         padding: EdgeInsets.only(
                             top: 10, bottom: 10, left: 20, right: 20),
-                        child: Text('User Fullname',
-                            style: TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
-                              fontSize: 12,
-                            )),
+                        child: Center(
+                          child: Text('User Fullname',
+                              style: TextStyle(
+                                color: DefaultTheme.GREY_TEXT,
+                                fontSize: 12,
+                              )),
+                        ),
                       ),
                     );
                   }
@@ -1812,11 +1816,13 @@ class _Header extends State<Header> {
                   child: Padding(
                     padding: EdgeInsets.only(
                         top: 10, bottom: 10, left: 20, right: 20),
-                    child: Text('User Fullname',
-                        style: TextStyle(
-                          color: DefaultTheme.GREY_TEXT,
-                          fontSize: 12,
-                        )),
+                    child: Center(
+                      child: Text('User Fullname',
+                          style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontSize: 12,
+                          )),
+                    ),
                   ),
                 );
               }
@@ -1832,11 +1838,13 @@ class _Header extends State<Header> {
                     child: Padding(
                       padding: EdgeInsets.only(
                           top: 10, bottom: 10, left: 20, right: 20),
-                      child: Text('',
-                          style: TextStyle(
-                            color: DefaultTheme.GREY_TEXT,
-                            fontSize: 12,
-                          )),
+                      child: Center(
+                        child: Text('User Fullname',
+                            style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 12,
+                            )),
+                      ),
                     ),
                   );
                 }

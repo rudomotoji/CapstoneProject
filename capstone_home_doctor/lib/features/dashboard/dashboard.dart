@@ -953,12 +953,12 @@ class _DashboardState extends State<DashboardPage>
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                         decoration: BoxDecoration(
-                          color: DefaultTheme.GREY_VIEW,
-                          // border: Border(
-                          //   left: BorderSide(
-                          //       width: 2.0, color: DefaultTheme.RED_CALENDAR),
-                          // ),
-                        ),
+                            //color: DefaultTheme.GREY_VIEW,
+                            // border: Border(
+                            //   left: BorderSide(
+                            //       width: 2.0, color: DefaultTheme.RED_CALENDAR),
+                            // ),
+                            ),
                         width: MediaQuery.of(context).size.width,
                         margin: EdgeInsets.only(left: 20, right: 20, bottom: 5),
                         padding: EdgeInsets.only(bottom: 10, top: 10),
@@ -979,7 +979,7 @@ class _DashboardState extends State<DashboardPage>
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                         color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        width: 0.5),
+                                        width: 0.75),
                                     color: DefaultTheme.WHITE,
                                     borderRadius: BorderRadius.circular(13),
                                   ),
@@ -1030,7 +1030,7 @@ class _DashboardState extends State<DashboardPage>
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                            'Bác sĩ ${detail.fullNameDoctor} lên lịch tái khám cho bạn.'),
+                                            'Bác sĩ ${detail.fullNameDoctor} lên lịch khám cho bạn.'),
                                         Padding(
                                           padding: EdgeInsets.only(
                                             top: 3,

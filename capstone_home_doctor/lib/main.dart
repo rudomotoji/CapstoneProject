@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'dart:async';
+import 'package:capstone_home_doctor/features/schedule/blocs/appnt_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/sms/repositories/sms_repositories.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/blood_bloc.dart';
 import 'package:capstone_home_doctor/services/payment_helper.dart';
@@ -1393,7 +1394,7 @@ _connectInBackground(int timeInsert) async {
                                 //SEND SMS TO RELATIVE AND DOCTOR
                                 await _smsRepository.sendSmsMessage(_accountId,
                                     _vitalSignScheduleDTO.doctorAccountId);
-                                //
+
                                 //UPDATE STATUS SMS IS SENT
                                 _vitalSignHelper
                                     .updateSendSMSTurnOffStatus(true)
@@ -1591,7 +1592,7 @@ _connectInBackground(int timeInsert) async {
                                 //SEND SMS TO RELATIVE AND DOCTOR
                                 await _smsRepository.sendSmsMessage(_accountId,
                                     _vitalSignScheduleDTO.doctorAccountId);
-                                //
+                                // //
                                 //UPDATE STATUS SMS IS SENT
                                 _vitalSignHelper
                                     .updateSendSMSTurnOffStatus(true)
@@ -2028,6 +2029,11 @@ class _HomeDoctorState extends State<HomeDoctor> {
             create: (BuildContext context) => VitalSignBloodBloc(
                 vitalSignRepository: _vitalSignRepository,
                 sqfLiteHelper: _sqfLiteHelper),
+          ),
+          BlocProvider<AppointDetailmentBloc>(
+            create: (BuildContext context) => AppointDetailmentBloc(
+              appointmentRepository: _appointmentRepository,
+            ),
           ),
         ],
         child: GestureDetector(
