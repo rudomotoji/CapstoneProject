@@ -305,6 +305,8 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                         onTap: () {
                           if (_patientId != 0 &&
                               _placeController.text != null &&
+                              _placeController.text != '' &&
+                              _placeController.text.length > 0 &&
                               (_listLv3IdSelected.length > 0 ||
                                   _diseaseIds.length > 0)) {
                             healthRecordDTO = HealthRecordDTO(
