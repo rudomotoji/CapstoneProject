@@ -9,16 +9,13 @@ import 'package:capstone_home_doctor/features/contract/blocs/medical_share_bloc.
 import 'package:capstone_home_doctor/features/contract/events/medical_share_event.dart';
 import 'package:capstone_home_doctor/features/contract/states/medical_share_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
-import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/hr_list_event.dart';
-import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_get_by_id_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_list_state.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/events/medical_Share_event.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/states/medical_share_state.dart';
-import 'package:capstone_home_doctor/models/contract_inlist_dto.dart';
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
