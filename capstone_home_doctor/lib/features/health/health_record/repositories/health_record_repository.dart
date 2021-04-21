@@ -142,7 +142,7 @@ class HealthRecordRepository extends BaseApiClient {
   Future<List<MedInsByDiseaseDTO>> getAllMedicalToShare(
       int patientID, int healthRecordId, int typeID) async {
     String url;
-    if (typeID != null) {
+    if (typeID != null && typeID != 0) {
       url =
           '/MedicalInstructions/GetMedicalInstructionsToShare?patientId=${patientID}&healthRecordId=${healthRecordId}&medicalInstructionType=${typeID}';
     } else {

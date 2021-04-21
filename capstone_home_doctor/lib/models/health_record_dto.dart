@@ -17,6 +17,7 @@ class HealthRecordDTO {
   List<String> diceaseIds;
   List<Diseases> diseases;
   String status;
+  String contractStatus;
 
   //constructor
   HealthRecordDTO({
@@ -30,6 +31,7 @@ class HealthRecordDTO {
     this.contractId,
     this.patientId,
     this.status,
+    this.contractStatus,
   });
 
   // Map<String, dynamic> toMapSqflite() {
@@ -72,6 +74,7 @@ class HealthRecordDTO {
     dateCreated = json['dateCreated'];
     contractId = json['contractId'];
     status = json['status'];
+    contractStatus = json['contractStatus'];
   }
 
   Map<String, dynamic> toJson() {
@@ -85,6 +88,7 @@ class HealthRecordDTO {
     data['place'] = this.place;
     data['description'] = this.description;
     data['status'] = this.status;
+    data['contractStatus'] = this.contractStatus;
     return data;
   }
 

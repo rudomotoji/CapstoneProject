@@ -11,6 +11,7 @@ import 'package:capstone_home_doctor/features/contract/states/medical_share_stat
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_type_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/hr_list_event.dart';
+import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_type_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_list_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_type_list_state.dart';
@@ -50,6 +51,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   List<int> medicalInstructionIdsSelected = [];
   MedicalShareBloc _medicalShareBloc;
   MedicalShareInsBloc _medicalShareInsBloc;
+  MedInsTypeListBloc _medInsTypeListBloc;
 
   MedicalShareInsRepository _medicalShareInsRepository =
       MedicalShareInsRepository(httpClient: http.Client());
@@ -61,7 +63,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   bool sendStatus = false;
   DateValidator _dateValidator = DateValidator();
   String _selectedHRType;
-  int _selectedHRTypeID;
+  int _selectedHRTypeID = 0;
+  List<MedicalInstructionTypeDTO> _listMedInsType;
 
   @override
   void initState() {
@@ -70,6 +73,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
     _healthRecordListBloc = BlocProvider.of(context);
     _medicalShareBloc = BlocProvider.of(context);
     _medicalShareInsBloc = BlocProvider.of(context);
+    _medInsTypeListBloc = BlocProvider.of(context);
 
     _getPatientId();
   }
@@ -421,7 +425,9 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                               if (state.listHealthRecord != null) {
                                 _listContracts = [];
                                 for (var contract in state.listHealthRecord) {
-                                  if (contract.contractId != null) {
+                                  if (contract.contractId != null &&
+                                      !contract.contractStatus
+                                          .contains('FINISHED')) {
                                     _listContracts.add(contract);
                                   }
                                 }
@@ -619,6 +625,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
             );
           }
           if (state is MedInsTypeStateSuccess) {
+            _listMedInsType = [];
             // if (_selectedHRTypeID != null) {
             //   _selectedHRType = state.listMedInsType
             //       .where((element) =>
@@ -627,12 +634,20 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
             //       .name;
             // }
 
-            // _listMedInsType = state.listMedInsType;
+            _listMedInsType = state.listMedInsType;
+            // MedicalInstructionTypeDTO all = MedicalInstructionTypeDTO(
+            //     medicalInstructionTypeId: 0, name: 'Tất cả');
+            // bool add = true;
+
+            // if (add) {
+            //   print(add);
+            //   _listMedInsType.add(all);
+            // }
+
             return Container(
               width: MediaQuery.of(context).size.width - 80,
               child: DropdownButton<MedicalInstructionTypeDTO>(
-                items:
-                    state.listMedInsType.map((MedicalInstructionTypeDTO value) {
+                items: _listMedInsType.map((MedicalInstructionTypeDTO value) {
                   return new DropdownMenuItem<MedicalInstructionTypeDTO>(
                     value: value,
                     child: new Text(value.name),
@@ -1236,6 +1251,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
         dropdownValue = null;
         medicalInstructionIdsSelected = [];
         medicalInstructionIdsSelected = [];
+        _medInsTypeListBloc.add(MedInsTypeEventGetList(status: 'active'));
         if (_patientId != 0) {
           _healthRecordListBloc.add(
               HRListEventSetPersonalHRId(personalHealthRecordId: _patientId));
