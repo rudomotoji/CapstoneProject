@@ -107,12 +107,12 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                               'Bắt đầu ngày: ${_dateValidator.convertDateCreate(timeStart, 'dd/MM/yyyy', 'yyyy-MM-dd')}'),
                           Text(
                               'Kết thúc ngày:  ${_dateValidator.convertDateCreate(timeCanceled, 'dd/MM/yyyy', 'yyyy-MM-dd')}'),
-                          Row(
-                            children: [
-                              Text('Nhận xét:'),
-                              Text('Bác sĩ chưa có nhận xét nào.'),
-                            ],
-                          ),
+                          // Row(
+                          //   children: [
+                          //     Text('Nhận xét:'),
+                          //     Text('Bác sĩ chưa có nhận xét nào.'),
+                          //   ],
+                          // ),
                         ],
                       ),
                     ),

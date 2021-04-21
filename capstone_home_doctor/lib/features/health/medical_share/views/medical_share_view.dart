@@ -578,7 +578,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
           hint: Container(
             width: MediaQuery.of(context).size.width - 84,
             child: Text(
-              'Chọn hợp đồng cần chia sẻ:',
+              'Chọn hồ sơ cần chia sẻ:',
               style: TextStyle(fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
