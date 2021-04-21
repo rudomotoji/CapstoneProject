@@ -434,10 +434,9 @@ class _ReasonContractView extends State<ReasonContractView>
                                     ),
                                     Spacer(),
                                     ButtonHDr(
-                                      label: 'Chọn',
-                                      style: BtnStyle.BUTTON_FULL,
+                                      style: BtnStyle.BUTTON_IMAGE,
                                       image: Image.asset(
-                                          'assets/images/ic-choose-date.png'),
+                                          'assets/images/ic-calendar.png'),
                                       width: 30,
                                       height: 40,
                                       labelColor: DefaultTheme.BLUE_DARK,

@@ -958,9 +958,15 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                         child: Text('Không',
                                             style: TextStyle(
                                                 color: DefaultTheme.BLUE_TEXT)),
-                                        onPressed: () {
+                                        onPressed: () async {
                                           Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
+                                          int currentIndex = 2;
+                                          Navigator.of(context)
+                                              .pushNamedAndRemoveUntil(
+                                                  RoutesHDr.MAIN_HOME,
+                                                  (Route<dynamic> route) =>
+                                                      false,
+                                                  arguments: currentIndex);
                                         },
                                       ),
                                       Container(

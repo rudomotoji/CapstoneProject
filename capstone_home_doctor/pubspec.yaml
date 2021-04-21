@@ -192,6 +192,8 @@ flutter:
     - assets/images/ic-appointment.png
     - assets/images/ic-history-medicine.png
     - assets/images/bg-medicine.png
+    - assets/images/bg-calendar.png
+    - assets/images/ic-call.png
 
 
   

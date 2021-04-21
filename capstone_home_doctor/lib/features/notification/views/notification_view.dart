@@ -121,7 +121,7 @@ class _NotificationState extends State<NotificationPage> {
                               Container(
                                 width: MediaQuery.of(context).size.width,
                                 padding: EdgeInsets.only(
-                                    left: 20, bottom: 10, top: 20),
+                                    left: 20, bottom: 15, top: 15),
                                 child: Text(
                                   '${_dateValidator.parseDateToNotiView(state.listNotification[index].dateCreate)}',
                                   style: TextStyle(
@@ -130,19 +130,97 @@ class _NotificationState extends State<NotificationPage> {
                                   ),
                                 ),
                               ),
+                              Divider(
+                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                height: 1,
+                              ),
                               for (Notifications i in state
                                   .listNotification[index].notifications)
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  margin: EdgeInsets.only(bottom: 5),
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                      color: (i.status == false)
-                                          ? DefaultTheme.GREY_VIEW
-                                              .withOpacity(0.7)
-                                          : DefaultTheme.WHITE
-                                              .withOpacity(0.1)),
-                                  child: InkWell(
+                                InkWell(
+                                  onTap: () async {
+                                    _notificationListBloc.add(
+                                        NotificationUpdateStatusEvent(
+                                            notiId: i.notificationId));
+                                    _getAccountId();
+                                    if (i.notificationType == 1 ||
+                                        i.notificationType == 4 ||
+                                        i.notificationType == 5 ||
+                                        i.notificationType == 9 ||
+                                        i.notificationType == 10) {
+                                      //Navigate hợp đồng detail
+                                      //
+                                      if (i.contractId != null) {
+                                        await _contractHelper
+                                            .updateContractId(i.contractId);
+
+                                        Navigator.of(context).pushNamed(
+                                            RoutesHDr.DETAIL_CONTRACT_VIEW);
+                                      }
+                                    } else if (i.notificationType == 2) {
+                                      //Navigate Screen overview
+
+                                      //
+                                      int currentIndex = 1;
+                                      Navigator.of(context)
+                                          .pushNamedAndRemoveUntil(
+                                              RoutesHDr.MAIN_HOME,
+                                              (Route<dynamic> route) => false,
+                                              arguments: currentIndex);
+                                    } else if (i.notificationType == 7) {
+                                      //Navigate Lịch sinh hiệu
+                                      //
+                                      int currentIndex = 1;
+                                      Navigator.of(context)
+                                          .pushNamedAndRemoveUntil(
+                                              RoutesHDr.MAIN_HOME,
+                                              (Route<dynamic> route) => false,
+                                              arguments: currentIndex);
+                                    } else if (i.notificationType == 6) {
+                                      //Navigate thuốc detail
+                                      //
+                                      Navigator.pushNamed(context,
+                                          RoutesHDr.MEDICAL_HISTORY_DETAIL,
+                                          arguments: i.medicalInstructionId);
+                                    } else if (i.notificationType == 8) {
+                                      //Navigate hẹn hẹn detail
+                                      //
+                                      int _indexPage = 1;
+                                      Navigator.of(context).pushNamed(
+                                          RoutesHDr.SCHEDULE,
+                                          arguments: _indexPage);
+                                    } else if (i.notificationType == 12) {
+                                      //Navigate share medical instruction
+                                      //
+
+                                    } else if (i.notificationType == 11) {
+                                      //Navigate connect device screen
+
+                                      await peripheralHelper
+                                          .getPeripheralId()
+                                          .then((value) async {
+                                        if (value != '') {
+                                          Navigator.of(context).pushNamed(
+                                              RoutesHDr
+                                                  .INTRO_CONNECT_PERIPHERAL);
+                                        } else {
+                                          Navigator.of(context).pushNamed(
+                                              RoutesHDr.PERIPHERAL_SERVICE);
+                                        }
+                                      });
+                                    }
+                                  },
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        EdgeInsets.only(bottom: 10, top: 10),
+                                    // margin: EdgeInsets.only(bottom: 5),
+                                    decoration: BoxDecoration(
+                                        color: (i.status == false)
+                                            ? DefaultTheme.GREY_VIEW
+                                                .withOpacity(0.7)
+                                            : DefaultTheme.WHITE
+                                                .withOpacity(0.1)),
+
                                     child: Stack(
                                       children: [
                                         Row(
@@ -196,10 +274,12 @@ class _NotificationState extends State<NotificationPage> {
                                                 //
 
                                                 Container(
+                                                  padding:
+                                                      EdgeInsets.only(top: 5),
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width -
-                                                      70,
+                                                      110,
                                                   child: Text(
                                                     '${i.title}',
                                                     style: TextStyle(
@@ -214,10 +294,12 @@ class _NotificationState extends State<NotificationPage> {
                                                       bottom: 2),
                                                 ),
                                                 Container(
+                                                  padding:
+                                                      EdgeInsets.only(top: 3),
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width -
-                                                      80,
+                                                      110,
                                                   child: Text('${i.body}',
                                                       style: TextStyle(
                                                           fontWeight:
@@ -236,7 +318,7 @@ class _NotificationState extends State<NotificationPage> {
                                           ],
                                         ),
                                         Positioned(
-                                          top: 17,
+                                          top: 5,
                                           right: 10,
                                           child: Text(
                                             '${_dateValidator.renderLastTimeNoti(i.timeAgo)}',
@@ -245,80 +327,12 @@ class _NotificationState extends State<NotificationPage> {
                                         ),
                                       ],
                                     ),
-                                    onTap: () async {
-                                      _notificationListBloc.add(
-                                          NotificationUpdateStatusEvent(
-                                              notiId: i.notificationId));
-                                      _getAccountId();
-                                      if (i.notificationType == 1 ||
-                                          i.notificationType == 4 ||
-                                          i.notificationType == 5 ||
-                                          i.notificationType == 9 ||
-                                          i.notificationType == 10) {
-                                        //Navigate hợp đồng detail
-                                        //
-                                        if (i.contractId != null) {
-                                          await _contractHelper
-                                              .updateContractId(i.contractId);
-
-                                          Navigator.of(context).pushNamed(
-                                              RoutesHDr.DETAIL_CONTRACT_VIEW);
-                                        }
-                                      } else if (i.notificationType == 2) {
-                                        //Navigate Screen overview
-
-                                        //
-                                        int currentIndex = 1;
-                                        Navigator.of(context)
-                                            .pushNamedAndRemoveUntil(
-                                                RoutesHDr.MAIN_HOME,
-                                                (Route<dynamic> route) => false,
-                                                arguments: currentIndex);
-                                      } else if (i.notificationType == 7) {
-                                        //Navigate Lịch sinh hiệu
-                                        //
-                                        int currentIndex = 1;
-                                        Navigator.of(context)
-                                            .pushNamedAndRemoveUntil(
-                                                RoutesHDr.MAIN_HOME,
-                                                (Route<dynamic> route) => false,
-                                                arguments: currentIndex);
-                                      } else if (i.notificationType == 6) {
-                                        //Navigate thuốc detail
-                                        //
-                                        Navigator.pushNamed(context,
-                                            RoutesHDr.MEDICAL_HISTORY_DETAIL,
-                                            arguments: i.medicalInstructionId);
-                                      } else if (i.notificationType == 8) {
-                                        //Navigate hẹn hẹn detail
-                                        //
-                                        int _indexPage = 1;
-                                        Navigator.of(context).pushNamed(
-                                            RoutesHDr.SCHEDULE,
-                                            arguments: _indexPage);
-                                      } else if (i.notificationType == 12) {
-                                        //Navigate share medical instruction
-                                        //
-
-                                      } else if (i.notificationType == 11) {
-                                        //Navigate connect device screen
-
-                                        await peripheralHelper
-                                            .getPeripheralId()
-                                            .then((value) async {
-                                          if (value != '') {
-                                            Navigator.of(context).pushNamed(
-                                                RoutesHDr
-                                                    .INTRO_CONNECT_PERIPHERAL);
-                                          } else {
-                                            Navigator.of(context).pushNamed(
-                                                RoutesHDr.PERIPHERAL_SERVICE);
-                                          }
-                                        });
-                                      }
-                                    },
                                   ),
                                 ),
+                              Divider(
+                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                height: 1,
+                              ),
                             ],
                           );
                         },

@@ -100,50 +100,48 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: DefaultTabController(
-        length: 1,
-        child: Column(
-          // height: MediaQuery.of(context).size.height * 0.7,
-          children: <Widget>[
-            HeaderWidget(
-              title: 'Hồ sơ',
-              isMainView: true,
-              buttonHeaderType: ButtonHeaderType.CREATE_HEALTH_RECORD,
+      child: Column(
+        // height: MediaQuery.of(context).size.height * 0.7,
+        children: <Widget>[
+          HeaderWidget(
+            title: 'Hồ sơ',
+            isMainView: true,
+            buttonHeaderType: ButtonHeaderType.CREATE_HEALTH_RECORD,
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(top: 5, left: 20, right: 20),
+              child: Text(
+                  'Mỗi hồ sơ sức khoẻ bao gồm nhiều phiếu y lệnh. Phiếu y lệnh là một chỉ định, một lệnh bằng văn bản được ghi trong bệnh án và các giấy tờ y tế mang tính pháp lý.'),
             ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: EdgeInsets.only(top: 5, left: 20, right: 20),
-                child: Text(
-                    'Mỗi hồ sơ sức khoẻ bao gồm nhiều phiếu y lệnh. Phiếu y lệnh là một chỉ định, một lệnh bằng văn bản được ghi trong bệnh án và các giấy tờ y tế mang tính pháp lý.'),
-              ),
-            ),
-            _buildHeader(),
-            _buildTab(),
-            Padding(
-              padding: EdgeInsets.only(bottom: 10),
-            ),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: refreshListHR,
-                child: ListView(
-                  children: <Widget>[
-                    //
+          ),
+          _buildShareButton(),
+          _buildHeader(),
+          _buildTab(),
+          Padding(
+            padding: EdgeInsets.only(bottom: 10),
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: refreshListHR,
+              child: ListView(
+                children: <Widget>[
+                  //
 
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 10),
-                    ),
-                    _buildDescription(_listIndex),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 20),
-                    ),
-                    _buildListHealthRecord(),
-                  ],
-                ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                  ),
+                  _buildDescription(_listIndex),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 20),
+                  ),
+                  _buildListHealthRecord(),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -458,7 +456,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                     children: [
                       //
                       Container(
-                        padding: EdgeInsets.only(right: 15),
+                        margin: EdgeInsets.only(right: 20),
                         child: (dto.diseases == null)
                             ? Text(
                                 'Hồ sơ',
@@ -467,7 +465,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                 style: TextStyle(fontWeight: FontWeight.w500),
                               )
                             : Text(
-                                'Hồ sơ tại ${dto.place}',
+                                'Hồ sơ${_genderDiseaseId(dto.diseases)} tại ${dto.place}',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -514,7 +512,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                       : Positioned(
                           width: 35,
                           height: 35,
-                          top: -10,
+                          top: -8,
                           right: -10,
                           child: ButtonHDr(
                             style: BtnStyle.BUTTON_IMAGE,
@@ -884,6 +882,38 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                 ),
               ));
         });
+  }
+
+  _buildShareButton() {
+    return Container(
+      margin: EdgeInsets.only(top: 20),
+      width: MediaQuery.of(context).size.width - 40,
+      decoration: BoxDecoration(),
+      height: 40,
+      child: InkWell(
+        onTap: () {
+          ///
+        },
+        child: Center(
+          child: Text('Chia sẻ hồ sơ'),
+        ),
+      ),
+    );
+  }
+
+  String _genderDiseaseId(List<Diseases> list) {
+    String result = '';
+    if (list.isEmpty && list == null) {
+      //
+    } else {
+      for (Diseases x in list) {
+        result += ' ' + x.diseaseId + '-';
+      }
+    }
+    if ((result.trim().characters.last) == '-') {
+      result = result.substring(0, result.length - 1);
+    }
+    return result;
   }
 
   Future refreshListHR() async {

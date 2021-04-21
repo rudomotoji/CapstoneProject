@@ -176,7 +176,23 @@ class _ScheduleView extends State<ScheduleView>
                         children: <Widget>[
                           // _buildTableCalendar(),
                           _buildCalendar(),
-                          const SizedBox(height: 8.0),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Container(
+                            height: 5,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image:
+                                    AssetImage('assets/images/bg-calendar.png'),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 20),
+                          ),
                           Expanded(child: _buildEventList(context)),
                         ],
                       ),
@@ -346,21 +362,42 @@ class _ScheduleView extends State<ScheduleView>
       // availableGestures: AvailableGestures.none,
       events: _events,
       startingDayOfWeek: StartingDayOfWeek.monday,
+      daysOfWeekStyle: DaysOfWeekStyle(
+        weekendStyle: TextStyle(color: DefaultTheme.GREY_TEXT.withOpacity(0.6)),
+      ),
       calendarStyle: CalendarStyle(
+        ///
+        markersMaxAmount: 1,
+        ////
         weekendStyle: TextStyle(color: DefaultTheme.GREY_TEXT.withOpacity(0.6)),
         selectedColor: DefaultTheme.BLUE_TEXT,
         todayColor: DefaultTheme.BLUE_TEXT.withOpacity(0.6),
-        markersColor: DefaultTheme.BLUE_TEXT,
+        markersColor: DefaultTheme.GREY_TOP_TAB_BAR,
         eventDayStyle: TextStyle(color: DefaultTheme.BLUE_TEXT),
         outsideDaysVisible: false,
       ),
       headerStyle: HeaderStyle(
         centerHeaderTitle: true,
         formatButtonVisible: false,
+        leftChevronVisible: false,
+        rightChevronVisible: false,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg-calendar.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        headerPadding: EdgeInsets.only(top: 10, bottom: 10),
+        headerMargin: EdgeInsets.only(bottom: 10, top: 20),
+        titleTextStyle: TextStyle(
+          color: DefaultTheme.WHITE,
+          fontSize: 18,
+        ),
       ),
       formatAnimation: FormatAnimation.slide,
       onDaySelected: _onDaySelected,
       onVisibleDaysChanged: _onVisibleDaysChanged,
+      //builders: Calendar
     );
   }
 
@@ -1382,7 +1419,7 @@ class _ScheduleView extends State<ScheduleView>
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 10),
                                   ),
-                                    Text('Không có lịch dùng thuốc trong hôm nay')
+                                  Text('Không có lịch dùng thuốc trong hôm nay')
                                 ],
                               ),
                             ),

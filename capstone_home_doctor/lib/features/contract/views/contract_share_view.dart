@@ -59,7 +59,7 @@ class _ContractShareView extends State<ContractShareView>
 
   ///////AAAA
   List<DiseaseMedicalInstructions> diseaseMedicalInstructionsSelected = [];
-//// comment for set up
+////
   //FOR MEDICAL SHARE
   HealthRecordRepository _healthRecordRepository =
       HealthRecordRepository(httpClient: http.Client());

@@ -19,6 +19,7 @@ import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 DoctorRepository doctorRepository = DoctorRepository(httpClient: http.Client());
 final ContractHelper _contractHelper = ContractHelper();
@@ -275,16 +276,47 @@ class _DoctorInformation extends State<DoctorInformation>
                   //
                 ],
               ),
+
               //
               Padding(
-                padding: EdgeInsets.only(bottom: 20, top: 10),
+                padding: EdgeInsets.only(top: 10),
                 child: Divider(
                   color: DefaultTheme.GREY_TOP_TAB_BAR,
                   height: 1,
                 ),
               ),
               //
-
+              InkWell(
+                onTap: () async => await launch(
+                    'tel://${_arrayValidator.parsePhoneToPhoneNo(state.dto.phone)}'),
+                child: Container(
+                    height: 40,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.SUCCESS_STATUS.withOpacity(0.3),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: Image.asset('assets/images/ic-call.png'),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                        ),
+                        Text('Gọi ngay')
+                      ],
+                    )),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 20),
+                child: Divider(
+                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                  height: 1,
+                ),
+              ),
               Row(
                 children: [
                   Container(
@@ -519,39 +551,42 @@ class _DoctorInformation extends State<DoctorInformation>
           barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
-            return Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    width: 250,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: DefaultTheme.WHITE.withOpacity(0.7),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          width: 130,
-                          // height: 100,
-                          child: Image.asset('assets/images/loading.gif'),
-                        ),
-                        // Spacer(),
-                        Container(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            'Đang kiểm tra',
-                            style: TextStyle(
-                              decoration: TextDecoration.none,
-                              color: DefaultTheme.GREY_TEXT,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15,
+            return Material(
+              color: DefaultTheme.TRANSPARENT,
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      width: 250,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.WHITE.withOpacity(0.7),
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 130,
+                            // height: 100,
+                            child: Image.asset('assets/images/loading.gif'),
+                          ),
+                          // Spacer(),
+                          Container(
+                            padding: EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              'Đang kiểm tra',
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                color: DefaultTheme.GREY_TEXT,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -586,68 +621,71 @@ class _DoctorInformation extends State<DoctorInformation>
                     barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
-                      return Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                            child: Container(
-                              padding:
-                                  EdgeInsets.only(left: 10, top: 10, right: 10),
-                              width: 250,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                color: DefaultTheme.WHITE.withOpacity(0.7),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(bottom: 10, top: 10),
-                                    child: Text(
-                                      'Gửi yêu cầu thất bại',
-                                      style: TextStyle(
-                                        decoration: TextDecoration.none,
-                                        color: DefaultTheme.BLACK,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(left: 20, right: 20),
-                                    child: Align(
-                                      alignment: Alignment.center,
+                      return Material(
+                        color: DefaultTheme.TRANSPARENT,
+                        child: Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    left: 10, top: 10, right: 10),
+                                width: 250,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  color: DefaultTheme.WHITE.withOpacity(0.7),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(bottom: 10, top: 10),
                                       child: Text(
-                                        '$msg',
-                                        textAlign: TextAlign.center,
+                                        'Gửi yêu cầu thất bại',
                                         style: TextStyle(
                                           decoration: TextDecoration.none,
-                                          color: DefaultTheme.GREY_TEXT,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 13,
+                                          color: DefaultTheme.BLACK,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Spacer(),
-                                  Divider(
-                                    height: 1,
-                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  ),
-                                  ButtonHDr(
-                                    height: 40,
-                                    style: BtnStyle.BUTTON_TRANSPARENT,
-                                    label: 'OK',
-                                    labelColor: DefaultTheme.BLUE_TEXT,
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          '$msg',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            decoration: TextDecoration.none,
+                                            color: DefaultTheme.GREY_TEXT,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Divider(
+                                      height: 1,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                    ButtonHDr(
+                                      height: 40,
+                                      style: BtnStyle.BUTTON_TRANSPARENT,
+                                      label: 'OK',
+                                      labelColor: DefaultTheme.BLUE_TEXT,
+                                      onTap: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -661,96 +699,102 @@ class _DoctorInformation extends State<DoctorInformation>
                     barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
-                      return Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                            child: Container(
-                              padding:
-                                  EdgeInsets.only(left: 10, top: 10, right: 10),
-                              width: 250,
-                              height: 185,
-                              decoration: BoxDecoration(
-                                color: DefaultTheme.WHITE.withOpacity(0.7),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(bottom: 10, top: 10),
-                                    child: Text(
-                                      'Lưu ý',
-                                      style: TextStyle(
-                                        decoration: TextDecoration.none,
-                                        color: DefaultTheme.BLACK,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(left: 20, right: 20),
-                                    child: Align(
-                                      alignment: Alignment.center,
+                      return Material(
+                        color: DefaultTheme.TRANSPARENT,
+                        child: Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    left: 10, top: 10, right: 10),
+                                width: 250,
+                                height: 185,
+                                decoration: BoxDecoration(
+                                  color: DefaultTheme.WHITE.withOpacity(0.7),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(bottom: 10, top: 10),
                                       child: Text(
-                                        '$msg',
-                                        textAlign: TextAlign.center,
+                                        'Lưu ý',
                                         style: TextStyle(
                                           decoration: TextDecoration.none,
-                                          color: DefaultTheme.GREY_TEXT,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 13,
+                                          color: DefaultTheme.BLACK,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Spacer(),
-                                  Divider(
-                                    height: 1,
-                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      FlatButton(
-                                        height: 40,
-                                        minWidth: 250 / 2 - 10.5,
-                                        child: Text('Đóng',
-                                            style: TextStyle(
-                                                color: DefaultTheme.BLUE_TEXT)),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
+                                    Spacer(),
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          '$msg',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            decoration: TextDecoration.none,
+                                            color: DefaultTheme.GREY_TEXT,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13,
+                                          ),
+                                        ),
                                       ),
-                                      Container(
-                                        height: 40,
-                                        width: 0.5,
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                      ),
-                                      FlatButton(
-                                        height: 40,
-                                        minWidth: 250 / 2 - 10.5,
-                                        child: Text('Tiếp tục',
-                                            style: TextStyle(
-                                                color: DefaultTheme.BLUE_TEXT)),
-                                        onPressed: () {
-                                          //
-                                          Navigator.of(context).pop();
-                                          Navigator.pushNamed(context,
-                                              RoutesHDr.CONTRACT_SHARE_VIEW,
-                                              arguments: arg);
-                                          //////
-                                          //////
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                    ),
+                                    Spacer(),
+                                    Divider(
+                                      height: 1,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        FlatButton(
+                                          height: 40,
+                                          minWidth: 250 / 2 - 10.5,
+                                          child: Text('Đóng',
+                                              style: TextStyle(
+                                                  color:
+                                                      DefaultTheme.BLUE_TEXT)),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        Container(
+                                          height: 40,
+                                          width: 0.5,
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        ),
+                                        FlatButton(
+                                          height: 40,
+                                          minWidth: 250 / 2 - 10.5,
+                                          child: Text('Tiếp tục',
+                                              style: TextStyle(
+                                                  color:
+                                                      DefaultTheme.BLUE_TEXT)),
+                                          onPressed: () {
+                                            //
+                                            Navigator.of(context).pop();
+                                            Navigator.pushNamed(context,
+                                                RoutesHDr.CONTRACT_SHARE_VIEW,
+                                                arguments: arg);
+                                            //////
+                                            //////
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

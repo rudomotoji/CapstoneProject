@@ -9,7 +9,7 @@ class SystemRepository extends BaseApiClient {
   SystemRepository({@required this.httpClient}) : assert(httpClient != null);
 
   Future<String> getTimeSystem() async {
-    final String url = 'http://45.76.186.233:8000/api/Times';
+    final String url = 'http://45.76.186.233:8000/api/v1/Times';
     try {
       final response = await http.get(url, headers: {
         'accept': 'aplication/json',

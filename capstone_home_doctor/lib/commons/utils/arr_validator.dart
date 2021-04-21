@@ -25,6 +25,22 @@ class ArrayValidator {
     return result.trim();
   }
 
+  String parsePhoneToPhoneNo(String phone) {
+    String result = '';
+    if (!phone.contains('.') && !phone.contains(' ')) {
+      return phone;
+    } else if (phone.contains(' ')) {
+      for (String component in phone.split(' ')) {
+        result += component;
+      }
+    }
+    else if(phone.contains('.')){
+      for (String component in phone.split('.')) {
+      result += component + ' ';
+    }
+    }
+    return result.trim();
+  }
   // int findNumberMostUse(List<int> arr) {
   //   arr.sort();
   //   var arrA = [];
