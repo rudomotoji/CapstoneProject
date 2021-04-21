@@ -510,9 +510,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               listGroupMedIns.clear();
 
               List<MedicalInsGroup> listGroupMed = [];
-              MedicalInsGroup _medicalGroupItem = null;
               for (var item in state.listMedIns) {
                 List<MedicalInstructionDTO> _listMedIns = [];
+                MedicalInsGroup _medicalGroupItem = null;
                 _listMedIns.add(item);
                 if (listGroupMed.length <= 0) {
                   _medicalGroupItem = new MedicalInsGroup(
@@ -520,18 +520,21 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                       medicalInstructionTypeId: item.medicalInstructionTypeId,
                       listMedicalIns: _listMedIns);
                 } else {
+                  bool flag = false;
                   for (var element in listGroupMed) {
                     if (element.medicalInstructionTypeId ==
                         item.medicalInstructionTypeId) {
+                      flag = true;
                       element.listMedicalIns.add(item);
-                    } else {
-                      _medicalGroupItem = MedicalInsGroup(
-                          type: item.medicalInstructionType,
-                          medicalInstructionTypeId:
-                              item.medicalInstructionTypeId,
-                          listMedicalIns: _listMedIns);
                     }
                   }
+                  if (!flag) {
+                    _medicalGroupItem = MedicalInsGroup(
+                        type: item.medicalInstructionType,
+                        medicalInstructionTypeId: item.medicalInstructionTypeId,
+                        listMedicalIns: _listMedIns);
+                  }
+                  flag = false;
                 }
                 if (_medicalGroupItem != null) {
                   listGroupMed.add(_medicalGroupItem);
@@ -825,29 +828,38 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     ),
                   ],
                 ),
-                (dto.status.contains('PATIENT') &&
-                        _healthRecordDTO.contractId == null)
-                    ? Positioned(
-                        width: 35,
-                        height: 35,
-                        top: 7,
-                        right: 0,
-                        child: ButtonHDr(
-                          style: BtnStyle.BUTTON_IMAGE,
-                          image: Image.asset('assets/images/ic-more.png'),
-                          onTap: () {
-                            _showMorePopup(dto.medicalInstructionId,
-                                dto.medicalInstructionType);
-                          },
-                        ),
-                      )
-                    : Container(),
+                checkButtonMoreFuture(dto),
+                // (dto.status.contains('PATIENT') &&
+                //         _healthRecordDTO.contractId == null)
+                //     ?
+                //     : Container(),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  checkButtonMoreFuture(MedicalInstructionDTO dto) {
+    if (dto.status.contains('PATIENT') || dto.status.contains('PENDING')) {
+      return Positioned(
+        width: 35,
+        height: 35,
+        top: 7,
+        right: 0,
+        child: ButtonHDr(
+          style: BtnStyle.BUTTON_IMAGE,
+          image: Image.asset('assets/images/ic-more.png'),
+          onTap: () {
+            _showMorePopup(
+                dto.medicalInstructionId, dto.medicalInstructionType);
+          },
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
   checkImageNull(MedicalInstructionDTO dto) {
@@ -1644,7 +1656,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   height: 60,
                                   labelColor: DefaultTheme.RED_TEXT,
                                   style: BtnStyle.BUTTON_IN_LIST,
-                                  onTap: () {
+                                  onTap: () async {
+                                    bool delete = false;
                                     Navigator.of(context).pop();
                                     showDialog(
                                       barrierDismissible: false,
@@ -1759,69 +1772,15 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                                             //
                                                             Navigator.pop(
                                                                 context);
-                                                            showDialog(
-                                                              barrierDismissible:
-                                                                  false,
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return Center(
-                                                                  child:
-                                                                      ClipRRect(
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(5)),
-                                                                    child:
-                                                                        BackdropFilter(
-                                                                      filter: ImageFilter.blur(
-                                                                          sigmaX:
-                                                                              25,
-                                                                          sigmaY:
-                                                                              25),
-                                                                      child:
-                                                                          Container(
-                                                                        width:
-                                                                            250,
-                                                                        height:
-                                                                            180,
-                                                                        decoration: BoxDecoration(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(10),
-                                                                            color: DefaultTheme.WHITE.withOpacity(0.8)),
-                                                                        child:
-                                                                            Column(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.center,
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.center,
-                                                                          children: [
-                                                                            SizedBox(
-                                                                              width: 150,
-                                                                              height: 120,
-                                                                              child: Image.asset('assets/images/loading.gif'),
-                                                                            ),
-                                                                            Text(
-                                                                              'Vui lòng chờ trong giây lát hệ thống đang xoá y lệnh',
-                                                                              style: TextStyle(color: DefaultTheme.GREY_TEXT, fontSize: 15, fontWeight: FontWeight.w400, decoration: TextDecoration.none),
-                                                                            ),
-                                                                            Spacer(),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
+
                                                             await medicalInstructionRepository
                                                                 .deleteMedicalInstruction(
                                                                     medicalInstructionId)
                                                                 .then((value) {
-                                                              print(value);
-                                                              Navigator.pop(
-                                                                  context);
-                                                              _pullRefresh();
+                                                              if (value !=
+                                                                  null) {
+                                                                _pullRefresh();
+                                                              }
                                                             });
                                                           },
                                                         ),
@@ -1951,7 +1910,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     } else if (status.contains('CONTRACT')) {
       return 'Được chia sẻ';
     } else {
-      return 'Chờ bác sĩ duyệt';
+      return 'Chờ duyệt';
     }
   }
 

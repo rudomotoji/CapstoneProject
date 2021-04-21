@@ -6,6 +6,7 @@ import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rounded_date_picker/rounded_picker.dart';
+import 'package:http/http.dart' as http;
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
@@ -30,7 +32,7 @@ class VitalSignChartDetail extends StatefulWidget {
 class _VitalSignChartDetail extends State<VitalSignChartDetail>
     with WidgetsBindingObserver {
   //
-  VitalSignBloc _vitalSignBloc;
+  // VitalSignBloc _vitalSignBloc;
   // List<int> listValueMap = [];
   // List<String> listTimeXAxis = [];
   int _patientId = 0;
@@ -42,10 +44,15 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
   VitalSignDetailDTO _vitalSignDetailDTO = VitalSignDetailDTO();
   DateValidator _dateValidator = DateValidator();
 
+  VitalSignServerRepository vitalSignServerRepository =
+      VitalSignServerRepository(httpClient: http.Client());
+
   VitalSignDetailBloc _vitalSignDetailBloc;
   int medicalInstructionId = 0;
   String timeStart = '';
   String timeCanceled = '';
+  String dropdownValue;
+  List<String> listDays = [];
 
   @override
   void initState() {
@@ -61,10 +68,33 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
         _patientId = value;
       });
       if (_patientId != 0) {
-        _vitalSignDetailBloc.add(VitalSignEventGetDetail(
-            patientId: _patientId, medicalInstructionId: medicalInstructionId));
+        // _vitalSignDetailBloc.add(VitalSignEventGetDetail(
+        //     patientId: _patientId, medicalInstructionId: medicalInstructionId));
+        //
+        vitalSignServerRepository
+            .getVitalSign(_patientId, medicalInstructionId)
+            .then((value) {
+          if (value.vitalSignValues.length > 0) {
+            _vitalSignDetailDTO = value;
+            listDays.clear();
+            for (var item in value.vitalSignValues) {
+              setState(() {
+                listDays.add(item.dateCreated.toString());
+              });
+            }
+
+            setState(() {
+              dropdownValue = listDays.first;
+            });
+          }
+        });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -100,209 +130,187 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                     ),
                     Padding(
                       padding: EdgeInsets.all(10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Text(
-                              'Bắt đầu ngày: ${_dateValidator.convertDateCreate(timeStart, 'dd/MM/yyyy', 'yyyy-MM-dd')}'),
-                          Text(
-                              'Kết thúc ngày:  ${_dateValidator.convertDateCreate(timeCanceled, 'dd/MM/yyyy', 'yyyy-MM-dd')}'),
-                          Row(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Nhận xét:'),
-                              Text('Bác sĩ chưa có nhận xét nào.'),
+                              Text(
+                                  'Bắt đầu ngày: ${_dateValidator.convertDateCreate(timeStart, 'dd/MM/yyyy', 'yyyy-MM-dd')}'),
+                              Text(
+                                  'Kết thúc ngày:  ${_dateValidator.convertDateCreate(timeCanceled, 'dd/MM/yyyy', 'yyyy-MM-dd')}'),
                             ],
                           ),
+                          _selectContract(),
                         ],
                       ),
                     ),
-                    // Row(
-                    //   children: [
-                    //     Text('Ngày:'),
-                    //     FlatButton(
-                    //       child: Text(
-                    //         _dateValidator.convertDateCreate(
-                    //             dateTime, 'dd/MM/yyyy', 'yyyy-MM-dd'),
-                    //         style: TextStyle(color: Colors.black),
+                    // BlocBuilder<VitalSignDetailBloc, VitalSignState>(
+                    //     builder: (context, state) {
+                    //   if (state is VitalSignStateLoading) {
+                    //     print('VitalSignStateLoading');
+                    //     return Container(
+                    //       margin: EdgeInsets.only(left: 20, right: 20),
+                    //       decoration: BoxDecoration(
+                    //           borderRadius: BorderRadius.circular(6),
+                    //           color: DefaultTheme.GREY_BUTTON),
+                    //       child: Center(
+                    //         child: SizedBox(
+                    //           width: 60,
+                    //           height: 60,
+                    //           child: Image.asset('assets/images/loading.gif'),
+                    //         ),
                     //       ),
-                    //       onPressed: () async {
-                    //         DateTime newDateTime = await showRoundedDatePicker(
-                    //             context: context,
-                    //             initialDate: DateTime.parse(timeStart),
-                    //             firstDate: DateTime.parse(timeCanceled),
-                    //             lastDate: DateTime.now(),
-                    //             borderRadius: 16,
-                    //             theme: ThemeData.dark());
-                    //         if (newDateTime != null) {
-                    //           setState(() {
-                    //             dateTime = newDateTime.toString();
-                    //           });
-                    //           _vitalSignDetailBloc.add(VitalSignEventGetDetail(
-                    //               patientId: _patientId,
-                    //               medicalInstructionId: medicalInstructionId));
+                    //     );
+                    //   }
+                    //   if (state is VitalSignStateFailure) {
+                    //     print('VitalSignStateFailure');
+                    //     return Container(
+                    //       width: MediaQuery.of(context).size.width,
+                    //       child: Text('Không có dữ liệu'),
+                    //     );
+                    //   }
+                    //   if (state is VitalSignGetDetailSuccess) {
+                    //     print('VitalSignGetDetailSuccess');
+                    //     if (state.vitalSignDetailDTO != null &&
+                    //         state.vitalSignDetailDTO.vitalSignValues != null) {
+                    //       if (state.vitalSignDetailDTO.vitalSignValues.length >
+                    //           0) {
+                    //         _vitalSignDetailDTO = state.vitalSignDetailDTO;
+                    //         listDays.clear();
+                    //         for (var item
+                    //             in state.vitalSignDetailDTO.vitalSignValues) {
+                    //           listDays.add(item.dateCreated.toString());
                     //         }
-                    //       },
-                    //     ),
-                    //   ],
-                    // ),
-                    BlocBuilder<VitalSignDetailBloc, VitalSignState>(
-                        builder: (context, state) {
-                      if (state is VitalSignStateLoading) {
-                        print('VitalSignStateLoading');
-                        return Container(
-                          margin: EdgeInsets.only(left: 20, right: 20),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: DefaultTheme.GREY_BUTTON),
-                          child: Center(
-                            child: SizedBox(
-                              width: 60,
-                              height: 60,
-                              child: Image.asset('assets/images/loading.gif'),
-                            ),
-                          ),
-                        );
-                      }
-                      if (state is VitalSignStateFailure) {
-                        print('VitalSignStateFailure');
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Text('Không có dữ liệu'),
-                        );
-                      }
-                      if (state is VitalSignGetDetailSuccess) {
-                        print('VitalSignGetDetailSuccess');
-                        if (state.vitalSignDetailDTO != null &&
-                            state.vitalSignDetailDTO.vitalSignValues != null) {
-                          if (state.vitalSignDetailDTO.vitalSignValues.length >
-                              0) {
-                            _vitalSignDetailDTO = state.vitalSignDetailDTO;
 
-                            return ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount:
-                                  _vitalSignDetailDTO.vitalSignValues.length,
-                              itemBuilder: (context, index) {
-                                // var itemVitalsign;
-                                var itemVitalsignValue =
-                                    _vitalSignDetailDTO.vitalSignValues[index];
+                    //         return Container();
 
-                                // if (index >
-                                //     _vitalSignDetailDTO.vitalSigns.length) {
-                                //   itemVitalsign = VitalSigns(
-                                //       vitalSignType: '',
-                                //       vitalSignTypeId: 1,
-                                //       numberMax: 0,
-                                //       numberMin: 0,
-                                //       minuteDangerInterval: 1,
-                                //       minuteNormalInterval: 1,
-                                //       timeStart: "",
-                                //       minuteAgain: 0);
-                                // } else {
-                                //   itemVitalsign =
-                                //       _vitalSignDetailDTO.vitalSigns[index];
-                                // }
+                    //         // return ListView.builder(
+                    //         //   shrinkWrap: true,
+                    //         //   physics: NeverScrollableScrollPhysics(),
+                    //         //   itemCount:
+                    //         //       _vitalSignDetailDTO.vitalSignValues.length,
+                    //         //   itemBuilder: (context, index) {
+                    //         //     // var itemVitalsign;
+                    //         //     var itemVitalsignValue =
+                    //         //         _vitalSignDetailDTO.vitalSignValues[index];
 
-                                // int minVitalSignValue = (itemVitalsign == null)
-                                //     ? 0
-                                //     : itemVitalsign.numberMin;
-                                // int maxVitalSignValue = (itemVitalsign == null)
-                                //     ? 0
-                                //     : itemVitalsign.numberMax;
-                                //
-                                //
+                    //         //     // if (index >
+                    //         //     //     _vitalSignDetailDTO.vitalSigns.length) {
+                    //         //     //   itemVitalsign = VitalSigns(
+                    //         //     //       vitalSignType: '',
+                    //         //     //       vitalSignTypeId: 1,
+                    //         //     //       numberMax: 0,
+                    //         //     //       numberMin: 0,
+                    //         //     //       minuteDangerInterval: 1,
+                    //         //     //       minuteNormalInterval: 1,
+                    //         //     //       timeStart: "",
+                    //         //     //       minuteAgain: 0);
+                    //         //     // } else {
+                    //         //     //   itemVitalsign =
+                    //         //     //       _vitalSignDetailDTO.vitalSigns[index];
+                    //         //     // }
 
-                                int minVitalSignValue = 0;
-                                int maxVitalSignValue = 0;
+                    //         //     // int minVitalSignValue = (itemVitalsign == null)
+                    //         //     //     ? 0
+                    //         //     //     : itemVitalsign.numberMin;
+                    //         //     // int maxVitalSignValue = (itemVitalsign == null)
+                    //         //     //     ? 0
+                    //         //     //     : itemVitalsign.numberMax;
+                    //         //     //
+                    //         //     //
 
-                                var listTime =
-                                    itemVitalsignValue.timeValue.split(',');
-                                var listValue =
-                                    itemVitalsignValue.numberValue.split(',');
-                                listTime.removeLast();
-                                listValue.removeLast();
+                    //         //     int minVitalSignValue = 0;
+                    //         //     int maxVitalSignValue = 0;
 
-                                if (itemVitalsignValue.vitalSignTypeId == 1 ||
-                                    itemVitalsignValue.vitalSignTypeId == 3 ||
-                                    itemVitalsignValue.vitalSignTypeId == 4) {
-                                  for (var val
-                                      in _vitalSignDetailDTO.vitalSigns) {
-                                    if (val.vitalSignTypeId ==
-                                        itemVitalsignValue.vitalSignTypeId) {
-                                      minVitalSignValue = val.numberMin;
-                                      maxVitalSignValue = val.numberMax;
-                                    }
-                                  }
-                                  List<int> listValueMap = listValue
-                                      .map((data) => int.parse(data))
-                                      .toList();
-                                  List<String> listTimeXAxis =
-                                      listTime.map((e) => '"${e}"').toList();
+                    //         //     var listTime =
+                    //         //         itemVitalsignValue.timeValue.split(',');
+                    //         //     var listValue =
+                    //         //         itemVitalsignValue.numberValue.split(',');
+                    //         //     listTime.removeLast();
+                    //         //     listValue.removeLast();
 
-                                  return heartChart(
-                                      listTimeXAxis,
-                                      minVitalSignValue,
-                                      maxVitalSignValue,
-                                      listValueMap,
-                                      _dateValidator.convertDateCreate(
-                                          itemVitalsignValue.dateCreated,
-                                          'dd/MM/yyyy',
-                                          'yyyy-MM-dd'));
-                                } else if (itemVitalsignValue.vitalSignTypeId ==
-                                    2) {
-                                  List<List<int>> listValueMap =
-                                      listValue.map((data) {
-                                    List<int> listNum = data
-                                        .split('-')
-                                        .map((e) => int.parse(e))
-                                        .toList();
+                    //         //     if (itemVitalsignValue.vitalSignTypeId == 1 ||
+                    //         //         itemVitalsignValue.vitalSignTypeId == 3 ||
+                    //         //         itemVitalsignValue.vitalSignTypeId == 4) {
+                    //         //       for (var val
+                    //         //           in _vitalSignDetailDTO.vitalSigns) {
+                    //         //         if (val.vitalSignTypeId ==
+                    //         //             itemVitalsignValue.vitalSignTypeId) {
+                    //         //           minVitalSignValue = val.numberMin;
+                    //         //           maxVitalSignValue = val.numberMax;
+                    //         //         }
+                    //         //       }
+                    //         //       List<int> listValueMap = listValue
+                    //         //           .map((data) => int.parse(data))
+                    //         //           .toList();
+                    //         //       List<String> listTimeXAxis =
+                    //         //           listTime.map((e) => '"${e}"').toList();
 
-                                    listNum.sort();
+                    //         //       return heartChart(
+                    //         //           listTimeXAxis,
+                    //         //           minVitalSignValue,
+                    //         //           maxVitalSignValue,
+                    //         //           listValueMap,
+                    //         //           _dateValidator.convertDateCreate(
+                    //         //               itemVitalsignValue.dateCreated,
+                    //         //               'dd/MM/yyyy',
+                    //         //               'yyyy-MM-dd'));
+                    //         //     } else if (itemVitalsignValue.vitalSignTypeId ==
+                    //         //         2) {
+                    //         //       List<List<int>> listValueMap =
+                    //         //           listValue.map((data) {
+                    //         //         List<int> listNum = data
+                    //         //             .split('-')
+                    //         //             .map((e) => int.parse(e))
+                    //         //             .toList();
 
-                                    List<int> dataClone = [
-                                      listNum.first,
-                                      listNum.last,
-                                      listNum.last,
-                                      listNum.last
-                                    ];
+                    //         //         listNum.sort();
 
-                                    return dataClone;
-                                  }).toList();
+                    //         //         List<int> dataClone = [
+                    //         //           listNum.first,
+                    //         //           listNum.last,
+                    //         //           listNum.last,
+                    //         //           listNum.last
+                    //         //         ];
 
-                                  List<String> listTimeXAxis =
-                                      listTime.map((e) => '"${e}"').toList();
+                    //         //         return dataClone;
+                    //         //       }).toList();
 
-                                  return bloodChart(
-                                      listTimeXAxis,
-                                      minVitalSignValue,
-                                      maxVitalSignValue,
-                                      listValueMap,
-                                      _dateValidator.convertDateCreate(
-                                          itemVitalsignValue.dateCreated,
-                                          'dd/MM/yyyy',
-                                          'yyyy-MM-dd'));
-                                }
-                              },
-                            );
-                          } else {
-                            return Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: Text('Không có dữ liệu'),
-                            );
-                          }
-                        } else {
-                          return Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: Text('Không có dữ liệu'),
-                          );
-                        }
-                      }
-                      return Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: Text('Vui lòng kiểm tra lại kết nối'),
-                      );
-                    }),
+                    //         //       List<String> listTimeXAxis =
+                    //         //           listTime.map((e) => '"${e}"').toList();
+
+                    //         //       return bloodChart(
+                    //         //           listTimeXAxis,
+                    //         //           minVitalSignValue,
+                    //         //           maxVitalSignValue,
+                    //         //           listValueMap,
+                    //         //           _dateValidator.convertDateCreate(
+                    //         //               itemVitalsignValue.dateCreated,
+                    //         //               'dd/MM/yyyy',
+                    //         //               'yyyy-MM-dd'));
+                    //         //     }
+                    //         //   },
+                    //         // );
+                    //       } else {
+                    //         return Container(
+                    //           width: MediaQuery.of(context).size.width,
+                    //           child: Text('Không có dữ liệu'),
+                    //         );
+                    //       }
+                    //     } else {
+                    //       return Container(
+                    //         width: MediaQuery.of(context).size.width,
+                    //         child: Text('Không có dữ liệu'),
+                    //       );
+                    //     }
+                    //   }
+                    //   return Container(
+                    //     width: MediaQuery.of(context).size.width,
+                    //     child: Text('Vui lòng kiểm tra lại kết nối'),
+                    //   );
+                    // }),
+                    detailVitalSign(),
                   ],
                 ),
               ),
@@ -311,6 +319,156 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
         ),
       ),
     );
+  }
+
+  detailVitalSign() {
+    if (dropdownValue != null) {
+      VitalSignValues vitalSignValue = _vitalSignDetailDTO.vitalSignValues
+          .where((element) => element.dateCreated.contains(dropdownValue))
+          .toList()
+          .first;
+
+      int minVitalSignValue = 0;
+      int maxVitalSignValue = 0;
+
+      var listTime = vitalSignValue.timeValue.split(',');
+      var listValue = vitalSignValue.numberValue.split(',');
+      listTime.removeLast();
+      listValue.removeLast();
+
+      if (vitalSignValue.vitalSignTypeId == 1 ||
+          vitalSignValue.vitalSignTypeId == 3 ||
+          vitalSignValue.vitalSignTypeId == 4) {
+        for (var val in _vitalSignDetailDTO.vitalSigns) {
+          if (val.vitalSignTypeId == vitalSignValue.vitalSignTypeId) {
+            minVitalSignValue = val.numberMin;
+            maxVitalSignValue = val.numberMax;
+          }
+        }
+        List<int> listValueMap =
+            listValue.map((data) => int.parse(data)).toList();
+        List<String> listTimeXAxis = listTime.map((e) => '"${e}"').toList();
+
+        return heartChart(
+            listTimeXAxis,
+            minVitalSignValue,
+            maxVitalSignValue,
+            listValueMap,
+            _dateValidator.convertDateCreate(
+                vitalSignValue.dateCreated, 'dd/MM/yyyy', 'yyyy-MM-dd'));
+      } else if (vitalSignValue.vitalSignTypeId == 2) {
+        List<List<int>> listValueMap = listValue.map((data) {
+          List<int> listNum = data.split('-').map((e) => int.parse(e)).toList();
+
+          listNum.sort();
+
+          List<int> dataClone = [
+            listNum.first,
+            listNum.last,
+            listNum.last,
+            listNum.last
+          ];
+
+          return dataClone;
+        }).toList();
+
+        List<String> listTimeXAxis = listTime.map((e) => '"${e}"').toList();
+
+        return bloodChart(
+            listTimeXAxis,
+            minVitalSignValue,
+            maxVitalSignValue,
+            listValueMap,
+            _dateValidator.convertDateCreate(
+                vitalSignValue.dateCreated, 'dd/MM/yyyy', 'yyyy-MM-dd'));
+      }
+    } else {
+      return Container();
+    }
+  }
+
+  _selectContract() {
+    if (listDays.isNotEmpty && listDays != null) {
+      return Container(
+        width: MediaQuery.of(context).size.width - 200,
+        child: Container(
+          margin: EdgeInsets.only(left: 20, right: 20, top: 10),
+          padding: EdgeInsets.only(left: 20),
+          decoration: BoxDecoration(
+              color: DefaultTheme.GREY_VIEW,
+              borderRadius: BorderRadius.circular(6)),
+          child: DropdownButton<String>(
+            value: dropdownValue,
+            items: listDays.map((String value) {
+              return new DropdownMenuItem<String>(
+                value: value,
+                child: new Text(
+                  _dateValidator.convertDateCreate(
+                      value, 'dd/MM/yyyy', 'yyyy-MM-dd'),
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              );
+            }).toList(),
+            dropdownColor: DefaultTheme.GREY_VIEW,
+            elevation: 1,
+            hint: Container(
+              width: MediaQuery.of(context).size.width - 284,
+              child: Text(
+                'Chọn ngày',
+                style: TextStyle(fontWeight: FontWeight.w600),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+            underline: Container(
+              width: 0,
+            ),
+            isExpanded: false,
+            onChanged: (res) async {
+              setState(() {
+                dropdownValue = res;
+              });
+            },
+          ),
+          //  DropdownButton<String>(
+          //   value: dropdownValue,
+          //   items: listDays.map((String value) {
+          //     return new DropdownMenuItem<String>(
+          //       value: value,
+          //       child: new Text(
+          //         value,
+          //         style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+          //       ),
+          //     );
+          //   }).toList(),
+          //   dropdownColor: DefaultTheme.GREY_VIEW,
+          //   elevation: 1,
+          //   hint: Container(
+          //     width: MediaQuery.of(context).size.width - 284,
+          //     child: Text(
+          //       'Chọn ngày',
+          //       style: TextStyle(fontWeight: FontWeight.w600),
+          //       overflow: TextOverflow.ellipsis,
+          //       maxLines: 1,
+          //     ),
+          //   ),
+          //   underline: Container(
+          //     width: 0,
+          //   ),
+          //   isExpanded: false,
+          //   onChanged: (res) async {
+          //     ///
+          //     setState(() {
+          //       dropdownValue = res;
+          //     });
+          //     //
+          //   },
+          // ),
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
   heartChart(List<String> listTimeXAxis, int minVitalSignValue,

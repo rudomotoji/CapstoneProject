@@ -881,9 +881,10 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
       child: InkWell(
         onTap: () {
           ///
+          Navigator.pushNamed(context, RoutesHDr.MEDICAL_SHARE);
         },
         child: Center(
-          child: Text('Chia sẻ hồ sơ'),
+          child: Text('Chia sẻ y lệnh'),
         ),
       ),
     );
