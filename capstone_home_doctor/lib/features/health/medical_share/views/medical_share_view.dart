@@ -9,9 +9,11 @@ import 'package:capstone_home_doctor/features/contract/blocs/medical_share_bloc.
 import 'package:capstone_home_doctor/features/contract/events/medical_share_event.dart';
 import 'package:capstone_home_doctor/features/contract/states/medical_share_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
+import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_type_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/hr_list_event.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/states/hr_list_state.dart';
+import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_type_list_state.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/events/medical_Share_event.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
@@ -19,8 +21,10 @@ import 'package:capstone_home_doctor/features/health/medical_share/states/medica
 import 'package:capstone_home_doctor/models/health_record_dto.dart';
 import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
+import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/medical_share_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
@@ -39,7 +43,6 @@ class MedicalShare extends StatefulWidget {
 class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 
-  int _contractId;
   int _patientId = 0;
   List<HealthRecordDTO> _listContracts = List<HealthRecordDTO>();
   HealthRecordDTO dropdownValue;
@@ -57,6 +60,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   //
   bool sendStatus = false;
   DateValidator _dateValidator = DateValidator();
+  String _selectedHRType;
+  int _selectedHRTypeID;
 
   @override
   void initState() {
@@ -73,6 +78,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   void dispose() {
     // TODO: implement dispose
     _medicalShareInsBloc.add(MedicalShareInsEventInitial());
+    NotificationsSelectBloc.instance.newNotification('');
     super.dispose();
   }
 
@@ -330,7 +336,9 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     listMedicalInsShare = [];
-    _contractId = ModalRoute.of(context).settings.arguments;
+    // if (_selectedHRTypeID == null) {
+    //   _selectedHRTypeID = ModalRoute.of(context).settings.arguments;
+    // }
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -368,97 +376,75 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                   }
                   return RefreshIndicator(
                     onRefresh: _pullRefresh,
-                    child: (_contractId == null)
-                        ? ListView(
-                            children: [
-                              BlocBuilder<HealthRecordListBloc, HRListState>(
-                                builder: (context, state) {
-                                  if (state is HRListStateLoading) {
-                                    return Container(
-                                      margin:
-                                          EdgeInsets.only(left: 20, right: 20),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color: DefaultTheme.GREY_BUTTON),
-                                      child: Center(
-                                        child: SizedBox(
-                                          width: 30,
-                                          height: 30,
-                                          child: Image.asset(
-                                              'assets/images/loading.gif'),
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  if (state is HRListStateFailure) {
-                                    print('---ListContractStateFailure---');
-                                    return Container(
-                                      margin: EdgeInsets.only(
-                                          left: 20,
-                                          right: 20,
-                                          bottom: 10,
-                                          top: 10),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          color: DefaultTheme.GREY_BUTTON),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 10,
-                                            bottom: 10,
-                                            left: 20,
-                                            right: 20),
-                                        child: Text(
-                                            'Không thể lấy danh sách hợp đồng',
-                                            style: TextStyle(
-                                              color: DefaultTheme.GREY_TEXT,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                            )),
-                                      ),
-                                    );
-                                  }
-                                  if (state is HRListStateSuccess) {
-                                    if (state.listHealthRecord != null) {
-                                      _listContracts = [];
-                                      for (var contract
-                                          in state.listHealthRecord) {
-                                        if (contract.contractId != null) {
-                                          _listContracts.add(contract);
-                                        }
-                                      }
-                                    }
-                                    return _selectContract();
-                                  }
-                                  return Container();
-                                },
-                              ),
-                              Container(
-                                margin: EdgeInsets.only(top: 10, bottom: 10),
-                                child: Text(
-                                  'Danh sách phiếu y lệnh:',
-                                  style: TextStyle(
-                                      color: DefaultTheme.BLACK,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w600),
+                    child: ListView(
+                      children: [
+                        BlocBuilder<HealthRecordListBloc, HRListState>(
+                          builder: (context, state) {
+                            if (state is HRListStateLoading) {
+                              return Container(
+                                margin: EdgeInsets.only(left: 20, right: 20),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(6),
+                                    color: DefaultTheme.GREY_BUTTON),
+                                child: Center(
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: Image.asset(
+                                        'assets/images/loading.gif'),
+                                  ),
                                 ),
-                              ),
-                              _listShare(),
-                            ],
-                          )
-                        : ListView(
-                            children: [
-                              Text(
-                                'Danh sách phiếu y lệnh:',
-                                style: TextStyle(
-                                    color: DefaultTheme.BLACK,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              _listShare(),
-                            ],
+                              );
+                            }
+                            if (state is HRListStateFailure) {
+                              print('---ListContractStateFailure---');
+                              return Container(
+                                margin: EdgeInsets.only(
+                                    left: 20, right: 20, bottom: 10, top: 10),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: DefaultTheme.GREY_BUTTON),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10, bottom: 10, left: 20, right: 20),
+                                  child:
+                                      Text('Không thể lấy danh sách hợp đồng',
+                                          style: TextStyle(
+                                            color: DefaultTheme.GREY_TEXT,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          )),
+                                ),
+                              );
+                            }
+                            if (state is HRListStateSuccess) {
+                              if (state.listHealthRecord != null) {
+                                _listContracts = [];
+                                for (var contract in state.listHealthRecord) {
+                                  if (contract.contractId != null) {
+                                    _listContracts.add(contract);
+                                  }
+                                }
+                              }
+                              return _selectContract();
+                            }
+                            return Container();
+                          },
+                        ),
+                        _selectType(),
+                        Container(
+                          margin: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Text(
+                            'Danh sách phiếu y lệnh:',
+                            style: TextStyle(
+                                color: DefaultTheme.BLACK,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600),
                           ),
+                        ),
+                        _listShare(),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -575,7 +561,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
           hint: Container(
             width: MediaQuery.of(context).size.width - 84,
             child: Text(
-              'Chọn hồ sơ cần chia sẻ:',
+              'Chọn hồ sơ cần chia sẻ',
               style: TextStyle(fontWeight: FontWeight.w600),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -590,14 +576,100 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
               dropdownValue = res;
               listMedicalInsShare = [];
               medicalInstructionIdsSelected = [];
+              _selectedHRType = null;
+              _selectedHRTypeID = null;
             });
             if (_patientId != 0 && dropdownValue.contractId != 0) {
               await _medicalShareBloc.add(MedicalShareEventGetMediIns(
                   patientID: _patientId,
-                  healthRecordId: dropdownValue.healthRecordId));
+                  healthRecordId: dropdownValue.healthRecordId,
+                  typeID: _selectedHRTypeID));
             }
           },
         ),
+      ),
+    );
+  }
+
+  Widget _selectType() {
+    return Container(
+      margin: EdgeInsets.only(top: 5, bottom: 5, left: 20, right: 20),
+      padding: EdgeInsets.only(left: 20),
+      height: 40,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: DefaultTheme.GREY_VIEW),
+      child: BlocBuilder<MedInsTypeListBloc, MedInsTypeState>(
+        builder: (context, state) {
+          if (state is MedInsTypeStateLoading) {
+            return Container(
+              width: 40,
+              height: 40,
+              child: SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset('assets/images/loading.gif'),
+              ),
+            );
+          }
+          if (state is MedInsTypeStateFailure) {
+            return Container(
+              width: 30,
+              child: Text('Lỗi'),
+            );
+          }
+          if (state is MedInsTypeStateSuccess) {
+            // if (_selectedHRTypeID != null) {
+            //   _selectedHRType = state.listMedInsType
+            //       .where((element) =>
+            //           element.medicalInstructionTypeId == _selectedHRTypeID)
+            //       .first
+            //       .name;
+            // }
+
+            // _listMedInsType = state.listMedInsType;
+            return Container(
+              width: MediaQuery.of(context).size.width - 80,
+              child: DropdownButton<MedicalInstructionTypeDTO>(
+                items:
+                    state.listMedInsType.map((MedicalInstructionTypeDTO value) {
+                  return new DropdownMenuItem<MedicalInstructionTypeDTO>(
+                    value: value,
+                    child: new Text(value.name),
+                  );
+                }).toList(),
+                hint: Text(
+                  (_selectedHRType == null)
+                      ? 'Chọn loại phiếu'
+                      : '${_selectedHRType}',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                underline: Container(
+                  width: 0,
+                ),
+                isExpanded: true,
+                onChanged: (_) async {
+                  setState(() {
+                    ///
+                    _selectedHRType = _.name;
+                    _selectedHRTypeID = _.medicalInstructionTypeId;
+                  });
+
+                  if (_patientId != 0 && dropdownValue.contractId != 0) {
+                    await _medicalShareBloc.add(MedicalShareEventGetMediIns(
+                        patientID: _patientId,
+                        healthRecordId: dropdownValue.healthRecordId,
+                        typeID: _selectedHRTypeID));
+                  }
+                },
+              ),
+            );
+            //
+          }
+          return Container(
+              width: MediaQuery.of(context).size.width,
+              child: Center(child: Text('Lỗi')));
+        },
       ),
     );
   }
@@ -1164,7 +1236,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
         dropdownValue = null;
         medicalInstructionIdsSelected = [];
         medicalInstructionIdsSelected = [];
-        if (_patientId != 0 && _contractId == null) {
+        if (_patientId != 0) {
           _healthRecordListBloc.add(
               HRListEventSetPersonalHRId(personalHealthRecordId: _patientId));
         }

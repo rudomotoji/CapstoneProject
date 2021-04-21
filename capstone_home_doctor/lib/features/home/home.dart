@@ -152,6 +152,7 @@ class _MainHomeState extends State<MainHome> {
         } else if (int.parse(notificationType) == 12) {
           //Navigate share medical instruction
           //
+          Navigator.of(context).pushNamed(RoutesHDr.MEDICAL_SHARE);
         } else if (int.parse(notificationType) == 11) {
           //Navigate connect device screen
           //

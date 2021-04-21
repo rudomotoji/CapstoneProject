@@ -140,9 +140,16 @@ class HealthRecordRepository extends BaseApiClient {
 
   //lấy danh sách medical instruction để share
   Future<List<MedInsByDiseaseDTO>> getAllMedicalToShare(
-      int patientID, int healthRecordId) async {
-    final String url =
-        '/MedicalInstructions/GetMedicalInstructionsToShare?patientId=${patientID}&healthRecordId=${healthRecordId}';
+      int patientID, int healthRecordId, int typeID) async {
+    String url;
+    if (typeID != null) {
+      url =
+          '/MedicalInstructions/GetMedicalInstructionsToShare?patientId=${patientID}&healthRecordId=${healthRecordId}&medicalInstructionType=${typeID}';
+    } else {
+      url =
+          '/MedicalInstructions/GetMedicalInstructionsToShare?patientId=${patientID}&healthRecordId=${healthRecordId}';
+    }
+    print(url);
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
