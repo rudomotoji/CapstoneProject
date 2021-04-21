@@ -125,7 +125,7 @@ class _OverviewTabState extends State<OverviewTab> {
               ));
         }
         if (state is VitalScheduleStateSuccess) {
-          if (state.dto.medicalInstructionId == null) {
+          if (state.dto.medicalInstructionId == null || state.dto == null) {
             return Container();
           } else {
             _saveVitalSignScheduleOffline(state.dto);

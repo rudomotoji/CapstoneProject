@@ -194,6 +194,9 @@ flutter:
     - assets/images/bg-medicine.png
     - assets/images/bg-calendar.png
     - assets/images/ic-call.png
+    - assets/images/bg-danger.png
+    - assets/images/bg-normal.png
+    - assets/images/ic-measure.png
 
 
   

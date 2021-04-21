@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/artboard_button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
@@ -44,6 +45,7 @@ import 'package:capstone_home_doctor/models/token_device_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
+import 'package:capstone_home_doctor/services/measure_helper.dart';
 import 'package:capstone_home_doctor/services/mobile_device_helper.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
@@ -57,6 +59,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 //////////////
 ///
@@ -70,8 +73,13 @@ final MobileDeviceHelper _mobileDeviceHelper = MobileDeviceHelper();
 final VitalSignHelper vitalSignHelper = VitalSignHelper();
 final ContractHelper contractHelper = ContractHelper();
 final ReminderHelper _reminderHelper = ReminderHelper();
+final ArrayValidator _arrayValidator = ArrayValidator();
+final MeasureHelper _measureHelper = MeasureHelper();
 DateValidator _dateValidator = DateValidator();
+List<ContractListDTO> _listExecuting = [];
 
+//
+List<int> listTimeMeasure = [5, 10, 15, 30];
 //
 final Shader _normalHealthColors = LinearGradient(
   colors: <Color>[
@@ -101,6 +109,9 @@ class _DashboardState extends State<DashboardPage>
   String _idDoctor = '';
   List<ContractListDTO> listContract = [];
   bool checkPeopleStatusLocal = false;
+
+  //measure kicked on
+  bool isMeasureOn = false;
 
   //peripheral
   bool _isConnectedWithPeripheral = false;
@@ -370,7 +381,12 @@ class _DashboardState extends State<DashboardPage>
         //
         listContract = value;
         //listContract=  listContract.where((item) => item.status=='APPROVED');
-
+        if (!mounted) return;
+        setState(() {
+          _listExecuting =
+              listContract.where((item) => item.status == 'ACTIVE').toList();
+        });
+        //
         for (ContractListDTO contract in listContract) {
           if (contract.status == 'APPROVED') {
             if (!mounted) return;
@@ -416,27 +432,6 @@ class _DashboardState extends State<DashboardPage>
                       maxHeight: maxHeight + 10,
                       minHeight: minHeight + 10,
                     ),
-                    (checkPeopleStatusLocal)
-                        ? Positioned(
-                            top: 30,
-                            child: Center(
-                              child: Container(
-                                width: MediaQuery.of(context).size.width - 80,
-                                margin: EdgeInsets.only(left: 40, right: 40),
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: Center(
-                                    child: Text('Sinh hiệu bất thường',
-                                        style: TextStyle(
-                                            color: DefaultTheme.WHITE,
-                                            fontWeight: FontWeight.w500))),
-                              ),
-                            ),
-                          )
-                        : Container(),
                   ],
                 ),
                 expandedHeight:
@@ -470,6 +465,7 @@ class _DashboardState extends State<DashboardPage>
 
           // ),
           // Text('$percent%'),
+          (checkPeopleStatusLocal) ? _showVitalSignSummary() : Container(),
           _showAppointmentNoti(),
           ((listPrescription != null && listPrescription.isNotEmpty) ||
                   !_isConnectedWithPeripheral ||
@@ -482,7 +478,11 @@ class _DashboardState extends State<DashboardPage>
           //
           //
           //
-
+          (checkPeopleStatusLocal && !_isConnectedWithPeripheral)
+              ? Container()
+              : (!checkPeopleStatusLocal && _isConnectedWithPeripheral)
+                  ? _showVitalSignSummary()
+                  : Container(),
           _showLastHeartRateMeasure(),
           _showLastBloodPressureMeasure(),
 
@@ -494,27 +494,6 @@ class _DashboardState extends State<DashboardPage>
 
   Widget _showMedicineSchedule() {
     return Container();
-  }
-
-  Widget _buildVitalSign() {
-    return Column(
-      children: <Widget>[
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Container(
-            padding: EdgeInsets.only(left: 20, bottom: 10),
-            margin: EdgeInsets.only(top: 20),
-            child: Text(
-              'Sinh hiệu',
-              style: TextStyle(
-                  color: DefaultTheme.BLACK,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildReminder() {
@@ -797,7 +776,18 @@ class _DashboardState extends State<DashboardPage>
                 ),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () async {
+                  //isMeasureOn
+                  await _measureHelper.isMeasureOn().then((value) {
+                    //
+                    if (!mounted) return;
+                    setState(() {
+                      //
+                      isMeasureOn = value;
+                    });
+                  });
+                  _showMeasureDuration();
+                },
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.2,
                   height: 80,
@@ -805,7 +795,7 @@ class _DashboardState extends State<DashboardPage>
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset('assets/images/ic-all-vital.png',
+                      Image.asset('assets/images/ic-measure.png',
                           width: 30, height: 30),
                       Padding(
                         padding: EdgeInsets.only(bottom: 3),
@@ -813,7 +803,7 @@ class _DashboardState extends State<DashboardPage>
                       Container(
                         width: MediaQuery.of(context).size.width * 0.2,
                         child: Text(
-                          'Sinh hiệu',
+                          'Đo nhịp tim',
                           style: TextStyle(fontSize: 12),
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
@@ -852,6 +842,214 @@ class _DashboardState extends State<DashboardPage>
       Future.microtask(() => _controller.animateTo(snapOffset,
           duration: Duration(milliseconds: 200), curve: Curves.easeIn));
     }
+  }
+
+  _showVitalSignSummary() {
+    return (checkPeopleStatusLocal)
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              (checkPeopleStatusLocal)
+                  ? Container()
+                  : Padding(
+                      padding: EdgeInsets.only(top: 20, left: 20),
+                      child: Text(
+                        'Sinh hiệu',
+                        style: TextStyle(
+                          color: DefaultTheme.BLACK,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 10),
+              ),
+              Container(
+                margin: EdgeInsets.only(bottom: 0),
+                padding:
+                    EdgeInsets.only(left: 20, bottom: 10, top: 10, right: 20),
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/bg-danger.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Column(
+                  children: <Widget>[
+                    //
+                    Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.WHITE.withOpacity(0.2),
+                      ),
+                      width: MediaQuery.of(context).size.width - 20,
+                      child: Center(
+                        child: Text(
+                          'Sinh hiệu bất thường'.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: DefaultTheme.WHITE,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(bottom: 5),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Ghi chú của bác sĩ: ',
+                        style: TextStyle(
+                          color: DefaultTheme.WHITE,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 100,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: DefaultTheme.WHITE.withOpacity(0.9),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              (_listExecuting.length == 0)
+                  ? Container()
+                  : Container(
+                      child: ListView.builder(
+                        padding: EdgeInsets.only(top: 15),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: _listExecuting.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return InkWell(
+                            onTap: () async => await launch(
+                                'tel://${_arrayValidator.parsePhoneToPhoneNo(_listExecuting[index].phoneNumberDoctor)}'),
+                            child: Container(
+                              padding: EdgeInsets.only(top: 10, bottom: 10),
+                              margin: EdgeInsets.only(left: 20, right: 20),
+                              decoration: BoxDecoration(
+                                //
+                                border: Border.all(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    width: 0.75),
+                                color: DefaultTheme.WHITE,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: Image.asset(
+                                        'assets/images/ic-call.png'),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 15),
+                                  ),
+                                  Text(
+                                    'Gọi bác sĩ ${_listExecuting[index].fullNameDoctor}',
+                                    style: TextStyle(
+                                      color: DefaultTheme.SUCCESS_STATUS,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+            ],
+          )
+        : Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              (checkPeopleStatusLocal)
+                  ? Container()
+                  : Padding(
+                      padding: EdgeInsets.only(top: 20, left: 20),
+                      child: Text(
+                        'Sinh hiệu',
+                        style: TextStyle(
+                          color: DefaultTheme.BLACK,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 10),
+              ),
+              Container(
+                margin: EdgeInsets.only(bottom: 0),
+                padding:
+                    EdgeInsets.only(left: 20, bottom: 10, top: 10, right: 20),
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/bg-normal.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: DefaultTheme.WHITE.withOpacity(0.2),
+                            ),
+                            width: MediaQuery.of(context).size.width - 20,
+                            child: Center(
+                              child: Text(
+                                'Sinh hiệu ổn định',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: DefaultTheme.WHITE,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                          Container(
+                            child: Text(
+                              'Hệ thống không nhận thấy dấu hiệu bất thường.',
+                              style: TextStyle(
+                                color: DefaultTheme.WHITE,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
   }
 
   _showAppointmentNoti() {
@@ -927,9 +1125,8 @@ class _DashboardState extends State<DashboardPage>
                             begin: Alignment.topRight,
                             end: Alignment.bottomLeft,
                             colors: [
-                              DefaultTheme.YELLOW,
-                              DefaultTheme.GRADIENT_5,
-                              DefaultTheme.RED_CALENDAR,
+                              DefaultTheme.BLUE_TEXT.withOpacity(0.5),
+                              DefaultTheme.BLUE_TEXT,
                             ]),
                       ),
                       child: Center(
@@ -988,12 +1185,14 @@ class _DashboardState extends State<DashboardPage>
                                     children: [
                                       Text(
                                         '${listAppointmentCurrentSortedDate[index].dateExamination.split('/')[0]}',
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontSize: 17,
-                                            color: DefaultTheme.RED_CALENDAR),
+                                            color: DefaultTheme.BLUE_TEXT),
                                       ),
                                       Text(
                                         'Th ${listAppointmentCurrentSortedDate[index].dateExamination.split('/')[1]}',
+                                        textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontSize: 12,
                                             color: DefaultTheme.BLACK),
@@ -1019,7 +1218,7 @@ class _DashboardState extends State<DashboardPage>
                                         border: Border(
                                       left: BorderSide(
                                           width: 2.0,
-                                          color: DefaultTheme.RED_CALENDAR),
+                                          color: DefaultTheme.BLUE_TEXT),
                                     )),
                                     width: MediaQuery.of(context).size.width -
                                         (40 + 20 + 50 + 2 + 10),
@@ -1094,7 +1293,7 @@ class _DashboardState extends State<DashboardPage>
           Padding(
             padding: EdgeInsets.only(top: 20, left: 20),
             child: Text(
-              'Lần đo gần nhất',
+              'Lần đo gần đây',
               style: TextStyle(
                 color: DefaultTheme.BLACK,
                 fontSize: 18,
@@ -1525,188 +1724,6 @@ class _DashboardState extends State<DashboardPage>
             : Container(),
       ],
     );
-  }
-
-  _showStatusOverview() {
-    //change color and text color if else status patient and call it
-    return (checkPeopleStatusLocal)
-        ? ClipRRect(
-            child: Stack(
-              children: [
-                Center(
-                  child: AnimatedContainer(
-                    width: MediaQuery.of(context).size.width,
-                    height: 100,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                          colors: (dangerKickedOn)
-                              ? [
-                                  DefaultTheme.GRADIENT_3,
-                                  DefaultTheme.GRADIENT_3,
-                                  DefaultTheme.GRADIENT_4,
-                                  DefaultTheme.GRADIENT_5,
-                                ]
-                              : [
-                                  DefaultTheme.GRADIENT_5,
-                                  DefaultTheme.GRADIENT_5,
-                                  DefaultTheme.GRADIENT_5,
-                                  DefaultTheme.GRADIENT_5,
-                                ]),
-                    ),
-                    duration: const Duration(seconds: 1),
-                    curve: Curves.easeInOutBack,
-                    // child: Text('Sinh hiệu bất thường'),
-                  ),
-                ),
-                Positioned(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 100,
-                    padding: EdgeInsets.only(left: 20, right: 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.black.withOpacity(0.3),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        //
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 15,
-                          ),
-                        ),
-                        Text(
-                          'Sinh hiệu bất thường',
-                          style: TextStyle(
-                            color: DefaultTheme.WHITE,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 5,
-                          ),
-                        ),
-                        Divider(
-                          color: DefaultTheme.GREY_VIEW,
-                          height: 1,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 10),
-                        ),
-                        Text(
-                          'Hệ thống ghi nhận nhịp tim của bạn bất thường.',
-                          style: TextStyle(
-                            color: DefaultTheme.WHITE,
-                          ),
-                        ),
-                        // BlocBuilder<VitalSignDangerousBloc, VitalSignState>(
-                        //     builder: (context, state) {
-                        //   if (state is VitalSignStateLoading) {
-                        //     return Container(
-                        //       width: MediaQuery.of(context).size.width,
-                        //       height: 80,
-                        //       child: SizedBox(
-                        //         width: 80,
-                        //         height: 80,
-                        //         child: Image.asset('assets/images/loading.gif'),
-                        //       ),
-                        //     );
-                        //   }
-                        //   if (state is VitalSignStateFailure) {
-                        //     return Container(
-                        //         width: MediaQuery.of(context).size.width,
-                        //         height: 80,
-                        //         child: Center(
-                        //           child: Text('Không thể tải'),
-                        //         ));
-                        //   }
-                        //   if (state is VitalSignGetListDangerousSuccess) {
-                        //     if (null == state.list) {
-                        //       return Container();
-                        //     } else {
-                        //       // lastMeasurement = state.list.last;
-                        //       listVitalSignDangerous = state.list;
-                        //     }
-                        //   }
-                        //   return Container(
-                        //       child: Column(
-                        //     children: <Widget>[
-                        //       //
-                        //       Text(
-                        //         'Hệ thống ghi nhận nhịp tim của bạn bất thường.',
-                        //         style: TextStyle(
-                        //           color: DefaultTheme.WHITE,
-                        //         ),
-                        //       ),
-                        //       (listVitalSignDangerous != null)
-                        //           ? Text('${listVitalSignDangerous.length}')
-                        //           : Container(),
-                        //     ],
-                        //   ));
-                        // }),
-                      ],
-                    ),
-                  ),
-                ),
-                //
-              ],
-            ),
-          )
-        : Container(
-            width: MediaQuery.of(context).size.width,
-            height: 100,
-            padding: EdgeInsets.only(left: 20, right: 20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: DefaultTheme.GREY_VIEW,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                //
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 15,
-                  ),
-                ),
-                Text(
-                  'Sinh hiệu bình thường',
-                  style: TextStyle(
-                    color: DefaultTheme.BLUE_TEXT,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: 5,
-                  ),
-                ),
-                Divider(
-                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                  height: 1,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 10),
-                ),
-                Text(
-                  'Hiện tại không có dấu hiệu bất thường về sinh hiệu của bạn.',
-                  style: TextStyle(
-                    color: DefaultTheme.BLACK,
-                  ),
-                ),
-              ],
-            ),
-          );
   }
 
   void _showPopUpIDDoctor() {
@@ -2664,5 +2681,250 @@ class _DashboardState extends State<DashboardPage>
 
   Future<void> _pullRefresh() async {
     _getPatientId();
+  }
+
+  DateTime dateNow;
+  _getDateTimeNow() {
+    setState(() {
+      dateNow = DateTime.now();
+    });
+  }
+
+//show measure duration
+  _showMeasureDuration() {
+    _getDateTimeNow();
+    final _tamThuController = TextEditingController();
+    final _tamTruongController = TextEditingController();
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        backgroundColor: DefaultTheme.TRANSPARENT,
+        builder: (context) {
+          return BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.85,
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.05),
+                  color: DefaultTheme.TRANSPARENT,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.8,
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(15)),
+                      color: DefaultTheme.WHITE.withOpacity(0.9),
+                    ),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          //
+
+                          Padding(
+                            padding:
+                                EdgeInsets.only(top: 30, left: 20, right: 30),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 30,
+                                      height: 30,
+                                      child: Image.asset(
+                                          'assets/images/ic-measure.png'),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 15),
+                                    ),
+                                    Text(
+                                      'Đo nhịp tim',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                  ],
+                                )),
+                          ),
+                          (isMeasureOn)
+                              ? Expanded(
+                                  child: Column(children: []),
+                                )
+                              : Expanded(
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.only(top: 20)),
+                                      Divider(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        height: 0.25,
+                                      ),
+                                      Container(
+                                        height: 50,
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 140,
+                                              child: Text(
+                                                'Ngày',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                            ),
+                                            Text(
+                                                '${_dateValidator.parseToDateView3(dateNow.toString())}'),
+                                          ],
+                                        ),
+                                      ),
+                                      Divider(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        height: 0.25,
+                                      ),
+                                      Container(
+                                        height: 50,
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 140,
+                                              child: Text(
+                                                'Bắt đầu từ',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                            ),
+                                            Text(
+                                                '${_dateValidator.getHourAndMinute(dateNow.toString())}'),
+                                            Spacer(),
+                                          ],
+                                        ),
+                                      ),
+                                      Divider(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        height: 0.25,
+                                      ),
+                                      Container(
+                                        height: 50,
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              width: 140,
+                                              child: Text(
+                                                'Trong vòng',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                              ),
+                                            ),
+                                            //
+                                            Container(
+                                              height: 40,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  180,
+                                              child: DropdownButton<int>(
+                                                items: listTimeMeasure
+                                                    .map((int value) {
+                                                  return new DropdownMenuItem<
+                                                      int>(
+                                                    value: value,
+                                                    child: new Text(
+                                                      '${value} phút',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                                hint: Container(
+                                                  padding:
+                                                      EdgeInsets.only(left: 0),
+                                                  child: Text(
+                                                    'Chọn thời gian',
+                                                    style: TextStyle(
+                                                        color:
+                                                            DefaultTheme.BLACK,
+                                                        fontSize: 15),
+                                                  ),
+                                                ),
+                                                underline: Container(
+                                                  width: 0,
+                                                ),
+                                                isExpanded: true,
+                                                onChanged: (_) {
+                                                  print('$_');
+                                                },
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Divider(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        height: 0.25,
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 45,
+                                        child: ButtonHDr(
+                                          style: BtnStyle.BUTTON_BLACK,
+                                          label: 'Bắt đầu đo',
+                                          onTap: () async {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.only(top: 30)),
+                                    ],
+                                  ),
+                                ),
+                        ]),
+                  ),
+                ),
+                Positioned(
+                  top: 23,
+                  left: MediaQuery.of(context).size.width * 0.3,
+                  height: 5,
+                  child: Container(
+                    padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.3),
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    height: 15,
+                    decoration: BoxDecoration(
+                        color: DefaultTheme.WHITE.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(50)),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
   }
 }

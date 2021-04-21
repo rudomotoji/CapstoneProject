@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:capstone_home_doctor/features/schedule/blocs/appnt_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/sms/repositories/sms_repositories.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/blood_bloc.dart';
+import 'package:capstone_home_doctor/services/measure_helper.dart';
 import 'package:capstone_home_doctor/services/payment_helper.dart';
 import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
 import 'package:intl/intl.dart';
@@ -150,6 +151,7 @@ final MedicalInstructionHelper _medicalInstructionHelper =
     MedicalInstructionHelper();
 final DoctorHelper _doctorHelper = DoctorHelper();
 final PaymentHelper _paymentHelper = PaymentHelper();
+final MeasureHelper _measureHelper = MeasureHelper();
 //
 /////////////////////
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
@@ -615,10 +617,10 @@ void main() async {
                                         //
                                         if (isSMSOff == false) {
                                           //SEND SMS TO RELATIVE AND DOCTOR
-                                          await _smsRepository.sendSmsMessage(
-                                              _accountId,
-                                              _vitalSignScheduleDTO
-                                                  .doctorAccountId);
+                                          // await _smsRepository.sendSmsMessage(
+                                          //     _accountId,
+                                          //     _vitalSignScheduleDTO
+                                          //         .doctorAccountId);
                                           //
                                           //UPDATE STATUS SMS IS SENT
                                           _vitalSignHelper
@@ -1392,8 +1394,8 @@ _connectInBackground(int timeInsert) async {
                               //
                               if (isSMSOff == false) {
                                 //SEND SMS TO RELATIVE AND DOCTOR
-                                await _smsRepository.sendSmsMessage(_accountId,
-                                    _vitalSignScheduleDTO.doctorAccountId);
+                                // await _smsRepository.sendSmsMessage(_accountId,
+                                //     _vitalSignScheduleDTO.doctorAccountId);
 
                                 //UPDATE STATUS SMS IS SENT
                                 _vitalSignHelper
@@ -1590,8 +1592,8 @@ _connectInBackground(int timeInsert) async {
                               //
                               if (isSMSOff == false) {
                                 //SEND SMS TO RELATIVE AND DOCTOR
-                                await _smsRepository.sendSmsMessage(_accountId,
-                                    _vitalSignScheduleDTO.doctorAccountId);
+                                // await _smsRepository.sendSmsMessage(_accountId,
+                                //     _vitalSignScheduleDTO.doctorAccountId);
                                 // //
                                 //UPDATE STATUS SMS IS SENT
                                 _vitalSignHelper
@@ -1749,6 +1751,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('SMS_TURN_OFF')) {
       _vitalSignHelper.initialSendSMS();
+    }
+    if (!prefs.containsKey('MEASURE_ON')) {
+      _measureHelper.initialMeasureHelper();
     }
   }
 

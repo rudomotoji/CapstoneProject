@@ -47,8 +47,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   List<TypeFilter> _listFilter = [];
   TypeFilter _valueFilter;
   int _patientId = 0;
-  TabController controller;
-  ScrollController _scrollController;
+
   int _listIndex = 0;
 
   Stream<ReceiveNotification> _notificationsStream;
@@ -58,7 +57,6 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     _healthRecordListBloc = BlocProvider.of(context);
-    _scrollController = ScrollController(initialScrollOffset: 0.0);
 
     getDataFromJSONFile();
 
@@ -86,6 +84,8 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
     await _authenticateHelper.getPatientId().then((value) {
       setState(() {
         _patientId = value;
+        _healthRecordListBloc
+            .add(HRListEventSetPersonalHRId(personalHealthRecordId: value));
       });
     });
   }
@@ -94,7 +94,6 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.addObserver(this);
     super.dispose();
-    _scrollController.dispose();
   }
 
   @override
@@ -444,7 +443,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
               child: Image.asset('assets/images/ic-health-record.png'),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 20),
+              padding: EdgeInsets.only(left: 10),
             ),
             Expanded(
               child: Stack(
@@ -465,11 +464,11 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                 style: TextStyle(fontWeight: FontWeight.w500),
                               )
                             : Text(
-                                'Hồ sơ${_genderDiseaseId(dto.diseases)} tại ${dto.place}',
+                                'Hồ sơ tại ${dto.place} (${_genderDiseaseId(dto.diseases)})',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 16),
+                                    fontWeight: FontWeight.w500, fontSize: 15),
                               ),
                       ),
                       Padding(
