@@ -76,11 +76,11 @@ class HealthRecordRepository extends BaseApiClient {
       final response = await http.put(url);
       // final response = await putApi(url, null, null);
       print('response: ${response.statusCode}');
-      // if (response.statusCode == 200) {
-      //   return true;
-      // } else {
-      return true;
-      // }
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       print('ERROR AT DELETE HEALTH RECORD ${e}');
       return false;
