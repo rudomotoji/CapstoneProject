@@ -510,9 +510,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               listGroupMedIns.clear();
 
               List<MedicalInsGroup> listGroupMed = [];
-              MedicalInsGroup _medicalGroupItem = null;
               for (var item in state.listMedIns) {
                 List<MedicalInstructionDTO> _listMedIns = [];
+                MedicalInsGroup _medicalGroupItem = null;
                 _listMedIns.add(item);
                 if (listGroupMed.length <= 0) {
                   _medicalGroupItem = new MedicalInsGroup(
@@ -520,18 +520,21 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                       medicalInstructionTypeId: item.medicalInstructionTypeId,
                       listMedicalIns: _listMedIns);
                 } else {
+                  bool flag = false;
                   for (var element in listGroupMed) {
                     if (element.medicalInstructionTypeId ==
                         item.medicalInstructionTypeId) {
+                      flag = true;
                       element.listMedicalIns.add(item);
-                    } else {
-                      _medicalGroupItem = MedicalInsGroup(
-                          type: item.medicalInstructionType,
-                          medicalInstructionTypeId:
-                              item.medicalInstructionTypeId,
-                          listMedicalIns: _listMedIns);
                     }
                   }
+                  if (!flag) {
+                    _medicalGroupItem = MedicalInsGroup(
+                        type: item.medicalInstructionType,
+                        medicalInstructionTypeId: item.medicalInstructionTypeId,
+                        listMedicalIns: _listMedIns);
+                  }
+                  flag = false;
                 }
                 if (_medicalGroupItem != null) {
                   listGroupMed.add(_medicalGroupItem);
