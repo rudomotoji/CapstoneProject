@@ -8,13 +8,8 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/contract/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/contract/events/medical_share_event.dart';
 import 'package:capstone_home_doctor/features/contract/states/medical_share_state.dart';
-import 'package:capstone_home_doctor/features/health/health_record/blocs/health_record_list_bloc.dart';
-import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_type_list_bloc.dart';
-import 'package:capstone_home_doctor/features/health/health_record/events/hr_list_event.dart';
-import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_type_event.dart';
+import 'package:capstone_home_doctor/features/health/health_record/repositories/health_record_repository.dart';
 import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
-import 'package:capstone_home_doctor/features/health/health_record/states/hr_list_state.dart';
-import 'package:capstone_home_doctor/features/health/health_record/states/med_ins_type_list_state.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/blocs/medical_share_bloc.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/events/medical_Share_event.dart';
 import 'package:capstone_home_doctor/features/health/medical_share/repositories/medical_share_repository.dart';
@@ -47,16 +42,16 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   int _patientId = 0;
   List<HealthRecordDTO> _listContracts = List<HealthRecordDTO>();
   HealthRecordDTO dropdownValue;
-  HealthRecordListBloc _healthRecordListBloc;
   List<int> medicalInstructionIdsSelected = [];
   MedicalShareBloc _medicalShareBloc;
   MedicalShareInsBloc _medicalShareInsBloc;
-  MedInsTypeListBloc _medInsTypeListBloc;
 
   MedicalShareInsRepository _medicalShareInsRepository =
       MedicalShareInsRepository(httpClient: http.Client());
   MedicalInstructionRepository _medicalInstructionRepository =
       MedicalInstructionRepository(httpClient: http.Client());
+  HealthRecordRepository healthRecordRepository =
+      HealthRecordRepository(httpClient: http.Client());
 
   List<MedInsByDiseaseDTO> listMedicalInsShare;
   //
@@ -65,15 +60,14 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   String _selectedHRType;
   int _selectedHRTypeID = 0;
   List<MedicalInstructionTypeDTO> _listMedInsType;
+  int contractID;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _healthRecordListBloc = BlocProvider.of(context);
     _medicalShareBloc = BlocProvider.of(context);
     _medicalShareInsBloc = BlocProvider.of(context);
-    _medInsTypeListBloc = BlocProvider.of(context);
 
     _getPatientId();
   }
@@ -340,9 +334,13 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     listMedicalInsShare = [];
-    // if (_selectedHRTypeID == null) {
-    //   _selectedHRTypeID = ModalRoute.of(context).settings.arguments;
-    // }
+    if (contractID == null) {
+      Map<String, int> arguments = ModalRoute.of(context).settings.arguments;
+      if (arguments != null) {
+        contractID = arguments['contractID'];
+        _selectedHRTypeID = arguments['type'];
+      }
+    }
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -382,63 +380,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                     onRefresh: _pullRefresh,
                     child: ListView(
                       children: [
-                        BlocBuilder<HealthRecordListBloc, HRListState>(
-                          builder: (context, state) {
-                            if (state is HRListStateLoading) {
-                              return Container(
-                                margin: EdgeInsets.only(left: 20, right: 20),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: DefaultTheme.GREY_BUTTON),
-                                child: Center(
-                                  child: SizedBox(
-                                    width: 30,
-                                    height: 30,
-                                    child: Image.asset(
-                                        'assets/images/loading.gif'),
-                                  ),
-                                ),
-                              );
-                            }
-                            if (state is HRListStateFailure) {
-                              print('---ListContractStateFailure---');
-                              return Container(
-                                margin: EdgeInsets.only(
-                                    left: 20, right: 20, bottom: 10, top: 10),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color: DefaultTheme.GREY_BUTTON),
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 20, right: 20),
-                                  child:
-                                      Text('Không thể lấy danh sách hợp đồng',
-                                          style: TextStyle(
-                                            color: DefaultTheme.GREY_TEXT,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                          )),
-                                ),
-                              );
-                            }
-                            if (state is HRListStateSuccess) {
-                              if (state.listHealthRecord != null) {
-                                _listContracts = [];
-                                for (var contract in state.listHealthRecord) {
-                                  if (contract.contractId != null &&
-                                      !contract.contractStatus
-                                          .contains('FINISHED') &&
-                                      !contract.contractStatus
-                                          .contains('LOCKED')) {
-                                    _listContracts.add(contract);
-                                  }
-                                }
-                              }
-                              return _selectContract();
-                            }
-                            return Container();
-                          },
-                        ),
+                        _selectContract(),
                         _selectType(),
                         Container(
                           margin: EdgeInsets.only(top: 10, bottom: 10),
@@ -543,60 +485,87 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   }
 
   Widget _selectContract() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      child: Container(
-        margin: EdgeInsets.only(left: 20, right: 20, top: 10),
-        padding: EdgeInsets.only(left: 20),
-        decoration: BoxDecoration(
-            color: DefaultTheme.GREY_VIEW,
-            borderRadius: BorderRadius.circular(6)),
-        child: DropdownButton<HealthRecordDTO>(
-          value: dropdownValue,
-          items: _listContracts.map((HealthRecordDTO value) {
-            DateTime dateCreated =
-                DateFormat('yyyy-MM-dd').parse(value.dateCreated);
-            return new DropdownMenuItem<HealthRecordDTO>(
-              value: value,
-              child: new Text(
-                '${value.place}-${DateFormat('dd/MM/yyyy').format(dateCreated)}',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-              ),
-            );
-          }).toList(),
-          dropdownColor: DefaultTheme.GREY_VIEW,
-          elevation: 1,
-          hint: Container(
-            width: MediaQuery.of(context).size.width - 84,
+    if (_listContracts == null) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: Container(
+          margin: EdgeInsets.only(left: 20, right: 20, top: 10),
+          padding: EdgeInsets.only(left: 20),
+          decoration: BoxDecoration(
+              color: DefaultTheme.GREY_VIEW,
+              borderRadius: BorderRadius.circular(6)),
+          child: Container(
+            margin: EdgeInsets.only(top: 10, bottom: 10),
             child: Text(
-              'Chọn hồ sơ cần chia sẻ',
-              style: TextStyle(fontWeight: FontWeight.w600),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
+              'Không thể lấy dữ liệu',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             ),
           ),
-          underline: Container(
-            width: 0,
-          ),
-          isExpanded: false,
-          onChanged: (res) async {
-            setState(() {
-              dropdownValue = res;
-              listMedicalInsShare = [];
-              medicalInstructionIdsSelected = [];
-              _selectedHRType = null;
-              _selectedHRTypeID = null;
-            });
-            if (_patientId != 0 && dropdownValue.contractId != 0) {
-              await _medicalShareBloc.add(MedicalShareEventGetMediIns(
-                  patientID: _patientId,
-                  healthRecordId: dropdownValue.healthRecordId,
-                  typeID: _selectedHRTypeID));
-            }
-          },
         ),
-      ),
-    );
+      );
+    } else {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: Container(
+          margin: EdgeInsets.only(left: 20, right: 20, top: 10),
+          padding: EdgeInsets.only(left: 20),
+          decoration: BoxDecoration(
+              color: DefaultTheme.GREY_VIEW,
+              borderRadius: BorderRadius.circular(6)),
+          child: (contractID == null)
+              ? DropdownButton<HealthRecordDTO>(
+                  value: dropdownValue,
+                  items: _listContracts.map((HealthRecordDTO value) {
+                    return new DropdownMenuItem<HealthRecordDTO>(
+                      value: value,
+                      child: new Text(
+                        '${value.place}-${_dateValidator.convertDateCreate(value.dateCreated, 'dd/MM/yyyy', 'yyyy-MM-dd')}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14),
+                      ),
+                    );
+                  }).toList(),
+                  dropdownColor: DefaultTheme.GREY_VIEW,
+                  elevation: 1,
+                  hint: Container(
+                    width: MediaQuery.of(context).size.width - 84,
+                    child: Text(
+                      'Chọn hồ sơ cần chia sẻ',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                  underline: Container(
+                    width: 0,
+                  ),
+                  isExpanded: false,
+                  onChanged: (res) async {
+                    setState(() {
+                      dropdownValue = res;
+                      listMedicalInsShare = [];
+                      medicalInstructionIdsSelected = [];
+                      _selectedHRType = null;
+                      _selectedHRTypeID = null;
+                    });
+                    if (_patientId != 0 && dropdownValue.contractId != 0) {
+                      await _medicalShareBloc.add(MedicalShareEventGetMediIns(
+                          patientID: _patientId,
+                          healthRecordId: dropdownValue.healthRecordId,
+                          typeID: _selectedHRTypeID));
+                    }
+                  },
+                )
+              : Container(
+                  margin: EdgeInsets.only(top: 10, bottom: 10),
+                  child: Text(
+                    '${dropdownValue.place}-${_dateValidator.convertDateCreate(dropdownValue.dateCreated, 'dd/MM/yyyy', 'yyyy-MM-dd')}',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  ),
+                ),
+        ),
+      );
+    }
   }
 
   Widget _selectType() {
@@ -607,59 +576,27 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: DefaultTheme.GREY_VIEW),
-      child: BlocBuilder<MedInsTypeListBloc, MedInsTypeState>(
-        builder: (context, state) {
-          if (state is MedInsTypeStateLoading) {
-            return Container(
-              width: 40,
-              height: 40,
-              child: SizedBox(
-                width: 40,
-                height: 40,
-                child: Image.asset('assets/images/loading.gif'),
+      child: (_listMedInsType == null)
+          ? Container(
+              margin: EdgeInsets.only(top: 10, bottom: 10),
+              child: Text(
+                'Không thể lấy dữ liệu',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),
-            );
-          }
-          if (state is MedInsTypeStateFailure) {
-            return Container(
-              width: 30,
-              child: Text('Lỗi'),
-            );
-          }
-          if (state is MedInsTypeStateSuccess) {
-            _listMedInsType = [];
-            // if (_selectedHRTypeID != null) {
-            //   _selectedHRType = state.listMedInsType
-            //       .where((element) =>
-            //           element.medicalInstructionTypeId == _selectedHRTypeID)
-            //       .first
-            //       .name;
-            // }
-
-            // _listMedInsType = state.listMedInsType;
-            MedicalInstructionTypeDTO all = MedicalInstructionTypeDTO(
-                medicalInstructionTypeId: 0, name: 'Tất cả');
-            _listMedInsType.add(all);
-            _listMedInsType.addAll(state.listMedInsType);
-            // for (var item in state.listMedInsType) {
-            //   _listMedInsType.add(item);
-            // }
-            // if (mounted) {
-            //   MedicalInstructionTypeDTO all = MedicalInstructionTypeDTO(
-            //       medicalInstructionTypeId: 0, name: 'Tất cả');
-            //   _listMedInsType.add(all);
-            // }
-            // MedicalInstructionTypeDTO all = MedicalInstructionTypeDTO(
-            //     medicalInstructionTypeId: 0, name: 'Tất cả');
-            // bool add = true;
-
-            // if (add) {
-            //   print(add);
-            //   _listMedInsType.add(all);
-            // }
-
-            return Container(
+            )
+          : Container(
               width: MediaQuery.of(context).size.width - 80,
+              // child: (contractID == null)
+              //     ?
+              //     : Container(
+              //         margin: EdgeInsets.only(top: 10, bottom: 10),
+              //         child: Text(
+              //           '${_selectedHRType}',
+              //           style: TextStyle(
+              //               fontWeight: FontWeight.w600, fontSize: 16),
+              //         ),
+              //       ),
+              //
               child: DropdownButton<MedicalInstructionTypeDTO>(
                 items: _listMedInsType.map((MedicalInstructionTypeDTO value) {
                   return new DropdownMenuItem<MedicalInstructionTypeDTO>(
@@ -692,14 +629,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                   }
                 },
               ),
-            );
-            //
-          }
-          return Container(
-              width: MediaQuery.of(context).size.width,
-              child: Center(child: Text('Lỗi')));
-        },
-      ),
+            ),
     );
   }
 
@@ -1132,71 +1062,17 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
             );
           });
       if (healthRecordId != 0 && _listMedIns.length > 0) {
-        // _medicalShareInsBloc.add(MedicalShareInsEventSend(
-        //     healthRecordId: dropdownValue.healthRecordId,
-        //     listMediIns: medicalInstructionIdsSelected));
-        //
         _medicalShareInsRepository
             .shareMoreMedIns(dropdownValue.healthRecordId,
                 medicalInstructionIdsSelected, dropdownValue.contractId)
             .then((value) {
           Navigator.of(context).pop();
           if (value) {
-            // showDialog(
-            //   barrierDismissible: false,
-            //   context: context,
-            //   builder: (BuildContext context) {
-            //     return Center(
-            //       child: ClipRRect(
-            //         borderRadius: BorderRadius.all(Radius.circular(5)),
-            //         child: BackdropFilter(
-            //           filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-            //           child: Container(
-            //             width: 200,
-            //             height: 200,
-            //             decoration: BoxDecoration(
-            //                 borderRadius: BorderRadius.circular(10),
-            //                 color: DefaultTheme.WHITE.withOpacity(0.8)),
-            //             child: Column(
-            //               mainAxisAlignment: MainAxisAlignment.center,
-            //               crossAxisAlignment: CrossAxisAlignment.center,
-            //               children: [
-            //                 SizedBox(
-            //                   width: 100,
-            //                   height: 100,
-            //                   child:
-            //                       Image.asset('assets/images/ic-checked.png'),
-            //                 ),
-            //                 Text(
-            //                   'Chia sẻ thêm thành công',
-            //                   style: TextStyle(
-            //                       color: DefaultTheme.GREY_TEXT,
-            //                       fontSize: 15,
-            //                       fontWeight: FontWeight.w400,
-            //                       decoration: TextDecoration.none),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //         ),
-            //       ),
-            //     );
-            //   },
-            // );
-            // Future.delayed(const Duration(seconds: 3), () {
-            // Navigator.of(context).pop();
             Navigator.of(context).pop();
-            // });
           } else {
             _alertError('Không thể chia sẻ, vui lòng thử lại');
           }
         });
-
-        // Future.delayed(const Duration(seconds: 3), () {
-        //   _medicalShareHelper.isMedicalShared().then((value) {
-
-        //   });
-        // });
       } else {
         Navigator.of(context).pop();
         _alertError('Bạn phải chọn ít nhất 1 phiếu để chia sẻ');
@@ -1265,11 +1141,71 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
         dropdownValue = null;
         medicalInstructionIdsSelected = [];
         medicalInstructionIdsSelected = [];
-        _medInsTypeListBloc.add(MedInsTypeEventGetList(status: 'active'));
+
         if (_patientId != 0) {
-          _healthRecordListBloc.add(
-              HRListEventSetPersonalHRId(personalHealthRecordId: _patientId));
+          healthRecordRepository
+              .getListHealthRecord(_patientId)
+              .then((value) async {
+            _listContracts.clear();
+            if (value != null) {
+              _listContracts.clear();
+              for (var contract in value) {
+                if (contract.contractId != null &&
+                    !contract.contractStatus.contains('FINISHED') &&
+                    !contract.contractStatus.contains('LOCKED')) {
+                  setState(() {
+                    _listContracts.add(contract);
+                  });
+                }
+              }
+
+              for (var item in _listContracts) {
+                if (item.contractId == contractID) {
+                  setState(() {
+                    dropdownValue = item;
+                  });
+
+                  if (_patientId != 0 && dropdownValue.contractId != 0) {
+                    await _medicalShareBloc.add(MedicalShareEventGetMediIns(
+                        patientID: _patientId,
+                        healthRecordId: dropdownValue.healthRecordId,
+                        typeID: _selectedHRTypeID));
+                  }
+                }
+              }
+            }
+          });
         }
+        _medicalInstructionRepository
+            .getMedicalInstructionType('active')
+            .then((value) async {
+          if (value != null) {
+            MedicalInstructionTypeDTO all = MedicalInstructionTypeDTO(
+                medicalInstructionTypeId: 0, name: 'Tất cả');
+            setState(() {
+              _listMedInsType = value;
+              _listMedInsType.add(all);
+            });
+
+            // _listMedInsType.addAll(value);
+
+            if (contractID != null) {
+              for (var item in _listMedInsType) {
+                if (item.medicalInstructionTypeId == _selectedHRTypeID) {
+                  setState(() {
+                    _selectedHRType = item.name;
+                  });
+                  if (_patientId != 0 && dropdownValue.contractId != 0) {
+                    await _medicalShareBloc.add(MedicalShareEventGetMediIns(
+                        patientID: _patientId,
+                        healthRecordId: dropdownValue.healthRecordId,
+                        typeID: _selectedHRTypeID));
+                  }
+                }
+              }
+            }
+          }
+        });
       });
     });
   }

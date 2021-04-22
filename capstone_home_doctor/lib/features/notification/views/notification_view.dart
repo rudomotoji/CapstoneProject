@@ -191,7 +191,13 @@ class _NotificationState extends State<NotificationPage> {
                                     } else if (i.notificationType == 12) {
                                       //Navigate share medical instruction
                                       //
-
+                                      Map<String, int> argument = {
+                                        'contractID': i.contractId,
+                                        'type': i.medicalInstructionId
+                                      };
+                                      Navigator.of(context).pushNamed(
+                                          RoutesHDr.MEDICAL_SHARE,
+                                          arguments: argument);
                                     } else if (i.notificationType == 11) {
                                       //Navigate connect device screen
 

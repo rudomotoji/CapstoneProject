@@ -174,8 +174,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   }
 
   buttonAddMedicalIns() {
-    print('_healthRecordDTO: ${_healthRecordDTO}');
-
     if (_healthRecordDTO == null) {
       return Container();
     } else if (_healthRecordDTO.contractStatus != null) {
@@ -203,6 +201,26 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
           },
         );
       }
+    } else {
+      return FloatingActionButton.extended(
+        elevation: 3,
+        label:
+            Text('Y lệnh mới', style: TextStyle(color: DefaultTheme.BLUE_DARK)),
+        backgroundColor: DefaultTheme.GREY_VIEW,
+        icon: SizedBox(
+          width: 20,
+          height: 20,
+          child: Image.asset('assets/images/ic-medical-instruction.png'),
+        ),
+        onPressed: () {
+          Navigator.of(context)
+              .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
+                  arguments: _healthRecordDTO.diseases)
+              .then((value) async {
+            await _pullRefresh();
+          });
+        },
+      );
     }
   }
 
@@ -402,78 +420,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               Padding(
                 padding: EdgeInsets.only(bottom: 5),
               ),
-              (_healthRecordDTO.contractId != null)
-                  ? Align(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        padding: EdgeInsets.only(left: 30, bottom: 5, top: 5),
-                        child: Text(
-                          'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: DefaultTheme.BLUE_DARK, fontSize: 13),
-                        ),
-                      ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            padding:
-                                EdgeInsets.only(left: 30, bottom: 5, top: 5),
-                            child: Text(
-                              'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: DefaultTheme.BLUE_DARK, fontSize: 13),
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(padding: EdgeInsets.only(left: 20)),
-                            InkWell(
-                              splashColor: DefaultTheme.TRANSPARENT,
-                              highlightColor: DefaultTheme.TRANSPARENT,
-                              onTap: () async {
-                                Navigator.of(context)
-                                    .pushNamed(RoutesHDr.UPDATE_HEALTH_RECORD,
-                                        arguments: _hrId)
-                                    .then((value) => _pullRefresh());
-                              },
-                              child: Container(
-                                padding: EdgeInsets.only(
-                                    left: 15, right: 15, bottom: 5, top: 5),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  color: DefaultTheme.GREY_VIEW,
-                                ),
-                                child: Row(
-                                  children: [
-                                    // SizedBox(
-                                    //   width: 25,
-                                    //   height: 25,
-                                    //   child: Image.asset(''),
-                                    // ),
-                                    Text(
-                                      'Cập nhật hồ sơ',
-                                      style: TextStyle(
-                                          color: DefaultTheme.BLUE_DARK,
-                                          fontSize: 16),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+              buttonUpdateHealthRecord(),
               Padding(
                 padding: EdgeInsets.only(bottom: 10),
               ),
@@ -486,6 +433,74 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         ],
       ),
     );
+  }
+
+  buttonUpdateHealthRecord() {
+    if (_healthRecordDTO.contractId != null) {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: Container(
+          padding: EdgeInsets.only(left: 30, bottom: 5, top: 5),
+          child: Text(
+            'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: DefaultTheme.BLUE_DARK, fontSize: 13),
+          ),
+        ),
+      );
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              padding: EdgeInsets.only(left: 30, bottom: 5, top: 5),
+              child: Text(
+                'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: DefaultTheme.BLUE_DARK, fontSize: 13),
+              ),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Padding(padding: EdgeInsets.only(left: 20)),
+              InkWell(
+                splashColor: DefaultTheme.TRANSPARENT,
+                highlightColor: DefaultTheme.TRANSPARENT,
+                onTap: () async {
+                  Navigator.of(context)
+                      .pushNamed(RoutesHDr.UPDATE_HEALTH_RECORD,
+                          arguments: _hrId)
+                      .then((value) => _pullRefresh());
+                },
+                child: Container(
+                  padding:
+                      EdgeInsets.only(left: 15, right: 15, bottom: 5, top: 5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: DefaultTheme.GREY_VIEW,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Cập nhật hồ sơ',
+                        style: TextStyle(
+                            color: DefaultTheme.BLUE_DARK, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
   }
 
   SliverFillRemaining buildTabbarViewHasContract() {
