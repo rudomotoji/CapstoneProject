@@ -634,7 +634,19 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
             //       .name;
             // }
 
-            _listMedInsType = state.listMedInsType;
+            // _listMedInsType = state.listMedInsType;
+            MedicalInstructionTypeDTO all = MedicalInstructionTypeDTO(
+                medicalInstructionTypeId: 0, name: 'Tất cả');
+            _listMedInsType.add(all);
+            _listMedInsType.addAll(state.listMedInsType);
+            // for (var item in state.listMedInsType) {
+            //   _listMedInsType.add(item);
+            // }
+            // if (mounted) {
+            //   MedicalInstructionTypeDTO all = MedicalInstructionTypeDTO(
+            //       medicalInstructionTypeId: 0, name: 'Tất cả');
+            //   _listMedInsType.add(all);
+            // }
             // MedicalInstructionTypeDTO all = MedicalInstructionTypeDTO(
             //     medicalInstructionTypeId: 0, name: 'Tất cả');
             // bool add = true;
