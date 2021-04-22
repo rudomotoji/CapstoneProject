@@ -334,7 +334,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     listMedicalInsShare = [];
-    if (contractID == null) {
+    if (contractID == null || contractID == 0) {
       Map<String, int> arguments = ModalRoute.of(context).settings.arguments;
       if (arguments != null) {
         contractID = arguments['contractID'];
@@ -512,7 +512,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
           decoration: BoxDecoration(
               color: DefaultTheme.GREY_VIEW,
               borderRadius: BorderRadius.circular(6)),
-          child: (contractID == null)
+          child: (contractID == null || contractID == 0)
               ? DropdownButton<HealthRecordDTO>(
                   value: dropdownValue,
                   items: _listContracts.map((HealthRecordDTO value) {
@@ -558,10 +558,13 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                 )
               : Container(
                   margin: EdgeInsets.only(top: 10, bottom: 10),
-                  child: Text(
-                    '${dropdownValue.place}-${_dateValidator.convertDateCreate(dropdownValue.dateCreated, 'dd/MM/yyyy', 'yyyy-MM-dd')}',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                  ),
+                  child: (dropdownValue != null)
+                      ? Text(
+                          '${dropdownValue.place}-${_dateValidator.convertDateCreate(dropdownValue.dateCreated, 'dd/MM/yyyy', 'yyyy-MM-dd')}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 16),
+                        )
+                      : Text('Không thấy hồ sơ'),
                 ),
         ),
       );
@@ -621,7 +624,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                     _selectedHRTypeID = _.medicalInstructionTypeId;
                   });
 
-                  if (_patientId != 0 && dropdownValue.contractId != 0) {
+                  if (_patientId != 0 && dropdownValue != null) {
                     await _medicalShareBloc.add(MedicalShareEventGetMediIns(
                         patientID: _patientId,
                         healthRecordId: dropdownValue.healthRecordId,
