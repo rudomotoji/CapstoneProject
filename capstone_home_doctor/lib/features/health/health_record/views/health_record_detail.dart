@@ -175,35 +175,58 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
   buttonAddMedicalIns() {
     print('_healthRecordDTO: ${_healthRecordDTO}');
-
     if (_healthRecordDTO == null) {
       return Container();
-    } else if (_healthRecordDTO.contractStatus != null) {
-      if (_healthRecordDTO.contractStatus.contains('FINISHED') ||
-          _healthRecordDTO.contractStatus.contains('LOCKED')) {
-        return Container();
-      } else {
-        return FloatingActionButton.extended(
-          elevation: 3,
-          label: Text('Y lệnh mới',
-              style: TextStyle(color: DefaultTheme.BLUE_DARK)),
-          backgroundColor: DefaultTheme.GREY_VIEW,
-          icon: SizedBox(
-            width: 20,
-            height: 20,
-            child: Image.asset('assets/images/ic-medical-instruction.png'),
-          ),
-          onPressed: () {
-            Navigator.of(context)
-                .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
-                    arguments: _healthRecordDTO.diseases)
-                .then((value) async {
-              await _pullRefresh();
-            });
-          },
-        );
-      }
+    } else {
+      return FloatingActionButton.extended(
+        elevation: 3,
+        label:
+            Text('Y lệnh mới', style: TextStyle(color: DefaultTheme.BLUE_DARK)),
+        backgroundColor: DefaultTheme.GREY_VIEW,
+        icon: SizedBox(
+          width: 20,
+          height: 20,
+          child: Image.asset('assets/images/ic-medical-instruction.png'),
+        ),
+        onPressed: () {
+          Navigator.of(context)
+              .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
+                  arguments: _healthRecordDTO.diseases)
+              .then((value) async {
+            await _pullRefresh();
+          });
+        },
+      );
     }
+
+    // if (_healthRecordDTO == null) {
+    //   return Container();
+    // } else if (_healthRecordDTO.contractStatus != null) {
+    //   if (_healthRecordDTO.contractStatus.contains('FINISHED') ||
+    //       _healthRecordDTO.contractStatus.contains('LOCKED')) {
+    //     return Container();
+    //   } else {
+    //     return FloatingActionButton.extended(
+    //       elevation: 3,
+    //       label: Text('Y lệnh mới',
+    //           style: TextStyle(color: DefaultTheme.BLUE_DARK)),
+    //       backgroundColor: DefaultTheme.GREY_VIEW,
+    //       icon: SizedBox(
+    //         width: 20,
+    //         height: 20,
+    //         child: Image.asset('assets/images/ic-medical-instruction.png'),
+    //       ),
+    //       onPressed: () {
+    //         Navigator.of(context)
+    //             .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
+    //                 arguments: _healthRecordDTO.diseases)
+    //             .then((value) async {
+    //           await _pullRefresh();
+    //         });
+    //       },
+    //     );
+    //   }
+    // }
   }
 
   SliverAppBar buildSliverAppBarCollepse() {
