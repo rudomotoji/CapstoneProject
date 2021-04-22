@@ -6,13 +6,15 @@ abstract class MedicalShareInsEvent extends Equatable {
 
 class MedicalShareInsEventSend extends MedicalShareInsEvent {
   final int healthRecordId;
+  final int contractID;
   final List<int> listMediIns;
 
-  const MedicalShareInsEventSend({this.healthRecordId, this.listMediIns});
+  const MedicalShareInsEventSend(
+      {this.healthRecordId, this.listMediIns, this.contractID});
 
   @override
   // TODO: implement props
-  List<Object> get props => [healthRecordId, listMediIns];
+  List<Object> get props => [healthRecordId, listMediIns, contractID];
 }
 
 class MedicalShareInsEventInitial extends MedicalShareInsEvent {

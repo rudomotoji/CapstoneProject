@@ -1775,6 +1775,7 @@ class _Header extends State<Header> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Container(
+                    // width: MediaQuery.of(context).size.width / 2,
                     // padding: EdgeInsets.only(bottom: 10),
                     child: Text(
                       '${_dateValidator.getDateTimeView()}',

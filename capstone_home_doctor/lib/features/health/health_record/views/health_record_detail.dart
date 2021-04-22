@@ -178,26 +178,31 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
     if (_healthRecordDTO == null) {
       return Container();
-    } else {
-      return FloatingActionButton.extended(
-        elevation: 3,
-        label:
-            Text('Y lệnh mới', style: TextStyle(color: DefaultTheme.BLUE_DARK)),
-        backgroundColor: DefaultTheme.GREY_VIEW,
-        icon: SizedBox(
-          width: 20,
-          height: 20,
-          child: Image.asset('assets/images/ic-medical-instruction.png'),
-        ),
-        onPressed: () {
-          Navigator.of(context)
-              .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
-                  arguments: _healthRecordDTO.diseases)
-              .then((value) async {
-            await _pullRefresh();
-          });
-        },
-      );
+    } else if (_healthRecordDTO.contractStatus != null) {
+      if (_healthRecordDTO.contractStatus.contains('FINISHED') ||
+          _healthRecordDTO.contractStatus.contains('LOCKED')) {
+        return Container();
+      } else {
+        return FloatingActionButton.extended(
+          elevation: 3,
+          label: Text('Y lệnh mới',
+              style: TextStyle(color: DefaultTheme.BLUE_DARK)),
+          backgroundColor: DefaultTheme.GREY_VIEW,
+          icon: SizedBox(
+            width: 20,
+            height: 20,
+            child: Image.asset('assets/images/ic-medical-instruction.png'),
+          ),
+          onPressed: () {
+            Navigator.of(context)
+                .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
+                    arguments: _healthRecordDTO.diseases)
+                .then((value) async {
+              await _pullRefresh();
+            });
+          },
+        );
+      }
     }
   }
 
@@ -829,10 +834,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                   ],
                 ),
                 checkButtonMoreFuture(dto),
-                // (dto.status.contains('PATIENT') &&
-                //         _healthRecordDTO.contractId == null)
-                //     ?
-                //     : Container(),
               ],
             ),
           ),
@@ -1907,17 +1908,19 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   String titleForStatusMI(String status) {
     if (status.contains('DOCTOR')) {
       return 'Bác sĩ';
-    } else if (status.contains('CONTRACT')) {
+    } else if (status.contains('CONTRACT') || status.contains('APPROVED')) {
       return 'Được chia sẻ';
-    } else {
+    } else if (status.contains('PENDING')) {
       return 'Chờ duyệt';
+    } else {
+      return '';
     }
   }
 
   Color checkColorStatus(String status) {
     if (status.contains('DOCTOR')) {
       return DefaultTheme.GREY_VIEW;
-    } else if (status.contains('CONTRACT')) {
+    } else if (status.contains('CONTRACT') || status.contains('APPROVED')) {
       return DefaultTheme.GREY_VIEW;
     } else {
       return DefaultTheme.ORANGE_TEXT;
@@ -1928,7 +1931,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 Color checkColorStatusForTitle(String status) {
   if (status.contains('DOCTOR')) {
     return DefaultTheme.BLUE_DARK;
-  } else if (status.contains('CONTRACT')) {
+  } else if (status.contains('CONTRACT') || status.contains('APPROVED')) {
     return DefaultTheme.BLUE_DARK;
   } else {
     return DefaultTheme.WHITE;

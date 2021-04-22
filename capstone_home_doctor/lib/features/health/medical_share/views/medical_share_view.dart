@@ -427,7 +427,9 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                                 for (var contract in state.listHealthRecord) {
                                   if (contract.contractId != null &&
                                       !contract.contractStatus
-                                          .contains('FINISHED')) {
+                                          .contains('FINISHED') &&
+                                      !contract.contractStatus
+                                          .contains('LOCKED')) {
                                     _listContracts.add(contract);
                                   }
                                 }
@@ -1135,8 +1137,8 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
         //     listMediIns: medicalInstructionIdsSelected));
         //
         _medicalShareInsRepository
-            .shareMoreMedIns(
-                dropdownValue.healthRecordId, medicalInstructionIdsSelected)
+            .shareMoreMedIns(dropdownValue.healthRecordId,
+                medicalInstructionIdsSelected, dropdownValue.contractId)
             .then((value) {
           Navigator.of(context).pop();
           if (value) {
