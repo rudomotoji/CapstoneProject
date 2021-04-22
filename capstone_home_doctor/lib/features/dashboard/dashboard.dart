@@ -31,9 +31,11 @@ import 'package:capstone_home_doctor/features/schedule/repositories/prescription
 import 'package:capstone_home_doctor/features/schedule/states/appointment_state.dart';
 import 'package:capstone_home_doctor/features/schedule/states/prescription_list_state.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/blood_bloc.dart';
+import 'package:capstone_home_doctor/features/vital_sign/blocs/real_time_vt_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/vital_sign_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/events/blood_event.dart';
 import 'package:capstone_home_doctor/features/vital_sign/events/vital_sign_event.dart';
+import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
 import 'package:capstone_home_doctor/features/vital_sign/states/blood_state.dart';
 import 'package:capstone_home_doctor/features/vital_sign/states/vital_sign_state.dart';
 import 'package:capstone_home_doctor/models/appointment_dto.dart';
@@ -77,9 +79,9 @@ final ArrayValidator _arrayValidator = ArrayValidator();
 final MeasureHelper _measureHelper = MeasureHelper();
 DateValidator _dateValidator = DateValidator();
 List<ContractListDTO> _listExecuting = [];
-
+final VitalSignRepository _vitalSignRepository = VitalSignRepository();
 //
-List<int> listTimeMeasure = [5, 10, 15, 30];
+List<int> listTimeMeasure = [3, 5, 10, 15, 30];
 //
 final Shader _normalHealthColors = LinearGradient(
   colors: <Color>[
@@ -153,8 +155,11 @@ class _DashboardState extends State<DashboardPage>
   //
   bool isBluetoothConnection = false;
   bool isContractApproved = false;
+  bool isMeasureDone = false;
   String timeStartM = '';
   int durationM = 0;
+  String listTimeM = '';
+  String listValueM = '';
 
   //
   List<VitalSignDTO> listVitalSignDangerous = [];
@@ -195,6 +200,18 @@ class _DashboardState extends State<DashboardPage>
         durationM = dM;
       });
     });
+    await _measureHelper.getListValueHr().then((listV) {
+      setState(() {
+        listValueM = listV;
+      });
+    });
+    await _measureHelper.getListTime().then((listT) {
+      setState(() {
+        listTimeM = listT;
+      });
+    });
+    //
+    //
   }
 
   @override
@@ -797,16 +814,89 @@ class _DashboardState extends State<DashboardPage>
               ),
               InkWell(
                 onTap: () async {
-                  //isMeasureOn
-                  await _measureHelper.isMeasureOn().then((value) {
-                    //
-                    if (!mounted) return;
-                    setState(() {
-                      //
-                      isMeasureOn = value;
-                    });
-                  });
-                  _showMeasureDuration();
+                  if (_isConnectedWithPeripheral) {
+                    _chooseMeasure();
+                  } else {
+                    showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Material(
+                          color: DefaultTheme.TRANSPARENT,
+                          child: Center(
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                              child: BackdropFilter(
+                                filter:
+                                    ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                      left: 10, top: 10, right: 10),
+                                  width: 250,
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    color: DefaultTheme.WHITE.withOpacity(0.7),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            bottom: 10, top: 10),
+                                        child: Text(
+                                          'Không thể đo',
+                                          style: TextStyle(
+                                            decoration: TextDecoration.none,
+                                            color: DefaultTheme.BLACK,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Vui lòng kết nối với thiết bị đeo.',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              decoration: TextDecoration.none,
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Divider(
+                                        height: 1,
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                      ),
+                                      ButtonHDr(
+                                        height: 40,
+                                        style: BtnStyle.BUTTON_TRANSPARENT,
+                                        label: 'OK',
+                                        labelColor: DefaultTheme.BLUE_TEXT,
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
                 },
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.2,
@@ -1703,6 +1793,126 @@ class _DashboardState extends State<DashboardPage>
     );
   }
 
+  void _chooseMeasure() {
+    showModalBottomSheet(
+        isScrollControlled: false,
+        context: this.context,
+        backgroundColor: Colors.white.withOpacity(0),
+        builder: (context) {
+          return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(left: 5),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width - 10,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(33.33),
+                        // borderRadius: BorderRadius.only(
+                        //     topLeft: Radius.circular(33.33),
+                        //     topRight: Radius.circular(33.33)),
+                        color: Colors.white,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          // Padding(
+                          //   padding: EdgeInsets.only(
+                          //       top: MediaQuery.of(context).size.height * 0.05),
+                          // ),
+                          Spacer(),
+                          Image.asset(
+                            'assets/images/ic-measure.png',
+                            height: MediaQuery.of(context).size.height * 0.20,
+                          ),
+                          Container(
+                            margin: const EdgeInsets.fromLTRB(60, 20, 60, 0),
+                            child: Text(
+                              'Kiểm tra và theo dõi nhịp tim của bạn',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 15,
+                                color: Color(0xFF888888),
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                          ButtonHDr(
+                            isUnderline: false,
+                            style: BtnStyle.BUTTON_BLACK,
+                            label: 'Đo ngay',
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                              _onMeasuring();
+                            },
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 10),
+                          ),
+                          ButtonHDr(
+                            isUnderline: false,
+                            style: BtnStyle.BUTTON_GREY,
+                            label: 'Đo trong khoảng thời gian',
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                              await _measureHelper
+                                  .isMeasureOn()
+                                  .then((value) async {
+                                //
+                                if (!mounted) return;
+                                setState(() {
+                                  //
+                                  isMeasureOn = value;
+                                });
+                                //
+                                if (value) {
+                                  await _measureHelper
+                                      .getCountingM()
+                                      .then((countM) async {
+                                    //
+
+                                    await _measureHelper
+                                        .getDurationM()
+                                        .then((durationM) async {
+                                      if (countM < durationM) {
+                                        setState(() {
+                                          isMeasureDone = false;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          isMeasureDone = true;
+                                        });
+                                      }
+                                    });
+                                  });
+                                }
+                                //
+                              });
+                              await _getMeasureCounting();
+                              _showMeasureDuration();
+                            },
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 30),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 5),
+                    ),
+                  ],
+                ),
+              ));
+        });
+  }
+
   void _showPopUpIDDoctor() {
     showDialog(
       context: context,
@@ -2390,7 +2600,6 @@ class _DashboardState extends State<DashboardPage>
                 }
               }
             }
-//comment hihi
             listPrescription = _listPrescription;
           }
           if (contextPrescription.listPrescription.length > 0) {
@@ -2562,8 +2771,619 @@ class _DashboardState extends State<DashboardPage>
     // }
   }
 
-  _showMapHearRate() {
-    ///
+  _onMeasuring() async {
+    //String heartRateData = 'Đang đo';
+    await realtimeHeartRateBloc.realtimeHrSink.add(0);
+    bool isMeasureOff = false;
+    List<int> listHeartRate = [];
+    // List<int> listValueMeasure = [];
+    // listValueMeasure.clear();
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Material(
+            color: DefaultTheme.TRANSPARENT,
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    width: 250,
+                    height: 160,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.7),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 130,
+                          // height: 100,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                        // Spacer(),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Đang kích hoạt',
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.GREY_TEXT,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+    await _kickHRCOn();
+    peripheralHelper.getPeripheralId().then((peripheralId) {
+      if (peripheralId == '' || peripheralId == null) {
+        Navigator.of(context).pop();
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return Material(
+              color: DefaultTheme.TRANSPARENT,
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      padding: EdgeInsets.only(left: 10, top: 10, right: 10),
+                      width: 250,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.WHITE.withOpacity(0.7),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(bottom: 10, top: 10),
+                            child: Text(
+                              'Không thể đo',
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                color: DefaultTheme.BLACK,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 20, right: 20),
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Vui lòng kết nối với thiết bị đeo.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  decoration: TextDecoration.none,
+                                  color: DefaultTheme.GREY_TEXT,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                          Divider(
+                            height: 1,
+                            color: DefaultTheme.GREY_TOP_TAB_BAR,
+                          ),
+                          ButtonHDr(
+                            height: 40,
+                            style: BtnStyle.BUTTON_TRANSPARENT,
+                            label: 'OK',
+                            labelColor: DefaultTheme.BLUE_TEXT,
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      } else {
+        Navigator.of(context).pop();
+        showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          backgroundColor: DefaultTheme.TRANSPARENT,
+          builder: (context) {
+            return StatefulBuilder(
+                builder: (BuildContext context, StateSetter setModalState) {
+              Future.delayed(Duration(seconds: 30), () {
+                setModalState(() {
+                  if (!mounted) return;
+                  isMeasureOff = true;
+                });
+              }).catchError((e) {
+                return;
+              });
+              // if (isMeasureOff == false) {
+              //   _realTimeHeartRateStream =
+              //       HeartRealTimeBloc.instance.notificationsStream;
+              //   _realTimeHeartRateStream.listen((_) {
+              //     if (_.title.contains('realtime heart rate')) {
+              //       //
+              //       setModalState(() {
+              //         if (mounted == true) {
+              //           heartRateData = _.body;
+              //           listValueMeasure.add(int.tryParse(_.body));
+              //         } else {
+              //           return;
+              //         }
+              //       });
+              //     }
+              //   });
+              // }
+
+              // _timerHR = new Timer.periodic(
+              //     const Duration(seconds: 30),
+              //     (_) => setModalState(() {
+              //           //
+              //           if (!mounted) return;
+              //           if (mounted == true) {
+              //             isMeasureOff = true;
+              //             listValueMeasure.sort((a, b) => a.compareTo(b));
+              //             heartRateData =
+              //                 'Nhịp tim khoảng ${listValueMeasure.first}-${listValueMeasure.last}';
+              //             super.dispose();
+              //             _timerHR.cancel();
+              //             return;
+              //           }
+              //         }));
+              return BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.85,
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.05),
+                      color: DefaultTheme.TRANSPARENT,
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(15)),
+                          color: DefaultTheme.WHITE.withOpacity(0.9),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            //////
+                            ///
+                            Expanded(
+                              child: Container(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    // Padding(
+                                    //   padding: EdgeInsets.only(top: 20),
+                                    // ),
+                                    (isMeasureOff)
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              // Spacer(),
+                                              Container(
+                                                width: 120,
+                                                height: 60,
+                                                // decoration: BoxDecoration(
+                                                //   color: DefaultTheme.BLUE_TEXT
+                                                //       .withOpacity(0.4),
+                                                //   borderRadius:
+                                                //       BorderRadius.circular(30),
+                                                // ),
+                                                child: InkWell(
+                                                  onTap: () async {
+                                                    setModalState(() {
+                                                      if (!mounted) return;
+                                                      isMeasureOff = false;
+                                                      listHeartRate.clear();
+                                                    });
+                                                    realtimeHeartRateBloc
+                                                        .realtimeHrSink
+                                                        .add(0);
+                                                    await _kickHRCOn();
+                                                  },
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 15,
+                                                        height: 15,
+                                                        child: Image.asset(
+                                                            'assets/images/ic-reload-blue.png'),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10),
+                                                      ),
+                                                      Container(
+                                                        child: Center(
+                                                          child: Text(
+                                                            'Đo lại',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 15,
+                                                                color: DefaultTheme
+                                                                    .BLUE_TEXT),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Spacer(),
+                                              Container(
+                                                width: 80,
+                                                height: 60,
+                                                // decoration: BoxDecoration(
+                                                //   color: DefaultTheme.BLUE_TEXT
+                                                //       .withOpacity(0.4),
+                                                //   borderRadius:
+                                                //       BorderRadius.circular(30),
+                                                // ),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Container(
+                                                        child: Center(
+                                                          child: Text(
+                                                            'Xong',
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 15,
+                                                                color: DefaultTheme
+                                                                    .BLUE_TEXT),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Container(),
+                                    (isMeasureOff)
+                                        ? Divider(
+                                            color:
+                                                DefaultTheme.GREY_TOP_TAB_BAR,
+                                            height: 1,
+                                          )
+                                        : Container(),
+                                    Spacer(),
+                                    (isMeasureOff)
+                                        ? Container(
+                                            child: (listHeartRate.length == 1)
+                                                ? Container(
+                                                    child: Column(
+                                                    children: [
+                                                      SizedBox(
+                                                        width: 30,
+                                                        height: 30,
+                                                        child: Image.asset(
+                                                            'assets/images/ic-heart-rate.png'),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                bottom: 10),
+                                                      ),
+                                                      Text(
+                                                        'Không thể đo nhịp tim, xin vui lòng thử lại.',
+                                                        style: TextStyle(
+                                                          color: DefaultTheme
+                                                              .GREY_TEXT,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ))
+                                                : Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.8,
+                                                    height: 120,
+                                                    padding: EdgeInsets.only(
+                                                        left: 20, right: 20),
+                                                    decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                          begin: Alignment
+                                                              .topRight,
+                                                          end: Alignment
+                                                              .bottomLeft,
+                                                          colors: [
+                                                            DefaultTheme
+                                                                .SUCCESS_STATUS,
+                                                            DefaultTheme
+                                                                .GRADIENT_2
+                                                          ]),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 10),
+                                                        ),
+                                                        Container(
+                                                          child: Text(
+                                                            'Nhịp tim trong khoảng',
+                                                            style: TextStyle(
+                                                              fontSize: 20,
+                                                              color:
+                                                                  DefaultTheme
+                                                                      .WHITE,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 5),
+                                                        ),
+                                                        Container(
+                                                          child: Text(
+                                                            (listHeartRate[1] ==
+                                                                    listHeartRate
+                                                                        .last)
+                                                                ? '${listHeartRate[1]} bpm'
+                                                                : '${listHeartRate[1]} - ${listHeartRate.last} bpm',
+                                                            style: TextStyle(
+                                                                fontSize: 30,
+                                                                color:
+                                                                    DefaultTheme
+                                                                        .WHITE,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600),
+                                                          ),
+                                                        ),
+                                                        Container(
+                                                          child: Text(
+                                                            (listHeartRate
+                                                                        .last >
+                                                                    125)
+                                                                ? 'Hệ thống nhận thấy nhịp tim của bạn trên mức an toàn.'
+                                                                : 'Nhịp tim của bạn trong khoảng an toàn. Hệ thống không nhận thấy dấu hiệu bất thường.',
+                                                            style: TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  DefaultTheme
+                                                                      .WHITE,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        ///////this is comment avoid back old version.
+                                                        ////commenttttttttttttttt
+                                                      ],
+                                                    ),
+                                                  ),
+                                          )
+                                        : Container(
+                                            width: 300,
+                                            height: 300,
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR
+                                                      .withOpacity(1),
+                                                  spreadRadius: 1,
+                                                  blurRadius: 5,
+                                                  offset: Offset(0,
+                                                      1), // changes position of shadow
+                                                ),
+                                              ],
+                                              borderRadius:
+                                                  BorderRadius.circular(500),
+                                              gradient: LinearGradient(
+                                                  begin: Alignment.topRight,
+                                                  end: Alignment.bottomLeft,
+                                                  colors: [
+                                                    DefaultTheme.GRADIENT_1,
+                                                    DefaultTheme.GRADIENT_2
+                                                  ]),
+                                            ),
+                                            child: Container(
+                                              width: 250,
+                                              height: 250,
+                                              decoration: BoxDecoration(
+                                                color: DefaultTheme.WHITE,
+                                                borderRadius:
+                                                    BorderRadius.circular(500),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  (isMeasureOff)
+                                                      ? Container()
+                                                      : Image.asset(
+                                                          'assets/images/ic-mesuring.gif',
+                                                          width: 100,
+                                                          height: 100,
+                                                        ),
+                                                  StreamBuilder<int>(
+                                                      stream:
+                                                          realtimeHeartRateBloc
+                                                              .realtimeHrStream,
+                                                      builder:
+                                                          (context, snapshot) {
+                                                        // if (snapshot.hasData == null) {
+                                                        //   return Container(
+                                                        //       child: Text('Đang đo'));
+                                                        // } else
+                                                        if (snapshot
+                                                                .connectionState ==
+                                                            ConnectionState
+                                                                .waiting) {
+                                                          return Container(
+                                                              child: Text(
+                                                                  'Đang đo'));
+                                                        }
+                                                        print(
+                                                            'snap shot connection state ${snapshot.connectionState}');
+                                                        if (snapshot.hasData) {
+                                                          listHeartRate.add(
+                                                              snapshot.data);
+                                                          listHeartRate.sort((a,
+                                                                  b) =>
+                                                              a.compareTo(b));
+                                                          return Column(
+                                                            children: [
+                                                              (snapshot.data ==
+                                                                      0)
+                                                                  ? Padding(
+                                                                      padding: EdgeInsets.only(
+                                                                          bottom:
+                                                                              20),
+                                                                    )
+                                                                  : Container(),
+                                                              (snapshot.data ==
+                                                                      0)
+                                                                  ? Text(
+                                                                      'Đang đo',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLACK,
+                                                                        fontSize:
+                                                                            18,
+                                                                      ),
+                                                                    )
+                                                                  : Text(
+                                                                      '${snapshot.data}',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLACK,
+                                                                        fontSize:
+                                                                            35,
+                                                                      ),
+                                                                    ),
+                                                              Text(
+                                                                (snapshot.data ==
+                                                                        0)
+                                                                    ? ''
+                                                                    : 'bpm',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: DefaultTheme
+                                                                      .GREY_TEXT,
+                                                                  fontSize: 18,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        } else if (snapshot
+                                                            .hasError) {
+                                                          return Container(
+                                                              child: Text(
+                                                                  'Error Loading'));
+                                                        }
+                                                        print(
+                                                            'snap shot connection state after if else ${snapshot.connectionState}');
+                                                        return Container();
+                                                      }),
+                                                  Padding(
+                                                    padding: EdgeInsets.only(
+                                                        bottom: 10),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                    Spacer(),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 23,
+                      left: MediaQuery.of(context).size.width * 0.3,
+                      height: 5,
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width * 0.3),
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: 15,
+                        decoration: BoxDecoration(
+                            color: DefaultTheme.WHITE.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(50)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            });
+          },
+        );
+      }
+    });
   }
 
   Future _determinePosition() async {
@@ -2630,6 +3450,14 @@ class _DashboardState extends State<DashboardPage>
     // getLocalStorage();
   }
 
+  _kickHRCOn() async {
+    await peripheralHelper.getPeripheralId().then((id) async {
+      if (id != '') {
+        await _vitalSignRepository.kickHRCOn(id);
+      }
+    });
+  }
+
   getLocalStorage() async {
     List<PrescriptionDTO> data = await _sqfLiteHelper.getMedicationsRespone();
     print('getLocalStorage: ${data.length}');
@@ -2689,12 +3517,12 @@ class _DashboardState extends State<DashboardPage>
               child: Stack(
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.85,
+                    height: MediaQuery.of(context).size.height * 0.95,
                     padding: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.05),
                     color: DefaultTheme.TRANSPARENT,
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 0.8,
+                      height: MediaQuery.of(context).size.height * 0.9,
                       decoration: BoxDecoration(
                         borderRadius:
                             BorderRadius.vertical(top: Radius.circular(15)),
@@ -2708,7 +3536,7 @@ class _DashboardState extends State<DashboardPage>
 
                             Padding(
                               padding:
-                                  EdgeInsets.only(top: 30, left: 20, right: 30),
+                                  EdgeInsets.only(top: 30, left: 20, right: 20),
                               child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Row(
@@ -2730,6 +3558,34 @@ class _DashboardState extends State<DashboardPage>
                                         ),
                                       ),
                                       Spacer(),
+                                      (isMeasureOn)
+                                          ? Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 15,
+                                                  right: 15,
+                                                  bottom: 10,
+                                                  top: 10),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  color: (isMeasureDone)
+                                                      ? DefaultTheme.BLUE_TEXT
+                                                          .withOpacity(0.7)
+                                                      : DefaultTheme
+                                                          .RED_CALENDAR
+                                                          .withOpacity(0.7)),
+                                              child: Center(
+                                                child: Text(
+                                                  (isMeasureDone)
+                                                      ? 'Trạng thái: Đo hoàn tất'
+                                                      : 'Trạng thái: Đang đo',
+                                                  style: TextStyle(
+                                                      color:
+                                                          DefaultTheme.WHITE),
+                                                ),
+                                              ),
+                                            )
+                                          : Container(),
                                     ],
                                   )),
                             ),
@@ -3084,28 +3940,176 @@ class _DashboardState extends State<DashboardPage>
 
   _getMeasureInformation() {
     return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Thời gian bắt đầu đo: $timeStartM'),
-          Text('Đo trong vòng: $durationM phút'),
-          InkWell(
-            onTap: () async {
-              setState(() {
-                if (!mounted) return;
-                isMeasureOn = false;
-              });
-
-              await _measureHelper.updateMeasureOn(false);
-              //
-              //SAVE TIME START
-              await _measureHelper.updateTimeStartM('');
-              //
-              //SAVE DURATION TIME
-              await _measureHelper.updateDurationM(0);
-              Navigator.of(context).pop();
-            },
-            child: Text('Huỷ'),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      'Thời gian bắt đầu đo',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 3),
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                width: 0.75),
+                            borderRadius: BorderRadius.circular(8),
+                            color: DefaultTheme.WHITE,
+                          ),
+                          child: Center(
+                              child: Text(
+                            '${timeStartM.split(':')[0]}',
+                            textAlign: TextAlign.center,
+                          )),
+                        ),
+                        Text(' : '),
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                width: 0.75),
+                            borderRadius: BorderRadius.circular(8),
+                            color: DefaultTheme.WHITE,
+                          ),
+                          child: Center(
+                              child: Text('${timeStartM.split(':')[1]}')),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                Spacer(),
+                Column(
+                  children: [
+                    Text(
+                      'Đo trong khoảng',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 8),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          height: 25,
+                          child: Text(
+                            '$durationM',
+                            style: TextStyle(
+                                fontSize: 20, color: DefaultTheme.RED_CALENDAR),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 5),
+                        ),
+                        Container(
+                          alignment: Alignment.bottomCenter,
+                          padding: EdgeInsets.only(bottom: 2),
+                          height: 25,
+                          child: Text(
+                            'phút',
+                            style: TextStyle(fontSize: 16),
+                            // textAlign: TextAlign.end,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
+          Text('List value : $listValueM'),
+          Text('List time: $listTimeM'),
+          Spacer(),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: Row(
+              children: [
+                InkWell(
+                  onTap: () async {
+                    setState(() {
+                      if (!mounted) return;
+                      isMeasureOn = false;
+                    });
+
+                    await _measureHelper.updateMeasureOn(false);
+                    //
+                    //SAVE TIME START
+                    await _measureHelper.updateTimeStartM('');
+                    //
+                    //SAVE DURATION TIME
+                    await _measureHelper.updateDurationM(0);
+
+                    //
+                    await _measureHelper.updateCountingM(0);
+                    //UPDATE TIME AND VALUE LIST HR INTO INITIAL
+                    await _measureHelper.updateListTime('');
+                    await _measureHelper.updateListValueHr('');
+                    //
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                      width: (MediaQuery.of(context).size.width / 2) - 25,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR, width: 0.5),
+                          color: DefaultTheme.WHITE,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Center(
+                        child: Text('Huỷ đo',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: DefaultTheme.RED_CALENDAR)),
+                      )),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                      width: (MediaQuery.of(context).size.width / 2) - 25,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR, width: 0.5),
+                          color: DefaultTheme.WHITE,
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Center(
+                        child: Text('Đóng',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: DefaultTheme.BLACK)),
+                      )),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 30),
+          )
         ],
       ),
     );

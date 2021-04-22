@@ -610,7 +610,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                                       //
                                       if (device != null) {
                                         await _peripheralRepository
-                                            .disconnectDevice(device);
+                                            .disconnectDevice(peripheralId);
                                       }
                                     });
                                   }
@@ -2387,7 +2387,7 @@ class _Header extends State<Header> {
                                       //
                                       if (device != null) {
                                         await _peripheralRepository
-                                            .disconnectDevice(device);
+                                            .disconnectDevice(peripheralId);
                                       }
                                     });
                                   }

@@ -454,6 +454,68 @@ void main() async {
     ..schedule(Schedule.parse('* * * * * '), () async {
       checkNotifiMedical();
 
+      //CHECK MEASURE COUNT
+      //
+      int measureCount = 0;
+      if (measureCount == 0) {
+        //DO BUSINESS OF MEASURE COUNT
+        //
+        _measureHelper.isMeasureOn().then((isMOn) async {
+          if (isMOn) {
+            await _measureHelper.getCountingM().then((countM) async {
+              //
+              print('--MEASURE COUNT IS ON');
+
+              await _measureHelper.getDurationM().then((durationM) async {
+                //
+                if (countM < durationM) {
+                  countM = countM + 1;
+                  print('COUNT Measure $countM');
+                  await _measureHelper.updateCountingM(countM);
+                  //
+                  //
+                  //GET HEART RATE VALUE AND INSERT LIST VALUE AND LIST TIME
+                  await vitalSignHelper
+                      .getHeartRateValue()
+                      .then((heartRateValue) async {
+                    //
+                    await _measureHelper.getListValueHr().then((valueHr) async {
+                      valueHr += heartRateValue.toString() + ',';
+                      print('LIST VALUE HEART RATE MEASURE NOW--: $valueHr');
+                      await _measureHelper.updateListValueHr(valueHr);
+                    });
+                    await _measureHelper.getListTime().then((listT) async {
+                      DateTime noww = DateTime.now();
+                      String timee =
+                          noww.toString().split(' ')[1].split(':')[0] +
+                              ':' +
+                              noww.toString().split(' ')[1].split(':')[1];
+                      listT += timee + ',';
+                      await _measureHelper.updateListTime(listT);
+                    });
+                    //
+                  });
+                } else {
+                  //DO NOT PLUS COUNT M
+                  print('count is enough: $countM');
+                }
+              });
+              //
+            });
+          } else {
+            print('--MEASURE IS OFF');
+          }
+        });
+
+        //
+        measureCount++;
+      }
+
+      //
+      //
+      //
+      //
+      //
       //DO BLUETOOTH CONNECT AND GET HEART RATE
       print('At ${DateTime.now()} to Check Bluetooth funcs background');
 
@@ -1760,6 +1822,12 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('DURATION_M')) {
       _measureHelper.intialDurationM();
+    }
+    if (!prefs.containsKey('LIST_VALUE_HR')) {
+      _measureHelper.initialValueHeartRate();
+    }
+    if (!prefs.containsKey('LIST_TIME_HR')) {
+      _measureHelper.initialListTime();
     }
   }
 

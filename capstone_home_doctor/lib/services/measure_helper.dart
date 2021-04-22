@@ -109,4 +109,50 @@ class MeasureHelper {
     }
     return prefs.getInt('COUNTING_M');
   }
+
+  //SAVE LIST VALUE
+  Future<void> initialValueHeartRate() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('LIST_VALUE_HR', '');
+  }
+
+  Future<void> updateListValueHr(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('LIST_VALUE_HR')) {
+      initialValueHeartRate();
+    }
+    prefs.setString('LIST_VALUE_HR', value);
+  }
+
+  //
+  Future<String> getListValueHr() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('LIST_VALUE_HR')) {
+      initialValueHeartRate();
+    }
+    return prefs.getString('LIST_VALUE_HR');
+  }
+
+  //  //SAVE LIST TIME
+  Future<void> initialListTime() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('LIST_TIME_HR', '');
+  }
+
+  Future<void> updateListTime(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('LIST_TIME_HR')) {
+      initialListTime();
+    }
+    prefs.setString('LIST_TIME_HR', value);
+  }
+
+  //
+  Future<String> getListTime() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('LIST_TIME_HR')) {
+      initialListTime();
+    }
+    return prefs.getString('LIST_TIME_HR');
+  }
 }

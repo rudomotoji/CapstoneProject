@@ -8,6 +8,7 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/features/peripheral/blocs/peripheral_bloc.dart';
 import 'package:capstone_home_doctor/features/peripheral/events/peripheral_event.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repo.dart';
+import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
 import 'package:capstone_home_doctor/features/peripheral/states/peripheral_state.dart';
 import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 
@@ -28,6 +29,7 @@ final Shader _normalHealthColors = LinearGradient(
 
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
 final VitalSignRepository _vitalSignRepository = VitalSignRepository();
+final PeripheralRepository _peripheralRepository = PeripheralRepository();
 
 // final PeripheralServices _peripheralServices = PeripheralServices();
 // final PeripheralCharacteristics _peripheralCharacteristics = PeripheralCharacteristics();
@@ -631,11 +633,18 @@ class _PeripheralService extends State<PeripheralService>
                           FlatButton(
                             height: 40,
                             minWidth: 250 / 2 - 10.5,
-                            child: Text('Huỷ',
+                            child: Text('Huỷ kết nối',
                                 style: TextStyle(
                                     color: DefaultTheme.RED_CALENDAR)),
                             onPressed: () async {
                               Navigator.of(context).pop();
+                              await _peripheralHelper
+                                  .getPeripheralId()
+                                  .then((value) async {
+                                await _peripheralRepository
+                                    .disconnectDevice(value);
+                              });
+
                               await peripheralHelper.updatePeripheralChecking(
                                   false, '');
 

@@ -34,7 +34,8 @@ class PeripheralRepository {
   }
 
   //disconnect device
-  Future<void> disconnectDevice(BluetoothDevice device) async {
+  Future<void> disconnectDevice(String peripheralId) async {
+     BluetoothDevice device = await findScanResultById(peripheralId);
     await device.disconnect();
   }
 
