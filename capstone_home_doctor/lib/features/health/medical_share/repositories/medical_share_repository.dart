@@ -15,6 +15,7 @@ class MedicalShareInsRepository extends BaseApiClient {
       int healthRecordId, List<int> listMedicalShare, int contractID) async {
     String url =
         '/MedicalInstructions/ShareMedicalInstructions?healthRecordId=${healthRecordId}&contractId=${contractID}';
+    print(url);
     try {
       final response = await postApi(url, null, listMedicalShare);
       print(response.statusCode);
