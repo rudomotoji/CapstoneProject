@@ -602,7 +602,8 @@ class _ActivityTimeView extends State<ActivityTimeView>
                                             left: 30, right: 30),
                                         width:
                                             MediaQuery.of(context).size.width,
-                                        child: DropdownButton<TimeActDTO>(
+                                        child: 
+                                        DropdownButton<TimeActDTO>(
                                           items: state.list
                                               .map((TimeActDTO value) {
                                             return new DropdownMenuItem<
@@ -631,6 +632,7 @@ class _ActivityTimeView extends State<ActivityTimeView>
                                             });
                                           },
                                         ),
+                                     
                                       ),
                                       //
                                       Divider(

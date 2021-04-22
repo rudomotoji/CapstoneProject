@@ -112,6 +112,7 @@ class _DashboardState extends State<DashboardPage>
 
   //measure kicked on
   bool isMeasureOn = false;
+  String timeChosen = '';
 
   //peripheral
   bool _isConnectedWithPeripheral = false;
@@ -146,11 +147,14 @@ class _DashboardState extends State<DashboardPage>
   String vitalType = 'HEART_RATE';
   String vitalBPType = 'PRESSURE';
   VitalSignDTO lastMeasurement = VitalSignDTO();
+  List<VitalSignDTO> listHeartRate = [];
   VitalSignDTO lastMeasurementBlood = VitalSignDTO();
   //
   //
   bool isBluetoothConnection = false;
   bool isContractApproved = false;
+  String timeStartM = '';
+  int durationM = 0;
 
   //
   List<VitalSignDTO> listVitalSignDangerous = [];
@@ -178,11 +182,27 @@ class _DashboardState extends State<DashboardPage>
 
   double get minHeight => kToolbarHeight + MediaQuery.of(context).padding.top;
 
+  _getMeasureCounting() async {
+    await _measureHelper.getTimeStartM().then((tStart) {
+      print('---time start: $tStart');
+      setState(() {
+        timeStartM = tStart;
+      });
+    });
+    await _measureHelper.getDurationM().then((dM) {
+      print('---duration: $dM');
+      setState(() {
+        durationM = dM;
+      });
+    });
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     _getPatientId();
+    _getMeasureCounting();
     _appointmentBloc = BlocProvider.of(context);
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
@@ -1683,49 +1703,6 @@ class _DashboardState extends State<DashboardPage>
     );
   }
 
-  _showSuggestionDashboard() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(top: 20, bottom: 20),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Gợi ý',
-              style: TextStyle(
-                color: DefaultTheme.BLACK,
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ),
-        ButtonArtBoard(
-          title: 'Yêu cầu hợp đồng',
-          description: 'Quét QR hoặc nhập ID kết nối với bác sĩ',
-          imageAsset: 'assets/images/ic-contract.png',
-          onTap: () async {
-            _chooseStepContract();
-          },
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 20),
-        ),
-        (_isConnectedWithPeripheral == false && _peripheralId == '')
-            ? ButtonArtBoard(
-                title: 'Kết nối thiết bị',
-                description: 'Dữ liệu được đồng bộ qua thiết bị đeo',
-                imageAsset: 'assets/images/ic-connect-p.png',
-                onTap: () {
-                  Navigator.pushNamed(
-                      context, RoutesHDr.INTRO_CONNECT_PERIPHERAL);
-                },
-              )
-            : Container(),
-      ],
-    );
-  }
-
   void _showPopUpIDDoctor() {
     showDialog(
       context: context,
@@ -2585,6 +2562,10 @@ class _DashboardState extends State<DashboardPage>
     // }
   }
 
+  _showMapHearRate() {
+    ///
+  }
+
   Future _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -2692,6 +2673,7 @@ class _DashboardState extends State<DashboardPage>
 
 //show measure duration
   _showMeasureDuration() {
+    timeChosen = '';
     _getDateTimeNow();
     final _tamThuController = TextEditingController();
     final _tamTruongController = TextEditingController();
@@ -2700,231 +2682,432 @@ class _DashboardState extends State<DashboardPage>
         context: context,
         backgroundColor: DefaultTheme.TRANSPARENT,
         builder: (context) {
-          return BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.85,
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.05),
-                  color: DefaultTheme.TRANSPARENT,
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.8,
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(15)),
-                      color: DefaultTheme.WHITE.withOpacity(0.9),
-                    ),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          //
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.85,
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.05),
+                    color: DefaultTheme.TRANSPARENT,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(15)),
+                        color: DefaultTheme.WHITE.withOpacity(0.9),
+                      ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            //
 
-                          Padding(
-                            padding:
-                                EdgeInsets.only(top: 30, left: 20, right: 30),
-                            child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: Image.asset(
-                                          'assets/images/ic-measure.png'),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 15),
-                                    ),
-                                    Text(
-                                      'Đo nhịp tim',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Spacer(),
-                                  ],
-                                )),
-                          ),
-                          (isMeasureOn)
-                              ? Expanded(
-                                  child: Column(children: []),
-                                )
-                              : Expanded(
-                                  child: Column(
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(top: 30, left: 20, right: 30),
+                              child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
                                     children: [
+                                      SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: Image.asset(
+                                            'assets/images/ic-measure.png'),
+                                      ),
                                       Padding(
-                                          padding: EdgeInsets.only(top: 20)),
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 0.25,
+                                        padding: EdgeInsets.only(left: 15),
                                       ),
-                                      Container(
-                                        height: 50,
-                                        padding: EdgeInsets.only(
-                                            left: 20, right: 20),
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              width: 140,
-                                              child: Text(
-                                                'Ngày',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                            ),
-                                            Text(
-                                                '${_dateValidator.parseToDateView3(dateNow.toString())}'),
-                                          ],
+                                      Text(
+                                        'Đo nhịp tim',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
                                         ),
-                                      ),
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 0.25,
-                                      ),
-                                      Container(
-                                        height: 50,
-                                        padding: EdgeInsets.only(
-                                            left: 20, right: 20),
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              width: 140,
-                                              child: Text(
-                                                'Bắt đầu từ',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                            ),
-                                            Text(
-                                                '${_dateValidator.getHourAndMinute(dateNow.toString())}'),
-                                            Spacer(),
-                                          ],
-                                        ),
-                                      ),
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 0.25,
-                                      ),
-                                      Container(
-                                        height: 50,
-                                        padding: EdgeInsets.only(
-                                            left: 20, right: 20),
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              width: 140,
-                                              child: Text(
-                                                'Trong vòng',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                            ),
-                                            //
-                                            Container(
-                                              height: 40,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width -
-                                                  180,
-                                              child: DropdownButton<int>(
-                                                items: listTimeMeasure
-                                                    .map((int value) {
-                                                  return new DropdownMenuItem<
-                                                      int>(
-                                                    value: value,
-                                                    child: new Text(
-                                                      '${value} phút',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                  );
-                                                }).toList(),
-                                                hint: Container(
-                                                  padding:
-                                                      EdgeInsets.only(left: 0),
-                                                  child: Text(
-                                                    'Chọn thời gian',
-                                                    style: TextStyle(
-                                                        color:
-                                                            DefaultTheme.BLACK,
-                                                        fontSize: 15),
-                                                  ),
-                                                ),
-                                                underline: Container(
-                                                  width: 0,
-                                                ),
-                                                isExpanded: true,
-                                                onChanged: (_) {
-                                                  print('$_');
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 0.25,
                                       ),
                                       Spacer(),
-                                      Container(
-                                        margin: EdgeInsets.only(
-                                            left: 20, right: 20),
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 45,
-                                        child: ButtonHDr(
-                                          style: BtnStyle.BUTTON_BLACK,
-                                          label: 'Bắt đầu đo',
-                                          onTap: () async {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 30)),
                                     ],
+                                  )),
+                            ),
+                            (isMeasureOn)
+                                ? Expanded(
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                            padding: EdgeInsets.only(top: 20)),
+                                        _getMeasureInformation(),
+                                      ],
+                                    ),
+                                  )
+                                : Expanded(
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                            padding: EdgeInsets.only(top: 20)),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 0.25,
+                                        ),
+                                        Container(
+                                          height: 50,
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20),
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: 140,
+                                                child: Text(
+                                                  'Ngày',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                              ),
+                                              Text(
+                                                  '${_dateValidator.parseToDateView3(dateNow.toString())}'),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 0.25,
+                                        ),
+                                        Container(
+                                          height: 50,
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20),
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: 140,
+                                                child: Text(
+                                                  'Bắt đầu từ',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                              ),
+                                              Text(
+                                                  '${_dateValidator.getHourAndMinute(dateNow.toString())}'),
+                                              Spacer(),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 0.25,
+                                        ),
+                                        Container(
+                                          height: 50,
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20),
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: 140,
+                                                child: Text(
+                                                  'Trong vòng',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                              ),
+                                              //
+                                              Container(
+                                                height: 40,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    180,
+                                                child: DropdownButton<int>(
+                                                  items: listTimeMeasure
+                                                      .map((int value) {
+                                                    return new DropdownMenuItem<
+                                                        int>(
+                                                      value: value,
+                                                      child: new Text(
+                                                        '${value} phút',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  hint: Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 0),
+                                                    child: Text(
+                                                      '$timeChosen',
+                                                      style: TextStyle(
+                                                          color: DefaultTheme
+                                                              .BLACK,
+                                                          fontSize: 15),
+                                                    ),
+                                                  ),
+                                                  underline: Container(
+                                                    width: 0,
+                                                  ),
+                                                  isExpanded: true,
+                                                  onChanged: (_) {
+                                                    print('$_');
+                                                    setModalState(() {
+                                                      timeChosen =
+                                                          _.toString() +
+                                                              ' phút';
+                                                    });
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 0.25,
+                                        ),
+                                        Spacer(),
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              left: 20, right: 20),
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: 45,
+                                          child: ButtonHDr(
+                                            style: BtnStyle.BUTTON_BLACK,
+                                            label: 'Bắt đầu đo',
+                                            onTap: () async {
+                                              //CHANGE MEASURE ON
+                                              setState(() {
+                                                if (!mounted) return;
+                                                isMeasureOn = true;
+                                              });
+                                              setModalState(() {
+                                                if (!mounted) return;
+                                                isMeasureOn = true;
+                                              });
+                                              await _measureHelper
+                                                  .updateMeasureOn(true);
+                                              //
+                                              //SAVE TIME START
+                                              await _measureHelper
+                                                  .updateTimeStartM(
+                                                      _dateValidator
+                                                          .getHourAndMinute(
+                                                              dateNow
+                                                                  .toString()));
+                                              //
+                                              //SAVE DURATION TIME
+                                              await _measureHelper
+                                                  .updateDurationM(int.tryParse(
+                                                      timeChosen
+                                                          .split(' ')[0]));
+                                              //
+                                              // Navigator.of(context).pop();
+                                              await _getMeasureCounting();
+
+                                              ///
+                                              ///
+
+                                              showDialog(
+                                                barrierDismissible: false,
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return Material(
+                                                    color: DefaultTheme
+                                                        .TRANSPARENT,
+                                                    child: Center(
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15)),
+                                                        child: BackdropFilter(
+                                                          filter:
+                                                              ImageFilter.blur(
+                                                                  sigmaX: 25,
+                                                                  sigmaY: 25),
+                                                          child: Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 10,
+                                                                    top: 10,
+                                                                    right: 10),
+                                                            width: 250,
+                                                            height: 150,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: DefaultTheme
+                                                                  .WHITE
+                                                                  .withOpacity(
+                                                                      0.7),
+                                                            ),
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: <
+                                                                  Widget>[
+                                                                Container(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          bottom:
+                                                                              10,
+                                                                          top:
+                                                                              10),
+                                                                  child: Text(
+                                                                    'Bắt đầu đo nhịp tim',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .none,
+                                                                      color: DefaultTheme
+                                                                          .BLACK,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      fontSize:
+                                                                          18,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              20,
+                                                                          right:
+                                                                              20),
+                                                                  child: Align(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    child: Text(
+                                                                      'Hệ thống sẽ ghi nhận nhịp tim của bạn trong khoảng thời gian này',
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        decoration:
+                                                                            TextDecoration.none,
+                                                                        color: DefaultTheme
+                                                                            .GREY_TEXT,
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                        fontSize:
+                                                                            13,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Spacer(),
+                                                                Divider(
+                                                                  height: 1,
+                                                                  color: DefaultTheme
+                                                                      .GREY_TOP_TAB_BAR,
+                                                                ),
+                                                                ButtonHDr(
+                                                                  height: 40,
+                                                                  style: BtnStyle
+                                                                      .BUTTON_TRANSPARENT,
+                                                                  label:
+                                                                      'Đồng ý',
+                                                                  labelColor:
+                                                                      DefaultTheme
+                                                                          .BLUE_TEXT,
+                                                                  onTap: () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        Padding(
+                                            padding: EdgeInsets.only(top: 30)),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                        ]),
+                          ]),
+                    ),
                   ),
-                ),
-                Positioned(
-                  top: 23,
-                  left: MediaQuery.of(context).size.width * 0.3,
-                  height: 5,
-                  child: Container(
-                    padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.3),
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    height: 15,
-                    decoration: BoxDecoration(
-                        color: DefaultTheme.WHITE.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(50)),
+                  Positioned(
+                    top: 23,
+                    left: MediaQuery.of(context).size.width * 0.3,
+                    height: 5,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.3),
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      height: 15,
+                      decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(50)),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
+                ],
+              ),
+            );
+          });
         });
+  }
+
+  _getMeasureInformation() {
+    return Container(
+      child: Column(
+        children: [
+          Text('Thời gian bắt đầu đo: $timeStartM'),
+          Text('Đo trong vòng: $durationM phút'),
+          InkWell(
+            onTap: () async {
+              setState(() {
+                if (!mounted) return;
+                isMeasureOn = false;
+              });
+
+              await _measureHelper.updateMeasureOn(false);
+              //
+              //SAVE TIME START
+              await _measureHelper.updateTimeStartM('');
+              //
+              //SAVE DURATION TIME
+              await _measureHelper.updateDurationM(0);
+              Navigator.of(context).pop();
+            },
+            child: Text('Huỷ'),
+          ),
+        ],
+      ),
+    );
   }
 }

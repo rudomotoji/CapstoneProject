@@ -1755,6 +1755,12 @@ class _HomeDoctorState extends State<HomeDoctor> {
     if (!prefs.containsKey('MEASURE_ON')) {
       _measureHelper.initialMeasureHelper();
     }
+    if (!prefs.containsKey('TIME_M')) {
+      _measureHelper.intitialTimeStartM();
+    }
+    if (!prefs.containsKey('DURATION_M')) {
+      _measureHelper.intialDurationM();
+    }
   }
 
   @override
