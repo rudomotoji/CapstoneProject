@@ -147,6 +147,15 @@ class _ContractShareView extends State<ContractShareView>
                               width: (30 * 1.5),
                               height: (40 * 1.5),
                               color: DefaultTheme.GREY_TOP_TAB_BAR,
+                              child: Center(
+                                  child: SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: Image.asset((e
+                                                  .medicalInstructionTypeName ==
+                                              'Sinh hiệu')
+                                          ? 'assets/images/ic-health-selected.png'
+                                          : 'assets/images/ic-medicine.png'))),
                             )
                           : Stack(
                               children: [
@@ -344,6 +353,15 @@ class _ContractShareView extends State<ContractShareView>
                                 width: (30 * 1.5),
                                 height: (40 * 1.5),
                                 color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                child: Center(
+                                    child: SizedBox(
+                                        width: 25,
+                                        height: 25,
+                                        child: Image.asset((e
+                                                    .medicalInstructionTypeName ==
+                                                'Sinh hiệu')
+                                            ? 'assets/images/ic-health-selected.png'
+                                            : 'assets/images/ic-medicine.png'))),
                               )
                             : Stack(
                                 children: [
@@ -546,6 +564,15 @@ class _ContractShareView extends State<ContractShareView>
                                 width: (30 * 1.5),
                                 height: (40 * 1.5),
                                 color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                child: Center(
+                                    child: SizedBox(
+                                        width: 25,
+                                        height: 25,
+                                        child: Image.asset((e
+                                                    .medicalInstructionTypeName ==
+                                                'Sinh hiệu')
+                                            ? 'assets/images/ic-health-selected.png'
+                                            : 'assets/images/ic-medicine.png'))),
                               )
                             : Stack(
                                 children: [
@@ -1162,12 +1189,20 @@ class _ContractShareView extends State<ContractShareView>
                                               .isEmpty)
                                       ? Stack(
                                           children: [
-                                            Container(
+                                            SizedBox(
                                               width: 150,
                                               height: 200,
-                                              color: DefaultTheme
-                                                  .GREY_TOP_TAB_BAR
-                                                  .withOpacity(0.6),
+                                              child: Center(
+                                                child: Image.asset(
+                                                  (medicalInstructions3[index]
+                                                              .medicalInstructionTypeName ==
+                                                          'Đơn thuốc')
+                                                      ? 'assets/images/ic-medicine.png'
+                                                      : 'assets/images/ic-health-selected.png',
+                                                  width: 50,
+                                                  height: 50,
+                                                ),
+                                              ),
                                             ),
                                             Container(
                                               width: 150,
@@ -1397,6 +1432,24 @@ class _ContractShareView extends State<ContractShareView>
                       ),
                     ),
                   ),
+                  (medicalInstructionIdsSelected.length > 0)
+                      ? Container(
+                          margin: EdgeInsets.only(top: 5, bottom: 5),
+                          decoration: BoxDecoration(
+                            color: DefaultTheme.BLUE_DARK,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: EdgeInsets.only(
+                              left: 10, right: 10, bottom: 5, top: 5),
+                          child: Text(
+                            'Đã chọn ${medicalInstructionIdsSelected.length} phiếu',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: DefaultTheme.WHITE,
+                            ),
+                          ),
+                        )
+                      : Container(),
 
                   Container(
                     margin: EdgeInsets.only(left: 20, top: 10, right: 20),
@@ -1570,7 +1623,7 @@ class _ContractShareView extends State<ContractShareView>
           padding: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 20),
           child: Container(
             child: Text(
-              'Sau đây là những phiếu y lệnh yêu cầu mà bạn cần phải chia sẻ cho bác sĩ. Những phiếu này tương ứng với bệnh lý mà bạn đã chọn.',
+              'Sau đây là những phiếu y lệnh cần thiết mà hệ thống gợi ý cho bạn để chia sẻ cho bác sĩ. Những phiếu này tương ứng với bệnh lý mà bạn đã chọn.',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
@@ -1857,10 +1910,12 @@ class _ContractShareView extends State<ContractShareView>
                                                                             listMi[insideCountNow - 1][index3].images.isEmpty)
                                                                         ? Stack(
                                                                             children: [
-                                                                              Container(
+                                                                              SizedBox(
                                                                                 width: 150,
                                                                                 height: 200,
-                                                                                color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.6),
+                                                                                child: Center(
+                                                                                  child: Image.asset((listMi[insideCountNow - 1][index3].medicalInstructionTypeName == 'Đơn thuốc') ? 'assets/images/ic-medicine.png' : 'assets/images/ic-health-selected.png', width: 50, height: 50),
+                                                                                ),
                                                                               ),
                                                                               Container(
                                                                                 width: 150,

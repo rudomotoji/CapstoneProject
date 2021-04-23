@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
+import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_push_dto.dart';
+import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
+import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
@@ -80,6 +85,10 @@ final MeasureHelper _measureHelper = MeasureHelper();
 DateValidator _dateValidator = DateValidator();
 List<ContractListDTO> _listExecuting = [];
 final VitalSignRepository _vitalSignRepository = VitalSignRepository();
+final BackgroundRepository _backgroundRepository =
+    BackgroundRepository(httpClient: http.Client());
+final VitalSignServerRepository _vitalSignServerRepository =
+    VitalSignServerRepository(httpClient: http.Client());
 //
 List<int> listTimeMeasure = [3, 5, 10, 15, 30];
 //
@@ -158,8 +167,12 @@ class _DashboardState extends State<DashboardPage>
   bool isMeasureDone = false;
   String timeStartM = '';
   int durationM = 0;
-  String listTimeM = '';
+  int countDurationM = 0;
+  List<String> listTimeM = [];
+  String listTimeString = '';
   String listValueM = '';
+  int minL = 0;
+  int maxL = 0;
 
   //
   List<VitalSignDTO> listVitalSignDangerous = [];
@@ -177,6 +190,7 @@ class _DashboardState extends State<DashboardPage>
 
   Stream<ReceiveNotification> _notificationsStream;
   Stream<ReceiveNotification> _refreshHeartRateStream;
+  Stream<ReceiveNotification> _measureStream;
 
   bool dangerKickedOn = false;
 
@@ -187,28 +201,109 @@ class _DashboardState extends State<DashboardPage>
 
   double get minHeight => kToolbarHeight + MediaQuery.of(context).padding.top;
 
+  _refreshBottomSheet(StateSetter setModalState) {
+    if (!mounted) return;
+    setModalState(() {
+      timeStartM = timeStartM;
+      durationM = durationM;
+      listValueM = listValueM;
+      listTimeM = listTimeM;
+      isMeasureOn = isMeasureOn;
+      isMeasureDone = isMeasureDone;
+      countDurationM = countDurationM;
+    });
+  }
+
+  _getsOffline() async {
+    await _sqfLiteHelper.getVitalSignScheduleOffline().then((sOffline) async {
+      if (sOffline.isNotEmpty && sOffline != null) {
+        //
+        var heartRateSchedule =
+            sOffline.where((item) => item.vitalSignType == 'Nhịp tim').first;
+        setState(() {
+          minL = heartRateSchedule.numberMin;
+          maxL = heartRateSchedule.numberMax;
+        });
+      } else {
+        await _backgroundRepository
+            .getSafeScopeHeartRate()
+            .then((safeScopeHR) async {
+          print(
+              'safe scope hr: ${safeScopeHR.minSafeHeartRate} - ${safeScopeHR.maxSafeHeartRate}');
+          setState(() {
+            minL = safeScopeHR.minSafeHeartRate;
+            maxL = safeScopeHR.maxSafeHeartRate;
+          });
+        });
+      }
+    });
+  }
+
   _getMeasureCounting() async {
     await _measureHelper.getTimeStartM().then((tStart) {
-      print('---time start: $tStart');
+      if (!mounted) return;
       setState(() {
         timeStartM = tStart;
       });
     });
     await _measureHelper.getDurationM().then((dM) {
-      print('---duration: $dM');
+      if (!mounted) return;
       setState(() {
         durationM = dM;
       });
     });
     await _measureHelper.getListValueHr().then((listV) {
+      if (!mounted) return;
       setState(() {
         listValueM = listV;
       });
     });
     await _measureHelper.getListTime().then((listT) {
+      if (!mounted) return;
+
+      listTimeM.clear();
       setState(() {
-        listTimeM = listT;
+        listTimeString = listT;
+        for (int i = 0; i < listT.split(',').length; i++) {
+          listTimeM.add('"' + '${listT.split(',')[i]}' + '"');
+        }
+        if (listTimeM.last == '""') {
+          listTimeM.removeLast();
+        }
       });
+    });
+    await _measureHelper.isMeasureOn().then((value) async {
+      //
+      if (!mounted) return;
+      setState(() {
+        //
+        isMeasureOn = value;
+      });
+      //
+      if (value) {
+        await _measureHelper.getCountingM().then((countM) async {
+          //
+          if (!mounted) return;
+          setState(() {
+            countDurationM = countM;
+          });
+
+          await _measureHelper.getDurationM().then((durationM) async {
+            if (countM < durationM) {
+              if (!mounted) return;
+              setState(() {
+                isMeasureDone = false;
+              });
+            } else {
+              if (!mounted) return;
+              setState(() {
+                isMeasureDone = true;
+              });
+            }
+          });
+        });
+      }
+      //
     });
     //
     //
@@ -220,6 +315,7 @@ class _DashboardState extends State<DashboardPage>
     super.initState();
     _getPatientId();
     _getMeasureCounting();
+    _getsOffline();
     _appointmentBloc = BlocProvider.of(context);
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
@@ -239,6 +335,12 @@ class _DashboardState extends State<DashboardPage>
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((notification) {
       _pullRefresh();
+    });
+    _measureStream = MeasureBloc.instance.notificationsStream;
+    _measureStream.listen((rf) {
+      if (rf.title.contains('measure hr')) {
+        _getMeasureCounting();
+      }
     });
 
     //
@@ -1327,8 +1429,8 @@ class _DashboardState extends State<DashboardPage>
                                     decoration: BoxDecoration(
                                         border: Border(
                                       left: BorderSide(
-                                          width: 2.0,
-                                          color: DefaultTheme.BLUE_TEXT),
+                                          width: 3.0,
+                                          color: _genderColor(detail.status)),
                                     )),
                                     width: MediaQuery.of(context).size.width -
                                         (40 + 20 + 50 + 2 + 10),
@@ -1861,39 +1963,6 @@ class _DashboardState extends State<DashboardPage>
                             label: 'Đo trong khoảng thời gian',
                             onTap: () async {
                               Navigator.of(context).pop();
-                              await _measureHelper
-                                  .isMeasureOn()
-                                  .then((value) async {
-                                //
-                                if (!mounted) return;
-                                setState(() {
-                                  //
-                                  isMeasureOn = value;
-                                });
-                                //
-                                if (value) {
-                                  await _measureHelper
-                                      .getCountingM()
-                                      .then((countM) async {
-                                    //
-
-                                    await _measureHelper
-                                        .getDurationM()
-                                        .then((durationM) async {
-                                      if (countM < durationM) {
-                                        setState(() {
-                                          isMeasureDone = false;
-                                        });
-                                      } else {
-                                        setState(() {
-                                          isMeasureDone = true;
-                                        });
-                                      }
-                                    });
-                                  });
-                                }
-                                //
-                              });
                               await _getMeasureCounting();
                               _showMeasureDuration();
                             },
@@ -3501,10 +3570,11 @@ class _DashboardState extends State<DashboardPage>
 
 //show measure duration
   _showMeasureDuration() {
+    ////////
+    ///DO HERE
     timeChosen = '';
     _getDateTimeNow();
-    final _tamThuController = TextEditingController();
-    final _tamTruongController = TextEditingController();
+
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -3512,6 +3582,13 @@ class _DashboardState extends State<DashboardPage>
         builder: (context) {
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
+            _measureStream = MeasureBloc.instance.notificationsStream;
+            _measureStream.listen((rf) {
+              if (rf.title.contains('measure hr')) {
+                // _getMeasureCounting();
+                _refreshBottomSheet(setModalState);
+              }
+            });
             return BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
               child: Stack(
@@ -3576,9 +3653,18 @@ class _DashboardState extends State<DashboardPage>
                                                           .withOpacity(0.7)),
                                               child: Center(
                                                 child: Text(
-                                                  (isMeasureDone)
+                                                  (isMeasureDone &&
+                                                          countDurationM > 0)
                                                       ? 'Trạng thái: Đo hoàn tất'
-                                                      : 'Trạng thái: Đang đo',
+                                                      : (!isMeasureDone &&
+                                                              countDurationM ==
+                                                                  0)
+                                                          ? 'Trạng thái: Đang đo'
+                                                          : (!isMeasureDone &&
+                                                                  countDurationM >
+                                                                      0)
+                                                              ? 'Trạng thái: Đang đo ${countDurationM} phút'
+                                                              : '',
                                                   style: TextStyle(
                                                       color:
                                                           DefaultTheme.WHITE),
@@ -3747,7 +3833,6 @@ class _DashboardState extends State<DashboardPage>
                                             style: BtnStyle.BUTTON_BLACK,
                                             label: 'Bắt đầu đo',
                                             onTap: () async {
-                                              //CHANGE MEASURE ON
                                               setState(() {
                                                 if (!mounted) return;
                                                 isMeasureOn = true;
@@ -4038,74 +4123,207 @@ class _DashboardState extends State<DashboardPage>
               ],
             ),
           ),
-          Text('List value : $listValueM'),
-          Text('List time: $listTimeM'),
+          Spacer(),
+          _heartRateChartToday(listTimeM, listValueM),
           Spacer(),
           Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.only(left: 20, right: 20),
-            child: Row(
-              children: [
-                InkWell(
-                  onTap: () async {
-                    setState(() {
-                      if (!mounted) return;
-                      isMeasureOn = false;
-                    });
+            child: (isMeasureDone)
+                ? Column(
+                    children: [
+                      Row(
+                        children: [
+                          //
+                          InkWell(
+                            onTap: () async {
+                              VitalSignPushDTO vitalSignPush = VitalSignPushDTO(
+                                patientId: _patientId,
+                                vitalSignTypeId: 1,
+                                timeStartValue: listTimeString,
+                                numberStartValue: listValueM,
+                              );
+                              await _vitalSignServerRepository
+                                  .pushVitalSign(vitalSignPush)
+                                  .then((isSuccess) async {
+                                if (isSuccess) {
+                                  print('SUCCESSFUL PUSH DATA HEART RATE');
+                                }
+                              });
+                              /////
+                              ///
+                              setState(() {
+                                if (!mounted) return;
+                                isMeasureOn = false;
+                              });
 
-                    await _measureHelper.updateMeasureOn(false);
-                    //
-                    //SAVE TIME START
-                    await _measureHelper.updateTimeStartM('');
-                    //
-                    //SAVE DURATION TIME
-                    await _measureHelper.updateDurationM(0);
+                              await _measureHelper.updateMeasureOn(false);
+                              //
+                              //SAVE TIME START
+                              await _measureHelper.updateTimeStartM('');
+                              //
+                              //SAVE DURATION TIME
+                              await _measureHelper.updateDurationM(0);
 
-                    //
-                    await _measureHelper.updateCountingM(0);
-                    //UPDATE TIME AND VALUE LIST HR INTO INITIAL
-                    await _measureHelper.updateListTime('');
-                    await _measureHelper.updateListValueHr('');
-                    //
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                      width: (MediaQuery.of(context).size.width / 2) - 25,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: DefaultTheme.GREY_TOP_TAB_BAR, width: 0.5),
-                          color: DefaultTheme.WHITE,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                        child: Text('Huỷ đo',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: DefaultTheme.RED_CALENDAR)),
-                      )),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 10),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                      width: (MediaQuery.of(context).size.width / 2) - 25,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                              color: DefaultTheme.GREY_TOP_TAB_BAR, width: 0.5),
-                          color: DefaultTheme.WHITE,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                        child: Text('Đóng',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: DefaultTheme.BLACK)),
-                      )),
-                ),
-              ],
-            ),
+                              //
+                              await _measureHelper.updateCountingM(0);
+                              //UPDATE TIME AND VALUE LIST HR INTO INITIAL
+                              await _measureHelper.updateListTime('');
+                              await _measureHelper.updateListValueHr('');
+                              //
+                              ///
+                              ///
+                              Navigator.of(context).pop();
+                              //
+                            },
+                            child: Container(
+                                width: (MediaQuery.of(context).size.width / 2) -
+                                    25,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: DefaultTheme.BLACK_BUTTON,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Center(
+                                  child: Text('Đồng bộ',
+                                      textAlign: TextAlign.center,
+                                      style:
+                                          TextStyle(color: DefaultTheme.WHITE)),
+                                )),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              setState(() {
+                                if (!mounted) return;
+                                isMeasureOn = false;
+                              });
+
+                              await _measureHelper.updateMeasureOn(false);
+                              //
+                              //SAVE TIME START
+                              await _measureHelper.updateTimeStartM('');
+                              //
+                              //SAVE DURATION TIME
+                              await _measureHelper.updateDurationM(0);
+
+                              //
+                              await _measureHelper.updateCountingM(0);
+                              //UPDATE TIME AND VALUE LIST HR INTO INITIAL
+                              await _measureHelper.updateListTime('');
+                              await _measureHelper.updateListValueHr('');
+                              //
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                                width: (MediaQuery.of(context).size.width / 2) -
+                                    25,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        width: 0.5),
+                                    color: DefaultTheme.WHITE,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Center(
+                                  child: Text('Huỷ kết quả',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: DefaultTheme.RED_CALENDAR)),
+                                )),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 10),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    width: 0.5),
+                                color: DefaultTheme.WHITE,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Center(
+                              child: Text('Đóng',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: DefaultTheme.BLACK)),
+                            )),
+                      ),
+                    ],
+                  )
+                : Row(
+                    children: [
+                      InkWell(
+                        onTap: () async {
+                          setState(() {
+                            if (!mounted) return;
+                            isMeasureOn = false;
+                          });
+
+                          await _measureHelper.updateMeasureOn(false);
+                          //
+                          //SAVE TIME START
+                          await _measureHelper.updateTimeStartM('');
+                          //
+                          //SAVE DURATION TIME
+                          await _measureHelper.updateDurationM(0);
+
+                          //
+                          await _measureHelper.updateCountingM(0);
+                          //UPDATE TIME AND VALUE LIST HR INTO INITIAL
+                          await _measureHelper.updateListTime('');
+                          await _measureHelper.updateListValueHr('');
+                          //
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                            width: (MediaQuery.of(context).size.width / 2) - 25,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    width: 0.5),
+                                color: DefaultTheme.WHITE,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Center(
+                              child: Text('Huỷ đo',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: DefaultTheme.RED_CALENDAR)),
+                            )),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                            width: (MediaQuery.of(context).size.width / 2) - 25,
+                            height: 50,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    width: 0.5),
+                                color: DefaultTheme.WHITE,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Center(
+                              child: Text('Đóng',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: DefaultTheme.BLACK)),
+                            )),
+                      ),
+                    ],
+                  ),
           ),
           Padding(
             padding: EdgeInsets.only(bottom: 30),
@@ -4113,5 +4331,174 @@ class _DashboardState extends State<DashboardPage>
         ],
       ),
     );
+  }
+
+  Widget _heartRateChartToday(List<String> listXAxis, String listYAxis) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Divider(
+          color: DefaultTheme.GREY_TOP_TAB_BAR,
+          height: 0.5,
+        ),
+        (listXAxis != null && listYAxis != null)
+            ? new Container(
+                width: MediaQuery.of(context).size.width,
+                color: DefaultTheme.WHITE,
+                height: 430,
+                child: Column(
+                  children: [
+                    Container(
+                      child:
+                          // ListView(
+                          //   shrinkWrap: true,
+                          //   scrollDirection: Axis.horizontal,
+                          //   children: <Widget>[
+                          //
+                          new Echarts(
+                        option: '''
+                                    {
+                                      color: ['#FF784B'],
+                                      tooltip: {
+                                        trigger: "axis",
+                                        axisPointer: {
+                                          type: "shadow"
+                                      }
+                                  },
+                                      xAxis: {
+                                        axisTick: {
+                                          alignWithLabel: true
+                                        },
+                                        gridIndex: 0,
+                                          axisLine: {
+                                            lineStyle: {
+                                              color: '#303030',
+                                            },
+                                          },
+                                        name: 'GIỜ',
+                                        type: 'category',
+                                        data: ${listXAxis},
+                                        show: true,
+                                        nameTextStyle: {
+                                          align: "center",
+                                          color: "#F5233C",
+                                          fontSize: 10
+                                        }
+                                    },
+                                    yAxis: {
+                                       max:150,
+        min:0,
+                                      name: 'BPM',
+                                      nameTextStyle: {
+                                      verticalAlign: "middle",
+                                      color: "#F5233C"
+                                      },
+                                      axisTick: {
+                                        show: false
+                                      },
+                                      type: 'value',
+                                      axisLine: {
+                                        lineStyle: {
+                                          color: '#303030',
+                                        },
+                                      },
+                                      axisLabel: {
+                                        color: '#303030',
+                                      },
+                                    },
+                                     visualMap: {
+                                      show: true,
+                                         top: 20,
+                                         
+            right: 20,
+            pieces: [{
+                gt: 0,
+                lte:   ${minL},
+                color: '#F5233C'
+            }, {
+                gt:  ${minL},
+                lte:  ${maxL},
+                color: '#636AA7'
+            }, {
+                gt:  ${maxL},
+                lte: 150,
+                color: '#F5233C'
+            }],
+                                      },
+                                      series: [{
+                                        name: 'Nhịp tim',
+                                        data: [${listYAxis}],
+                                        type: 'line',
+                                            markLine: {
+                silent: true,
+                lineStyle: {
+                    color: '#303030',
+                     type: 'solid',
+                  
+                },
+   
+                data: [
+                 
+                    {
+                    yAxis: ${maxL},
+                   
+                }, {
+                    yAxis: ${minL},
+                }]
+            }
+                                      },]
+                                    }
+                                  ''',
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      // padding: EdgeInsets.only(right: 20),
+                      height: 400,
+                    ),
+                    Text('Biểu đồ nhịp tim'.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: DefaultTheme.BLUE_REFERENCE,
+                        )),
+                  ],
+                ),
+              )
+            : Container(),
+        Divider(
+          color: DefaultTheme.GREY_TOP_TAB_BAR,
+          height: 0.5,
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 15),
+        ),
+
+        // Container(
+        //   width: MediaQuery.of(context).size.width - 40,
+        //   height: 45,
+        //   child: ButtonHDr(
+        //     style: BtnStyle.BUTTON_BLACK,
+        //     label: 'Hiển thị thêm dữ liệu đo',
+        //     onTap: () {
+        //       Navigator.pushNamed(context, RoutesHDr.VITALSIGN_HISTORY);
+        //     },
+        //   ),
+        // ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 20),
+        ),
+      ],
+    );
+  }
+
+  Color _genderColor(String s) {
+    Color color;
+    if (s == 'FINISHED') {
+      color = DefaultTheme.BLUE_DARK;
+    } else if (s == 'ACTIVE') {
+      color = DefaultTheme.SUCCESS_STATUS;
+    } else if (s == 'CANCEL') {
+      color = DefaultTheme.BLACK_BUTTON;
+    }
+    return color;
   }
 }

@@ -483,6 +483,10 @@ void main() async {
                       valueHr += heartRateValue.toString() + ',';
                       print('LIST VALUE HEART RATE MEASURE NOW--: $valueHr');
                       await _measureHelper.updateListValueHr(valueHr);
+                      //
+                      ReceiveNotification notiData = ReceiveNotification(
+                          id: 0, title: "measure hr", body: "", payload: "");
+                      MeasureBloc.instance.newNotification(notiData);
                     });
                     await _measureHelper.getListTime().then((listT) async {
                       DateTime noww = DateTime.now();

@@ -406,7 +406,7 @@ class _HeartDetailView extends State<HeartDetailView>
           color: DefaultTheme.GREY_TOP_TAB_BAR,
           height: 0.5,
         ),
-        (listXAxis != null && listValueMap != null)
+        (listXAxis != null && listYAxis != null)
             ? new Container(
                 width: MediaQuery.of(context).size.width,
                 color: DefaultTheme.WHITE,

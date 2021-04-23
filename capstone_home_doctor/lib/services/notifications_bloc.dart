@@ -85,3 +85,24 @@ class HeartRealTimeBloc {
     _notificationsStreamController?.close();
   }
 }
+
+class MeasureBloc {
+  MeasureBloc._internal();
+
+  static final MeasureBloc instance = MeasureBloc._internal();
+
+  final BehaviorSubject<ReceiveNotification> _notificationsStreamController =
+      BehaviorSubject<ReceiveNotification>();
+
+  Stream<ReceiveNotification> get notificationsStream {
+    return _notificationsStreamController;
+  }
+
+  void newNotification(ReceiveNotification notification) {
+    _notificationsStreamController.sink.add(notification);
+  }
+
+  void dispose() {
+    _notificationsStreamController?.close();
+  }
+}

@@ -206,7 +206,7 @@ class _ButtonHDr extends State<ButtonHDr> {
               ),
               Text(
                 _label,
-                textAlign: TextAlign.left,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE,
                   color: _labelColor,
@@ -263,6 +263,7 @@ class _ButtonHDr extends State<ButtonHDr> {
         onPressed: widget.onTap,
         child: Text(
           _label,
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: DefaultNumeralUI.BUTTON_LABEL_SIZE,
             color: _labelColor,

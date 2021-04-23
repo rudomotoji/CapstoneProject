@@ -23,6 +23,7 @@ import 'package:capstone_home_doctor/models/patient_dto.dart';
 import 'package:capstone_home_doctor/models/token_device_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
+import 'package:capstone_home_doctor/services/measure_helper.dart';
 import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
@@ -47,6 +48,7 @@ final MedicalInstructionHelper _medicalInstructionHelper =
 final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 final ReminderHelper _reminderHelper = ReminderHelper();
 final VitalSignRepository _vitalSignRepository = VitalSignRepository();
+final MeasureHelper _measureHelper = MeasureHelper();
 //
 final ArrayValidator _arrayValidator = ArrayValidator();
 //final RealTimeHeartRateBloc _realTimeHeartRateBloc = RealTimeHeartRateBloc();
@@ -640,7 +642,19 @@ class _HeaderWidget extends State<HeaderWidget> {
                                         .newNotification(notiData);
                                   }
                                 });
+                                await _measureHelper.updateMeasureOn(false);
+                                //
+                                //SAVE TIME START
+                                await _measureHelper.updateTimeStartM('');
+                                //
+                                //SAVE DURATION TIME
+                                await _measureHelper.updateDurationM(0);
 
+                                //
+                                await _measureHelper.updateCountingM(0);
+                                //UPDATE TIME AND VALUE LIST HR INTO INITIAL
+                                await _measureHelper.updateListTime('');
+                                await _measureHelper.updateListValueHr('');
                                 await _sqfLiteHelper
                                     .deleteVitalSignSchedule()
                                     .then((isDeleted) async {
@@ -2418,6 +2432,19 @@ class _Header extends State<Header> {
                                       dto: _tokenDeviceDTO));
                                   print('udpate token becomes null successful');
                                 });
+                                await _measureHelper.updateMeasureOn(false);
+                                //
+                                //SAVE TIME START
+                                await _measureHelper.updateTimeStartM('');
+                                //
+                                //SAVE DURATION TIME
+                                await _measureHelper.updateDurationM(0);
+
+                                //
+                                await _measureHelper.updateCountingM(0);
+                                //UPDATE TIME AND VALUE LIST HR INTO INITIAL
+                                await _measureHelper.updateListTime('');
+                                await _measureHelper.updateListValueHr('');
                                 await _sqfLiteHelper
                                     .deleteVitalSignSchedule()
                                     .then((isDeleted) async {

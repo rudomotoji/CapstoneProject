@@ -461,7 +461,7 @@ class _ScheduleView extends State<ScheduleView>
                   decoration: BoxDecoration(
                     border: Border(
                       left: BorderSide(
-                          width: 2.0, color: DefaultTheme.RED_CALENDAR),
+                          width: 5.0, color: _genderColor(event.status)),
                     ),
                     color: DefaultTheme.GREY_VIEW,
                     //border: Border.all(width: 0.8),
@@ -507,15 +507,15 @@ class _ScheduleView extends State<ScheduleView>
                 children: <Widget>[
                   //
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.7,
                     padding: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.05),
                     color: DefaultTheme.TRANSPARENT,
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 0.9,
+                      height: MediaQuery.of(context).size.height * 0.65,
                       decoration: BoxDecoration(
                         borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(15)),
+                            BorderRadius.vertical(top: Radius.circular(20)),
                         color: DefaultTheme.GREY_VIEW,
                       ),
                       child: Column(
@@ -527,55 +527,419 @@ class _ScheduleView extends State<ScheduleView>
                           ),
                           Expanded(
                             child: Container(
+                              padding: EdgeInsets.only(left: 20, right: 20),
                               width: MediaQuery.of(context).size.width,
                               child: BlocBuilder<AppointDetailmentBloc,
                                       AppointmentDetailState>(
                                   builder: (context, state) {
-                                if (state is AppointmentDetailStateLoading) {}
+                                if (state is AppointmentDetailStateLoading) {
+                                  return Center(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 200,
+                                      child: SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 200,
+                                        child: Image.asset(
+                                            'assets/images/loading.gif'),
+                                      ),
+                                    ),
+                                  );
+                                }
                                 if (state is AppointmentDetailStateFailure) {}
                                 if (state is AppointmentDetailStateSuccess) {
                                   if (state.dto != null) {
                                     return ListView(
                                       children: <Widget>[
-                                        Text(
-                                            'Bác sĩ: ${state.dto.fullNameDoctor}'),
-                                        Text(
-                                            'Bệnh nhân: ${state.dto.fullNamePatient}'),
-                                        Text('Chẩn đoán: ${state.dto.note}'),
-                                        Text('Trạng thái: ${state.dto.status}'),
-                                        ListView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          itemCount: state
-                                              .dto.medicalInstructions.length,
-                                          itemBuilder:
-                                              (BuildContext contex, int index) {
-                                            return Container(
-                                              width: 60,
-                                              height: 60,
-                                              child: InkWell(
-                                                onTap: () {
-                                                  _showDetailVitalSign(state
-                                                      .dto
-                                                      .medicalInstructions[
-                                                          index]
-                                                      .medicalInstructionId);
-                                                  //
-                                                },
-                                                child: Container(
-                                                  width: 60,
-                                                  height: 60,
-                                                  color: DefaultTheme
-                                                      .GREY_TOP_TAB_BAR,
-                                                  child: Center(
-                                                    child: Text(
-                                                        '${state.dto.medicalInstructions[index].medicalInstructionType}'),
-                                                  ),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            SizedBox(
+                                              width: 30,
+                                              height: 30,
+                                              child: Image.asset(
+                                                  'assets/images/ic-appointment.png'),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                            ),
+                                            Container(
+                                              // padding:
+                                              //     EdgeInsets.only(bottom: 3),
+                                              alignment: Alignment.bottomCenter,
+                                              height: 30,
+                                              child: Text(
+                                                'Chi tiết cuộc hẹn',
+                                                style: TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
                                               ),
-                                            );
+                                            ),
+                                            Spacer(),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 3),
+                                              padding: EdgeInsets.only(
+                                                  bottom: 10,
+                                                  top: 10,
+                                                  left: 20,
+                                                  right: 20),
+                                              decoration: BoxDecoration(
+                                                color: _genderColor(
+                                                    state.dto.status),
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  '${_genderStatus(state.dto.status)}',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color:
+                                                          DefaultTheme.WHITE),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          height: 40,
+                                          alignment: Alignment.centerLeft,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              //
+                                              Container(
+                                                width: 120,
+                                                alignment: Alignment.centerLeft,
+                                                height: 40,
+                                                child: Text('Bác sĩ',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    160,
+                                                alignment: Alignment.centerLeft,
+                                                height: 40,
+                                                child: Text(
+                                                    '${state.dto.fullNameDoctor}',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          height: 40,
+                                          alignment: Alignment.centerLeft,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              //
+                                              Container(
+                                                width: 120,
+                                                alignment: Alignment.centerLeft,
+                                                height: 40,
+                                                child: Text('Bệnh nhân',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    160,
+                                                alignment: Alignment.centerLeft,
+                                                height: 40,
+                                                child: Text(
+                                                    '${state.dto.fullNamePatient}',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          height: 40,
+                                          alignment: Alignment.centerLeft,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              //
+                                              Container(
+                                                width: 120,
+                                                alignment: Alignment.centerLeft,
+                                                height: 40,
+                                                child: Text('Thời gian',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    160,
+                                                alignment: Alignment.centerLeft,
+                                                height: 40,
+                                                child: Row(
+                                                  children: [
+                                                    Container(
+                                                      width: 35,
+                                                      height: 35,
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            DefaultTheme.WHITE,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        border: Border.all(
+                                                            color: DefaultTheme
+                                                                .GREY_TOP_TAB_BAR,
+                                                            width: 0.5),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                            '${state.dto.dateExamination.split('T')[1].split(':')[0]}'),
+                                                      ),
+                                                    ),
+                                                    Text(' : '),
+                                                    Container(
+                                                      width: 35,
+                                                      height: 35,
+                                                      decoration: BoxDecoration(
+                                                        color:
+                                                            DefaultTheme.WHITE,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        border: Border.all(
+                                                            color: DefaultTheme
+                                                                .GREY_TOP_TAB_BAR,
+                                                            width: 0.5),
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                            '${state.dto.dateExamination.split('T')[1].split(':')[1]}'),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      // width: MediaQuery.of(context)
+                                                      //         .size
+                                                      //         .width -
+                                                      //     160,
+                                                      padding: EdgeInsets.only(
+                                                          left: 5),
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      height: 40,
+                                                      child: Text(
+                                                          ' ngày ${_dateValidator.parseToDateView(state.dto.dateExamination)}',
+                                                          style: TextStyle(
+                                                              fontSize: 16)),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          height: 200,
+                                          padding: EdgeInsets.only(top: 10),
+                                          alignment: Alignment.topLeft,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              //
+                                              Container(
+                                                width: 120,
+                                                alignment: Alignment.topLeft,
+                                                height: 200,
+                                                child: Text('Chẩn đoán',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    160,
+                                                alignment: Alignment.topLeft,
+                                                height: 200,
+                                                child: Text('${state.dto.note}',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                        ),
+                                        (state.dto.medicalInstructions
+                                                    .isEmpty ||
+                                                state.dto.medicalInstructions ==
+                                                    null)
+                                            ? Container()
+                                            : Container(
+                                                height: 40,
+                                                alignment: Alignment.centerLeft,
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    //
+                                                    Container(
+                                                      width: 120,
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      height: 40,
+                                                      child: Text('Đính kèm ',
+                                                          style: TextStyle(
+                                                              fontSize: 16)),
+                                                    ),
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width -
+                                                              160,
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      height: 40,
+                                                      child: ListView.builder(
+                                                          scrollDirection:
+                                                              Axis.horizontal,
+                                                          shrinkWrap: true,
+                                                          physics:
+                                                              NeverScrollableScrollPhysics(),
+                                                          itemCount: state
+                                                              .dto
+                                                              .medicalInstructions
+                                                              .length,
+                                                          itemBuilder:
+                                                              (BuildContext
+                                                                      contex,
+                                                                  int index) {
+                                                            return Container(
+                                                              height: 50,
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 20,
+                                                                      right:
+                                                                          20),
+                                                              child: InkWell(
+                                                                onTap: () {
+                                                                  _showDetailVitalSign(state
+                                                                      .dto
+                                                                      .medicalInstructions[
+                                                                          index]
+                                                                      .medicalInstructionId);
+                                                                  //
+                                                                },
+                                                                child:
+                                                                    Container(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              20,
+                                                                          right:
+                                                                              20),
+                                                                  height: 50,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    color: DefaultTheme
+                                                                        .WHITE,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            30),
+                                                                  ),
+                                                                  child: Center(
+                                                                    child: Row(
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width:
+                                                                              20,
+                                                                          height:
+                                                                              20,
+                                                                          child:
+                                                                              Image.asset('assets/images/ic-medicine.png'),
+                                                                        ),
+                                                                        Text(
+                                                                            '${state.dto.medicalInstructions[index].medicalInstructionType}'),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 30),
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.of(context).pop();
                                           },
+                                          child: Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: DefaultTheme
+                                                        .GREY_TOP_TAB_BAR,
+                                                    width: 0.5),
+                                                color: DefaultTheme.WHITE,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  'Đóng',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              )),
                                         ),
                                       ],
                                     );
@@ -610,6 +974,30 @@ class _ScheduleView extends State<ScheduleView>
         });
   }
 
+  String _genderStatus(String s) {
+    String status = '';
+    if (s == 'FINISHED') {
+      status = 'Đã kết thúc';
+    } else if (s == 'ACTIVE') {
+      status = 'Đang hiện hành';
+    } else if (s == 'CANCEL') {
+      status = 'Đã huỷ';
+    }
+    return status;
+  }
+
+  Color _genderColor(String s) {
+    Color color;
+    if (s == 'FINISHED') {
+      color = DefaultTheme.BLUE_DARK;
+    } else if (s == 'ACTIVE') {
+      color = DefaultTheme.SUCCESS_STATUS;
+    } else if (s == 'CANCEL') {
+      color = DefaultTheme.BLACK_BUTTON;
+    }
+    return color;
+  }
+
   void _showDetailVitalSign(int medicalInstructionId) {
     setState(() {
       showDialog(
@@ -639,7 +1027,7 @@ class _ScheduleView extends State<ScheduleView>
                         Container(
                           padding: EdgeInsets.only(bottom: 10),
                           child: Text(
-                            'Vui lòng chờ chút',
+                            'Đang tải',
                             style: TextStyle(
                               decoration: TextDecoration.none,
                               color: DefaultTheme.GREY_TEXT,
