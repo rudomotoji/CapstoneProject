@@ -75,12 +75,17 @@ class _MedicineHistory extends State<MedicineHistory>
                     ),
                   );
                 }
+
+                ///comment to install
+                ///comment to install
+                ///comment to install
+                ///comment to install
+                ///comment to install
                 if (state is PrescriptionListStateFailure) {
+                  ///comment to install
                   return Container(
                       width: MediaQuery.of(context).size.width,
-                      child: Center(
-                          child:
-                              Text('Kiểm tra lại đường truyền kết nối mạng')));
+                      child: Center(child: Text('Hiện không có đơn thuốc.')));
                 }
                 if (state is PrescriptionListStateSuccess) {
                   listPrescription = state.listPrescription;
@@ -94,8 +99,7 @@ class _MedicineHistory extends State<MedicineHistory>
                       ? Container(
                           width: MediaQuery.of(context).size.width,
                           child: Center(
-                            child:
-                                Text('Kiểm tra lại đường truyền kết nối mạng'),
+                            child: Text('Hiện không có đơn thuốc.'),
                           ),
                         )
                       : Expanded(

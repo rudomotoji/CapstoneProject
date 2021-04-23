@@ -1729,7 +1729,7 @@ class _ScheduleView extends State<ScheduleView>
                   height: 200,
                   width: MediaQuery.of(context).size.width,
                   child: Center(
-                      child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+                      child: Text('Không có lịch dùng thuốc trong hôm nay')));
             }
             if (state is PrescriptionListStateSuccess) {
               List<MedicalInstructionDTO> listPrescriptions = [];
@@ -1855,7 +1855,7 @@ class _ScheduleView extends State<ScheduleView>
             return Container(
               width: MediaQuery.of(context).size.width,
               child: Center(
-                child: Text('Không thể lấy dữ liệu'),
+                child: Text('Không có lịch dùng thuốc trong hôm nay'),
               ),
             );
           }),
