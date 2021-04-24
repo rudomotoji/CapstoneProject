@@ -1299,14 +1299,19 @@ class _DashboardState extends State<DashboardPage>
                     .parseStringToDateApnt(dto.dateExamination)
                     .isAtSameMomentAs(curentDateNow)) {
               //
+              dto.appointments.removeWhere((item) =>
+                  item.status == 'FINISHED' || item.status == 'CANCEL');
               listAppointmentCurrentSortedDate.add(dto);
               listAppointmentDetailSortedDate.addAll(dto.appointments);
             }
+            //
+
           }
         }
       }
       return (listAppointmentCurrentSortedDate == null ||
-              listAppointmentCurrentSortedDate.isEmpty)
+              listAppointmentCurrentSortedDate.isEmpty ||
+              listAppointmentDetailSortedDate.length == 0)
           ? Container()
           : Container(
               child: Column(
@@ -1360,121 +1365,151 @@ class _DashboardState extends State<DashboardPage>
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: listAppointmentCurrentSortedDate.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            //color: DefaultTheme.GREY_VIEW,
-                            // border: Border(
-                            //   left: BorderSide(
-                            //       width: 2.0, color: DefaultTheme.RED_CALENDAR),
-                            // ),
-                            ),
-                        width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                        padding: EdgeInsets.only(bottom: 10, top: 10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 10),
-                            ),
-                            Container(
-                              // width: 60,
-                              // height: 60,
-                              child: Center(
-                                child: Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        width: 0.75),
-                                    color: DefaultTheme.WHITE,
-                                    borderRadius: BorderRadius.circular(13),
+                      return (listAppointmentCurrentSortedDate[index]
+                                  .appointments
+                                  .isEmpty ||
+                              listAppointmentCurrentSortedDate[index]
+                                      .appointments ==
+                                  null)
+                          ? Container()
+                          : Container(
+                              decoration: BoxDecoration(
+                                  //color: DefaultTheme.GREY_VIEW,
+                                  // border: Border(
+                                  //   left: BorderSide(
+                                  //       width: 2.0, color: DefaultTheme.RED_CALENDAR),
+                                  // ),
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                              width: MediaQuery.of(context).size.width,
+                              margin: EdgeInsets.only(
+                                  left: 20, right: 20, bottom: 5),
+                              padding: EdgeInsets.only(bottom: 10, top: 10),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                  ),
+                                  Container(
+                                    // width: 60,
+                                    // height: 60,
+                                    child: Center(
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color:
+                                                  DefaultTheme.GREY_TOP_TAB_BAR,
+                                              width: 0.75),
+                                          color: DefaultTheme.WHITE,
+                                          borderRadius:
+                                              BorderRadius.circular(13),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '${listAppointmentCurrentSortedDate[index].dateExamination.split('/')[0]}',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 17,
+                                                  color:
+                                                      DefaultTheme.BLUE_TEXT),
+                                            ),
+                                            Text(
+                                              'Th ${listAppointmentCurrentSortedDate[index].dateExamination.split('/')[1]}',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: DefaultTheme.BLACK),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                    ////comment to install
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 10),
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        '${listAppointmentCurrentSortedDate[index].dateExamination.split('/')[0]}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 17,
-                                            color: DefaultTheme.BLUE_TEXT),
-                                      ),
-                                      Text(
-                                        'Th ${listAppointmentCurrentSortedDate[index].dateExamination.split('/')[1]}',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: DefaultTheme.BLACK),
-                                      ),
+                                      for (AppointmentDetailDTO detail
+                                          in listAppointmentCurrentSortedDate[
+                                                  index]
+                                              .appointments)
+                                        Container(
+                                          margin: EdgeInsets.only(
+                                              bottom: 5, top: 5),
+                                          padding: EdgeInsets.only(left: 5),
+                                          decoration: BoxDecoration(
+                                              border: Border(
+                                            left: BorderSide(
+                                                width: 3.0,
+                                                color: _genderColor(
+                                                    detail.status)),
+                                          )),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              (40 + 20 + 50 + 2 + 10),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                  'Bác sĩ ${detail.fullNameDoctor} lên lịch khám cho bạn.'),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                  top: 3,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Thời gian: ${detail.dateExamination.split('T')[1].split(':')[0]}:${detail.dateExamination.split('T')[1].split(':')[1]}',
+                                                style: TextStyle(
+                                                  color: DefaultTheme.GREY_TEXT,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                  top: 3,
+                                                ),
+                                                child: Divider(
+                                                  height: 2,
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                     ],
                                   ),
-                                ),
+                                ],
                               ),
-                            ),
-                            //comment to install
-                            //comment to install
-                            //comment to install
-                            ///////asojdoasijd ias doasjd lajsldj
-                            Padding(
-                              padding: EdgeInsets.only(left: 10),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                for (AppointmentDetailDTO detail
-                                    in listAppointmentCurrentSortedDate[index]
-                                        .appointments)
-                                  Container(
-                                    margin: EdgeInsets.only(bottom: 5, top: 5),
-                                    padding: EdgeInsets.only(left: 5),
-                                    decoration: BoxDecoration(
-                                        border: Border(
-                                      left: BorderSide(
-                                          width: 3.0,
-                                          color: _genderColor(detail.status)),
-                                    )),
-                                    width: MediaQuery.of(context).size.width -
-                                        (40 + 20 + 50 + 2 + 10),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                            'Bác sĩ ${detail.fullNameDoctor} lên lịch khám cho bạn.'),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            top: 3,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Thời gian: ${detail.dateExamination.split('T')[1].split(':')[0]}:${detail.dateExamination.split('T')[1].split(':')[1]}',
-                                          style: TextStyle(
-                                            color: DefaultTheme.GREY_TEXT,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                            top: 3,
-                                          ),
-                                          child: Divider(
-                                            height: 2,
-                                            color:
-                                                DefaultTheme.GREY_TOP_TAB_BAR,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
+                            );
                     },
                   ),
                 ),

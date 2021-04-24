@@ -845,9 +845,9 @@ class _ScheduleView extends State<ScheduleView>
                                                       child: ListView.builder(
                                                           scrollDirection:
                                                               Axis.horizontal,
-                                                          shrinkWrap: true,
-                                                          physics:
-                                                              NeverScrollableScrollPhysics(),
+                                                          // shrinkWrap: true,
+                                                          // physics:
+                                                          //     NeverScrollableScrollPhysics(),
                                                           itemCount: state
                                                               .dto
                                                               .medicalInstructions
@@ -860,9 +860,8 @@ class _ScheduleView extends State<ScheduleView>
                                                               height: 50,
                                                               padding: EdgeInsets
                                                                   .only(
-                                                                      left: 20,
                                                                       right:
-                                                                          20),
+                                                                          10),
                                                               child: InkWell(
                                                                 onTap: () {
                                                                   _showDetailVitalSign(state
@@ -870,7 +869,15 @@ class _ScheduleView extends State<ScheduleView>
                                                                       .medicalInstructions[
                                                                           index]
                                                                       .medicalInstructionId);
-                                                                  //
+                                                                  //commment for install
+                                                                  //commment for install
+                                                                  //commment for install
+                                                                  //commment for install
+                                                                  //commment for install
+                                                                  //commment for install
+                                                                  //commment for install
+                                                                  //commment for install
+                                                                  //commment for install
                                                                 },
                                                                 child:
                                                                     Container(
