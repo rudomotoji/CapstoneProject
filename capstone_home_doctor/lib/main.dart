@@ -951,7 +951,7 @@ _saveVitalSignScheduleOffline() async {
       .getVitalSignSchedule(_patientId)
       .then((scheduleDTO) async {
     //insert schedule vitalsign into local db
-    if (scheduleDTO.vitalSignScheduleId != null) {
+    if (scheduleDTO.vitalSignScheduleId != null || scheduleDTO != null) {
       await _sqfLiteHelper.deleteVitalSignSchedule();
       _vitalSignScheduleDTO = scheduleDTO;
       for (VitalSigns x in scheduleDTO.vitalSigns) {
@@ -970,6 +970,14 @@ _saveVitalSignScheduleOffline() async {
 
         await _sqfLiteHelper.insertVitalSignSchedule(vitalSignDTO);
       }
+    } else {
+      await _sqfLiteHelper.deleteVitalSignSchedule().then((isDeleted) {
+        if (isDeleted) {
+          print('------DELETE VITALSIGN SCHEDULE SUCCESSFUL AND DO NOT SAVE');
+        } else {
+          print('------??????');
+        }
+      });
     }
   });
 }
@@ -1955,7 +1963,7 @@ class _HomeDoctorState extends State<HomeDoctor> {
         notiData.title.toLowerCase().contains('hẹn')) {
       // getCalendarAppointment();
     }
-
+    _sqfLiteHelper.deleteVitalSignSchedule();
     _saveVitalSignScheduleOffline();
     // if (notiData.body.contains('Bạn có một lịch đo sinh hiệu mới')) {
     //   _saveVitalSignScheduleOffline();

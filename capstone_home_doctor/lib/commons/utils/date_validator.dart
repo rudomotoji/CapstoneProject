@@ -248,7 +248,7 @@ class DateValidator {
     String _day = _formatted.split('-')[2];
     String _month = _formatted.split('-')[1];
     String _year = _formatted.split('-')[0];
-    String _view = '${_dateInWeek}, ngày ${_day} tháng ${_month}, ${_year}';
+    String _view = '${_dateInWeek}, ${_day} tháng ${_month}, ${_year}';
     return _view;
   }
 

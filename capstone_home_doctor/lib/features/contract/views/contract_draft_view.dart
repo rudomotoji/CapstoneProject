@@ -1388,43 +1388,46 @@ class _ContractDraftView extends State<ContractDraftView>
           barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
-            return Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    width: 250,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: DefaultTheme.WHITE.withOpacity(0.7),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          width: 130,
-                          // height: 100,
-                          child: Image.asset('assets/images/loading.gif'),
-                        ),
-                        // Spacer(),
-                        Container(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            'Đang gửi yêu cầu',
-                            style: TextStyle(
-                              decoration: TextDecoration.none,
-                              color: DefaultTheme.GREY_TEXT,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15,
+            return Material(
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      width: 250,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.WHITE.withOpacity(0.7),
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 130,
+                            // height: 100,
+                            child: Image.asset('assets/images/loading.gif'),
+                          ),
+                          // Spacer(),
+                          Container(
+                            padding: EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              'Đang gửi yêu cầu',
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                color: DefaultTheme.GREY_TEXT,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
+              color: DefaultTheme.TRANSPARENT,
             );
           });
       //
@@ -1750,66 +1753,71 @@ class _ContractDraftView extends State<ContractDraftView>
                   barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
-                    return Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                          child: Container(
-                            padding:
-                                EdgeInsets.only(left: 10, top: 10, right: 10),
-                            width: 250,
-                            height: 150,
-                            decoration: BoxDecoration(
-                              color: DefaultTheme.WHITE.withOpacity(0.7),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.only(bottom: 10, top: 10),
-                                  child: Text(
-                                    'Gửi yêu cầu thất bại',
-                                    style: TextStyle(
-                                      decoration: TextDecoration.none,
-                                      color: DefaultTheme.BLACK,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 20, right: 20),
-                                  child: Align(
-                                    alignment: Alignment.center,
+                    return Material(
+                      color: DefaultTheme.TRANSPARENT,
+                      child: Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                            child: Container(
+                              padding:
+                                  EdgeInsets.only(left: 10, top: 10, right: 10),
+                              width: 250,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                color: DefaultTheme.WHITE.withOpacity(0.7),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(bottom: 10, top: 10),
                                     child: Text(
-                                      '$msg',
-                                      textAlign: TextAlign.center,
+                                      'Gửi yêu cầu thất bại',
                                       style: TextStyle(
                                         decoration: TextDecoration.none,
-                                        color: DefaultTheme.GREY_TEXT,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 13,
+                                        color: DefaultTheme.BLACK,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 18,
                                       ),
                                     ),
                                   ),
-                                ),
-                                Spacer(),
-                                Divider(
-                                  height: 1,
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                ),
-                                ButtonHDr(
-                                  height: 40,
-                                  style: BtnStyle.BUTTON_TRANSPARENT,
-                                  label: 'OK',
-                                  labelColor: DefaultTheme.BLUE_TEXT,
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        '$msg',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.GREY_TEXT,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Divider(
+                                    height: 1,
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  ),
+                                  ButtonHDr(
+                                    height: 40,
+                                    style: BtnStyle.BUTTON_TRANSPARENT,
+                                    label: 'OK',
+                                    labelColor: DefaultTheme.BLUE_TEXT,
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

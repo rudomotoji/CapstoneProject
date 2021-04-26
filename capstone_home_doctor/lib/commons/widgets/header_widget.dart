@@ -1778,7 +1778,7 @@ class _Header extends State<Header> {
                     child: Text(
                       'Trang chủ',
                       style: TextStyle(
-                        fontSize: Tween<double>(begin: 25, end: 36)
+                        fontSize: Tween<double>(begin: 20, end: 30)
                             .evaluate(animation),
                         color: DefaultTheme.WHITE,
                         fontWeight: FontWeight.w800,
@@ -1795,7 +1795,7 @@ class _Header extends State<Header> {
                       '${_dateValidator.getDateTimeView()}',
                       style: TextStyle(
                           color: DefaultTheme.WHITE,
-                          fontSize: Tween<double>(begin: 13, end: 16)
+                          fontSize: Tween<double>(begin: 10, end: 13)
                               .evaluate(animation)),
                     ),
                   ),
@@ -1899,7 +1899,10 @@ class _Header extends State<Header> {
                               (_patientDTO.fullName.split(' ').length >= 2)
                                   ? '${_patientDTO.fullName.split(' ').first} ${_patientDTO.fullName.split(' ').last}'
                                   : '${_patientDTO.fullName}',
-                              style: TextStyle(fontWeight: FontWeight.w500)),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              )),
                         ),
                         Padding(padding: EdgeInsets.only(left: 10)),
                         CircleAvatar(

@@ -757,7 +757,7 @@ class _DashboardState extends State<DashboardPage>
                     Padding(
                       padding: EdgeInsets.only(left: 20),
                     ),
-                    Text('Bạn cần nối thiết bị đeo để lấy dữ liệu sinh hiệu.',
+                    Text('Bạn cần nối thiết bị đeo',
                         style: TextStyle(color: DefaultTheme.BLACK))
                   ],
                 ),
@@ -794,7 +794,7 @@ class _DashboardState extends State<DashboardPage>
                   Navigator.pushNamed(context, RoutesHDr.SCHEDULE);
                 },
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.2,
+                  width: MediaQuery.of(context).size.width * 0.19,
                   height: 80,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -805,7 +805,7 @@ class _DashboardState extends State<DashboardPage>
                         padding: EdgeInsets.only(bottom: 3),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width * 0.2,
+                        width: MediaQuery.of(context).size.width * 0.19,
                         child: Text(
                           'Lịch',
                           style: TextStyle(fontSize: 12),
@@ -823,7 +823,7 @@ class _DashboardState extends State<DashboardPage>
                   _chooseStepContract();
                 },
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 0.2,
+                  width: MediaQuery.of(context).size.width * 0.21,
                   height: 80,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -834,7 +834,7 @@ class _DashboardState extends State<DashboardPage>
                         padding: EdgeInsets.only(bottom: 3),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width * 0.2,
+                        width: MediaQuery.of(context).size.width * 0.21,
                         child: Text(
                           'Tạo hợp đồng',
                           style: TextStyle(fontSize: 12),
@@ -960,7 +960,7 @@ class _DashboardState extends State<DashboardPage>
                                       ),
                                       Container(
                                         padding: EdgeInsets.only(
-                                            left: 20, right: 20),
+                                            left: 10, right: 10),
                                         child: Align(
                                           alignment: Alignment.center,
                                           child: Text(
@@ -968,7 +968,7 @@ class _DashboardState extends State<DashboardPage>
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               decoration: TextDecoration.none,
-                                              color: DefaultTheme.GREY_TEXT,
+                                              color: DefaultTheme.BLACK,
                                               fontWeight: FontWeight.w400,
                                               fontSize: 13,
                                             ),
@@ -2025,103 +2025,106 @@ class _DashboardState extends State<DashboardPage>
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width - 20,
-                height: MediaQuery.of(context).size.height * 0.5,
-                decoration: BoxDecoration(
-                  color: DefaultTheme.WHITE.withOpacity(0.6),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 20),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 20),
-                        ),
-                        SizedBox(
-                          height: 40,
-                          width: 40,
-                          child: Image.asset('assets/images/ic-id.png'),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 20),
-                        ),
-                        Text(
-                          'Bác sĩ',
-                          style: TextStyle(
-                            fontSize: 30,
-                            decoration: TextDecoration.none,
-                            color: DefaultTheme.BLACK,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
+        return Material(
+          color: DefaultTheme.TRANSPARENT,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width - 20,
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  decoration: BoxDecoration(
+                    color: DefaultTheme.WHITE.withOpacity(0.8),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 20),
+                      ),
+                      Row(
+                        children: <Widget>[
                           Padding(
-                            padding: EdgeInsets.only(
-                                left: 20, right: 20, top: 20, bottom: 20),
-                            child: Text(
-                              'Mã định danh giúp bệnh nhân dễ dàng ghép nối với bác sĩ thông qua hợp đồng',
-                              style: TextStyle(
-                                fontSize: 16,
-                                decoration: TextDecoration.none,
-                                color: DefaultTheme.GREY_TEXT,
-                                fontWeight: FontWeight.w400,
-                              ),
+                            padding: EdgeInsets.only(left: 20),
+                          ),
+                          SizedBox(
+                            height: 40,
+                            width: 40,
+                            child: Image.asset('assets/images/ic-id.png'),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 20),
+                          ),
+                          Text(
+                            'Bác sĩ',
+                            style: TextStyle(
+                              fontSize: 30,
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.BLACK,
+                              fontWeight: FontWeight.w600,
                             ),
-                          ),
-                          Divider(
-                            color: DefaultTheme.GREY_TEXT,
-                            height: 0.25,
-                          ),
-                          Flexible(
-                            child: TextFieldHDr(
-                              style: TFStyle.NO_BORDER,
-                              label: 'ID:',
-                              controller: _idDoctorController,
-                              keyboardAction: TextInputAction.done,
-                              onChange: (text) {
-                                setState(() {
-                                  _idDoctor = text;
-                                });
-                              },
-                            ),
-                          ),
-                          Divider(
-                            color: DefaultTheme.GREY_TEXT,
-                            height: 0.25,
                           ),
                         ],
                       ),
-                    ),
-                    ButtonHDr(
-                      style: BtnStyle.BUTTON_BLACK,
-                      label: 'Tiếp theo',
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        Navigator.pushNamed(
-                            context, RoutesHDr.DOCTOR_INFORMATION,
-                            arguments: _idDoctor);
-                      },
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 15),
-                    )
-                  ],
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: 20, right: 20, top: 20, bottom: 20),
+                              child: Text(
+                                'Mã định danh giúp bệnh nhân dễ dàng ghép nối với bác sĩ thông qua hợp đồng',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  decoration: TextDecoration.none,
+                                  color: DefaultTheme.GREY_TEXT,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              color: DefaultTheme.GREY_TEXT,
+                              height: 0.25,
+                            ),
+                            Flexible(
+                              child: TextFieldHDr(
+                                style: TFStyle.NO_BORDER,
+                                label: 'ID:',
+                                controller: _idDoctorController,
+                                keyboardAction: TextInputAction.done,
+                                onChange: (text) {
+                                  setState(() {
+                                    _idDoctor = text;
+                                  });
+                                },
+                              ),
+                            ),
+                            Divider(
+                              color: DefaultTheme.GREY_TEXT,
+                              height: 0.25,
+                            ),
+                          ],
+                        ),
+                      ),
+                      ButtonHDr(
+                        style: BtnStyle.BUTTON_BLACK,
+                        label: 'Tiếp theo',
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.pushNamed(
+                              context, RoutesHDr.DOCTOR_INFORMATION,
+                              arguments: _idDoctor);
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 15),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -44,9 +44,15 @@ class _ReasonContractView extends State<ReasonContractView>
   String _note = '';
   String _availableDay = '';
   int date = 0;
+  bool isCalendarChange = false;
+
   int year = 0;
   int month = 0;
   DateTime time;
+  DateTime tTime;
+  int tDate = 0;
+  int tMonth = 0;
+  int tYear = 0;
   bool isOKDate = false;
 
   @override
@@ -77,11 +83,16 @@ class _ReasonContractView extends State<ReasonContractView>
       if (value != '') {
         setState(() {
           _availableDay = value;
+
           print('$value');
           date = int.tryParse(value.split('/')[0]);
           month = int.tryParse(value.split('/')[1]);
           year = int.tryParse(value.split('/')[2]);
           time = DateTime(year, month, date);
+          tTime = DateTime(year, month, date).add(Duration(days: 1));
+          tDate = int.tryParse(tTime.toString().split(' ')[0].split('-')[2]);
+          tMonth = int.tryParse(tTime.toString().split(' ')[0].split('-')[1]);
+          tYear = int.tryParse(tTime.toString().split(' ')[0].split('-')[0]);
         });
       } else {
         //
@@ -336,55 +347,73 @@ class _ReasonContractView extends State<ReasonContractView>
                                       fontSize: 13),
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.only(left: 20, right: 20),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: DefaultTheme.GREY_BUTTON),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 20),
-                                    ),
-                                    Text(
-                                      // '${_startDate.split('-')[2]} tháng ${_startDate.split('-')[1]} năm ${_startDate.split('-')[0]}',
-                                      '$dateView',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400,
-                                          color: DefaultTheme.BLACK),
-                                    ),
-                                    Spacer(),
-                                    ButtonHDr(
-                                      style: BtnStyle.BUTTON_IMAGE,
-                                      image: Image.asset(
-                                          'assets/images/ic-calendar.png'),
-                                      width: 30,
-                                      height: 40,
-                                      labelColor: DefaultTheme.BLUE_DARK,
-                                      bgColor: DefaultTheme.TRANSPARENT,
-                                      onTap: () {
-                                        setState(() {
-                                          dateView = 'Chọn ngày';
-                                          if (dateAfterFromServer != 0) {
-                                            _startDate = DateTime.now()
-                                                .add(Duration(
-                                                    days: dateAfterFromServer))
-                                                .toString()
-                                                .split(' ')[0];
-                                          }
-                                        });
-                                        _showDatePickerStart(_requestContract);
-                                      },
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 10),
-                                    )
-                                  ],
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    dateView = 'Chọn ngày';
+                                    if (dateAfterFromServer != 0) {
+                                      _startDate = DateTime.now()
+                                          .add(Duration(
+                                              days: dateAfterFromServer))
+                                          .toString()
+                                          .split(' ')[0];
+                                    }
+                                  });
+                                  _showDatePickerStart(_requestContract);
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 20, right: 20),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: DefaultTheme.GREY_BUTTON),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                      ),
+                                      Text(
+                                        // '${_startDate.split('-')[2]} tháng ${_startDate.split('-')[1]} năm ${_startDate.split('-')[0]}',
+                                        '$dateView',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: DefaultTheme.BLACK),
+                                      ),
+                                      Spacer(),
+                                      ButtonHDr(
+                                        style: BtnStyle.BUTTON_IMAGE,
+                                        image: Image.asset(
+                                            'assets/images/ic-calendar.png'),
+                                        width: 30,
+                                        height: 40,
+                                        labelColor: DefaultTheme.BLUE_DARK,
+                                        bgColor: DefaultTheme.TRANSPARENT,
+                                        onTap: () {
+                                          setState(() {
+                                            dateView = 'Chọn ngày';
+                                            if (dateAfterFromServer != 0) {
+                                              _startDate = DateTime.now()
+                                                  .add(Duration(
+                                                      days:
+                                                          dateAfterFromServer))
+                                                  .toString()
+                                                  .split(' ')[0];
+                                            }
+                                          });
+                                          _showDatePickerStart(
+                                              _requestContract);
+                                        },
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
+                              )
                             ],
                           ),
                         )
@@ -407,48 +436,54 @@ class _ReasonContractView extends State<ReasonContractView>
                                 padding: EdgeInsets.only(
                                     bottom: 5, left: 20, right: 30),
                                 child: Text(
-                                  'Bạn đang có hợp đồng với bác sỹ này. Ngày kết thúc là ngày ${int.tryParse(_availableDay.split('/')[0])} tháng ${int.tryParse(_availableDay.split('/')[1])}, ${int.tryParse(_availableDay.split('/')[2])}. Vui lòng chọn ngày yêu cầu hợp đồng sau ngày trên.',
+                                  'Thời gian phù hợp để gửi yêu cầu hợp đồng là sau ngày ${int.tryParse(_availableDay.split('/')[0])} tháng ${int.tryParse(_availableDay.split('/')[1])}, ${int.tryParse(_availableDay.split('/')[2])}.',
                                   style: TextStyle(
                                       color: DefaultTheme.RED_CALENDAR,
                                       fontWeight: FontWeight.w400,
                                       fontSize: 15),
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.only(left: 20, right: 20),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: DefaultTheme.GREY_BUTTON),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 20),
-                                    ),
-                                    Text(
-                                      '${date} tháng ${month} năm ${year}',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                    Spacer(),
-                                    ButtonHDr(
-                                      style: BtnStyle.BUTTON_IMAGE,
-                                      image: Image.asset(
-                                          'assets/images/ic-calendar.png'),
-                                      width: 30,
-                                      height: 40,
-                                      labelColor: DefaultTheme.BLUE_DARK,
-                                      bgColor: DefaultTheme.TRANSPARENT,
-                                      onTap: () {
-                                        _showDatePickerStart2();
-                                      },
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 10),
-                                    )
-                                  ],
+                              InkWell(
+                                onTap: () {
+                                  _showDatePickerStart2();
+                                },
+                                child: Container(
+                                  margin: EdgeInsets.only(left: 20, right: 20),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: DefaultTheme.GREY_BUTTON),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                      ),
+                                      Text(
+                                        '${tDate} tháng ${tMonth} năm ${tYear}',
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                      Spacer(),
+                                      ButtonHDr(
+                                        style: BtnStyle.BUTTON_IMAGE,
+                                        image: Image.asset(
+                                            'assets/images/ic-calendar.png'),
+                                        width: 30,
+                                        height: 40,
+                                        labelColor: DefaultTheme.BLUE_DARK,
+                                        bgColor: DefaultTheme.TRANSPARENT,
+                                        onTap: () {
+                                          _showDatePickerStart2();
+                                        },
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(right: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
@@ -628,39 +663,42 @@ class _ReasonContractView extends State<ReasonContractView>
           barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
-            return Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    width: 250,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: DefaultTheme.WHITE.withOpacity(0.7),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          width: 130,
-                          // height: 100,
-                          child: Image.asset('assets/images/loading.gif'),
-                        ),
-                        // Spacer(),
-                        Container(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            'Đang kiểm tra',
-                            style: TextStyle(
-                              decoration: TextDecoration.none,
-                              color: DefaultTheme.GREY_TEXT,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15,
+            return Material(
+              color: DefaultTheme.TRANSPARENT,
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      width: 250,
+                      height: 160,
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.WHITE.withOpacity(0.7),
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 130,
+                            // height: 100,
+                            child: Image.asset('assets/images/loading.gif'),
+                          ),
+                          // Spacer(),
+                          Container(
+                            padding: EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              'Đang kiểm tra',
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                color: DefaultTheme.GREY_TEXT,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -699,75 +737,79 @@ class _ReasonContractView extends State<ReasonContractView>
                   barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
-                    return Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                          child: Container(
-                            padding:
-                                EdgeInsets.only(left: 10, top: 10, right: 10),
-                            width: 250,
-                            height: 150,
-                            decoration: BoxDecoration(
-                              color: DefaultTheme.WHITE.withOpacity(0.7),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.only(bottom: 10, top: 10),
-                                  child: Text(
-                                    'Chọn ngày khác',
-                                    style: TextStyle(
-                                      decoration: TextDecoration.none,
-                                      color: DefaultTheme.BLACK,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18,
-                                    ),
-                                  ),
+                    return Material(
+                        child: Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    left: 10, top: 10, right: 10),
+                                width: 250,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  color: DefaultTheme.WHITE.withOpacity(0.7),
                                 ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 20, right: 20),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'Vui lòng chọn ngày bắt đầu hợp đồng theo quy định.',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        decoration: TextDecoration.none,
-                                        color: DefaultTheme.GREY_TEXT,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 13,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(bottom: 10, top: 10),
+                                      child: Text(
+                                        'Chọn ngày khác',
+                                        style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.BLACK,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          'Vui lòng chọn ngày bắt đầu hợp đồng theo quy định.',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            decoration: TextDecoration.none,
+                                            color: DefaultTheme.GREY_TEXT,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Divider(
+                                      height: 1,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                    ButtonHDr(
+                                      height: 40,
+                                      style: BtnStyle.BUTTON_TRANSPARENT,
+                                      label: 'OK',
+                                      labelColor: DefaultTheme.BLUE_TEXT,
+                                      onTap: () {
+                                        setState(() {
+                                          dateView = 'Chọn ngày';
+                                          isOKDate = false;
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
                                 ),
-                                Spacer(),
-                                Divider(
-                                  height: 1,
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                ),
-                                ButtonHDr(
-                                  height: 40,
-                                  style: BtnStyle.BUTTON_TRANSPARENT,
-                                  label: 'OK',
-                                  labelColor: DefaultTheme.BLUE_TEXT,
-                                  onTap: () {
-                                    setState(() {
-                                      dateView = 'Chọn ngày';
-                                      isOKDate = false;
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
+                        color: DefaultTheme.TRANSPARENT);
                   },
                 );
               }
@@ -784,76 +826,79 @@ class _ReasonContractView extends State<ReasonContractView>
                     barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
-                      return Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                            child: Container(
-                              padding:
-                                  EdgeInsets.only(left: 10, top: 10, right: 10),
-                              width: 250,
-                              height: 150,
-                              decoration: BoxDecoration(
-                                color: DefaultTheme.WHITE.withOpacity(0.7),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(bottom: 10, top: 10),
-                                    child: Text(
-                                      'Chọn ngày khác',
-                                      style: TextStyle(
-                                        decoration: TextDecoration.none,
-                                        color: DefaultTheme.BLACK,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(left: 20, right: 20),
-                                    child: Align(
-                                      alignment: Alignment.center,
+                      return Material(
+                        child: Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    left: 10, top: 10, right: 10),
+                                width: 250,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  color: DefaultTheme.WHITE.withOpacity(0.7),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(bottom: 10, top: 10),
                                       child: Text(
-                                        '$msg',
-                                        textAlign: TextAlign.center,
+                                        'Chọn ngày khác',
                                         style: TextStyle(
                                           decoration: TextDecoration.none,
-                                          color: DefaultTheme.GREY_TEXT,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 13,
+                                          color: DefaultTheme.BLACK,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Spacer(),
-                                  Divider(
-                                    height: 1,
-                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  ),
-                                  ButtonHDr(
-                                    height: 40,
-                                    style: BtnStyle.BUTTON_TRANSPARENT,
-                                    label: 'OK',
-                                    labelColor: DefaultTheme.BLUE_TEXT,
-                                    onTap: () {
-                                      setState(() {
-                                        dateView = 'Chọn ngày';
-                                        isOKDate = false;
-                                      });
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          '$msg',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            decoration: TextDecoration.none,
+                                            color: DefaultTheme.GREY_TEXT,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Divider(
+                                      height: 1,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                    ButtonHDr(
+                                      height: 40,
+                                      style: BtnStyle.BUTTON_TRANSPARENT,
+                                      label: 'OK',
+                                      labelColor: DefaultTheme.BLUE_TEXT,
+                                      onTap: () {
+                                        setState(() {
+                                          dateView = 'Chọn ngày';
+                                          isOKDate = false;
+                                        });
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
+                        color: DefaultTheme.TRANSPARENT,
                       );
                     },
                   );
@@ -873,70 +918,73 @@ class _ReasonContractView extends State<ReasonContractView>
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(15)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width - 20,
-                height: MediaQuery.of(context).size.height * 0.5,
-                decoration: BoxDecoration(
-                  color: DefaultTheme.WHITE.withOpacity(0.6),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Ngày bắt đầu',
-                          style: TextStyle(
-                            fontSize: 25,
-                            color: DefaultTheme.BLACK,
-                            decoration: TextDecoration.none,
-                            fontWeight: FontWeight.w500,
+        return Material(
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width - 20,
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  decoration: BoxDecoration(
+                    color: DefaultTheme.WHITE.withOpacity(0.6),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Ngày bắt đầu',
+                            style: TextStyle(
+                              fontSize: 25,
+                              color: DefaultTheme.BLACK,
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: CupertinoDatePicker(
-                          mode: CupertinoDatePickerMode.date,
-                          initialDateTime: time,
-                          onDateTimeChanged: (dateTime) {
-                            setState(() {
-                              _startDate = dateTime.toString().split(' ')[0];
-                              dateView = _dateValidator.parseToDateView2(
-                                  dateTime.toString().split(' ')[0]);
-                              date = int.tryParse(_startDate.split('-')[2]);
-                              month = int.tryParse(_startDate.split('-')[1]);
-                              year = int.tryParse(_startDate.split('-')[0]);
-                            });
-                          }),
-                    ),
-                    ButtonHDr(
-                      style: BtnStyle.BUTTON_BLACK,
-                      label: 'Chọn',
-                      onTap: () {
-                        setState(() {
-                          if (dateView == 'Chọn ngày') {
-                            dateView =
-                                _dateValidator.parseToDateView2(_startDate);
-                          }
-                        });
-                        print('date view now: $dateView');
-                        Navigator.of(context).pop();
-                        _checkDateAvailable2(date, month, year, time);
-                      },
-                    ),
-                  ],
+                      Expanded(
+                        child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.date,
+                            initialDateTime: tTime,
+                            onDateTimeChanged: (dateTime) {
+                              setState(() {
+                                _startDate = dateTime.toString().split(' ')[0];
+                                dateView = _dateValidator.parseToDateView2(
+                                    dateTime.toString().split(' ')[0]);
+                                date = int.tryParse(_startDate.split('-')[2]);
+                                month = int.tryParse(_startDate.split('-')[1]);
+                                year = int.tryParse(_startDate.split('-')[0]);
+                              });
+                            }),
+                      ),
+                      ButtonHDr(
+                        style: BtnStyle.BUTTON_BLACK,
+                        label: 'Chọn',
+                        onTap: () {
+                          setState(() {
+                            if (dateView == 'Chọn ngày') {
+                              dateView =
+                                  _dateValidator.parseToDateView2(_startDate);
+                            }
+                          });
+                          print('date view now: $dateView');
+                          Navigator.of(context).pop();
+                          _checkDateAvailable2(date, month, year, time);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
+          color: DefaultTheme.TRANSPARENT,
         );
       },
     );
@@ -949,122 +997,127 @@ class _ReasonContractView extends State<ReasonContractView>
           barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
-            return Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    width: 250,
-                    height: 160,
-                    decoration: BoxDecoration(
-                      color: DefaultTheme.WHITE.withOpacity(0.7),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          width: 130,
-                          // height: 100,
-                          child: Image.asset('assets/images/loading.gif'),
+            return Material(
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        width: 250,
+                        height: 160,
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE.withOpacity(0.7),
                         ),
-                        // Spacer(),
-                        Container(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            'Đang kiểm tra',
-                            style: TextStyle(
-                              decoration: TextDecoration.none,
-                              color: DefaultTheme.GREY_TEXT,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15,
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(
+                              width: 130,
+                              // height: 100,
+                              child: Image.asset('assets/images/loading.gif'),
                             ),
-                          ),
+                            // Spacer(),
+                            Container(
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                'Đang kiểm tra',
+                                style: TextStyle(
+                                  decoration: TextDecoration.none,
+                                  color: DefaultTheme.GREY_TEXT,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
+                color: DefaultTheme.TRANSPARENT);
           });
 
       Future.delayed(const Duration(seconds: 3), () async {
         //
         DateTime checkDate = DateTime(year, month, date);
-        if (checkDate.isBefore(currentTime)) {
+        if (checkDate.isBefore(currentTime.add(Duration(days: 1)))) {
           Navigator.of(context).pop();
           return showDialog(
             barrierDismissible: false,
             context: context,
             builder: (BuildContext context) {
-              return Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                    child: Container(
-                      padding: EdgeInsets.only(left: 10, top: 10, right: 10),
-                      width: 250,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: DefaultTheme.WHITE.withOpacity(0.7),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            padding: EdgeInsets.only(bottom: 10, top: 10),
-                            child: Text(
-                              'Chọn ngày khác',
-                              style: TextStyle(
-                                decoration: TextDecoration.none,
-                                color: DefaultTheme.BLACK,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(left: 20, right: 20),
-                            child: Align(
-                              alignment: Alignment.center,
+              return Material(
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                      child: Container(
+                        padding: EdgeInsets.only(left: 10, top: 10, right: 10),
+                        width: 250,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE.withOpacity(0.7),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.only(bottom: 20, top: 10),
                               child: Text(
-                                'Ngày hiện tại nhỏ hơn ngày mặc định',
-                                textAlign: TextAlign.center,
+                                'Chọn ngày khác',
                                 style: TextStyle(
                                   decoration: TextDecoration.none,
-                                  color: DefaultTheme.GREY_TEXT,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 13,
+                                  color: DefaultTheme.BLACK,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
                                 ),
                               ),
                             ),
-                          ),
-                          Spacer(),
-                          Divider(
-                            height: 1,
-                            color: DefaultTheme.GREY_TOP_TAB_BAR,
-                          ),
-                          ButtonHDr(
-                            height: 40,
-                            style: BtnStyle.BUTTON_TRANSPARENT,
-                            label: 'OK',
-                            labelColor: DefaultTheme.BLUE_TEXT,
-                            onTap: () {
-                              setState(() {
-                                dateView = 'Chọn ngày';
-                                isOKDate = false;
-                              });
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
+                            Container(
+                              padding: EdgeInsets.only(left: 20, right: 20),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Ngày bắt đầu hợp đồng mong muốn phải sau ngày yêu cầu của hệ thống.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    decoration: TextDecoration.none,
+                                    color: DefaultTheme.GREY_TEXT,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Spacer(),
+                            Divider(
+                              height: 1,
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                            ),
+                            ButtonHDr(
+                              height: 40,
+                              style: BtnStyle.BUTTON_TRANSPARENT,
+                              label: 'OK',
+                              labelColor: DefaultTheme.BLUE_TEXT,
+                              onTap: () {
+                                setState(() {
+                                  dateView = 'Chọn ngày';
+                                  isOKDate = false;
+                                });
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
+                color: DefaultTheme.TRANSPARENT,
               );
             },
           );

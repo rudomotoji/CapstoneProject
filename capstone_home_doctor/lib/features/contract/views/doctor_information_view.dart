@@ -617,8 +617,7 @@ class _DoctorInformation extends State<DoctorInformation>
                     msg.contains('chờ bạn chấp thuận') ||
                     msg.contains('Kiểm tra lại kết nối mạng')) {
                   Navigator.of(context).pop();
-                  return 
-                  showDialog(
+                  return showDialog(
                     barrierDismissible: false,
                     context: context,
                     builder: (BuildContext context) {
@@ -694,7 +693,6 @@ class _DoctorInformation extends State<DoctorInformation>
                       );
                     },
                   );
-               
                 } else {
                   Navigator.of(context).pop();
                   return showDialog(
@@ -733,7 +731,7 @@ class _DoctorInformation extends State<DoctorInformation>
                                         ),
                                       ),
                                     ),
-                                    Spacer(),
+                                    // Spacer(),
                                     Container(
                                       padding:
                                           EdgeInsets.only(left: 20, right: 20),
@@ -744,7 +742,7 @@ class _DoctorInformation extends State<DoctorInformation>
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             decoration: TextDecoration.none,
-                                            color: DefaultTheme.GREY_TEXT,
+                                            color: DefaultTheme.BLACK,
                                             fontWeight: FontWeight.w400,
                                             fontSize: 13,
                                           ),

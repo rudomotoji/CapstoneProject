@@ -151,9 +151,13 @@ class ContractRepository extends BaseApiClient {
               false, 'Bác sĩ đã xác nhận hợp đồng và chờ bạn chấp thuận.');
         } else if (response == null) {
           _contractHelper.updateContractCheckingStatus(true, 'OK');
+        } else if (response == 'CANCELP') {
+          _contractHelper.updateContractCheckingStatus(true, 'OK');
+        } else if (response == 'CANCELD') {
+          _contractHelper.updateContractCheckingStatus(true, 'OK');
         } else {
           _contractHelper.updateContractCheckingStatus(false,
-              'Bạn đang có hợp đồng với bác sỹ này. Ngày kết thúc là ngày ${response}. Bạn có muốn tiếp tục?');
+              'Thời gian phù hợp để gửi yêu cầu hợp đồng là sau ngày ${_dateValidator.parseToDateView4(response)}.\nBạn có muốn tiếp tục?');
           _contractHelper.updateAvailableDay(response);
         }
       } else {
@@ -208,20 +212,6 @@ class ContractRepository extends BaseApiClient {
           _contractHelper.updateContractCheckingStatus(true, 'OK');
           return true;
         }
-
-        // if (response.contains('PENDING')) {
-        //   _contractHelper.updateContractCheckingStatus(
-        //       false, 'Bạn đang có hợp đồng chờ bác sĩ này xét duyệt.');
-        // } else if (response.contains('APPROVED')) {
-        //   _contractHelper.updateContractCheckingStatus(
-        //       false, 'Bác sĩ đã xác nhận hợp đồng và chờ bạn chấp thuận.');
-        // } else {
-        //   _contractHelper.updateContractCheckingStatus(false,
-        //       'Bạn đang có hợp đồng với bác sỹ này. Ngày kết thúc là ngày ${response}. Bạn có muốn tiếp tục?');
-        //   _contractHelper.updateAvailableDay(response);
-
-        // }
-
       } else if (request.statusCode == 204) {
         _contractHelper.updateContractCheckingStatus(true, 'OK');
         return true;
