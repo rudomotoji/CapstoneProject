@@ -5,6 +5,7 @@ import 'package:capstone_home_doctor/features/background/repositories/background
 import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_push_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
+import 'package:capstone_home_doctor/services/time_system_helper.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
@@ -89,6 +90,7 @@ final BackgroundRepository _backgroundRepository =
     BackgroundRepository(httpClient: http.Client());
 final VitalSignServerRepository _vitalSignServerRepository =
     VitalSignServerRepository(httpClient: http.Client());
+final TimeSystemHelper _timeSystemHelper = TimeSystemHelper();
 //
 List<int> listTimeMeasure = [3, 5, 10, 15, 30];
 //
@@ -264,11 +266,13 @@ class _DashboardState extends State<DashboardPage>
       listTimeM.clear();
       setState(() {
         listTimeString = listT;
-        for (int i = 0; i < listT.split(',').length; i++) {
-          listTimeM.add('"' + '${listT.split(',')[i]}' + '"');
-        }
-        if (listTimeM.last == '""') {
-          listTimeM.removeLast();
+        if (listT != '' || listT != null) {
+          for (int i = 0; i < listT.split(',').length; i++) {
+            listTimeM.add('"' + '${listT.split(',')[i]}' + '"');
+          }
+          if (listTimeM.last == '""') {
+            listTimeM.removeLast();
+          }
         }
       });
     });
@@ -309,10 +313,24 @@ class _DashboardState extends State<DashboardPage>
     //
   }
 
+  _getTimeSystem() async {
+    await _systemRepository.getTimeSystem().then((value) async {
+      /////
+      // await _timeSystemHelper.setTimeSystem(value);
+      if (!mounted) return;
+      setState(() {
+        curentDateNow = new DateFormat('yyyy-MM-dd').parse(
+            DateFormat('yyyy-MM-dd')
+                .format(DateTime.parse(value.split('"')[1].split('"')[0])));
+      });
+    });
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+    _getTimeSystem();
     _getPatientId();
     _getMeasureCounting();
     _getsOffline();
@@ -335,6 +353,9 @@ class _DashboardState extends State<DashboardPage>
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((notification) {
       _pullRefresh();
+      _getTimeSystem();
+      print(
+          '--------NOTI BODY ${notification.body} - noti id: ${notification.id} -  - noti: ${notification.payload}');
     });
     _measureStream = MeasureBloc.instance.notificationsStream;
     _measureStream.listen((rf) {
@@ -1112,25 +1133,25 @@ class _DashboardState extends State<DashboardPage>
                     Padding(
                       padding: EdgeInsets.only(bottom: 10),
                     ),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 5),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Ghi chú của bác sĩ: ',
-                        style: TextStyle(
-                          color: DefaultTheme.WHITE,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 100,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: DefaultTheme.WHITE.withOpacity(0.9),
-                      ),
-                    ),
+                    // Container(
+                    //   padding: EdgeInsets.only(bottom: 5),
+                    //   alignment: Alignment.centerLeft,
+                    //   child: Text(
+                    //     'Ghi chú của bác sĩ: ',
+                    //     style: TextStyle(
+                    //       color: DefaultTheme.WHITE,
+                    //       fontSize: 15,
+                    //     ),
+                    //   ),
+                    // ),
+                    // Container(
+                    //   height: 100,
+                    //   width: MediaQuery.of(context).size.width,
+                    //   decoration: BoxDecoration(
+                    //     borderRadius: BorderRadius.circular(5),
+                    //     color: DefaultTheme.WHITE.withOpacity(0.9),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
@@ -1158,9 +1179,12 @@ class _DashboardState extends State<DashboardPage>
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 20),
+                                  ),
                                   SizedBox(
                                     width: 30,
                                     height: 30,
@@ -1178,6 +1202,7 @@ class _DashboardState extends State<DashboardPage>
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
+                                  Spacer(),
                                 ],
                               ),
                             ),
@@ -1298,11 +1323,15 @@ class _DashboardState extends State<DashboardPage>
                 _dateValidator
                     .parseStringToDateApnt(dto.dateExamination)
                     .isAtSameMomentAs(curentDateNow)) {
-              //
-              dto.appointments.removeWhere((item) =>
-                  item.status == 'FINISHED' || item.status == 'CANCEL');
-              listAppointmentCurrentSortedDate.add(dto);
-              listAppointmentDetailSortedDate.addAll(dto.appointments);
+              if (_dateValidator
+                  .parseStringToDateApnt(dto.dateExamination)
+                  .isBefore(curentDateNow.add(Duration(days: 7)))) {
+                //
+                dto.appointments.removeWhere((item) =>
+                    item.status == 'FINISHED' || item.status == 'CANCEL');
+                listAppointmentCurrentSortedDate.add(dto);
+                listAppointmentDetailSortedDate.addAll(dto.appointments);
+              }
             }
             //
 
@@ -1324,6 +1353,7 @@ class _DashboardState extends State<DashboardPage>
                   child: Row(children: [
                     Text(
                       'Sự kiện tiếp theo',
+                      //  \n${curentDateNow}',
                       style: TextStyle(
                           color: DefaultTheme.BLACK,
                           fontSize: 18,
@@ -1430,23 +1460,6 @@ class _DashboardState extends State<DashboardPage>
                                         ),
                                       ),
                                     ),
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
-                                    ////comment to install
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(left: 10),
@@ -1984,22 +1997,22 @@ class _DashboardState extends State<DashboardPage>
                             ),
                           ),
                           Spacer(),
+                          // ButtonHDr(
+                          //   isUnderline: false,
+                          //   style: BtnStyle.BUTTON_BLACK,
+                          //   label: 'Đo ngay',
+                          //   onTap: () async {
+                          //     Navigator.of(context).pop();
+                          //     _onMeasuring();
+                          //   },
+                          // ),
+                          // Padding(
+                          //   padding: EdgeInsets.only(top: 10),
+                          // ),
                           ButtonHDr(
                             isUnderline: false,
                             style: BtnStyle.BUTTON_BLACK,
-                            label: 'Đo ngay',
-                            onTap: () async {
-                              Navigator.of(context).pop();
-                              _onMeasuring();
-                            },
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 10),
-                          ),
-                          ButtonHDr(
-                            isUnderline: false,
-                            style: BtnStyle.BUTTON_GREY,
-                            label: 'Đo trong khoảng thời gian',
+                            label: 'Đo',
                             onTap: () async {
                               Navigator.of(context).pop();
                               await _getMeasureCounting();
@@ -3722,7 +3735,7 @@ class _DashboardState extends State<DashboardPage>
                                     child: Column(
                                       children: [
                                         Padding(
-                                            padding: EdgeInsets.only(top: 20)),
+                                            padding: EdgeInsets.only(top: 10)),
                                         _getMeasureInformation(),
                                       ],
                                     ),
@@ -4068,9 +4081,9 @@ class _DashboardState extends State<DashboardPage>
   _getMeasureInformation() {
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
+        // mainAxisAlignment: MainAxisAlignment.start,
+        // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
@@ -4079,11 +4092,14 @@ class _DashboardState extends State<DashboardPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 20),
+                ),
                 Column(
                   children: [
                     Text(
                       'Thời gian bắt đầu đo',
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 15),
                     ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 3),
@@ -4091,7 +4107,7 @@ class _DashboardState extends State<DashboardPage>
                     Row(
                       children: [
                         Container(
-                          width: 40,
+                          width: 100,
                           height: 40,
                           decoration: BoxDecoration(
                             border: Border.all(
@@ -4102,23 +4118,11 @@ class _DashboardState extends State<DashboardPage>
                           ),
                           child: Center(
                               child: Text(
-                            '${timeStartM.split(':')[0]}',
+                            '${timeStartM.split(':')[0]}:${timeStartM.split(':')[1]}',
                             textAlign: TextAlign.center,
+                            style:
+                                TextStyle(wordSpacing: 2.0, letterSpacing: 2),
                           )),
-                        ),
-                        Text(' : '),
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                width: 0.75),
-                            borderRadius: BorderRadius.circular(8),
-                            color: DefaultTheme.WHITE,
-                          ),
-                          child: Center(
-                              child: Text('${timeStartM.split(':')[1]}')),
                         ),
                       ],
                     )
@@ -4129,7 +4133,7 @@ class _DashboardState extends State<DashboardPage>
                   children: [
                     Text(
                       'Đo trong khoảng',
-                      style: TextStyle(fontSize: 16),
+                      style: TextStyle(fontSize: 15),
                     ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 8),
@@ -4165,7 +4169,6 @@ class _DashboardState extends State<DashboardPage>
               ],
             ),
           ),
-          Spacer(),
           _heartRateChartToday(listTimeM, listValueM),
           Spacer(),
           Container(
@@ -4379,6 +4382,9 @@ class _DashboardState extends State<DashboardPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(bottom: 10),
+        ),
         Divider(
           color: DefaultTheme.GREY_TOP_TAB_BAR,
           height: 0.5,
@@ -4387,7 +4393,7 @@ class _DashboardState extends State<DashboardPage>
             ? new Container(
                 width: MediaQuery.of(context).size.width,
                 color: DefaultTheme.WHITE,
-                height: 430,
+                height: 400,
                 child: Column(
                   children: [
                     Container(
@@ -4449,7 +4455,7 @@ class _DashboardState extends State<DashboardPage>
                                       },
                                     },
                                      visualMap: {
-                                      show: true,
+                                      show: false,
                                          top: 20,
                                          
             right: 20,
@@ -4494,11 +4500,11 @@ class _DashboardState extends State<DashboardPage>
                       ),
                       width: MediaQuery.of(context).size.width,
                       // padding: EdgeInsets.only(right: 20),
-                      height: 400,
+                      height: 380,
                     ),
                     Text('Biểu đồ nhịp tim'.toUpperCase(),
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: DefaultTheme.BLUE_REFERENCE,
                         )),
@@ -4525,9 +4531,9 @@ class _DashboardState extends State<DashboardPage>
         //     },
         //   ),
         // ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 20),
-        ),
+        // Padding(
+        //   padding: EdgeInsets.only(bottom: 20),
+        // ),
       ],
     );
   }

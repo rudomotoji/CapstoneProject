@@ -345,10 +345,18 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
             maxVitalSignValue = val.numberMax;
           }
         }
-        List<int> listValueMap =
-            listValue.map((data) => int.parse(data)).toList();
-        List<String> listTimeXAxis = listTime.map((e) => '"${e}"').toList();
 
+        List<int> listValueMap = listValue.map((data) {
+          if (data != "") {
+            return int.parse(data);
+          }
+        }).toList();
+        List<String> listTimeXAxis = listTime.map((e) {
+          if (e != "") {
+            return '"' + e.toString() + '"';
+          }
+        }).toList();
+        print('------------LIST TIME X: ${listTimeXAxis}');
         return heartChart(
             listTimeXAxis,
             minVitalSignValue,

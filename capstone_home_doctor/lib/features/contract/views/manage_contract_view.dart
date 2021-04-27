@@ -304,6 +304,7 @@ class _ManageContract extends State<ManageContract>
                                       ),
                                       InkWell(
                                         onTap: () {
+                                          if (!mounted) return;
                                           setState(() {
                                             _listIndex = 0;
                                           });
@@ -349,6 +350,7 @@ class _ManageContract extends State<ManageContract>
                                       ),
                                       InkWell(
                                         onTap: () {
+                                          if (!mounted) return;
                                           setState(() {
                                             _listIndex = 1;
                                           });
@@ -394,6 +396,7 @@ class _ManageContract extends State<ManageContract>
                                       ),
                                       InkWell(
                                         onTap: () {
+                                          if (!mounted) return;
                                           setState(() {
                                             _listIndex = 2;
                                           });
@@ -455,7 +458,25 @@ class _ManageContract extends State<ManageContract>
                               );
                             } else {
                               return Container(
-                                  child: Text('Kiểm tra kết nối mạng'));
+                                  height: 200,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      //
+                                      SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: Image.asset(
+                                            'assets/images/ic-contract-empty.png'),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(bottom: 20),
+                                      ),
+                                      Text('Hiện không có hợp đồng nào')
+                                    ],
+                                  ));
                             }
                           }
                           return Container();

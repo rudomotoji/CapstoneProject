@@ -197,6 +197,8 @@ flutter:
     - assets/images/bg-danger.png
     - assets/images/bg-normal.png
     - assets/images/ic-measure.png
+    - assets/images/ic-create-dark.png
+    - assets/images/ic-share.png
 
 
   

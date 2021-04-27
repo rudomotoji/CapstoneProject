@@ -217,23 +217,19 @@ class DateValidator {
     String result = '';
     if (value == 'Monday') {
       result = 'Thứ hai';
-    }
-    if (value == 'Tuesday') {
+    } else if (value == 'Tuesday') {
       result = 'Thứ ba';
-    }
-    if (value == 'Wednesday') {
+    } else if (value == 'Wednesday') {
       result = 'Thứ tư';
-    }
-    if (value == 'Thursday') {
+    } else if (value == 'Thursday') {
       result = 'Thứ năm';
-    }
-    if (value == 'Friday') {
+    } else if (value == 'Friday') {
       result = 'Thứ sáu';
-    }
-    if (value == 'Saturday') {
+    } else if (value.contains('Saturday')) {
+      print('go int to t7-----------------------');
       result = 'Thứ bảy';
-    }
-    if (value == 'Sunday') {
+    } else if (value == 'Sunday') {
+      print('go int to cn-----------------------');
       result = 'Chủ nhật';
     }
 
@@ -250,6 +246,22 @@ class DateValidator {
     String _year = _formatted.split('-')[0];
     String _view = '${_dateInWeek}, ${_day} tháng ${_month}, ${_year}';
     return _view;
+  }
+
+  String getDateTimeView2(String timeSystem) {
+    String result = '';
+    if (timeSystem != null && timeSystem != '') {
+      DateFormat _format = DateFormat('yyyy-MM-dd-EEEE');
+      String _formatted = _format
+          .format(DateTime.parse(timeSystem.split('"')[1].split('"')[0]));
+      String _dateInWeek = parseDateInWeekToView(_formatted.split('-')[3]);
+      String _day = _formatted.split('-')[2];
+      String _month = _formatted.split('-')[1];
+      String _year = _formatted.split('-')[0];
+      String _view = '${_dateInWeek}, ${_day} tháng ${_month}, ${_year}';
+      result = _view;
+    }
+    return result;
   }
 
   String convertDateCreate(String date, String formatTo, String formatFrom) {

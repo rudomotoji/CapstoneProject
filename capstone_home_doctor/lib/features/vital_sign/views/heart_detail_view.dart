@@ -151,10 +151,9 @@ class _HeartDetailView extends State<HeartDetailView>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             HeaderWidget(
-              title: 'Nhịp tim',
-              isMainView: false,
-              buttonHeaderType: ButtonHeaderType.HEART_RATE_MEASURE,
-            ),
+                title: 'Nhịp tim',
+                isMainView: false,
+                buttonHeaderType: ButtonHeaderType.BACK_HOME),
             Padding(
               padding: EdgeInsets.only(bottom: 10),
             ),

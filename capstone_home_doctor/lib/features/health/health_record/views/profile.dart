@@ -105,7 +105,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
           HeaderWidget(
             title: 'Hồ sơ',
             isMainView: true,
-            buttonHeaderType: ButtonHeaderType.CREATE_HEALTH_RECORD,
+            buttonHeaderType: ButtonHeaderType.HR_CREATE_SHARE,
           ),
           Align(
             alignment: Alignment.centerLeft,
@@ -115,7 +115,6 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                   'Mỗi hồ sơ sức khoẻ bao gồm nhiều phiếu y lệnh. Phiếu y lệnh là một chỉ định, một lệnh bằng văn bản được ghi trong bệnh án và các giấy tờ y tế mang tính pháp lý.'),
             ),
           ),
-          _buildShareButton(),
           _buildHeader(),
           _buildTab(),
           Padding(
@@ -362,7 +361,25 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                   .toList());
             }
           } else {
-            return Container(child: Text('Không có hồ sơ nào'));
+            return Container(
+                height: 200,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    //
+                    SizedBox(
+                      width: 30,
+                      height: 30,
+                      child:
+                          Image.asset('assets/images/ic-health-record-u.png'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                    ),
+                    Text('Hiện không có hồ sơ nào'),
+                  ],
+                ));
           }
 
           //
@@ -870,24 +887,6 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                 ),
               ));
         });
-  }
-
-  _buildShareButton() {
-    return Container(
-      margin: EdgeInsets.only(top: 20),
-      width: MediaQuery.of(context).size.width - 40,
-      decoration: BoxDecoration(),
-      height: 40,
-      child: InkWell(
-        onTap: () {
-          ///
-          Navigator.pushNamed(context, RoutesHDr.MEDICAL_SHARE);
-        },
-        child: Center(
-          child: Text('Chia sẻ y lệnh'),
-        ),
-      ),
-    );
   }
 
   String _genderDiseaseId(List<Diseases> list) {

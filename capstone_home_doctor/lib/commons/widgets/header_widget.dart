@@ -6,6 +6,7 @@ import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
 import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
 import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
+import 'package:capstone_home_doctor/features/global/repositories/system_repository.dart';
 
 import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
 import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
@@ -30,6 +31,7 @@ import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:capstone_home_doctor/services/reminder_helper.dart';
 import 'package:capstone_home_doctor/services/sqflite_helper.dart';
+import 'package:capstone_home_doctor/services/time_system_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
@@ -49,6 +51,9 @@ final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 final ReminderHelper _reminderHelper = ReminderHelper();
 final VitalSignRepository _vitalSignRepository = VitalSignRepository();
 final MeasureHelper _measureHelper = MeasureHelper();
+final SystemRepository _systemRepository =
+    SystemRepository(httpClient: http.Client());
+final TimeSystemHelper _timeSystemHelper = TimeSystemHelper();
 //
 final ArrayValidator _arrayValidator = ArrayValidator();
 //final RealTimeHeartRateBloc _realTimeHeartRateBloc = RealTimeHeartRateBloc();
@@ -59,8 +64,9 @@ enum ButtonHeaderType {
   NEW_MESSAGE,
   DETAIL,
   BACK_HOME,
-  HEART_RATE_MEASURE,
+  // HEART_RATE_MEASURE,
   CREATE_HEALTH_RECORD,
+  HR_CREATE_SHARE,
 }
 
 class HeaderWidget extends StatefulWidget {
@@ -114,7 +120,15 @@ class _HeaderWidget extends State<HeaderWidget> {
     _patientBloc = BlocProvider.of(context);
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
+    // _getTimeSystem();
   }
+
+  // _getTimeSystem() async {
+  //   await _systemRepository.getTimeSystem().then((value) async {
+  //     /////
+  //     await _timeSystemHelper.setTimeSystem(value);
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -219,43 +233,97 @@ class _HeaderWidget extends State<HeaderWidget> {
                 color: DefaultTheme.BLACK,
               ),
             ),
-            if (_buttonHeaderType == ButtonHeaderType.HEART_RATE_MEASURE)
+            // if (_buttonHeaderType == ButtonHeaderType.HEART_RATE_MEASURE)
+            //   (Expanded(
+            //     flex: 2,
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.end,
+            //       children: [
+            //         Padding(padding: EdgeInsets.only(left: 20)),
+            //         Container(
+            //           padding: EdgeInsets.only(
+            //               left: 10, right: 10, bottom: 5, top: 5),
+            //           decoration: BoxDecoration(
+            //             borderRadius: BorderRadius.circular(20),
+            //             color: DefaultTheme.RED_CALENDAR.withOpacity(0.2),
+            //             // border: Border.all(
+            //             //     color: DefaultTheme.GREY_TOP_TAB_BAR, width: 0.5),
+            //           ),
+            //           child: InkWell(
+            //               splashColor: DefaultTheme.TRANSPARENT,
+            //               highlightColor: DefaultTheme.TRANSPARENT,
+            //               onTap: _onMeasuring,
+            //               child: Row(
+            //                 children: [
+            //                   Image.asset(
+            //                     'assets/images/ic-heart-dangerous.gif',
+            //                     width: 30,
+            //                     height: 30,
+            //                   ),
+            //                   Container(
+            //                     child: Text('Đo'),
+            //                   ),
+            //                 ],
+            //               )),
+            //         ),
+            //       ],
+            //     ),
+            //   )),
+
+            if (_buttonHeaderType == ButtonHeaderType.HR_CREATE_SHARE)
               (Expanded(
                 flex: 2,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Padding(padding: EdgeInsets.only(left: 20)),
-                    Container(
-                      padding: EdgeInsets.only(
-                          left: 10, right: 10, bottom: 5, top: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: DefaultTheme.RED_CALENDAR.withOpacity(0.2),
-                        // border: Border.all(
-                        //     color: DefaultTheme.GREY_TOP_TAB_BAR, width: 0.5),
+                    //
+                    Spacer(),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, RoutesHDr.MEDICAL_SHARE);
+                      },
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR, width: 1),
+                          color: DefaultTheme.WHITE,
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: Image.asset(
+                          'assets/images/ic-share.png',
+                        ),
                       ),
-                      child: InkWell(
-                          splashColor: DefaultTheme.TRANSPARENT,
-                          highlightColor: DefaultTheme.TRANSPARENT,
-                          onTap: _onMeasuring,
-                          child: Row(
-                            children: [
-                              Image.asset(
-                                'assets/images/ic-heart-dangerous.gif',
-                                width: 30,
-                                height: 30,
-                              ),
-                              Container(
-                                child: Text('Đo'),
-                              ),
-                            ],
-                          )),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        await _medicalInstructionHelper
+                            .updateCreateHRFromDetail(false);
+                        Navigator.of(context)
+                            .pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
+                      },
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR, width: 1),
+                          color: DefaultTheme.WHITE,
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        child: Image.asset(
+                          'assets/images/ic-create-dark.png',
+                        ),
+                      ),
                     ),
                   ],
                 ),
               )),
-
             //
             if (_buttonHeaderType == ButtonHeaderType.CREATE_HEALTH_RECORD)
               (Expanded(
@@ -263,10 +331,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Padding(padding: EdgeInsets.only(left: 20)),
+                    Spacer(),
                     InkWell(
-                      splashColor: DefaultTheme.TRANSPARENT,
-                      highlightColor: DefaultTheme.TRANSPARENT,
                       onTap: () async {
                         await _medicalInstructionHelper
                             .updateCreateHRFromDetail(true);
@@ -274,41 +340,17 @@ class _HeaderWidget extends State<HeaderWidget> {
                             .pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
                       },
                       child: Container(
-                        padding: EdgeInsets.only(
-                            left: 15, right: 15, bottom: 10, top: 10),
+                        width: 40,
+                        height: 40,
+                        padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: DefaultTheme.GREY_VIEW,
-                          boxShadow: [
-                            BoxShadow(
-                              color: DefaultTheme.GREY_TOP_TAB_BAR
-                                  .withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset:
-                                  Offset(0, 1), // changes position of shadow
-                            ),
-                          ],
+                          border: Border.all(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR, width: 1),
+                          color: DefaultTheme.WHITE,
+                          borderRadius: BorderRadius.circular(40),
                         ),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 20,
-                              height: 20,
-                              child:
-                                  Image.asset('assets/images/ic-create-hr.png'),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10),
-                            ),
-                            Text(
-                              'Hồ sơ mới',
-                              style: TextStyle(
-                                  color: DefaultTheme.BLACK,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
+                        child: Image.asset(
+                          'assets/images/ic-create-dark.png',
                         ),
                       ),
                     ),
@@ -343,15 +385,15 @@ class _HeaderWidget extends State<HeaderWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Padding(padding: EdgeInsets.only(left: 20)),
+                    Padding(padding: EdgeInsets.only(left: 15)),
                     InkWell(
                       splashColor: DefaultTheme.TRANSPARENT,
                       highlightColor: DefaultTheme.TRANSPARENT,
                       onTap: _backToHome,
                       child: Image.asset(
                         'assets/images/ic-back-home.png',
-                        width: 35,
-                        height: 35,
+                        width: 40,
+                        height: 40,
                       ),
                     ),
                   ],
@@ -1706,6 +1748,7 @@ class _Header extends State<Header> {
       PatientRepository(httpClient: http.Client());
   PrescriptionListBloc _prescriptionListBloc;
   TokenDeviceBloc _tokenDeviceBloc;
+  String _timeSystem = '';
   @override
   _Header(this._maxHeight, this._minHeight);
 
@@ -1715,6 +1758,16 @@ class _Header extends State<Header> {
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
     _getPatientId();
+    _getTimeSystem();
+  }
+
+  _getTimeSystem() async {
+    await _systemRepository.getTimeSystem().then((value) async {
+      await _timeSystemHelper.setTimeSystem(value);
+      setState(() {
+        _timeSystem = value;
+      });
+    });
   }
 
   _getPatientId() async {
@@ -1792,7 +1845,7 @@ class _Header extends State<Header> {
                     // width: MediaQuery.of(context).size.width / 2,
                     // padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                      '${_dateValidator.getDateTimeView()}',
+                      '${_dateValidator.getDateTimeView2(_timeSystem)}',
                       style: TextStyle(
                           color: DefaultTheme.WHITE,
                           fontSize: Tween<double>(begin: 10, end: 13)

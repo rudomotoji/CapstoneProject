@@ -146,7 +146,8 @@ class _NotificationState extends State<NotificationPage> {
                                         i.notificationType == 4 ||
                                         i.notificationType == 5 ||
                                         i.notificationType == 9 ||
-                                        i.notificationType == 10) {
+                                        i.notificationType == 10 ||
+                                        i.notificationType == 20) {
                                       //Navigate hợp đồng detail
                                       //
                                       if (i.contractId != null) {
@@ -245,7 +246,9 @@ class _NotificationState extends State<NotificationPage> {
                                                       i.notificationType == 4 ||
                                                       i.notificationType == 5 ||
                                                       i.notificationType == 9 ||
-                                                      i.notificationType == 10)
+                                                      i.notificationType ==
+                                                          10 ||
+                                                      i.notificationType == 20)
                                                   ? 'assets/images/ic-contract.png'
                                                   : (i.notificationType == 2 ||
                                                           i.notificationType ==
@@ -308,6 +311,7 @@ class _NotificationState extends State<NotificationPage> {
                                                       110,
                                                   child: Text('${i.body}',
                                                       style: TextStyle(
+                                                          height: 1.2,
                                                           fontWeight:
                                                               (i.status == true)
                                                                   ? FontWeight

@@ -8,6 +8,7 @@ import 'package:capstone_home_doctor/features/vital_sign/blocs/blood_bloc.dart';
 import 'package:capstone_home_doctor/services/measure_helper.dart';
 import 'package:capstone_home_doctor/services/payment_helper.dart';
 import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
+import 'package:capstone_home_doctor/services/time_system_helper.dart';
 import 'package:intl/intl.dart';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -152,6 +153,7 @@ final MedicalInstructionHelper _medicalInstructionHelper =
 final DoctorHelper _doctorHelper = DoctorHelper();
 final PaymentHelper _paymentHelper = PaymentHelper();
 final MeasureHelper _measureHelper = MeasureHelper();
+final TimeSystemHelper _timeSystemHelper = TimeSystemHelper();
 //
 /////////////////////
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
@@ -1840,6 +1842,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('LIST_TIME_HR')) {
       _measureHelper.initialListTime();
+    }
+    if (!prefs.containsKey('TIME_SYSTEM')) {
+      _timeSystemHelper.initialTimeSystem();
     }
   }
 

@@ -564,17 +564,17 @@ class _ContractDraftView extends State<ContractDraftView>
                               fontFamily: 'NewYork'),
                         ),
                       ),
-                      Padding(
-                        padding:
-                            EdgeInsets.only(left: 20, right: 20, bottom: 10),
-                        child: Text(
-                          '- Phương thức thanh toán: Chuyển khoản trực tiếp vào tài khoản của HDr (Tên TK: Home Doctor Vietnam, Số TK: 123456789, Ngân hàng TP Bank)',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                              fontFamily: 'NewYork'),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding:
+                      //       EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                      //   child: Text(
+                      //     '- Phương thức thanh toán: Chuyển khoản trực tiếp vào tài khoản của HDr (Tên TK: Home Doctor Vietnam, Số TK: 123456789, Ngân hàng TP Bank)',
+                      //     style: TextStyle(
+                      //         fontWeight: FontWeight.w500,
+                      //         fontSize: 16,
+                      //         fontFamily: 'NewYork'),
+                      //   ),
+                      // ),
                       Padding(
                         padding: EdgeInsets.only(
                             left: 20, right: 20, bottom: 20, top: 30),
