@@ -1,0 +1,368 @@
+[
+	{
+		"patientId": 2,
+		"patientName": "Hồ Duy Phú",
+		"diseases": [
+			{
+				"diseaseId": "I11",
+				"name": "Bệnh tim do tăng huyết áp"
+			},
+			{
+				"diseaseId": "I20-I25",
+				"name": "Bệnh tim thiếu máu cục bộ"
+			}
+		],
+		"status": "Nguy hiểm",
+		"timeAppointment": "2021-03-10",
+		"vitalSigns": [
+			{
+			  "vitalSignId": 1,
+			  "type": "Huyết áp",
+			  "value": 110
+			},
+			{
+			  "vitalSignId": 2,
+			  "type": "Nhịp tim",
+			  "value": 78
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Oxy trong máu",
+			  "value": 93
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Nhịp thở",
+			  "value": 22
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Nhiệt độ cơ thể",
+			  "value": 37
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Chiều cao",
+			  "value": 168
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Cân nặng",
+			  "value": 61
+			}
+		],
+		"heartRateMasure": [
+			{
+				"minute": 0,
+				"value": 80
+			},
+			{
+				"minute": 1,
+				"value": 77
+			},
+			{
+				"minute": 2,
+				"value": 78
+			},
+			{
+				"minute": 3,
+				"value": 76
+			},
+			{
+				"minute": 4,
+				"value": 75
+			},
+			{
+				"minute": 5,
+				"value": 78
+			},
+			{
+				"minute": 6,
+				"value": 79
+			},
+			{
+				"minute": 7,
+				"value": 80
+			},
+			{
+				"minute": 8,
+				"value": 83
+			},
+			{
+				"minute": 9,
+				"value": 77
+			}
+		]
+	},
+	{
+		"patientId": 1002,
+		"patientName": "Phạm Đức Hiếu",
+		"diseases": [
+			{
+				"diseaseId": "I26-I28",
+				"name": "Bệnh tim do phổi và bệnh tuần hoàn phổi"
+			}
+		],
+		"status": "Bất thường",
+		"timeAppointment": "2021-03-10",
+		"vitalSigns": [
+			{
+			  "vitalSignId": 1,
+			  "type": "Huyết áp",
+			  "value": 110
+			},
+			{
+			  "vitalSignId": 2,
+			  "type": "Nhịp tim",
+			  "value": 78
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Oxy trong máu",
+			  "value": 93
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Nhịp thở",
+			  "value": 22
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Nhiệt độ cơ thể",
+			  "value": 37
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Chiều cao",
+			  "value": 168
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Cân nặng",
+			  "value": 61
+			}
+		],
+		"heartRateMasure": [
+			{
+				"minute": 0,
+				"value": 80
+			},
+			{
+				"minute": 1,
+				"value": 77
+			},
+			{
+				"minute": 2,
+				"value": 78
+			},
+			{
+				"minute": 3,
+				"value": 76
+			},
+			{
+				"minute": 4,
+				"value": 75
+			},
+			{
+				"minute": 5,
+				"value": 78
+			},
+			{
+				"minute": 6,
+				"value": 79
+			},
+			{
+				"minute": 7,
+				"value": 80
+			},
+			{
+				"minute": 8,
+				"value": 83
+			},
+			{
+				"minute": 9,
+				"value": 77
+			}
+		]
+	},
+	{
+		"patientId": 1004,
+		"patientName": "Nguyễn Đình Vương",
+		"diseases": [
+			{
+				"diseaseId": "I26-I28",
+				"name": "Bệnh tim do phổi và bệnh tuần hoàn phổi"
+			}],
+		"status": "Bình thường",
+		"timeAppointment": "2021-03-10",
+		"vitalSigns": [
+			{
+			  "vitalSignId": 1,
+			  "type": "Huyết áp",
+			  "value": 110
+			},
+			{
+			  "vitalSignId": 2,
+			  "type": "Nhịp tim",
+			  "value": 78
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Oxy trong máu",
+			  "value": 93
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Nhịp thở",
+			  "value": 22
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Nhiệt độ cơ thể",
+			  "value": 37
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Chiều cao",
+			  "value": 168
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Cân nặng",
+			  "value": 61
+			}
+		],
+		"heartRateMasure": [
+			{
+				"minute": 0,
+				"value": 80
+			},
+			{
+				"minute": 1,
+				"value": 77
+			},
+			{
+				"minute": 2,
+				"value": 78
+			},
+			{
+				"minute": 3,
+				"value": 76
+			},
+			{
+				"minute": 4,
+				"value": 75
+			},
+			{
+				"minute": 5,
+				"value": 78
+			},
+			{
+				"minute": 6,
+				"value": 79
+			},
+			{
+				"minute": 7,
+				"value": 80
+			},
+			{
+				"minute": 8,
+				"value": 83
+			},
+			{
+				"minute": 9,
+				"value": 77
+			}
+		]
+	},
+	{
+		"patientId": 1004,
+		"patientName": "Nguyễn Lê Huy",
+		"diseases": [
+			{
+				"diseaseId": "I26-I28",
+				"name": "Bệnh tim do phổi và bệnh tuần hoàn phổi"
+			}],
+		"status": "Bình thường",
+		"timeAppointment": "2021-03-10",
+		"vitalSigns": [
+			{
+			  "vitalSignId": 1,
+			  "type": "Huyết áp",
+			  "value": 110
+			},
+			{
+			  "vitalSignId": 2,
+			  "type": "Nhịp tim",
+			  "value": 78
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Oxy trong máu",
+			  "value": 93
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Nhịp thở",
+			  "value": 22
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Nhiệt độ cơ thể",
+			  "value": 37
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Chiều cao",
+			  "value": 168
+			},
+			{
+			  "vitalSignId": 1,
+			  "type": "Cân nặng",
+			  "value": 61
+			}
+		],
+		"heartRateMasure": [
+			{
+				"minute": 0,
+				"value": 80
+			},
+			{
+				"minute": 1,
+				"value": 77
+			},
+			{
+				"minute": 2,
+				"value": 78
+			},
+			{
+				"minute": 3,
+				"value": 76
+			},
+			{
+				"minute": 4,
+				"value": 75
+			},
+			{
+				"minute": 5,
+				"value": 78
+			},
+			{
+				"minute": 6,
+				"value": 79
+			},
+			{
+				"minute": 7,
+				"value": 80
+			},
+			{
+				"minute": 8,
+				"value": 83
+			},
+			{
+				"minute": 9,
+				"value": 77
+			}
+		]
+	}
+]

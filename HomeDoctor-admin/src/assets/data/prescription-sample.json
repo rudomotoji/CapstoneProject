@@ -1,0 +1,27 @@
+{
+	"medicalInstructionId": 3021,
+	"medicalInstructionType": "Đơn thuốc",
+	"image": null,
+	"description": "description",
+	"diagnose": "Đơn thuốc lần 1",
+	"placeHealthRecord": "Bác sĩ Nguyễn Lê Huy",
+	"dateCreated": "2021-03-05T08:30:43.191",
+	"status": "status",
+	"medicationsResponse": {
+	  "dateStarted": "2021-03-05T08:30:43.191",
+	  "dateFinished": "2021-03-05T08:30:43.191",
+	  "dateCanceled": "2021-03-05T08:30:43.191",
+	  "medicationSchedules": [
+		{
+		  "medicationName": "PanadolXX",
+		  "content": "700g",
+		  "useTime": "sáng 1,tối 1",
+		  "unit": "viên",
+		  "morning": 1,
+		  "noon": 0,
+		  "afterNoon": 0,
+		  "night": 1
+		}
+	  ]
+	}
+}

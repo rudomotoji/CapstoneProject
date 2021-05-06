@@ -1,0 +1,12 @@
+{
+	"deviceId": 0,
+	"deviceName": "Xiaomi Mi Band 4",
+	"services": [
+		{
+			"serviceId": 0,
+			"serviceName": "Nhịp tim",
+			"uuid": "0000180d-0000-1000-8000-00805f9b34fb"
+		}
+
+	]
+}
