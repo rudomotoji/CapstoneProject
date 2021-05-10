@@ -1,0 +1,80 @@
+{
+	"baseLaw": [
+		"Căn cứ Bộ luật Dân sự ngày 14 tháng 6 năm 2005",
+		"Căn cứ Luật khám bệnh, chữa bệnh ngày 23 tháng 11 năm 2009",
+		"Căn cứ Nghị định số 87/2011/NĐ-CP ngày 27 tháng 9 năm 2011 của Chính phủ quy định chi tiết và hướng dẫn thi hành một số điều của Luật khám bệnh, chữa bệnh"
+	],
+	"today": null,
+	"descriptionSum": "Sau khi thỏa thuận, Hai bên thống nhất ký kết hợp đồng khám, chữa bệnh theo các điều khoản cụ thể như sau:",
+	"partyA": {
+		"name": null,
+		"fullName": null,
+		"address": null,
+		"phoneNumber": null,
+		"dateOfBirth": null,
+		"gender": null,
+		"job": null
+	},
+	"partyB": {
+		"name": null,
+		"fullName": null,
+		"address": null,
+		"phoneNumber": null,
+		"workLocation": null,
+		"specialization": null,
+		"dateOfBirth": null
+	},
+	"timeAndMission": {
+		"title": "Thời hạn và nhiệm vụ hợp đồng",
+		"description": null
+	},
+	"workingMode": {
+		"title": "Chế độ làm việc",
+		"description": null
+	},
+	"dutyAndInterest": [
+		{
+			"name": "Sử dụng dịch vụ khám chữa bệnh",
+			"duty": [
+				"Được khám, chữa bệnh và chăm sóc dưới sự giám sát của bên B",
+				"Đề xuất, khiếu nại hoặc đề nghị thay đổi hoặc chấm dứt hợp đồng",
+				"Bên A có thể chấm dứt hợp đồng bất cứ khi nào họ muốn"
+			],
+			"interest": [
+				"Cung cấp những thông tin cần thiết cho bên B để có thể theo dõi và khám chữa bệnh",
+				"Hoàn thành những nghĩa vụ đã cam kết trong hợp đồng giữa hai bên theo các điều mục đã cam kết trong hợp đồng",
+				"Phối hợp theo đúng chỉ định của bên B về việc khám và chữa bệnh",
+				"Chấp hành nội quy, quy chế theo quy định của bộ y tế về việc tổ chức khám chữa bệnh"
+
+			]
+		},
+		{
+			"name": "Cung cấp dịch vụ khám bệnh",
+			"duty": [
+				"Yêu cầu bên A cung cấp và chia sẻ các thông tin cần thiết",
+				"Bên B có thể đơn phương chấm dứt hợp đồng khi có bằng chứng việc bên A có những sai phạm trong các điều khoản 5 và 6 cũng như các nghĩa vụ mà bên A phải thực hiện hoặc sai phạm luật của bộ y tế theo nghị định số 87/2011/NĐ-CP ngày 27 tháng 9 năm 2011 và không tuân thủ các quy định được đưa ra trong ứng dụng HDr, gay ảnh hưởng tới việc không thể theo dõi và chăm sóc bệnh nhân"
+			],
+			"interest": [
+				"Xác nhận quá trình theo quy định của Luật khám bệnh, chữa bệnh ngày 23 tháng 11 năm 2009; Nghị định số 87/2011/NĐ-CP ngày 27 tháng 9 năm 2011 của Chính phủ quy định chi tiết và hướng dẫn thi hành một số điều của Luật khám bệnh, chữa bệnh và Thông tư số 41/2011/TT-BYT ngày 14 tháng 11 năm 2011 của Bộ trưởng Bộ Y tế Hướng dẫn cấp chứng chỉ hành nghề đối với người hành nghề và cấp giấy phép hoạt động đối với cơ sở khám bệnh, chữa bệnh",
+				"Đảm bảo việc làm và thực hiện đầy đủ những điều đã cam kết trong hợp đồng làm việc",
+				"Không được chấm dứt hợp đồng nếu bên A không sai phạm các điều luật đã quy định trong hợp đồng",
+				"Khi bên B tự động chấm dứt hợp đồng trước thời hạn, phải bồi thường cho bên A theo quy định của pháp luật"
+			]
+		}
+	],
+	"disputeResolution": {
+		"title": "Giải quyết tranh chấp",
+		"description": [
+			"Khi có tranh chấp, hai bên thống nhất giải quyết trên nguyên tắc bình đẳng, hợp tác, hòa giải",
+			"Trong thời gian tranh chấp, hai Bên vẫn phải bảo đảm điều kiện để khám bệnh, chữa bệnh đầy đủ",
+			"Trường hợp hai Bên không hòa giải được sẽ báo cáo cơ quan có thẩm quyền giải quyết"
+		]
+	},
+	"collectiveCommitment": {
+		"title": "Cam kết chung",
+		"description": [
+			"Những vấn đề phát sinh khác ngoài hợp đồng, kể cả việc kéo dài hoặc chấm dứt hợp đồng trước thời hạn sẽ được hai bên cùng thảo luận giải quyết, thể hiện bằng việc ký kết một hợp mới, hợp đồng hiện hành sẽ hết hạn kể từ khi hợp đồng mới được ký",
+			"Hai bên thống nhất việc sử dụng ứng dụng HDr cho việc khám chữa bệnh và tuân thủ các quy định liên quan tới phần mềm để hỗ trợ việc theo dõi bệnh"
+		]
+	}
+}

@@ -1,0 +1,203 @@
+[
+	{
+		"diagnoseId": 1,
+		"code": "I00",
+		"description": "Thấu khớp không có tổn thương tim"
+	},
+	{
+		"diagnoseId": 2,
+		"code": "I01",
+		"description": "Thấu khớp ảnh hưởng tim"
+	},
+	{
+		"diagnoseId": 3,
+		"code": "I10",
+		"description": "Tăng huyết áp nguyên phát"
+	},
+	{
+		"diagnoseId": 4,
+		"code": "I13",
+		"description": "Bệnh tim và thận do tăng huyết áp"
+	},
+	{
+		"diagnoseId": 5,
+		"code": "I15",
+		"description": "Tăng huyết áp thứ phát"
+	},
+	{
+		"diagnoseId": 6,
+		"code": "I20",
+		"description": "Cơn đau thắt ngực"
+	},
+	{
+		"diagnoseId": 7,
+		"code": "I21",
+		"description": "Nhồi máu cơ tim cấp"
+	},
+	{
+		"diagnoseId": 8,
+		"code": "I24.8",
+		"description": "Bệnh tim do thiêú máu cục bộ cấp (Suy vành/ Thiểu năng vành"
+	},
+	{
+		"diagnoseId": 9,
+		"code": "I25.2",
+		"description": "Bệnh tim thiếu máu cục bộ mạn/ Nhồi máu cơ tim cũ"
+	},
+	{
+		"diagnoseId": 10,
+		"code": "I33",
+		"description": "Viêm nội tâm mạc cấp - Bán cấp"
+	},
+	{
+		"diagnoseId": 11,
+		"code": "I34",
+		"description": "Bệnh van hai lá không do thấp"
+	},
+	{
+		"diagnoseId": 12,
+		"code": "I35",
+		"description": "Bệnh van động mạch chủ không do thấp"
+	},
+	{
+		"diagnoseId": 13,
+		"code": "I36",
+		"description": "Bệnh van 3 lá không do thấp"
+	},
+	{
+		"diagnoseId": 14,
+		"code": "I37",
+		"description": "Bệnh van ĐM phổi"
+	},
+	{
+		"diagnoseId": 15,
+		"code": "I40",
+		"description": "Viêm cơ tim cấp"
+	},
+	{
+		"diagnoseId": 16,
+		"code": "I44",
+		"description": "Block nhĩ thất và nhánh (T)"
+	},
+	{
+		"diagnoseId": 17,
+		"code": "I145.0",
+		"description": "Block nhánh (P)"
+	},
+	{
+		"diagnoseId": 18,
+		"code": "I45.2",
+		"description": "Block 2 nhánh"
+	},
+	{
+		"diagnoseId": 19,
+		"code": "I46.1",
+		"description": "Ngừng tim/ Đột tử do tim"
+	},
+	{
+		"diagnoseId": 20,
+		"code": "I47.1",
+		"description": "Nhịp nhanh trên thất"
+	},
+	{
+		"diagnoseId": 21,
+		"code": "I47.2",
+		"description": "Nhịp nhanh thất"
+	},
+	{
+		"diagnoseId": 22,
+		"code": "I48",
+		"description": "Rung nhĩ / Cuồng nhĩ"
+	},
+	{
+		"diagnoseId": 23,
+		"code": "I49.0",
+		"description": "Rung thất / cuồng thất"
+	},
+	{
+		"diagnoseId": 24,
+		"code": "I49.1",
+		"description": "Ngoại tâm thu nhĩ"
+	},
+	{
+		"diagnoseId": 25,
+		"code": "I49.3",
+		"description": "Ngoại tâm thu thất"
+	},
+	{
+		"diagnoseId": 26,
+		"code": "I49.5",
+		"description": "Hội chứng suy nút xoang"
+	},
+	{
+		"diagnoseId": 27,
+		"code": "I49.9",
+		"description": "Rối loạn nhịp tim không xác định"
+	},
+	{
+		"diagnoseId": 28,
+		"code": "I50",
+		"description": "Suy tim"
+	},
+	{
+		"diagnoseId": 29,
+		"code": "I61",
+		"description": "Xuất huyết nội sọ"
+	},
+	{
+		"diagnoseId": 30,
+		"code": "I63",
+		"description": "Nhồi máu não"
+	},
+	{
+		"diagnoseId": 31,
+		"code": "I64",
+		"description": "Đột quị / TBMMN (không xác định nhồi máu hay xuất huyết)"
+	},
+	{
+		"diagnoseId": 32,
+		"code": "I67.4",
+		"description": "Bệnh lý não do tăng huyết áp"
+	},
+	{
+		"diagnoseId": 33,
+		"code": "I67.9",
+		"description": "Bệnh mạch máu não không xác định"
+	},
+	{
+		"diagnoseId": 34,
+		"code": "I67.8",
+		"description": "Bệnh mạch máu não xác định khác"
+	},
+	{
+		"diagnoseId": 35,
+		"code": "I69",
+		"description": "Di chứng bệnh mạch máu não"
+	},
+	{
+		"diagnoseId": 36,
+		"code": "I70.0",
+		"description": "Xơ vữa động mạch chủ"
+	},
+	{
+		"diagnoseId": 37,
+		"code": "I80",
+		"description": "Viêm tắc tĩnh mạch chi dưới"
+	},
+	{
+		"diagnoseId": 38,
+		"code": "I83",
+		"description": "Giãn tĩnh mạch chi dưới"
+	},
+	{
+		"diagnoseId": 39,
+		"code": "I85",
+		"description": "Giãn tĩnh mạch thực quản"
+	},
+	{
+		"diagnoseId": 40,
+		"code": "I95",
+		"description": "Huyết áp thấp (Hạ huyết áp)"
+	}
+
+]

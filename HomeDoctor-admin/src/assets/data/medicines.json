@@ -1,0 +1,194 @@
+[
+	{
+		"medicineId": 1,
+		"medicineName": "Digoxin",
+		"content": "0.125mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 2,
+		"medicineName": "Digoxin",
+		"content": "0.25mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 3,
+		"medicineName": "Digoxin",
+		"content": "0.5mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 4,
+		"medicineName": "Digoxin",
+		"content": "0.1mg/ml",
+		"unitType": "ống"
+	},
+	{
+		"medicineId": 5,
+		"medicineName": "Digoxin",
+		"content": "0.25mg/2ml",
+		"unitType": "ống"
+	},
+	{
+		"medicineId": 6,
+		"medicineName": "Ouabain",
+		"content": "0.25mg/ml",
+		"unitType": "ống"
+	}, 
+	{
+		"medicineId": 7,
+		"medicineName": "Nitroglycerin",
+		"content": "0.3mg (1/200gr)",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 8,
+		"medicineName": "Nitroglycerin",
+		"content": "1mg/5ml",
+		"unitType": "ống"
+	}, 
+	{
+		"medicineId": 9,
+		"medicineName": "Isosorbid",
+		"content": "5mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 10,
+		"medicineName": "Isosorbid",
+		"content": "5mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 11,
+		"medicineName": "Isosorbid",
+		"content": "10mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 12,
+		"medicineName": "Isosorbid",
+		"content": "20mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 13,
+		"medicineName": "Isosorbid",
+		"content": "40mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 14,
+		"medicineName": "Isosorbid",
+		"content": "60mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 15,
+		"medicineName": "Isosorbid",
+		"content": "1.25mg",
+		"unitType": "ống"
+	},
+	{
+		"medicineId": 16,
+		"medicineName": "Amiodaron",
+		"content": "200mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 17,
+		"medicineName": "Amiodaron",
+		"content": "150mg/3ml",
+		"unitType": "ống"
+	},
+	{
+		"medicineId": 18,
+		"medicineName": "Quinidin",
+		"content": "200mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 19,
+		"medicineName": "Quinidin",
+		"content": "300mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 20,
+		"medicineName": "Quinidin",
+		"content": "800mg/10ml",
+		"unitType": "ống"
+	},
+	{
+		"medicineId": 21,
+		"medicineName": "Quinidin",
+		"content": "500mg/10ml",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 22,
+		"medicineName": "Nifedipin",
+		"content": "5mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 23,
+		"medicineName": "Nifedipin",
+		"content": "10mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 24,
+		"medicineName": "Nifedipin",
+		"content": "20mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 25,
+		"medicineName": "Adrenalin",
+		"content": "0.1mg/ml",
+		"unitType": "ống"
+	},
+	{
+		"medicineId": 26,
+		"medicineName": "Adrenalin",
+		"content": "1mg/ml",
+		"unitType": "ống"
+	},
+	{
+		"medicineId": 27,
+		"medicineName": "Heparin",
+		"content": "10mg/1ml",
+		"unitType": "ống"
+	},
+	{
+		"medicineId": 28,
+		"medicineName": "Heparin",
+		"content": "100mg/ml",
+		"unitType": "ống"
+	},
+	{
+		"medicineId": 29,
+		"medicineName": "Apixaban",
+		"content": "2,5mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 30,
+		"medicineName": "Apixaban",
+		"content": "5mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 31, 
+		"medicineName": "Dabigatran",
+		"content": "75mg",
+		"unitType": "viên"
+	},
+	{
+		"medicineId": 32, 
+		"medicineName": "Dabigatran",
+		"content": "110mg",
+		"unitType": "viên"
+	}
+]

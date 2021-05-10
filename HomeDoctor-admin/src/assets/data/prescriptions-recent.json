@@ -1,0 +1,43 @@
+[
+	{
+		"prescriptionId": 1,
+		"dateStarted": "",
+		"dateFinished": "",
+		"diagnose": "",
+		"prescriptionDetail": [
+			{
+				"prescriptionDetailId": 1,
+				"medicineName": "",
+				"content": "",
+				"unit": "",
+				"morning": 0,
+				"noon": 0,
+				"afternoon": 0,
+				"night": 0,
+				"useTime": ""
+			},
+			{
+				"prescriptionDetailId": 2,
+				"medicineName": "",
+				"content": "",
+				"unit": "",
+				"morning": 0,
+				"noon": 0,
+				"afternoon": 0,
+				"night": 0,
+				"useTime": ""
+			},
+			{
+				"prescriptionDetailId": 3,
+				"medicineName": "",
+				"content": "",
+				"unit": "",
+				"morning": 0,
+				"noon": 0,
+				"afternoon": 0,
+				"night": 0,
+				"useTime": ""
+			}
+		]
+	}
+]
