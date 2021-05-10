@@ -182,7 +182,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                       child: Padding(
                         padding: EdgeInsets.only(top: 5, left: 10, right: 20),
                         child: Text(
-                          'Chọn loại bệnh chính xác được ghi trên hồ sơ bệnh án của bạn',
+                          'Chọn loại bệnh chính xác được ghi trên hồ sơ sức khoẻ của bạn.',
                           style: TextStyle(
                               color: DefaultTheme.GREY_TEXT,
                               fontSize: 15,
@@ -428,7 +428,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Chọn bệnh lý cụ thể*',
+                        'Bệnh lý đã chọn',
                         style: TextStyle(
                           color: DefaultTheme.BLACK,
                           fontWeight: FontWeight.w500,
