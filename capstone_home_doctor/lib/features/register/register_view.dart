@@ -220,7 +220,8 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                         if (usernameController.text.isEmpty ||
                             passwordController.text.isEmpty ||
                             passwordConfirmController.text.isEmpty) {
-                          alertError('Vui lòng nhập thông tin có dấu *');
+                          alertError(
+                              'Vui lòng nhập đầy đủ các thông tin yêu cầu');
                         } else if (validateUsernamePassword(
                                 usernameController.text, 'tên đăng nhập') !=
                             null) {
@@ -332,7 +333,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                                                     'assets/images/loading.gif'),
                                               ),
                                               Text(
-                                                'Đang tạo...',
+                                                'Đang tạo',
                                                 style: TextStyle(
                                                     color:
                                                         DefaultTheme.GREY_TEXT,
@@ -533,39 +534,48 @@ class _Register extends State<Register> with WidgetsBindingObserver {
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
-          return Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: DefaultTheme.WHITE.withOpacity(0.8)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: Image.asset('assets/images/ic-failed.png'),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          '$title',
-                          style: TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              decoration: TextDecoration.none),
-                          textAlign: TextAlign.center,
+          return Material(
+            color: DefaultTheme.TRANSPARENT,
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    width: 250,
+                    height: 200,
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: DefaultTheme.WHITE.withOpacity(0.8)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Spacer(),
+                        SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: Image.asset('assets/images/ic-failed.png'),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 20),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            '$title',
+                            style: TextStyle(
+                                color: DefaultTheme.BLACK,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                decoration: TextDecoration.none),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Spacer(),
+                      ],
+                    ),
                   ),
                 ),
               ),

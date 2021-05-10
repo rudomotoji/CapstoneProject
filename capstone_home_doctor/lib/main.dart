@@ -843,11 +843,24 @@ void main() async {
             });
             countSummary++;
           }
+
+          ///cach cun`
+          await _saveVitalSignScheduleOffline();
         } else {
           print('user has logged out of system');
         }
       });
-
+//////////////////
+      ///
+      ///
+      ///
+      ///
+      ///
+      ///
+      ///
+      ///
+      ///
+      ///cmt for ins
       ///
       ///////-----------------------------------------------
       ///FOR ANOTHER VITAL SIGN EXCEPT HEART RATE

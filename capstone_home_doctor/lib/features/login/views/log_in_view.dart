@@ -65,7 +65,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
               title: 'Đăng nhập',
               isMainView: true,
             ),
-            Padding(padding: const EdgeInsets.only(top: 30)),
+            Padding(padding: const EdgeInsets.only(top: 10)),
             Image.asset(
               'assets/images/logo-home-doctor.png',
               width: 60,
@@ -138,68 +138,74 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                       barrierDismissible: false,
                       context: context,
                       builder: (BuildContext context) {
-                        return Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                              child: Container(
-                                padding: EdgeInsets.only(
-                                    left: 10, top: 10, right: 10),
-                                width: 250,
-                                height: 150,
-                                decoration: BoxDecoration(
-                                  color: DefaultTheme.WHITE.withOpacity(0.7),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      padding:
-                                          EdgeInsets.only(bottom: 10, top: 10),
-                                      child: Text(
-                                        'Đăng nhập thất bại',
-                                        style: TextStyle(
-                                          decoration: TextDecoration.none,
-                                          color: DefaultTheme.BLACK,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      padding:
-                                          EdgeInsets.only(left: 20, right: 20),
-                                      child: Align(
-                                        alignment: Alignment.center,
+                        return Material(
+                          color: DefaultTheme.TRANSPARENT,
+                          child: Center(
+                            child: ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                              child: BackdropFilter(
+                                filter:
+                                    ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                                child: Container(
+                                  padding: EdgeInsets.only(
+                                      left: 10, top: 10, right: 10),
+                                  width: 250,
+                                  height: 150,
+                                  decoration: BoxDecoration(
+                                    color: DefaultTheme.WHITE.withOpacity(0.7),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            bottom: 10, top: 10),
                                         child: Text(
-                                          'Vui lòng điền đầy đủ thông tin đăng nhập',
-                                          textAlign: TextAlign.center,
+                                          'Đăng nhập thất bại',
                                           style: TextStyle(
                                             decoration: TextDecoration.none,
-                                            color: DefaultTheme.GREY_TEXT,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 13,
+                                            color: DefaultTheme.BLACK,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 18,
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Spacer(),
-                                    Divider(
-                                      height: 1,
-                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                    ),
-                                    ButtonHDr(
-                                      height: 40,
-                                      style: BtnStyle.BUTTON_TRANSPARENT,
-                                      label: 'OK',
-                                      labelColor: DefaultTheme.BLUE_TEXT,
-                                      onTap: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
+                                      Container(
+                                        padding: EdgeInsets.only(
+                                            left: 20, right: 20),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Vui lòng điền đầy đủ thông tin đăng nhập',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              decoration: TextDecoration.none,
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      Divider(
+                                        height: 1,
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                      ),
+                                      ButtonHDr(
+                                        height: 40,
+                                        style: BtnStyle.BUTTON_TRANSPARENT,
+                                        label: 'OK',
+                                        labelColor: DefaultTheme.BLUE_TEXT,
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -209,7 +215,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                 }
               },
             ),
-            Padding(padding: EdgeInsets.only(top: 15)),
+            Padding(padding: EdgeInsets.only(top: 5)),
             Text(
               'hoặc',
               style: TextStyle(
@@ -219,17 +225,17 @@ class _Login extends State<Login> with WidgetsBindingObserver {
             ),
             Padding(padding: EdgeInsets.only(top: 5)),
             Container(
-                width: MediaQuery.of(context).size.width * 0.5,
-                height: 30,
+                width: MediaQuery.of(context).size.width * 0.8,
+                // height: 40,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(30),
                   child: Center(
                     child: Container(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      height: 30,
+                      //  width: MediaQuery.of(context).size.width * 0.8,
+                      height: 40,
                       decoration: BoxDecoration(
-                        color: DefaultTheme.GREY_VIEW.withOpacity(0.5),
-                        borderRadius: BorderRadius.circular(30),
+                        color: DefaultTheme.GREY_VIEW,
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Align(
                         alignment: Alignment.center,
@@ -237,8 +243,9 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                           'Đăng kí tài khoản',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: DefaultTheme.BLUE_DARK,
-                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.w500,
+                            color: DefaultTheme.BLUE_TEXT,
+                            // decoration: TextDecoration.underline,
                           ),
                         ),
                       ),
@@ -269,39 +276,42 @@ class _Login extends State<Login> with WidgetsBindingObserver {
           barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
-            return Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(15)),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    width: 250,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: DefaultTheme.WHITE.withOpacity(0.7),
-                    ),
-                    child: Column(
-                      children: <Widget>[
-                        SizedBox(
-                          width: 130,
-                          // height: 100,
-                          child: Image.asset('assets/images/loading.gif'),
-                        ),
-                        // Spacer(),
-                        Container(
-                          padding: EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            'Đang đăng nhập',
-                            style: TextStyle(
-                              decoration: TextDecoration.none,
-                              color: DefaultTheme.GREY_TEXT,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 15,
+            return Material(
+              color: DefaultTheme.TRANSPARENT,
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      width: 250,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.WHITE.withOpacity(0.7),
+                      ),
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 130,
+                            // height: 100,
+                            child: Image.asset('assets/images/loading.gif'),
+                          ),
+                          // Spacer(),
+                          Container(
+                            padding: EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              'Đang đăng nhập',
+                              style: TextStyle(
+                                decoration: TextDecoration.none,
+                                color: DefaultTheme.GREY_TEXT,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 15,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -326,66 +336,71 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                   barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
-                    return Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                          child: Container(
-                            padding:
-                                EdgeInsets.only(left: 10, top: 10, right: 10),
-                            width: 250,
-                            height: 150,
-                            decoration: BoxDecoration(
-                              color: DefaultTheme.WHITE.withOpacity(0.7),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.only(bottom: 10, top: 10),
-                                  child: Text(
-                                    'Đăng nhập thất bại',
-                                    style: TextStyle(
-                                      decoration: TextDecoration.none,
-                                      color: DefaultTheme.BLACK,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 20, right: 20),
-                                  child: Align(
-                                    alignment: Alignment.center,
+                    return Material(
+                      color: DefaultTheme.TRANSPARENT,
+                      child: Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                            child: Container(
+                              padding:
+                                  EdgeInsets.only(left: 10, top: 10, right: 10),
+                              width: 250,
+                              height: 150,
+                              decoration: BoxDecoration(
+                                color: DefaultTheme.WHITE.withOpacity(0.7),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(bottom: 10, top: 10),
                                     child: Text(
-                                      'Tên đăng nhập hoặc mật khẩu không đúng',
-                                      textAlign: TextAlign.center,
+                                      'Đăng nhập thất bại',
                                       style: TextStyle(
                                         decoration: TextDecoration.none,
-                                        color: DefaultTheme.GREY_TEXT,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 13,
+                                        color: DefaultTheme.BLACK,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 18,
                                       ),
                                     ),
                                   ),
-                                ),
-                                Spacer(),
-                                Divider(
-                                  height: 1,
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                ),
-                                ButtonHDr(
-                                  height: 40,
-                                  style: BtnStyle.BUTTON_TRANSPARENT,
-                                  label: 'OK',
-                                  labelColor: DefaultTheme.BLUE_TEXT,
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Tên đăng nhập hoặc mật khẩu không đúng',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          decoration: TextDecoration.none,
+                                          color: DefaultTheme.GREY_TEXT,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Divider(
+                                    height: 1,
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  ),
+                                  ButtonHDr(
+                                    height: 40,
+                                    style: BtnStyle.BUTTON_TRANSPARENT,
+                                    label: 'OK',
+                                    labelColor: DefaultTheme.BLUE_TEXT,
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

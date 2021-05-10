@@ -148,6 +148,8 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   '${_label}',
+                  // maxLines: 1,
+                  // overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontWeight: DefaultNumeralUI.FONT_WEIGHT_LABEL_TEXTFIELD,
                     fontSize: DefaultNumeralUI.TEXTFIELD_LABEL_SIZE,

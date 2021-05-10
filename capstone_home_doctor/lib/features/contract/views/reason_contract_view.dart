@@ -8,12 +8,14 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
 import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
+import 'package:capstone_home_doctor/features/global/repositories/system_repository.dart';
 import 'package:capstone_home_doctor/models/date_request_dto.dart';
 import 'package:capstone_home_doctor/models/req_contract_dto.dart';
 import 'package:capstone_home_doctor/services/contract_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 final ContractHelper _contractHelper = ContractHelper();
 final ContractRepository contractRepository =
@@ -21,6 +23,8 @@ final ContractRepository contractRepository =
 final DateValidator _dateValidator = DateValidator();
 final BackgroundRepository _backgroundRepository =
     BackgroundRepository(httpClient: http.Client());
+final SystemRepository _systemRepository =
+    SystemRepository(httpClient: http.Client());
 
 class ReasonContractView extends StatefulWidget {
   @override
@@ -46,6 +50,9 @@ class _ReasonContractView extends State<ReasonContractView>
   int date = 0;
   bool isCalendarChange = false;
 
+  DateTime curentDateNow = new DateFormat('yyyy-MM-dd')
+      .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+
   int year = 0;
   int month = 0;
   DateTime time;
@@ -61,6 +68,19 @@ class _ReasonContractView extends State<ReasonContractView>
     super.initState();
     _getDateRequestFromServer();
     _getAvailableDay();
+  }
+
+  _getTimeSystem() async {
+    await _systemRepository.getTimeSystem().then((value) async {
+      /////
+      // await _timeSystemHelper.setTimeSystem(value);
+      if (!mounted) return;
+      setState(() {
+        curentDateNow = new DateFormat('yyyy-MM-dd').parse(
+            DateFormat('yyyy-MM-dd')
+                .format(DateTime.parse(value.split('"')[1].split('"')[0])));
+      });
+    });
   }
 
   _getDateRequestFromServer() async {
@@ -352,7 +372,7 @@ class _ReasonContractView extends State<ReasonContractView>
                                   setState(() {
                                     dateView = 'Chọn ngày';
                                     if (dateAfterFromServer != 0) {
-                                      _startDate = DateTime.now()
+                                      _startDate = curentDateNow
                                           .add(Duration(
                                               days: dateAfterFromServer))
                                           .toString()
@@ -395,7 +415,7 @@ class _ReasonContractView extends State<ReasonContractView>
                                           setState(() {
                                             dateView = 'Chọn ngày';
                                             if (dateAfterFromServer != 0) {
-                                              _startDate = DateTime.now()
+                                              _startDate = curentDateNow
                                                   .add(Duration(
                                                       days:
                                                           dateAfterFromServer))

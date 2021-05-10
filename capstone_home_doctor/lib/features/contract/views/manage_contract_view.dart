@@ -91,6 +91,7 @@ class _ManageContract extends State<ManageContract>
   @override
   void dispose() {
     NotificationsSelectBloc.instance.newNotification('');
+    if (!mounted) return;
     super.dispose();
   }
 
@@ -305,6 +306,7 @@ class _ManageContract extends State<ManageContract>
                                       InkWell(
                                         onTap: () {
                                           if (!mounted) return;
+
                                           setState(() {
                                             _listIndex = 0;
                                           });
