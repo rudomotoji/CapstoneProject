@@ -86,25 +86,187 @@ class _NomalInfoViewState extends State<NomalInfoView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 20),
+      padding: EdgeInsets.only(bottom: 20, top: 20),
+      decoration: BoxDecoration(
+        color: DefaultTheme.GREY_VIEW,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      // margin: EdgeInsets.only(top: 20),
       child: ListView(
         children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 20),
-            child: Text(
-              'Thông tin cá nhân',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-            ),
-          ),
           TextFieldHDr(
-            style: TFStyle.BORDERED,
-            label: 'Họ tên(*):',
+            style: TFStyle.NO_BORDER,
+            label: 'Họ tên*:',
+            label_text_width: 120,
             placeHolder: 'Nguyễn Văn A',
             inputType: TFInputType.TF_TEXT,
             controller: widget.fullNameController,
-            keyboardAction: TextInputAction.done,
+            keyboardAction: TextInputAction.next,
             onChange: (text) {},
           ),
+          Divider(
+            height: 1,
+            color: DefaultTheme.GREY_TOP_TAB_BAR,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 20),
+                width: 115,
+                child: Text('Giới tính*:',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  addRadioButton(0, 'Nam'),
+                  Padding(
+                    padding: EdgeInsets.only(left: 20),
+                  ),
+                  addRadioButton(1, 'Nữ'),
+                ],
+              ),
+            ],
+          ),
+          Divider(
+            height: 1,
+            color: DefaultTheme.GREY_TOP_TAB_BAR,
+          ),
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 20),
+                width: 115,
+                child: Text('Ngày sinh*:',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+              ),
+              FlatButton(
+                child: Text(
+                  widget.dateOfBirth == null
+                      ? 'Chọn ngày sinh'
+                      : DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd')
+                          .parse(widget.dateOfBirth.toString())),
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: (widget.dateOfBirth == null)
+                          ? DefaultTheme.BLUE_TEXT
+                          : Colors.black),
+                ),
+                onPressed: () async {
+                  DateTime newDateTime = await showRoundedDatePicker(
+                      context: context,
+                      initialDate: DateTime(DateTime.now().year - ageRequest),
+                      firstDate: DateTime(DateTime.now().year - 100),
+                      lastDate: DateTime(DateTime.now().year - ageRequest),
+                      borderRadius: 16,
+                      theme: ThemeData.dark());
+                  if (newDateTime != null) {
+                    // setState(() => widget.birthday = newDateTime);
+                    // widget.dateOfBirth = newDateTime.toString();
+                    widget.birthday(newDateTime.toString());
+                  }
+                },
+              ),
+            ],
+          ),
+          Divider(
+            height: 1,
+            color: DefaultTheme.GREY_TOP_TAB_BAR,
+          ),
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                width: MediaQuery.of(context).size.width - 100,
+                child: TextFieldHDr(
+                  style: TFStyle.NO_BORDER,
+                  label_text_width: 120,
+                  label: 'Chiều cao*:',
+                  placeHolder: '--',
+                  inputType: TFInputType.TF_NUMBER,
+                  controller: widget.heightController,
+                  keyboardAction: TextInputAction.next,
+                  onChange: (text) {},
+                ),
+              ),
+              Text('cm', style: TextStyle(color: DefaultTheme.GREY_TEXT)),
+            ],
+          ),
+          Divider(
+            height: 1,
+            color: DefaultTheme.GREY_TOP_TAB_BAR,
+          ),
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(right: 10),
+                width: MediaQuery.of(context).size.width - 100,
+                child: TextFieldHDr(
+                  style: TFStyle.NO_BORDER,
+                  label_text_width: 120,
+                  label: 'Cân nặng*:',
+                  placeHolder: '--',
+                  inputType: TFInputType.TF_NUMBER,
+                  controller: widget.weightController,
+                  keyboardAction: TextInputAction.next,
+                  onChange: (text) {},
+                ),
+              ),
+              Text('kg', style: TextStyle(color: DefaultTheme.GREY_TEXT)),
+            ],
+          ),
+
+          Divider(
+            height: 1,
+            color: DefaultTheme.GREY_TOP_TAB_BAR,
+          ),
+          TextFieldHDr(
+            style: TFStyle.NO_BORDER,
+            label: 'Email:',
+            label_text_width: 120,
+            placeHolder: 'UserEmail123@gmail.com',
+            inputType: TFInputType.TF_EMAIL,
+            controller: widget.emailController,
+            keyboardAction: TextInputAction.next,
+            onChange: (text) {},
+          ),
+          Divider(
+            height: 1,
+            color: DefaultTheme.GREY_TOP_TAB_BAR,
+          ),
+          TextFieldHDr(
+            style: TFStyle.NO_BORDER,
+            label: 'Địa chỉ*:',
+            label_text_width: 120,
+            placeHolder: 'Địa chỉ thường trú',
+            inputType: TFInputType.TF_TEXT,
+            controller: widget.addressController,
+            keyboardAction: TextInputAction.next,
+            onChange: (text) {},
+          ),
+          Divider(
+            height: 1,
+            color: DefaultTheme.GREY_TOP_TAB_BAR,
+          ),
+          TextFieldHDr(
+            style: TFStyle.NO_BORDER,
+            label: 'Nghề nghiệp:',
+            label_text_width: 120,
+            placeHolder: 'Công việc hiện tại',
+            inputType: TFInputType.TF_TEXT,
+            controller: widget.careerController,
+            keyboardAction: TextInputAction.next,
+            onChange: (text) {},
+          ),
+          Divider(
+            height: 1,
+            color: DefaultTheme.GREY_TOP_TAB_BAR,
+          ),
+
+          //
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,9 +277,10 @@ class _NomalInfoViewState extends State<NomalInfoView> {
                     ? (MediaQuery.of(context).size.width - 100)
                     : (MediaQuery.of(context).size.width - 160),
                 child: TextFieldHDr(
-                  style: TFStyle.BORDERED,
-                  label: 'SĐT(*):',
-                  placeHolder: '123456789',
+                  style: TFStyle.NO_BORDER,
+                  label: 'Số điện thoại*:',
+                  placeHolder: '0123 456 789',
+                  label_text_width: 120,
                   inputType: TFInputType.TF_PHONE,
                   controller: widget.phoneController,
                   keyboardAction: TextInputAction.done,
@@ -132,7 +295,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
               (verified)
                   ? Container(
                       height: 20,
-                      width: 20,
+                      margin: EdgeInsets.only(right: 20),
                       child: Image.asset(
                         'assets/images/ic-checked.png',
                       ),
@@ -155,8 +318,8 @@ class _NomalInfoViewState extends State<NomalInfoView> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 255, 120, 75),
-                            borderRadius: BorderRadius.all(Radius.circular(5)),
+                            color: DefaultTheme.BLUE_TEXT,
+                            // borderRadius: BorderRadius.all(Radius.circular(5)),
                           ),
                           height: 48,
                           padding: EdgeInsets.only(left: 10, right: 10),
@@ -174,108 +337,27 @@ class _NomalInfoViewState extends State<NomalInfoView> {
                     ),
             ],
           ),
-          Row(
-            children: [
-              Text('Giới tính(*):'),
-              Row(
-                children: <Widget>[
-                  addRadioButton(0, 'Nam'),
-                  addRadioButton(1, 'Nữ'),
-                ],
-              ),
-            ],
+          Divider(
+            height: 1,
+            color: DefaultTheme.GREY_TOP_TAB_BAR,
           ),
-          Row(
-            children: [
-              Text('Ngày sinh (*):'),
-              FlatButton(
-                child: Text(
-                  widget.dateOfBirth == null
-                      ? 'Chọn ngày sinh'
-                      : DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd')
-                          .parse(widget.dateOfBirth.toString())),
-                  style: TextStyle(color: Colors.black),
-                ),
-                onPressed: () async {
-                  DateTime newDateTime = await showRoundedDatePicker(
-                      context: context,
-                      initialDate: DateTime(DateTime.now().year - ageRequest),
-                      firstDate: DateTime(DateTime.now().year - 100),
-                      lastDate: DateTime(DateTime.now().year - ageRequest),
-                      borderRadius: 16,
-                      theme: ThemeData.dark());
-                  if (newDateTime != null) {
-                    // setState(() => widget.birthday = newDateTime);
-                    // widget.dateOfBirth = newDateTime.toString();
-                    widget.birthday(newDateTime.toString());
-                  }
-                },
-              ),
-            ],
+
+          Padding(
+            padding: EdgeInsets.only(bottom: 20),
           ),
-          TextFieldHDr(
-            style: TFStyle.BORDERED,
-            label: 'Email:',
-            placeHolder: 'abc@gmail.com',
-            inputType: TFInputType.TF_EMAIL,
-            controller: widget.emailController,
-            keyboardAction: TextInputAction.done,
-            onChange: (text) {},
-          ),
-          TextFieldHDr(
-            style: TFStyle.BORDERED,
-            label: 'Địa chỉ(*):',
-            placeHolder: 'Hai Bà Trưng HN...',
-            inputType: TFInputType.TF_TEXT,
-            controller: widget.addressController,
-            keyboardAction: TextInputAction.done,
-            onChange: (text) {},
-          ),
-          TextFieldHDr(
-            style: TFStyle.BORDERED,
-            label: 'Nghề nghiệp:',
-            placeHolder: 'Sinh viên',
-            inputType: TFInputType.TF_TEXT,
-            controller: widget.careerController,
-            keyboardAction: TextInputAction.done,
-            onChange: (text) {},
-          ),
-          Row(
-            children: [
-              Container(
-                margin: EdgeInsets.only(right: 10),
-                width: MediaQuery.of(context).size.width - 100,
-                child: TextFieldHDr(
-                  style: TFStyle.BORDERED,
-                  label: 'Chiều cao (*):',
-                  placeHolder: '175',
-                  inputType: TFInputType.TF_NUMBER,
-                  controller: widget.heightController,
-                  keyboardAction: TextInputAction.done,
-                  onChange: (text) {},
-                ),
-              ),
-              Text('cm'),
-            ],
-          ),
-          Row(
-            children: [
-              Container(
-                margin: EdgeInsets.only(right: 10),
-                width: MediaQuery.of(context).size.width - 100,
-                child: TextFieldHDr(
-                  style: TFStyle.BORDERED,
-                  label: 'Cân nặng (*):',
-                  placeHolder: '59',
-                  inputType: TFInputType.TF_NUMBER,
-                  controller: widget.weightController,
-                  keyboardAction: TextInputAction.done,
-                  onChange: (text) {},
-                ),
-              ),
-              Text('kg'),
-            ],
-          ),
+          (verified)
+              ? Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  decoration: BoxDecoration(color: DefaultTheme.SUCCESS_STATUS),
+                  child: Text(
+                    'Số điện thoại đã được xác thực',
+                    style: TextStyle(
+                      color: DefaultTheme.WHITE,
+                    ),
+                  ),
+                )
+              : Container(),
         ],
       ),
     );
@@ -475,7 +557,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Radio(
-          activeColor: Theme.of(context).primaryColor,
+          activeColor: DefaultTheme.BLUE_TEXT,
           value: widget.gender[btnValue],
           groupValue: widget.select,
           onChanged: (value) {

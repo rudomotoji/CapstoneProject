@@ -41,13 +41,6 @@ class _RegisterPage4State extends State<RegisterPage4> {
     return Container(
       child: ListView(
         children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 20),
-            child: Text(
-              'Thêm người thân',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-            ),
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

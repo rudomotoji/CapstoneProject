@@ -179,6 +179,8 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     hintText: _placeHolder,
+                    hintStyle: TextStyle(
+                        color: DefaultTheme.GREY_TEXT.withOpacity(0.7)),
                     contentPadding: EdgeInsets.fromLTRB(
                         DefaultNumeralUI.PADDING_10,
                         0,
@@ -284,7 +286,9 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
                     controller: _controller,
                     textInputAction: _keyboardAction,
                     decoration: InputDecoration(
-                      hintStyle: TextStyle(fontSize: 15),
+                      hintStyle: TextStyle(
+                          fontSize: 15,
+                          color: DefaultTheme.GREY_TEXT.withOpacity(0.8)),
                       hintText: _placeHolder,
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.all(20),

@@ -85,7 +85,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                       TextFieldHDr(
                         style: TFStyle.NO_BORDER,
                         label: 'Tên đăng nhập',
-                        placeHolder: '',
+                        placeHolder: 'username123',
                         inputType: TFInputType.TF_TEXT,
                         controller: _usernameController,
                         keyboardAction: TextInputAction.next,
@@ -100,7 +100,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                       TextFieldHDr(
                         style: TFStyle.NO_BORDER,
                         label: 'Mật khẩu',
-                        placeHolder: '',
+                        placeHolder: '••••••',
                         inputType: TFInputType.TF_PASSWORD,
                         // controller: Provider.of<PhoneAuthDataProvider>(context,
                         //         listen: false)
@@ -232,10 +232,10 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                   child: Center(
                     child: Container(
                       //  width: MediaQuery.of(context).size.width * 0.8,
-                      height: 40,
+                      height: 45,
                       decoration: BoxDecoration(
-                        color: DefaultTheme.GREY_VIEW,
-                        borderRadius: BorderRadius.circular(8),
+                        color: DefaultTheme.BLUE_TEXT.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Align(
                         alignment: Alignment.center,
@@ -243,6 +243,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                           'Đăng kí tài khoản',
                           textAlign: TextAlign.center,
                           style: TextStyle(
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: DefaultTheme.BLUE_TEXT,
                             // decoration: TextDecoration.underline,

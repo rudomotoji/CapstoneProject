@@ -95,7 +95,6 @@ class _Register extends State<Register> with WidgetsBindingObserver {
               title: 'Đăng ký',
               isMainView: false,
             ),
-            Padding(padding: EdgeInsets.only(top: 20)),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.only(left: 20, right: 20),
@@ -158,149 +157,369 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                               },
                               deleteRelative: deleteRelative);
                         }
+                        return null;
                       },
                     ),
-                    Stack(
-                      alignment: AlignmentDirectional.topStart,
-                      children: <Widget>[
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 35),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              for (int i = 0; i < slideList.length; i++)
-                                if (i == _currentPage)
-                                  SlideDots(true)
-                                else
-                                  SlideDots(false)
-                            ],
-                          ),
-                        )
-                      ],
-                    )
                   ],
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width / 2 - 20,
-                  child: ButtonHDr(
-                    style: BtnStyle.BUTTON_BLACK,
-                    label: 'Trở lại',
-                    onTap: () async {
-                      if (_currentPage > 0) {
-                        _currentPage = _currentPage - 1;
-                      } else {
-                        _currentPage = 0;
-                        Navigator.of(context).pop();
-                      }
+            Container(
+              padding: EdgeInsets.only(top: 5, bottom: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
 
-                      _pageController.animateToPage(
-                        _currentPage,
-                        duration: Duration(milliseconds: 300),
-                        curve: Curves.easeIn,
-                      );
-                    },
+                //  alignment: AlignmentDirectional.topStart,
+                children: <Widget>[
+                  for (int i = 0; i < slideList.length; i++)
+                    if (i == _currentPage) SlideDots(true) else SlideDots(false)
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+            ),
+            //
+            (_currentPage == 0)
+                ? Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      'Thông tin tài khoản',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 22,
+                      ),
+                    ),
+                  )
+                : (_currentPage == 1)
+                    ? Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: Text(
+                          'Thông tin cá nhân',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 22,
+                          ),
+                        ),
+                      )
+                    : (_currentPage == 2)
+                        ? Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                            child: Text(
+                              'Tiền sử bệnh án',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 22,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            margin: EdgeInsets.only(bottom: 20),
+                            child: Text(
+                              'Thêm người thân',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 22,
+                              ),
+                            ),
+                          ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                InkWell(
+                  // style: BtnStyle.BUTTON_BLACK,
+                  // label: 'Trở lại',
+                  child: Container(
+                    padding: EdgeInsets.only(left: 10, right: 20),
+                    width: 120,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: DefaultTheme.GREY_TEXT, width: 0.5),
+                        color: DefaultTheme.WHITE,
+                        borderRadius: BorderRadius.circular(50)),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 25,
+                          height: 25,
+                          child: Image.asset('assets/images/ic-foward.png'),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 15),
+                        ),
+                        Text('Trở lại'),
+                      ],
+                    ),
                   ),
+                  onTap: () async {
+                    if (_currentPage > 0) {
+                      _currentPage = _currentPage - 1;
+                    } else {
+                      _currentPage = 0;
+                      Navigator.of(context).pop();
+                    }
+
+                    _pageController.animateToPage(
+                      _currentPage,
+                      duration: Duration(milliseconds: 300),
+                      curve: Curves.easeIn,
+                    );
+                  },
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width / 2 - 20,
-                  child: ButtonHDr(
-                    style: BtnStyle.BUTTON_BLACK,
-                    label: (_currentPage == slideList.length - 1)
-                        ? 'Tạo'
-                        : 'Tiếp tục',
-                    onTap: () async {
-                      bool checkError = false;
-                      if (_currentPage == 0) {
-                        if (usernameController.text.isEmpty ||
-                            passwordController.text.isEmpty ||
-                            passwordConfirmController.text.isEmpty) {
-                          alertError(
-                              'Vui lòng nhập đầy đủ các thông tin yêu cầu');
-                        } else if (validateUsernamePassword(
-                                usernameController.text, 'tên đăng nhập') !=
-                            null) {
-                          alertError(validateUsernamePassword(
-                              usernameController.text, 'tên đăng nhập'));
-                        } else if (validateUsernamePassword(
-                                passwordController.text, 'mật khẩu') !=
-                            null) {
-                          alertError(validateUsernamePassword(
-                              passwordController.text, 'mật khẩu'));
-                        } else if (passwordController.text !=
-                            passwordConfirmController.text) {
-                          alertError('2 mật khẩu chưa trùng khớp');
-                        } else {
-                          checkError = true;
-                        }
-                      }
-                      if (_currentPage == 1) {
-                        if (_fullNameController.text == '' ||
-                            _phoneController.text == '' ||
-                            _addressController.text == '' ||
-                            _heightController.text == '' ||
-                            _weightController.text == '' ||
-                            birthday == null) {
-                          alertError(
-                              'Vui lòng điền đầy đủ thông tin có dấu (*)');
-                        } else if (!verified) {
-                          alertError('Vui lòng xác thực số điện thoại');
-                        } else if (_validator
-                                .phoneNumberValidator(_phoneController.text) !=
-                            null) {
-                          alertError(_validator
-                              .phoneNumberValidator(_phoneController.text));
-                        } else if (_emailController.text != '' &&
-                            !_validator.validateEmail(_emailController.text)) {
-                          alertError(
-                              'Vui lòng nhập đúng địa chỉ email (abc@gmail.com)');
-                        } else {
-                          checkError = true;
-                        }
-                      }
-                      if (_currentPage == 2 || _currentPage == 3) {
+                Padding(
+                  padding: EdgeInsets.only(left: 20),
+                ),
+                InkWell(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 20),
+                    width: 120,
+                    height: 40,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: DefaultTheme.GREY_TEXT, width: 0.5),
+                        color: DefaultTheme.WHITE,
+                        borderRadius: BorderRadius.circular(50)),
+                    child: Row(
+                      children: [
+                        (_currentPage == slideList.length - 1)
+                            ? Spacer()
+                            : Container(),
+                        Text((_currentPage == slideList.length - 1)
+                            ? 'Tạo'
+                            : 'Tiếp tục'),
+                        (_currentPage == slideList.length - 1)
+                            ? Spacer()
+                            : Padding(
+                                padding: EdgeInsets.only(left: 15),
+                              ),
+                        SizedBox(
+                          width: 25,
+                          height: 25,
+                          child: Image.asset('assets/images/ic-move-next.png'),
+                        ),
+                        (_currentPage == slideList.length - 1)
+                            ? Padding(
+                                padding: EdgeInsets.only(right: 10),
+                              )
+                            : Container(),
+                      ],
+                    ),
+                  ),
+                  // child: Container(
+                  //   child: Text((_currentPage == slideList.length - 1)
+                  //       ? 'Tạo'
+                  //       : 'Tiếp tục'),
+                  // ),
+                  // style: BtnStyle.BUTTON_BLACK,
+                  // label: ,
+                  onTap: () async {
+                    //turn off keyboard
+                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    if (!currentFocus.hasPrimaryFocus &&
+                        currentFocus.focusedChild != null) {
+                      currentFocus.focusedChild.unfocus();
+                    }
+                    //
+                    bool checkError = false;
+                    if (_currentPage == 0) {
+                      if (usernameController.text.isEmpty ||
+                          passwordController.text.isEmpty ||
+                          passwordConfirmController.text.isEmpty) {
+                        alertError(
+                            'Vui lòng nhập đầy đủ các thông tin yêu cầu');
+                      } else if (validateUsernamePassword(
+                              usernameController.text, 'tên đăng nhập') !=
+                          null) {
+                        alertError(validateUsernamePassword(
+                            usernameController.text, 'tên đăng nhập'));
+                      } else if (validateUsernamePassword(
+                              passwordController.text, 'mật khẩu') !=
+                          null) {
+                        alertError(validateUsernamePassword(
+                            passwordController.text, 'mật khẩu'));
+                      } else if (passwordController.text !=
+                          passwordConfirmController.text) {
+                        alertError('2 mật khẩu chưa trùng khớp');
+                      } else {
                         checkError = true;
                       }
+                    }
+                    if (_currentPage == 1) {
+                      if (_fullNameController.text == '' ||
+                          _phoneController.text == '' ||
+                          _addressController.text == '' ||
+                          _heightController.text == '' ||
+                          _weightController.text == '' ||
+                          birthday == null) {
+                        alertError('Vui lòng điền đầy đủ thông tin bắt buộc');
+                      } else if (!verified) {
+                        alertError('Vui lòng xác thực số điện thoại');
+                      } else if (_validator
+                              .phoneNumberValidator(_phoneController.text) !=
+                          null) {
+                        alertError(_validator
+                            .phoneNumberValidator(_phoneController.text));
+                      } else if (_emailController.text != '' &&
+                          !_validator.validateEmail(_emailController.text)) {
+                        alertError('Vui lòng nhập đúng địa chỉ email');
+                      } else {
+                        checkError = true;
+                      }
+                    }
+                    if (_currentPage == 2 || _currentPage == 3) {
+                      checkError = true;
+                    }
 
-                      if (checkError) {
-                        if (_currentPage < slideList.length - 1) {
-                          _currentPage = _currentPage + 1;
-                        } else {
-                          PatientHealthRecordDTO patientHealthRecordDTO =
-                              PatientHealthRecordDTO(
-                            height: int.parse(_heightController.text) ?? 0,
-                            weight: int.parse(_weightController.text) ?? 0,
-                            personalMedicalHistory: patientController.text,
-                            familyMedicalHistory: familyController.text,
-                            relativesRegister: listRelative,
-                          );
-                          String dateOfBirthDay = DateFormat('yyyy-MM-dd')
-                              .format(DateFormat('yyyy-MM-dd').parse(birthday));
+                    if (checkError) {
+                      if (_currentPage < slideList.length - 1) {
+                        _currentPage = _currentPage + 1;
+                      } else {
+                        PatientHealthRecordDTO patientHealthRecordDTO =
+                            PatientHealthRecordDTO(
+                          height: int.parse(_heightController.text) ?? 0,
+                          weight: int.parse(_weightController.text) ?? 0,
+                          personalMedicalHistory: patientController.text,
+                          familyMedicalHistory: familyController.text,
+                          relativesRegister: listRelative,
+                        );
+                        String dateOfBirthDay = DateFormat('yyyy-MM-dd')
+                            .format(DateFormat('yyyy-MM-dd').parse(birthday));
 
-                          PatientDTO patientDTO = PatientDTO(
-                            fullName: _fullNameController.text,
-                            phoneNumber: _phoneController.text,
-                            email: _emailController.text,
-                            address: _addressController.text,
-                            dateOfBirth: dateOfBirthDay,
-                            gender: selectGender,
-                            career: _careerController.text,
-                            patientHealthRecord: patientHealthRecordDTO,
-                          );
+                        PatientDTO patientDTO = PatientDTO(
+                          fullName: _fullNameController.text,
+                          phoneNumber: _phoneController.text,
+                          email: _emailController.text,
+                          address: _addressController.text,
+                          dateOfBirth: dateOfBirthDay,
+                          gender: selectGender,
+                          career: _careerController.text,
+                          patientHealthRecord: patientHealthRecordDTO,
+                        );
 
-                          FormRegisterDTO formRegisterDTO = FormRegisterDTO(
-                            username: usernameController.text,
-                            password: passwordController.text,
-                            patientInformation: patientDTO,
-                          );
+                        FormRegisterDTO formRegisterDTO = FormRegisterDTO(
+                          username: usernameController.text,
+                          password: passwordController.text,
+                          patientInformation: patientDTO,
+                        );
 
-                          setState(
-                            () {
+                        setState(
+                          () {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Center(
+                                  child: ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                          sigmaX: 25, sigmaY: 25),
+                                      child: Container(
+                                        width: 300,
+                                        height: 300,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: DefaultTheme.WHITE
+                                                .withOpacity(0.8)),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              width: 200,
+                                              height: 200,
+                                              child: Image.asset(
+                                                  'assets/images/loading.gif'),
+                                            ),
+                                            Text(
+                                              'Đang tạo',
+                                              style: TextStyle(
+                                                  color: DefaultTheme.GREY_TEXT,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w400,
+                                                  decoration:
+                                                      TextDecoration.none),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+
+                        _registerRepository
+                            .registerAccPatient(formRegisterDTO)
+                            .then(
+                          (value) {
+                            Navigator.pop(context);
+                            if (value) {
+                              // showDialog(
+                              //   barrierDismissible: false,
+                              //   context: context,
+                              //   builder: (BuildContext context) {
+                              //     return Center(
+                              //       child: ClipRRect(
+                              //         borderRadius: BorderRadius.all(
+                              //             Radius.circular(5)),
+                              //         child: BackdropFilter(
+                              //           filter: ImageFilter.blur(
+                              //               sigmaX: 25, sigmaY: 25),
+                              //           child: Container(
+                              //             width: 200,
+                              //             height: 200,
+                              //             decoration: BoxDecoration(
+                              //                 borderRadius:
+                              //                     BorderRadius.circular(10),
+                              //                 color: DefaultTheme.WHITE
+                              //                     .withOpacity(0.8)),
+                              //             child: Column(
+                              //               mainAxisAlignment:
+                              //                   MainAxisAlignment.center,
+                              //               crossAxisAlignment:
+                              //                   CrossAxisAlignment.center,
+                              //               children: [
+                              //                 SizedBox(
+                              //                   width: 100,
+                              //                   height: 100,
+                              //                   child: Image.asset(
+                              //                       'assets/images/ic-checked.png'),
+                              //                 ),
+                              //                 Text(
+                              //                   'Tạo thành công',
+                              //                   style: TextStyle(
+                              //                       color: DefaultTheme
+                              //                           .GREY_TEXT,
+                              //                       fontSize: 15,
+                              //                       fontWeight:
+                              //                           FontWeight.w400,
+                              //                       decoration:
+                              //                           TextDecoration.none),
+                              //                 ),
+                              //               ],
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     );
+                              //   },
+                              // );
+
+                              // Future.delayed(const Duration(seconds: 2), () {
+                              // Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              // });
+                            } else {
                               showDialog(
                                 barrierDismissible: false,
                                 context: context,
@@ -313,8 +532,8 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                                         filter: ImageFilter.blur(
                                             sigmaX: 25, sigmaY: 25),
                                         child: Container(
-                                          width: 300,
-                                          height: 300,
+                                          width: 200,
+                                          height: 200,
                                           decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -327,20 +546,25 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               SizedBox(
-                                                width: 200,
-                                                height: 200,
+                                                width: 100,
+                                                height: 100,
                                                 child: Image.asset(
-                                                    'assets/images/loading.gif'),
+                                                    'assets/images/ic-failed.png'),
                                               ),
-                                              Text(
-                                                'Đang tạo',
-                                                style: TextStyle(
-                                                    color:
-                                                        DefaultTheme.GREY_TEXT,
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.w400,
-                                                    decoration:
-                                                        TextDecoration.none),
+                                              Align(
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  'Không thể tạo tài khoản, vui kiểm tra lại',
+                                                  style: TextStyle(
+                                                      color: DefaultTheme
+                                                          .GREY_TEXT,
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      decoration:
+                                                          TextDecoration.none),
+                                                  textAlign: TextAlign.center,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -350,144 +574,26 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                                   );
                                 },
                               );
-                            },
-                          );
-
-                          _registerRepository
-                              .registerAccPatient(formRegisterDTO)
-                              .then(
-                            (value) {
-                              Navigator.pop(context);
-                              if (value) {
-                                // showDialog(
-                                //   barrierDismissible: false,
-                                //   context: context,
-                                //   builder: (BuildContext context) {
-                                //     return Center(
-                                //       child: ClipRRect(
-                                //         borderRadius: BorderRadius.all(
-                                //             Radius.circular(5)),
-                                //         child: BackdropFilter(
-                                //           filter: ImageFilter.blur(
-                                //               sigmaX: 25, sigmaY: 25),
-                                //           child: Container(
-                                //             width: 200,
-                                //             height: 200,
-                                //             decoration: BoxDecoration(
-                                //                 borderRadius:
-                                //                     BorderRadius.circular(10),
-                                //                 color: DefaultTheme.WHITE
-                                //                     .withOpacity(0.8)),
-                                //             child: Column(
-                                //               mainAxisAlignment:
-                                //                   MainAxisAlignment.center,
-                                //               crossAxisAlignment:
-                                //                   CrossAxisAlignment.center,
-                                //               children: [
-                                //                 SizedBox(
-                                //                   width: 100,
-                                //                   height: 100,
-                                //                   child: Image.asset(
-                                //                       'assets/images/ic-checked.png'),
-                                //                 ),
-                                //                 Text(
-                                //                   'Tạo thành công',
-                                //                   style: TextStyle(
-                                //                       color: DefaultTheme
-                                //                           .GREY_TEXT,
-                                //                       fontSize: 15,
-                                //                       fontWeight:
-                                //                           FontWeight.w400,
-                                //                       decoration:
-                                //                           TextDecoration.none),
-                                //                 ),
-                                //               ],
-                                //             ),
-                                //           ),
-                                //         ),
-                                //       ),
-                                //     );
-                                //   },
-                                // );
-
-                                // Future.delayed(const Duration(seconds: 2), () {
-                                // Navigator.of(context).pop();
+                              Future.delayed(const Duration(seconds: 2), () {
                                 Navigator.of(context).pop();
-                                // });
-                              } else {
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Center(
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5)),
-                                        child: BackdropFilter(
-                                          filter: ImageFilter.blur(
-                                              sigmaX: 25, sigmaY: 25),
-                                          child: Container(
-                                            width: 200,
-                                            height: 200,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                color: DefaultTheme.WHITE
-                                                    .withOpacity(0.8)),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                SizedBox(
-                                                  width: 100,
-                                                  height: 100,
-                                                  child: Image.asset(
-                                                      'assets/images/ic-failed.png'),
-                                                ),
-                                                Align(
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    'Không thể tạo tài khoản, vui kiểm tra lại',
-                                                    style: TextStyle(
-                                                        color: DefaultTheme
-                                                            .GREY_TEXT,
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .none),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                                Future.delayed(const Duration(seconds: 2), () {
-                                  Navigator.of(context).pop();
-                                });
-                              }
-                            },
-                          );
-                        }
-
-                        _pageController.animateToPage(
-                          _currentPage,
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeIn,
+                              });
+                            }
+                          },
                         );
                       }
-                    },
-                  ),
+
+                      _pageController.animateToPage(
+                        _currentPage,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.easeIn,
+                      );
+                    }
+                  },
                 ),
               ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 20),
             ),
           ],
         ),

@@ -2111,10 +2111,10 @@ class _ContractShareView extends State<ContractShareView>
                                                 decoration: BoxDecoration(
                                                     color: DefaultTheme
                                                         .BLUE_DARK
-                                                        .withOpacity(0.4),
+                                                        .withOpacity(0.8),
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            50)),
+                                                            8)),
                                                 child: Center(
                                                   child: Text(
                                                       '${state.list[index].medicalInstructions.length} phiếu yêu cầu',

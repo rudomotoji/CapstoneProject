@@ -199,6 +199,8 @@ flutter:
     - assets/images/ic-measure.png
     - assets/images/ic-create-dark.png
     - assets/images/ic-share.png
+    - assets/images/ic-foward.png
+    - assets/images/ic-move-next.png
 
 
   

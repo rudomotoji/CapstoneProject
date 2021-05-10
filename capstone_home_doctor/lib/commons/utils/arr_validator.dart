@@ -33,11 +33,10 @@ class ArrayValidator {
       for (String component in phone.split(' ')) {
         result += component;
       }
-    }
-    else if(phone.contains('.')){
+    } else if (phone.contains('.')) {
       for (String component in phone.split('.')) {
-      result += component + ' ';
-    }
+        result += component + ' ';
+      }
     }
     return result.trim();
   }
@@ -91,7 +90,7 @@ class ArrayValidator {
     Pattern pattern = r'^0[0-9]{9}$';
     RegExp regex = new RegExp(pattern);
     if (!regex.hasMatch(value))
-      return 'SĐT không đúng với cấu trúc (0123456789)';
+      return 'Số điện thoại không phù hợp';
     else
       return null;
   }

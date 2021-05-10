@@ -26,13 +26,6 @@ class _RegisterPage1State extends State<RegisterPage1> {
       child: ListView(
         children: [
           Container(
-            margin: EdgeInsets.only(bottom: 20),
-            child: Text(
-              'Thông tin tài khoản',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-            ),
-          ),
-          Container(
             padding: EdgeInsets.only(bottom: 10, top: 10),
             decoration: BoxDecoration(
               color: DefaultTheme.GREY_VIEW,
@@ -93,14 +86,14 @@ class _RegisterPage1State extends State<RegisterPage1> {
           Padding(
             padding: EdgeInsets.only(bottom: 30),
           ),
-          Container(
-            padding: EdgeInsets.only(bottom: 10, top: 10, left: 20, right: 20),
-            decoration: BoxDecoration(
-              color: DefaultTheme.GREY_VIEW,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text('Các thông tin có dấu * là bắt buộc.'),
-          ),
+          // Container(
+          //   padding: EdgeInsets.only(bottom: 10, top: 10, left: 20, right: 20),
+          //   decoration: BoxDecoration(
+          //     color: DefaultTheme.GREY_VIEW,
+          //     borderRadius: BorderRadius.circular(10),
+          //   ),
+          //   child: Text('Các thông tin có dấu * là bắt buộc.'),
+          // ),
         ],
       ),
     );

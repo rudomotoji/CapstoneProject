@@ -350,7 +350,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
         listType: MultiSelectListType.CHIP,
         searchable: true,
         buttonText: Text(
-          "Chọn bệnh lý cụ thể (*)",
+          "Chọn bệnh lý cụ thể*",
           style: TextStyle(color: Colors.black, fontSize: 16),
         ),
         title: Text(
@@ -428,7 +428,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Chọn bệnh lý cụ thể(*)',
+                        'Chọn bệnh lý cụ thể*',
                         style: TextStyle(
                           color: DefaultTheme.BLACK,
                           fontWeight: FontWeight.w500,
@@ -1132,12 +1132,12 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
 
   Widget _searchDiseases(StateSetter setModalState) {
     return Container(
-      padding: EdgeInsets.only(left: 10),
+      padding: EdgeInsets.only(left: 10, top: 10),
       child: TextField(
         controller: _diseaseIDController,
-        autofocus: true,
+        autofocus: false,
         decoration: InputDecoration(
-          hintText: "Tìm kiếm mã bệnh....",
+          hintText: "Tìm kiếm mã bệnh",
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Theme.of(context).primaryColor),
           ),
