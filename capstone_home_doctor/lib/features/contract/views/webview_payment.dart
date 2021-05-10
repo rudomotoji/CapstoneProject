@@ -89,7 +89,7 @@ class _VNPayWebViewState extends State<VNPayWebView> {
 
                     Future.delayed(const Duration(seconds: 2), () {
                       _paymentHelper.updatePaymentCheck(true);
-                      Navigator.of(context).pop();
+                      Navigator.pop(context, navigation.url);
                     });
                     return NavigationDecision.navigate;
                   }
