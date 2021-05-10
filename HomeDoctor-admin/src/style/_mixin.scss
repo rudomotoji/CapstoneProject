@@ -1,0 +1,47 @@
+@mixin borderRadius($radius) {
+    -webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    -ms-border-radius: $radius;
+    border-radius: $radius;
+}
+@mixin fontWeight($weight) {
+	-webkit-font-weight: $weight;
+	-moz-font-weight: $weight;
+	-ms-font-weight: $weight;
+	font-weight: $weight;
+}
+@mixin fontSize($size) {
+	-webkit-font-size: $size;
+	-moz-font-size: $size;
+	-ms-font-size: $size;
+	font-size: $size;
+}
+@mixin verticalCenterRight($right) {
+	position: absolute;
+	top: 50%;
+	right: $right;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+@mixin verticalCenter() {
+	position: absolute;
+	top: 50%;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+@mixin horizontalCenterBottom($bottom) {
+	position: absolute;
+	left: 50%;
+	bottom: $bottom;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+@mixin center() {
+	display: flex; align-items: center;
+}

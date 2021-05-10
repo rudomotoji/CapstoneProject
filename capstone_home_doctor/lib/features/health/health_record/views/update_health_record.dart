@@ -224,7 +224,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
                     Padding(
                       padding: EdgeInsets.only(top: 5),
                     ),
-                    _selectTypeIns(),
+                    // _selectTypeIns(),
                     _checkSelectIns(),
                     //
                     Align(
@@ -388,38 +388,38 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
           borderRadius: BorderRadius.circular(6)),
       child: Column(
         children: [
-          InkWell(
-            child: Row(
-              children: [
-                Container(
-                  height: 25,
-                  width: MediaQuery.of(context).size.width - 90,
-                  margin: EdgeInsets.only(top: 15, bottom: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Chọn bệnh lý cụ thể (*)',
-                        style: TextStyle(
-                          color: DefaultTheme.BLACK,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: Image.asset('assets/images/ic-dropdown.png'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            onTap: () {
-              _getListDiseaseOther();
-            },
-          ),
+          // InkWell(
+          //   child: Row(
+          //     children: [
+          //       Container(
+          //         height: 25,
+          //         width: MediaQuery.of(context).size.width - 90,
+          //         margin: EdgeInsets.only(top: 15, bottom: 10),
+          //         child: Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //           children: [
+          //             Text(
+          //               'Chọn bệnh lý cụ thể (*)',
+          //               style: TextStyle(
+          //                 color: DefaultTheme.BLACK,
+          //                 fontWeight: FontWeight.w500,
+          //                 fontSize: 16,
+          //               ),
+          //             ),
+          //             SizedBox(
+          //               width: 30,
+          //               height: 30,
+          //               child: Image.asset('assets/images/ic-dropdown.png'),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          //   onTap: () {
+          //     _getListDiseaseOther();
+          //   },
+          // ),
           _buildInheritedChipDisplayForOtherDisease()
         ],
       ),
@@ -841,38 +841,38 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
           borderRadius: BorderRadius.circular(6)),
       child: Column(
         children: [
-          InkWell(
-            child: Row(
-              children: [
-                Container(
-                  height: 25,
-                  width: MediaQuery.of(context).size.width - 90,
-                  margin: EdgeInsets.only(top: 15, bottom: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Chọn bệnh lý cụ thể (*)',
-                        style: TextStyle(
-                          color: DefaultTheme.BLACK,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 30,
-                        height: 30,
-                        child: Image.asset('assets/images/ic-dropdown.png'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            onTap: () {
-              _getListDiseaseContract();
-            },
-          ),
+          // InkWell(
+          //   child: Row(
+          //     children: [
+          //       Container(
+          //         height: 25,
+          //         width: MediaQuery.of(context).size.width - 90,
+          //         margin: EdgeInsets.only(top: 15, bottom: 10),
+          //         child: Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //           children: [
+          //             Text(
+          //               'Chọn bệnh lý cụ thể (*)',
+          //               style: TextStyle(
+          //                 color: DefaultTheme.BLACK,
+          //                 fontWeight: FontWeight.w500,
+          //                 fontSize: 16,
+          //               ),
+          //             ),
+          //             SizedBox(
+          //               width: 30,
+          //               height: 30,
+          //               child: Image.asset('assets/images/ic-dropdown.png'),
+          //             ),
+          //           ],
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          //   onTap: () {
+          //     _getListDiseaseContract();
+          //   },
+          // ),
           _buildInheritedChipDisplay()
         ],
       ),

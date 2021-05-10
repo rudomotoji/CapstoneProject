@@ -245,6 +245,11 @@ class _CreateMedicalInstructionViewState
                             color: DefaultTheme.GREY_LIGHT,
                           ),
                         ),
+
+                        ///
+                        ///ngay them
+                        ///
+
                         Padding(
                           padding: EdgeInsets.only(top: 10, bottom: 10),
                           child: Column(
@@ -967,12 +972,12 @@ class _CreateMedicalInstructionViewState
                                                                   setState(
                                                                     () {
                                                                       if (checkTemp) {
-                                                                        // _diseaseIds.removeWhere((item) =>
-                                                                        //     item ==
-                                                                        //     e.diseaseId);
-                                                                        //
-                                                                        _diseaseIds
-                                                                            .clear();
+                                                                        _diseaseIds.removeWhere((item) =>
+                                                                            item ==
+                                                                            e.diseaseId);
+
+                                                                        // _diseaseIds
+                                                                        //     .clear();
                                                                         _diseaseIds
                                                                             .add(e.diseaseId);
 
@@ -980,17 +985,17 @@ class _CreateMedicalInstructionViewState
                                                                         //     item.diseaseId ==
                                                                         //     e.diseaseId);
                                                                         //
-                                                                        listDiseaseSelected
-                                                                            .clear();
+                                                                        // listDiseaseSelected
+                                                                        //     .clear();
                                                                         listDiseaseSelected
                                                                             .add(e);
                                                                       } else {
-                                                                        // _diseaseIds.removeWhere((item) =>
-                                                                        //     item ==
-                                                                        //     e.diseaseId);
-                                                                        // listDiseaseSelected.removeWhere((item) =>
-                                                                        //     item.diseaseId ==
-                                                                        //     e.diseaseId);
+                                                                        _diseaseIds.removeWhere((item) =>
+                                                                            item ==
+                                                                            e.diseaseId);
+                                                                        listDiseaseSelected.removeWhere((item) =>
+                                                                            item.diseaseId ==
+                                                                            e.diseaseId);
                                                                       }
                                                                     },
                                                                   );

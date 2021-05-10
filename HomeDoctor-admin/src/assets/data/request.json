@@ -1,0 +1,23 @@
+{
+	"contractInfo": {
+		"contractId": 0,
+		"diseases": [
+			{
+				"diseaseId": 0,
+				"diseaseName": "",
+				"medicalInstructions": [
+					{
+						"medicalInstructionType": "",
+						"medicalInstructions": [
+							{
+								"image": "",
+								"description": "",
+								"diagnose": ""
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}
