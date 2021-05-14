@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/utils/img_util.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
@@ -29,6 +30,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 // import 'package:diff_image/diff_image.dart';
 // import 'package:image/image.dart' as imgs;
+import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 
 class CreateMedicalInstructionView extends StatefulWidget {
   @override
@@ -49,6 +51,7 @@ class _CreateMedicalInstructionViewState
   double titleCompare;
   // String _imgString = '';
   // String nowDate = '${DateTime.now()}';
+  String dateCreate;
   List<MedicalInstructionTypeDTO> _listMedInsType = [];
   double percenntCompare = 100;
   var f = NumberFormat("###.0#", "en_US");
@@ -61,6 +64,7 @@ class _CreateMedicalInstructionViewState
   List<Disease> listDisease = [];
   List<Disease> listDiseaseSelected = [];
   List<String> _diseaseIds = [];
+  DateValidator _dateValidator = DateValidator();
 
   var _dianoseController = TextEditingController();
   MedicalInstructionHelper _medicalInstructionHelper =
@@ -247,7 +251,55 @@ class _CreateMedicalInstructionViewState
                         ),
 
                         ///
-                        ///ngay them
+
+                        // InkWell(
+                        //   onTap: () async {
+                        //     DateTime curentDateNow = new DateTime.now();
+                        //     DateTime newDateTime = await showRoundedDatePicker(
+                        //         context: context,
+                        //         initialDate: DateTime(DateTime.now().year),
+                        //         firstDate: DateTime(DateTime.now().year),
+                        //         lastDate: DateTime(DateTime.now().year),
+                        //         borderRadius: 16,
+                        //         theme: ThemeData.dark());
+                        //     if (newDateTime != null) {
+                        //       // setState(() => widget.birthday = newDateTime);
+                        //       // widget.dateOfBirth = newDateTime.toString();
+                        //       print(newDateTime.toString());
+                        //       setState(() {
+                        //         dateCreate = newDateTime.toString();
+                        //       });
+                        //     }
+                        //   },
+                        //   child: Container(
+                        //     margin: EdgeInsets.only(bottom: 10),
+                        //     padding: EdgeInsets.only(
+                        //         left: 10, right: 20, bottom: 10, top: 10),
+                        //     decoration: BoxDecoration(
+                        //       color: DefaultTheme.GREY_VIEW,
+                        //       borderRadius: BorderRadius.circular(5),
+                        //     ),
+                        //     child: Row(
+                        //       children: [
+                        //         SizedBox(
+                        //           width: 20,
+                        //           height: 20,
+                        //           child: Image.asset(
+                        //               'assets/images/ic-calendar.png'),
+                        //         ),
+                        //         Padding(
+                        //           padding: EdgeInsets.only(left: 20),
+                        //         ),
+                        //         Text(
+                        //             (dateCreate == null)
+                        //                 ? 'Ngày khám'
+                        //                 : '${_dateValidator.convertDateCreate(dateCreate, 'dd/MM/yyyy', 'yyyy-MM-dd')}',
+                        //             style: TextStyle(color: DefaultTheme.BLACK))
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+
                         ///
 
                         Padding(
@@ -510,7 +562,8 @@ class _CreateMedicalInstructionViewState
                     } else if (_patientId != 0) {
                       MedicalInstructionDTO medInsDTO;
                       if (selectType.status.contains('SCOPE')) {
-                        if (_diseaseIds.length == listDisease.length ||
+                        if (
+                            // _diseaseIds.length == listDisease.length ||
                             _diseaseIds.length <= 0) {
                           medInsDTO = MedicalInstructionDTO(
                             medicalInstructionTypeId: _medInsTypeId,
@@ -518,7 +571,7 @@ class _CreateMedicalInstructionViewState
                             patientId: _patientId,
                             description: _note,
                             diagnose: _dianoseController.text,
-                            diseaseIds: '',
+                            diseaseIds: null,
                             imageFile: listImage,
                           );
                         } else {
@@ -528,7 +581,7 @@ class _CreateMedicalInstructionViewState
                             patientId: _patientId,
                             description: _note,
                             diagnose: _dianoseController.text,
-                            diseaseIds: _diseaseIds.first,
+                            diseaseIds: _diseaseIds,
                             imageFile: listImage,
                           );
                         }
@@ -539,7 +592,7 @@ class _CreateMedicalInstructionViewState
                           patientId: _patientId,
                           description: _note,
                           diagnose: _dianoseController.text,
-                          diseaseIds: '',
+                          diseaseIds: null,
                           imageFile: listImage,
                         );
                       }

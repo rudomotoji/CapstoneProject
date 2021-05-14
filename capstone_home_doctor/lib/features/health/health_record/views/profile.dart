@@ -436,6 +436,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
   }
 
   Widget _itemHealthRecord(HealthRecordDTO dto) {
+    // return Container();
     return Container(
       decoration: BoxDecoration(
           color: DefaultTheme.GREY_VIEW,
@@ -480,13 +481,22 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(fontWeight: FontWeight.w500),
                               )
-                            : Text(
-                                'Hồ sơ tại ${dto.place} (${_genderDiseaseId(dto.diseases)})',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 15),
-                              ),
+                            : (dto.diseases.length <= 0)
+                                ? Text(
+                                    'Hồ sơ',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w500),
+                                  )
+                                : Text(
+                                    'Hồ sơ tại ${dto.place} (${_genderDiseaseId(dto.diseases)})',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15),
+                                  ),
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 5),

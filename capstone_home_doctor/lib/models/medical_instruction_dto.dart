@@ -113,8 +113,8 @@ class MedicalInstructionDTO {
   String description;
   String diagnose;
   String placeHealthRecord;
-  // List<String> diseaseIds; // list mã bệnh để tạo medical instruction
-  String diseaseIds; // list mã bệnh để tạo medical instruction
+  List<String> diseaseIds; // list mã bệnh để tạo medical instruction
+  // String diseaseIds; // list mã bệnh để tạo medical instruction
   String patientFullName;
   String status;
   PrescriptionDTO medicationsRespone;

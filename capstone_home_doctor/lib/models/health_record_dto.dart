@@ -84,7 +84,7 @@ class HealthRecordDTO {
     if (this.diseases != null) {
       data['diseases'] = this.diseases.map((v) => v.toJson()).toList();
     }
-    data['diceaseIds'] = this.diceaseIds;
+    data['diseaseIds'] = this.diceaseIds;
     data['place'] = this.place;
     data['description'] = this.description;
     data['status'] = this.status;
