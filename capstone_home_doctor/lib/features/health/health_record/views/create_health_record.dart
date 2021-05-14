@@ -31,6 +31,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_rounded_date_picker/rounded_picker.dart';
+import 'package:intl/intl.dart';
 
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final MedicalInstructionHelper _medicalInstructionHelper =
@@ -59,6 +61,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
   List<String> _listType = [];
 
   String _valueTypeIns;
+  String dateCreate;
 
   //
   //SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
@@ -201,6 +204,62 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                     Padding(
                       padding: EdgeInsets.only(bottom: 5, left: 10),
                       child: Text(
+                        'Ngày khám (*)',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          color: DefaultTheme.BLACK_BUTTON,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () async {
+                        DateTime newDateTime = await showRoundedDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(DateTime.now().year - 100),
+                            lastDate: DateTime.now(),
+                            borderRadius: 16,
+                            theme: ThemeData.dark());
+                        if (newDateTime != null) {
+                          setState(() {
+                            dateCreate = newDateTime.toString();
+                          });
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 10),
+                        padding: EdgeInsets.only(
+                            left: 10, right: 20, bottom: 10, top: 10),
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.GREY_VIEW,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 20,
+                              height: 20,
+                              child:
+                                  Image.asset('assets/images/ic-calendar.png'),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 20),
+                            ),
+                            Text(
+                                (dateCreate == null)
+                                    ? 'Ngày khám'
+                                    : '${_dateValidator.convertDateCreate(dateCreate, 'dd/MM/yyyy', 'yyyy-MM-dd')}',
+                                style: TextStyle(color: DefaultTheme.BLACK))
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 5, left: 10),
+                      child: Text(
                         'Nơi khám (*)',
                         textAlign: TextAlign.start,
                         style: TextStyle(
@@ -310,13 +369,15 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                               (_listLv3IdSelected.length > 0 ||
                                   _diseaseIds.length > 0)) {
                             healthRecordDTO = HealthRecordDTO(
-                              patientId: _patientId,
-                              diceaseIds: _diseaseIds.length <= 0
-                                  ? _listLv3IdSelected
-                                  : _diseaseIds,
-                              place: _placeController.text,
-                              description: _note,
-                            );
+                                patientId: _patientId,
+                                diceaseIds: _diseaseIds.length <= 0
+                                    ? _listLv3IdSelected
+                                    : _diseaseIds,
+                                place: _placeController.text,
+                                description: _note,
+                                dateCreated: dateCreate.split(' ')[0]);
+                            // dateCreated: _dateValidator.convertDateCreate(
+                            //     dateCreate, 'yyyy-MM-dd', 'yyyy-MM-dd'));
                             _insertHealthRecord(healthRecordDTO);
                           } else {
                             _insertHealthRecord(null);

@@ -154,26 +154,25 @@ class MedicalInstructionRepository extends BaseApiClient {
     try {
       var uri = Uri.parse(
           'http://45.76.186.233:8000/api/v1/MedicalInstructions/InsertMedicalInstructionOld?fromBy=PATIENT');
-      var request = new http.MultipartRequest('POST', uri);
+      var request = http.MultipartRequest('POST', uri);
       request.fields['MedicalInstructionTypeId'] =
           '${dto.medicalInstructionTypeId}';
       request.fields['HealthRecordId'] = '${dto.healthRecordId}';
       request.fields['PatientId'] = '${dto.patientId}';
       request.fields['Description'] = '${dto.description}';
       request.fields['Diagnose'] = '${dto.diagnose}';
-      request.fields['DiseaseId'] = '${dto.diseaseIds}';
+      // request.fields['DiseaseId'] = '${dto.diseaseIds}';
 
-      // if (dto.diseaseIds == null) {
-      //   print('null');
-      //   request.fields['DiseaseId'] = '';
-      // } else {
-      //   print('not null');
-      //   for (String itemDisease in dto.diseaseIds) {
-      //     request.fields['DiseaseId'] = '${itemDisease}';
-      //     // request.files
-      //     //     .add(http.MultipartFile.fromString('DiseaseIds', itemDisease));
-      //   }
-      // }
+      if (dto.diseaseIds == null) {
+        print('null');
+        // request.fields['DiseaseId'] = '';
+      } else {
+        print('not null');
+        for (var itemDisease in dto.diseaseIds) {
+          request.files
+              .add(http.MultipartFile.fromString('DiseaseIds', '$itemDisease'));
+        }
+      }
 
       for (var imageItem in dto.imageFile) {
         String fileName = imageItem.split("/").last;
