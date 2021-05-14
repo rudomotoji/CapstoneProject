@@ -1,0 +1,44 @@
+[
+    {
+    "id":"1",
+    "adImage":"assets/images/ad-contract.png",
+    "title":"Hợp đồng",
+    "description":"Bệnh nhân và bác sĩ được kết nối với nhau thông qua hợp đồng."
+    },
+    {
+    "id":"2",
+    "adImage":"assets/images/ad-hr.png",
+    "title":"Hồ sơ sức khoẻ",
+    "description":"Hồ sơ sức khoẻ bao gồm các bệnh án, nơi khám, và các phiếu y lệnh..."
+    },
+    {
+    "id":"3",
+    "adImage":"assets/images/ad-medicine.png",
+    "title":"Lịch dùng thuốc",
+    "description":"Hiển thị các đơn thuốc mà bác sĩ đã lên lịch dùng thuốc cho bạn."
+    },
+    {
+    "id":"4",
+    "adImage":"assets/images/ad-connect.png",
+    "title":"Kết nối thiết bị đeo",
+    "description":"///."
+    },
+    {
+    "id":"5",
+    "adImage":"assets/images/ad-appointment.png",
+    "title":"Hợp đồng",
+    "description":"Bệnh nhân và bác sĩ được kết nối với nhau thông qua hợp đồng."
+    },
+    {
+    "id":"6",
+    "adImage":"assets/images/ad-med-ins.png",
+    "title":"Hợp đồng",
+    "description":"Bệnh nhân và bác sĩ được kết nối với nhau thông qua hợp đồng."
+    },
+    {
+    "id":"7",
+    "adImage":"assets/images/ad-vital-sign.png",
+    "title":"Hợp đồng",
+    "description":"Bệnh nhân và bác sĩ được kết nối với nhau thông qua hợp đồng."
+    }
+]

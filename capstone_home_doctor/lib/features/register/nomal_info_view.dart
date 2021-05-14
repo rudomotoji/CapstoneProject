@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
 import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,9 @@ import 'package:flutter_rounded_date_picker/rounded_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+final DateValidator _dateValidator = DateValidator();
+final ArrayValidator _arrayValidator = ArrayValidator();
 
 class NomalInfoView extends StatefulWidget {
   TextEditingController fullNameController = TextEditingController();
@@ -147,13 +151,14 @@ class _NomalInfoViewState extends State<NomalInfoView> {
                 child: Text(
                   widget.dateOfBirth == null
                       ? 'Chọn ngày sinh'
-                      : DateFormat('dd/MM/yyyy').format(DateFormat('yyyy-MM-dd')
-                          .parse(widget.dateOfBirth.toString())),
+                      : _dateValidator.parseToDateView4(DateFormat('dd/MM/yyyy')
+                          .format(DateFormat('yyyy-MM-dd')
+                              .parse(widget.dateOfBirth.toString()))),
                   style: TextStyle(
                       fontSize: 15,
                       color: (widget.dateOfBirth == null)
-                          ? DefaultTheme.BLUE_TEXT
-                          : Colors.black),
+                          ? DefaultTheme.SUCCESS_STATUS
+                          : DefaultTheme.BLACK),
                 ),
                 onPressed: () async {
                   DateTime newDateTime = await showRoundedDatePicker(
@@ -279,7 +284,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
                 child: TextFieldHDr(
                   style: TFStyle.NO_BORDER,
                   label: 'Số điện thoại*:',
-                  placeHolder: '0123 456 789',
+                  placeHolder: '090 123 6789',
                   label_text_width: 120,
                   inputType: TFInputType.TF_PHONE,
                   controller: widget.phoneController,
@@ -310,7 +315,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
                                 widget.phoneController.text.substring(1);
 
                             _verifyPhoneNumber('+84$phoneNum');
-                            _showPopInputOTP();
+                            _showPopInputOTP('+84$phoneNum');
                           } else {
                             widget.alertError(_validator.phoneNumberValidator(
                                 widget.phoneController.text));
@@ -318,14 +323,14 @@ class _NomalInfoViewState extends State<NomalInfoView> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: DefaultTheme.BLUE_TEXT,
+                            color: DefaultTheme.SUCCESS_STATUS,
                             // borderRadius: BorderRadius.all(Radius.circular(5)),
                           ),
                           height: 48,
                           padding: EdgeInsets.only(left: 10, right: 10),
                           child: Center(
                             child: Text(
-                              'Xác thực ngay',
+                              'Xác thực',
                               style: TextStyle(
                                   color: DefaultTheme.WHITE,
                                   fontWeight: FontWeight.w500),
@@ -341,18 +346,18 @@ class _NomalInfoViewState extends State<NomalInfoView> {
             height: 1,
             color: DefaultTheme.GREY_TOP_TAB_BAR,
           ),
-
-          Padding(
-            padding: EdgeInsets.only(bottom: 20),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.only(bottom: 20),
+          // ),
           (verified)
               ? Container(
                   alignment: Alignment.center,
-                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                  padding: EdgeInsets.only(bottom: 10, top: 10),
                   decoration: BoxDecoration(color: DefaultTheme.SUCCESS_STATUS),
                   child: Text(
                     'Số điện thoại đã được xác thực',
                     style: TextStyle(
+                      fontSize: 15,
                       color: DefaultTheme.WHITE,
                     ),
                   ),
@@ -443,11 +448,14 @@ class _NomalInfoViewState extends State<NomalInfoView> {
           widget.setVerify(true);
           Navigator.pop(context);
         } else {
+          // print('-----go into WRONG');
           widget.alertError('Mã OTP không chính xác');
           widget.setVerify(false);
         }
       }).catchError((onError) {
         print('_signInWithPhoneNumber: $onError');
+        // print(
+        //     '-----go into catch: ${_smsController.text} -- ${_verificationId}');
         widget.alertError('Mã OTP không chính xác');
         widget.setVerify(false);
       });
@@ -457,92 +465,116 @@ class _NomalInfoViewState extends State<NomalInfoView> {
     }
   }
 
-  void _showPopInputOTP() {
+  void _showPopInputOTP(String pNum) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width - 20,
-                height: MediaQuery.of(context).size.height * 0.35,
-                decoration: BoxDecoration(
-                  color: DefaultTheme.WHITE.withOpacity(0.6),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 20),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(left: 20),
-                        ),
-                        Text(
-                          'OTP',
-                          style: TextStyle(
-                            fontSize: 30,
-                            decoration: TextDecoration.none,
-                            color: DefaultTheme.BLACK,
-                            fontWeight: FontWeight.w600,
+        return Material(
+          color: DefaultTheme.TRANSPARENT,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  decoration: BoxDecoration(
+                    color: DefaultTheme.WHITE.withOpacity(0.9),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 20),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                            width: 50,
+                            child: Image.asset('assets/images/ic-otp.png'),
                           ),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 20, right: 20, top: 20, bottom: 20),
-                            child: Text(
-                              'Mã xác thực đã được gửi về số điện thoại của bạn',
-                              style: TextStyle(
-                                fontSize: 16,
-                                decoration: TextDecoration.none,
-                                color: DefaultTheme.GREY_TEXT,
-                                fontWeight: FontWeight.w400,
-                              ),
+                          Text(
+                            'Xác thực số điện thoại',
+                            style: TextStyle(
+                              fontSize: 22,
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.BLACK,
+                              fontWeight: FontWeight.w600,
                             ),
-                          ),
-                          Divider(
-                            color: DefaultTheme.GREY_TEXT,
-                            height: 0.25,
-                          ),
-                          Flexible(
-                            child: TextFieldHDr(
-                              style: TFStyle.NO_BORDER,
-                              label: 'Mã:',
-                              controller: _smsController,
-                              keyboardAction: TextInputAction.done,
-                              onChange: (text) {},
-                            ),
-                          ),
-                          Divider(
-                            color: DefaultTheme.GREY_TEXT,
-                            height: 0.25,
                           ),
                         ],
                       ),
-                    ),
-                    ButtonHDr(
-                      style: BtnStyle.BUTTON_BLACK,
-                      label: 'Xác thực',
-                      onTap: () {
-                        _signInWithPhoneNumber();
-                      },
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 15),
-                    )
-                  ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 20, top: 20, bottom: 30),
+                                child: RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                      style: TextStyle(
+                                          color: DefaultTheme.BLACK,
+                                          fontSize: 15),
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                            text:
+                                                'Vui lòng nhập OTP đã được gửi đến số điện thoại '),
+                                        TextSpan(
+                                            text:
+                                                '${_arrayValidator.parsePhoneToView2(pNum)}',
+                                            style: TextStyle(
+                                                color:
+                                                    DefaultTheme.SUCCESS_STATUS,
+                                                fontWeight: FontWeight.w500)),
+                                        TextSpan(text: ' để xác thực.'),
+                                      ]),
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              color: DefaultTheme.GREY_TEXT,
+                              height: 0.25,
+                            ),
+                            Flexible(
+                              child: TextFieldHDr(
+                                style: TFStyle.NO_BORDER,
+                                label: 'OTP:',
+                                placeHolder: 'Nhập mã ở đây',
+                                label_text_width: 60,
+                                controller: _smsController,
+                                inputType: TFInputType.TF_NUMBER,
+                                keyboardAction: TextInputAction.done,
+                                onChange: (text) {},
+                              ),
+                            ),
+                            Divider(
+                              color: DefaultTheme.GREY_TEXT,
+                              height: 0.25,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      ButtonHDr(
+                        style: BtnStyle.BUTTON_FULL,
+                        bgColor: DefaultTheme.SUCCESS_STATUS,
+                        label: 'Xác thực',
+                        onTap: () {
+                          _signInWithPhoneNumber();
+                        },
+                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.only(bottom: 15),
+                      // )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -557,7 +589,7 @@ class _NomalInfoViewState extends State<NomalInfoView> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Radio(
-          activeColor: DefaultTheme.BLUE_TEXT,
+          activeColor: DefaultTheme.SUCCESS_STATUS,
           value: widget.gender[btnValue],
           groupValue: widget.select,
           onChanged: (value) {

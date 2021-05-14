@@ -1761,19 +1761,25 @@ class _Header extends State<Header> {
     _getTimeSystem();
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  //
   _getTimeSystem() async {
     await _systemRepository.getTimeSystem().then((value) async {
       await _timeSystemHelper.setTimeSystem(value);
-      setState(() {
-        _timeSystem = value;
-      });
+      if (!mounted) return;
+      _timeSystem = value;
     });
   }
 
   _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) {
       setState(() {
-        if (!mounted) return;
+        if (!mounted) dispose();
         _patientId = value;
         if (_patientId != 0) {
           patientBloc.add(PatientEventSetId(id: _patientId));

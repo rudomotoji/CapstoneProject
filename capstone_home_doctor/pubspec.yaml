@@ -75,6 +75,7 @@ dev_dependencies:
   sentry_flutter: ^4.0.6
   flutter_cupertino_localizations: ^1.0.1
   webview_flutter: ^1.0.7
+  carousel_slider: ^3.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -201,6 +202,9 @@ flutter:
     - assets/images/ic-share.png
     - assets/images/ic-foward.png
     - assets/images/ic-move-next.png
+    - assets/images/ic-private.png
+    - assets/images/ic-otp.png
+    - assets/images/ic-register.png
 
 
   

@@ -733,6 +733,8 @@ void main() async {
                           }
                         }
                         countDangerousLosingBluetooth++;
+                      } else {
+                        print('DEVICE DOES NOT SUPPORT BLUETOOTH');
                       }
                     });
                     //
@@ -845,7 +847,7 @@ void main() async {
           }
 
           ///cach cun`
-          await _saveVitalSignScheduleOffline();
+          //await _saveVitalSignScheduleOffline();
         } else {
           print('user has logged out of system');
         }
@@ -1945,6 +1947,11 @@ class _HomeDoctorState extends State<HomeDoctor> {
     localNotifyManager.initializePlatform();
     // localNotifyManager.setOnNotificationReceive(onNotificationReceive);
     // localNotifyManager.setNotificationnOnClick(selectNotificationSubject);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   onNotificationReceive(message) {

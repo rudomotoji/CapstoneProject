@@ -46,15 +46,18 @@ class _RegisterPage3State extends State<RegisterPage3> {
                   ),
                 ),
               ),
-              TextFieldHDr(
-                style: TFStyle.TEXT_AREA,
-                placeHolder:
-                    'Mô tả thông tin bệnh lý liên quan của các thành viên trong gia đình (nếu có).',
-                maxLength: 5,
-                inputType: TFInputType.TF_TEXT,
-                controller: widget.familyController,
-                keyboardAction: TextInputAction.done,
-                onChange: (text) {},
+              Container(
+                height: 150,
+                child: TextFieldHDr(
+                  style: TFStyle.TEXT_AREA,
+                  placeHolder:
+                      'Mô tả thông tin bệnh lý liên quan của các thành viên trong gia đình (nếu có).',
+                  maxLength: 5,
+                  inputType: TFInputType.TF_TEXT,
+                  controller: widget.familyController,
+                  keyboardAction: TextInputAction.done,
+                  onChange: (text) {},
+                ),
               ),
             ],
           ),
@@ -76,14 +79,18 @@ class _RegisterPage3State extends State<RegisterPage3> {
                   ),
                 ),
               ),
-              TextFieldHDr(
-                style: TFStyle.TEXT_AREA,
-                placeHolder: '',
-                maxLength: 5,
-                inputType: TFInputType.TF_TEXT,
-                controller: widget.patientController,
-                keyboardAction: TextInputAction.done,
-                onChange: (text) {},
+              Container(
+                height: 150,
+                child: TextFieldHDr(
+                  style: TFStyle.TEXT_AREA,
+                  placeHolder:
+                      'Mô tả thông tin bệnh lý, các triệu chứng hay tình trạng dị ứng của bản thân.',
+                  maxLength: 5,
+                  inputType: TFInputType.TF_TEXT,
+                  controller: widget.patientController,
+                  keyboardAction: TextInputAction.done,
+                  onChange: (text) {},
+                ),
               ),
             ],
           ),

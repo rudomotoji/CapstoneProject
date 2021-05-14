@@ -68,6 +68,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 //////////////
 ///
@@ -804,6 +805,34 @@ class _DashboardState extends State<DashboardPage>
             ),
           ),
         ),
+        //
+        CarouselSlider(
+          options: CarouselOptions(
+            height: 200,
+            autoPlay: true,
+            aspectRatio: 2.0,
+            autoPlayInterval: Duration(seconds: 5),
+            enlargeCenterPage: true,
+            autoPlayCurve: Curves.easeIn,
+          ),
+          items: [1, 2, 3, 4, 5].map((i) {
+            return Builder(
+              builder: (BuildContext context) {
+                return Container(
+                    width: MediaQuery.of(context).size.width,
+                    // margin: EdgeInsets.symmetric(horizontal: 2.0),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: DefaultTheme.GREY_TEXT, width: 1)),
+                    child: Text(
+                      'text $i',
+                      style: TextStyle(fontSize: 16.0),
+                    ));
+              },
+            );
+          }).toList(),
+        ),
+//
         Divider(color: DefaultTheme.GREY_TOP_TAB_BAR, height: 1),
         Container(
           width: MediaQuery.of(context).size.width,

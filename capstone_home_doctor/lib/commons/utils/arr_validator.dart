@@ -25,6 +25,24 @@ class ArrayValidator {
     return result.trim();
   }
 
+  String parsePhoneToView2(String phone) {
+    String result = '';
+    if (phone.length != 12) {
+      return phone;
+    } else {
+      result = phone.substring(0, 3) +
+          ' ' +
+          phone.substring(3, 5) +
+          ' ' +
+          phone.substring(5, 8) +
+          ' ' +
+          phone.substring(8, 10) +
+          ' ' +
+          phone.substring(10, 12);
+    }
+    return result.trim();
+  }
+
   String parsePhoneToPhoneNo(String phone) {
     String result = '';
     if (!phone.contains('.') && !phone.contains(' ')) {

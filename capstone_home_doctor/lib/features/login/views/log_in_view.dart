@@ -215,15 +215,7 @@ class _Login extends State<Login> with WidgetsBindingObserver {
                 }
               },
             ),
-            Padding(padding: EdgeInsets.only(top: 5)),
-            Text(
-              'hoặc',
-              style: TextStyle(
-                color: DefaultTheme.GREY_TEXT,
-                fontSize: 12,
-              ),
-            ),
-            Padding(padding: EdgeInsets.only(top: 5)),
+            Padding(padding: EdgeInsets.only(top: 10)),
             Container(
                 width: MediaQuery.of(context).size.width * 0.8,
                 // height: 40,

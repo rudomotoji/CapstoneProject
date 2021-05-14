@@ -183,7 +183,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
             //
             (_currentPage == 0)
                 ? Container(
-                    margin: EdgeInsets.only(bottom: 20),
+                    margin: EdgeInsets.only(bottom: 15),
                     child: Text(
                       'Thông tin tài khoản',
                       style: TextStyle(
@@ -194,7 +194,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                   )
                 : (_currentPage == 1)
                     ? Container(
-                        margin: EdgeInsets.only(bottom: 20),
+                        margin: EdgeInsets.only(bottom: 15),
                         child: Text(
                           'Thông tin cá nhân',
                           style: TextStyle(
@@ -205,7 +205,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                       )
                     : (_currentPage == 2)
                         ? Container(
-                            margin: EdgeInsets.only(bottom: 20),
+                            margin: EdgeInsets.only(bottom: 15),
                             child: Text(
                               'Tiền sử bệnh án',
                               style: TextStyle(
@@ -215,7 +215,7 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                             ),
                           )
                         : Container(
-                            margin: EdgeInsets.only(bottom: 20),
+                            margin: EdgeInsets.only(bottom: 15),
                             child: Text(
                               'Thêm người thân',
                               style: TextStyle(
@@ -228,78 +228,110 @@ class _Register extends State<Register> with WidgetsBindingObserver {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                InkWell(
-                  // style: BtnStyle.BUTTON_BLACK,
-                  // label: 'Trở lại',
-                  child: Container(
-                    padding: EdgeInsets.only(left: 10, right: 20),
-                    width: 120,
-                    height: 40,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: DefaultTheme.GREY_TEXT, width: 0.5),
-                        color: DefaultTheme.WHITE,
-                        borderRadius: BorderRadius.circular(50)),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 25,
-                          height: 25,
-                          child: Image.asset('assets/images/ic-foward.png'),
+                (_currentPage != 0)
+                    ? InkWell(
+                        // style: BtnStyle.BUTTON_BLACK,
+                        // label: 'Trở lại',
+                        child: Container(
+                          padding: (_currentPage == slideList.length - 1)
+                              ? EdgeInsets.only(left: 10, right: 10)
+                              : EdgeInsets.only(left: 10, right: 20),
+                          width: (_currentPage == slideList.length - 1)
+                              ? null
+                              : 120,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: DefaultTheme.GREY_TEXT, width: 0.5),
+                              color: DefaultTheme.WHITE,
+                              borderRadius: BorderRadius.circular(50)),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                height: 25,
+                                child:
+                                    Image.asset('assets/images/ic-foward.png'),
+                              ),
+                              (_currentPage == slideList.length - 1)
+                                  ? Container()
+                                  : Padding(
+                                      padding: EdgeInsets.only(left: 15),
+                                    ),
+                              (_currentPage == slideList.length - 1)
+                                  ? Container()
+                                  : Text(
+                                      'Trở lại',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                            ],
+                          ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 15),
-                        ),
-                        Text('Trở lại'),
-                      ],
-                    ),
-                  ),
-                  onTap: () async {
-                    if (_currentPage > 0) {
-                      _currentPage = _currentPage - 1;
-                    } else {
-                      _currentPage = 0;
-                      Navigator.of(context).pop();
-                    }
+                        onTap: () async {
+                          if (_currentPage > 0) {
+                            _currentPage = _currentPage - 1;
+                          } else {
+                            _currentPage = 0;
+                            Navigator.of(context).pop();
+                          }
 
-                    _pageController.animateToPage(
-                      _currentPage,
-                      duration: Duration(milliseconds: 300),
-                      curve: Curves.easeIn,
-                    );
-                  },
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                ),
+                          _pageController.animateToPage(
+                            _currentPage,
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.easeIn,
+                          );
+                        },
+                      )
+                    : Container(),
+                (_currentPage != 0)
+                    ? Padding(
+                        padding: EdgeInsets.only(left: 15),
+                      )
+                    : Container(),
                 InkWell(
                   child: Container(
                     padding: EdgeInsets.only(left: 20),
-                    width: 120,
+                    width: (_currentPage == slideList.length - 1) ? 200 : 120,
                     height: 40,
                     decoration: BoxDecoration(
                         border: Border.all(
                             color: DefaultTheme.GREY_TEXT, width: 0.5),
-                        color: DefaultTheme.WHITE,
+                        color: (_currentPage == slideList.length - 1)
+                            ? DefaultTheme.BLACK
+                            : DefaultTheme.WHITE,
                         borderRadius: BorderRadius.circular(50)),
                     child: Row(
                       children: [
                         (_currentPage == slideList.length - 1)
                             ? Spacer()
                             : Container(),
-                        Text((_currentPage == slideList.length - 1)
-                            ? 'Tạo'
-                            : 'Tiếp tục'),
+                        Text(
+                          (_currentPage == slideList.length - 1)
+                              ? 'Tạo tài khoản'
+                              : 'Tiếp tục',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: (_currentPage == slideList.length - 1)
+                                  ? DefaultTheme.WHITE
+                                  : DefaultTheme.BLACK),
+                        ),
                         (_currentPage == slideList.length - 1)
                             ? Spacer()
                             : Padding(
-                                padding: EdgeInsets.only(left: 15),
+                                padding: EdgeInsets.only(left: 10),
                               ),
-                        SizedBox(
-                          width: 25,
-                          height: 25,
-                          child: Image.asset('assets/images/ic-move-next.png'),
-                        ),
+                        (_currentPage == slideList.length - 1)
+                            ? SizedBox(
+                                width: 25,
+                                height: 25,
+                                child: Image.asset(
+                                    'assets/images/ic-register.png'),
+                              )
+                            : SizedBox(
+                                width: 25,
+                                height: 25,
+                                child: Image.asset(
+                                    'assets/images/ic-move-next.png'),
+                              ),
                         (_currentPage == slideList.length - 1)
                             ? Padding(
                                 padding: EdgeInsets.only(right: 10),
@@ -590,6 +622,12 @@ class _Register extends State<Register> with WidgetsBindingObserver {
                     }
                   },
                 ),
+                (_currentPage == slideList.length - 1)
+                    ? Container(
+                        width: 60,
+                        height: 25,
+                      )
+                    : Container(),
               ],
             ),
             Padding(
