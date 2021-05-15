@@ -582,7 +582,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                                   (key, value) => MapEntry(
                                                     key,
                                                     Container(
-                                                      child: bui(
+                                                      child: showItem(context,
                                                           value, setModalState),
                                                     ),
                                                   ),
@@ -636,14 +636,14 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
         });
   }
 
-  bui(diseaseContractDTO, StateSetter setModalState) {
-    if (item == null) {
-      item = showItem(context, diseaseContractDTO, setModalState);
-    }
-    return showItem(context, diseaseContractDTO, setModalState);
-  }
+  // bui(diseaseContractDTO, StateSetter setModalState) {
+  //   // if (item == null) {
+  //   //   item = showItem(context, diseaseContractDTO, setModalState);
+  //   // }
+  //   return showItem(context, diseaseContractDTO, setModalState);
+  // }
 
-  Widget item;
+  // Widget item;
 
   // List<ListTile> _buildItems(BuildContext context,
   //     List<DiseaseLeverThrees> items, StateSetter setModalState) {
