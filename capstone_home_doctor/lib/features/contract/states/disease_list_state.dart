@@ -17,7 +17,7 @@ class DiseaseListStateLoading extends DiseaseListState {}
 class DiseaseListStateFailure extends DiseaseListState {}
 
 class DiseaseListStateSuccess extends DiseaseListState {
-  final List<DiseaseDTO> listDisease;
+  final List<DiseaseContractDTO> listDisease;
   const DiseaseListStateSuccess({@required this.listDisease});
 
   @override

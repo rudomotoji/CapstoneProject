@@ -1058,7 +1058,7 @@ class _ContractShareView extends State<ContractShareView>
                   Container(
                     width: MediaQuery.of(context).size.width - 120,
                     child: Text(
-                      '${e.diseaseLevelThreeId} - ${e.diseaseLeverThreeName}',
+                      '${e.diseaseLevelThreeId} - ${e.diseaseLevelThreeName}',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: TextStyle(
@@ -1335,7 +1335,7 @@ class _ContractShareView extends State<ContractShareView>
                                     //
                                     Container(
                                       child: Text(
-                                        '${_listLv3Selected[index].diseaseLevelThreeId} - ${_listLv3Selected[index].diseaseLeverThreeName}',
+                                        '${_listLv3Selected[index].diseaseLevelThreeId} - ${_listLv3Selected[index].diseaseLevelThreeName}',
                                         style: TextStyle(
                                             color: DefaultTheme.BLUE_DARK,
                                             fontWeight: FontWeight.w400,
@@ -2954,7 +2954,7 @@ class _ContractShareView extends State<ContractShareView>
                                                                       .width -
                                                                   122,
                                                               child: Text(
-                                                                '${group.diseaseLevelTwoId}: ${group.diseaseLeverTwoName}',
+                                                                '${group.diseaseLevelTwoId}: ${group.diseaseLevelTwoName}',
                                                                 style: TextStyle(
                                                                     fontSize:
                                                                         13,
@@ -2972,7 +2972,7 @@ class _ContractShareView extends State<ContractShareView>
                                                         items: _buildItems(
                                                             context,
                                                             group
-                                                                .diseaseLeverThrees,
+                                                                .diseaseLevelThrees,
                                                             setModalState),
                                                       );
                                                     }).toList(),

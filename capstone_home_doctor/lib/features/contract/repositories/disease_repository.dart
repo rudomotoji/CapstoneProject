@@ -10,18 +10,25 @@ class DiseaseRepository extends BaseApiClient {
   DiseaseRepository({@required this.httpClient}) : assert(httpClient != null);
 
   //get list disease
-  Future<List<DiseaseDTO>> getListDisease() async {
+  Future<List<DiseaseContractDTO>> getListDisease() async {
     final String url = '/Diseases/GetDiseases';
     try {
       final response = await getApi(url, null);
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body) as List;
-        List<DiseaseDTO> list = responseData.map((dto) {
-          return DiseaseDTO.fromJson(dto);
+        List<DiseaseContractDTO> list = responseData.map((dto) {
+          // return DiseaseContractDTO.fromJson(dto);
+          var newDTO = DiseaseContractDTO.fromJson(dto);
+          for (var item in newDTO.diseaseLevelThrees) {
+            item.strDiseaseID =
+                '${item.diseaseLevelThreeId} - ${item.diseaseLevelThreeName}';
+          }
+
+          return newDTO;
         }).toList();
         return list;
       } else {
-        return List<DiseaseDTO>();
+        return List<DiseaseContractDTO>();
       }
     } catch (e) {
       print('ERROR AT GET LIST DISEASE $e');

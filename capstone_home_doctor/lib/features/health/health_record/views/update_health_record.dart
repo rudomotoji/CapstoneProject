@@ -163,7 +163,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
                 _listLv3IdSelected.add(dto.diseaseId);
                 return new DiseaseLeverThrees(
                     diseaseLevelThreeId: dto.diseaseId,
-                    diseaseLeverThreeName: dto.diseaseName);
+                    diseaseLevelThreeName: dto.diseaseName);
               }).toList();
             });
             _diseaseListBloc.add(DiseaseEventGetHealthList());
@@ -225,7 +225,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
                       padding: EdgeInsets.only(top: 5),
                     ),
                     // _selectTypeIns(),
-                    _checkSelectIns(),
+                    // _checkSelectIns(),
                     //
                     Align(
                       alignment: Alignment.centerLeft,
@@ -987,7 +987,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
                                                                   .width -
                                                               122,
                                                           child: Text(
-                                                            '${group.diseaseLevelTwoId}: ${group.diseaseLeverTwoName}',
+                                                            '${group.diseaseLevelTwoId}: ${group.diseaseLevelTwoName}',
                                                             style: TextStyle(
                                                                 fontSize: 13,
                                                                 fontWeight:
@@ -1004,7 +1004,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
                                                     items: _buildItems(
                                                         context,
                                                         group
-                                                            .diseaseLeverThrees,
+                                                            .diseaseLevelThrees,
                                                         setModalState),
                                                   );
                                                 }).toList(),
@@ -1077,7 +1077,7 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
                 Container(
                   width: MediaQuery.of(context).size.width - 100,
                   child: Text(
-                    '${e.diseaseLevelThreeId} - ${e.diseaseLeverThreeName}',
+                    '${e.diseaseLevelThreeId} - ${e.diseaseLevelThreeName}',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
                     style: TextStyle(
@@ -1138,74 +1138,74 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
     }).toList();
   }
 
-  Widget _checkSelectIns() {
-    return BlocBuilder<DiseaseListBloc, DiseaseListState>(
-      builder: (context, state) {
-        if (state is DiseaseListStateLoading) {
-          return Container(
-            margin: EdgeInsets.only(left: 20, right: 20),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(6),
-                color: DefaultTheme.GREY_BUTTON),
-            child: Center(
-              child: SizedBox(
-                width: 30,
-                height: 30,
-                child: Image.asset('assets/images/loading.gif'),
-              ),
-            ),
-          );
-        }
-        if (state is DiseaseListStateFailure) {
-          return Container(
-            margin: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: DefaultTheme.GREY_BUTTON),
-            child: Padding(
-              padding:
-                  EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
-              child: Text('Không có dữ liệu',
-                  style: TextStyle(
-                    color: DefaultTheme.GREY_TEXT,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  )),
-            ),
-          );
-        }
-        if (state is DiseaseListStateSuccess) {
-          if (state.listDisease != null) {
-            _listDisease = [];
-            for (var item in state.listDisease) {
-              String alpha = item.diseaseId[0];
-              String strDisID = '';
-              var listDiseasesID = item.diseaseId.split('-');
-              int num1 = int.parse(listDiseasesID[0].substring(1));
-              int num2 = int.parse(listDiseasesID[1].substring(1));
-              for (var num = num1; num <= num2; num++) {
-                strDisID += '$alpha$num';
-              }
-              item.strDiseaseID = strDisID;
-              _listDisease.add(item);
-            }
+  // Widget _checkSelectIns() {
+  //   return BlocBuilder<DiseaseListBloc, DiseaseListState>(
+  //     builder: (context, state) {
+  //       if (state is DiseaseListStateLoading) {
+  //         return Container(
+  //           margin: EdgeInsets.only(left: 20, right: 20),
+  //           decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(6),
+  //               color: DefaultTheme.GREY_BUTTON),
+  //           child: Center(
+  //             child: SizedBox(
+  //               width: 30,
+  //               height: 30,
+  //               child: Image.asset('assets/images/loading.gif'),
+  //             ),
+  //           ),
+  //         );
+  //       }
+  //       if (state is DiseaseListStateFailure) {
+  //         return Container(
+  //           margin: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
+  //           decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(5),
+  //               color: DefaultTheme.GREY_BUTTON),
+  //           child: Padding(
+  //             padding:
+  //                 EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+  //             child: Text('Không có dữ liệu',
+  //                 style: TextStyle(
+  //                   color: DefaultTheme.GREY_TEXT,
+  //                   fontSize: 16,
+  //                   fontWeight: FontWeight.w500,
+  //                 )),
+  //           ),
+  //         );
+  //       }
+  //       if (state is DiseaseListStateSuccess) {
+  //         if (state.listDisease != null) {
+  //           _listDisease = [];
+  //           for (var item in state.listDisease) {
+  //             String alpha = item.diseaseId[0];
+  //             String strDisID = '';
+  //             var listDiseasesID = item.diseaseId.split('-');
+  //             int num1 = int.parse(listDiseasesID[0].substring(1));
+  //             int num2 = int.parse(listDiseasesID[1].substring(1));
+  //             for (var num = num1; num <= num2; num++) {
+  //               strDisID += '$alpha$num';
+  //             }
+  //             item.strDiseaseID = strDisID;
+  //             _listDisease.add(item);
+  //           }
 
-            // _listDisease = state.listDisease;
-          }
-          print('DiseaseListStateSuccess');
-          return _selectBoxInsOtherDissease();
-        }
-        if (state is DiseaseHeartListStateSuccess) {
-          if (state.listDiseaseContract != null) {
-            _listDiseaseForHeart = state.listDiseaseContract;
-          }
-          print('DiseaseHeartListStateSuccess');
-          return _selectBoxInsHeart();
-        }
-        return Container();
-      },
-    );
-  }
+  //           // _listDisease = state.listDisease;
+  //         }
+  //         print('DiseaseListStateSuccess');
+  //         return _selectBoxInsOtherDissease();
+  //       }
+  //       if (state is DiseaseHeartListStateSuccess) {
+  //         if (state.listDiseaseContract != null) {
+  //           _listDiseaseForHeart = state.listDiseaseContract;
+  //         }
+  //         print('DiseaseHeartListStateSuccess');
+  //         return _selectBoxInsHeart();
+  //       }
+  //       return Container();
+  //     },
+  //   );
+  // }
 
   Widget _selectTypeIns() {
     return Container(
@@ -1454,8 +1454,8 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
             }
           }
         } else {
-          for (var itemLV3 in item.diseaseLeverThrees) {
-            if (itemLV3.diseaseLeverThreeName
+          for (var itemLV3 in item.diseaseLevelThrees) {
+            if (itemLV3.diseaseLevelThreeName
                     .toLowerCase()
                     .contains(val.toLowerCase()) &&
                 !filteredItems.contains(item)) {
