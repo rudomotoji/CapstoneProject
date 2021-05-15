@@ -160,7 +160,7 @@ class MedicalInstructionRepository extends BaseApiClient {
       request.fields['HealthRecordId'] = '${dto.healthRecordId}';
       request.fields['PatientId'] = '${dto.patientId}';
       request.fields['Description'] = '${dto.description}';
-      request.fields['Diagnose'] = '${dto.diagnose}';
+      request.fields['Conclusion'] = '${dto.diagnose}';
       // request.fields['DiseaseId'] = '${dto.diseaseIds}';
 
       if (dto.diseaseIds == null) {

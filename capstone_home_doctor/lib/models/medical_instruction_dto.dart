@@ -155,7 +155,7 @@ class MedicalInstructionDTO {
     medicalInstructionTypeId = json['medicalInstructionTypeId'];
     image = json['images'] != null ? json['images'].cast<String>() : null;
     description = json['description'];
-    diagnose = json['diagnose'];
+    diagnose = json['conclusion'];
     placeHealthRecord = json['placeHealthRecord'];
     // dateStarted = json['dateStarted'];
     // dateFinished = json['dateFinished'];
