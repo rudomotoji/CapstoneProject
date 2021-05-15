@@ -21,24 +21,24 @@
     "id":"4",
     "adImage":"assets/images/ad-connect.png",
     "title":"Kết nối thiết bị đeo",
-    "description":"///."
+    "description":"Hệ thống sẽ lấy các chỉ số sinh hiệu thông qua thiết bị đeo."
     },
     {
     "id":"5",
     "adImage":"assets/images/ad-appointment.png",
-    "title":"Hợp đồng",
-    "description":"Bệnh nhân và bác sĩ được kết nối với nhau thông qua hợp đồng."
+    "title":"Lịch khám",
+    "description":"Bác sĩ xếp các cuộc hẹn với bạn thông qua lịch khám."
     },
     {
     "id":"6",
     "adImage":"assets/images/ad-med-ins.png",
-    "title":"Hợp đồng",
-    "description":"Bệnh nhân và bác sĩ được kết nối với nhau thông qua hợp đồng."
+    "title":"Y lệnh",
+    "description":"Là một chỉ định, một lệnh văn bản được ghi trong bệnh án."
     },
     {
     "id":"7",
     "adImage":"assets/images/ad-vital-sign.png",
-    "title":"Hợp đồng",
-    "description":"Bệnh nhân và bác sĩ được kết nối với nhau thông qua hợp đồng."
+    "title":"Sinh hiệu",
+    "description":"Là những dấu hiệu chỉ rõ tình trạng hoạt động của cơ thể."
     }
 ]

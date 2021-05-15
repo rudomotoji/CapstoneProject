@@ -160,32 +160,34 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                 isMainView: false,
                 buttonHeaderType: ButtonHeaderType.BACK_HOME,
               ),
-              Padding(
-                padding: EdgeInsets.only(left: 30, bottom: 10),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '${_dateValidator.getDateTimeView()}',
-                    style: TextStyle(color: DefaultTheme.GREY_TEXT),
-                  ),
-                ),
-              ),
+              // Padding(
+              //   padding: EdgeInsets.only(left: 30, bottom: 10),
+              //   child: Align(
+              //     alignment: Alignment.centerLeft,
+              //     child: Text(
+              //       '${_dateValidator.getDateTimeView()}',
+              //       style: TextStyle(color: DefaultTheme.GREY_TEXT),
+              //     ),
+              //   ),
+              // ),
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.only(left: 20, right: 20),
                   children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 5),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.only(bottom: 5, top: 20),
+                      child: Text('Thông tin bệnh lý',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500)),
                     ),
-                    _selectTypeIns(),
-                    _checkSelectIns(),
-                    //
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: EdgeInsets.only(top: 5, left: 10, right: 20),
+                        padding:
+                            EdgeInsets.only(left: 0, right: 20, bottom: 10),
                         child: Text(
-                          'Chọn loại bệnh chính xác được ghi trên hồ sơ sức khoẻ của bạn.',
+                          'Chọn bệnh lý chính xác được ghi trên hồ sơ sức khoẻ',
                           style: TextStyle(
                               color: DefaultTheme.GREY_TEXT,
                               fontSize: 15,
@@ -193,168 +195,219 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                         ),
                       ),
                     ),
+                    _selectTypeIns(),
+                    _checkSelectIns(),
+                    //
 
-                    Padding(
-                      padding: EdgeInsets.only(top: 10, bottom: 20),
-                      child: Divider(
-                        color: DefaultTheme.GREY_LIGHT,
-                        height: 0.1,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 5, left: 10),
-                      child: Text(
-                        'Ngày khám (*)',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          color: DefaultTheme.BLACK_BUTTON,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      onTap: () async {
-                        DateTime newDateTime = await showRoundedDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(DateTime.now().year - 100),
-                            lastDate: DateTime.now(),
-                            borderRadius: 16,
-                            theme: ThemeData.dark());
-                        if (newDateTime != null) {
-                          setState(() {
-                            dateCreate = newDateTime.toString();
-                          });
-                        }
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 10),
-                        padding: EdgeInsets.only(
-                            left: 10, right: 20, bottom: 10, top: 10),
-                        decoration: BoxDecoration(
-                          color: DefaultTheme.GREY_VIEW,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 20,
-                              height: 20,
-                              child:
-                                  Image.asset('assets/images/ic-calendar.png'),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 20),
-                            ),
-                            Text(
-                                (dateCreate == null)
-                                    ? 'Ngày khám'
-                                    : '${_dateValidator.convertDateCreate(dateCreate, 'dd/MM/yyyy', 'yyyy-MM-dd')}',
-                                style: TextStyle(color: DefaultTheme.BLACK))
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 5, left: 10),
-                      child: Text(
-                        'Nơi khám (*)',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          color: DefaultTheme.BLACK_BUTTON,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    AutoCompleteTextField(
-                      controller: _placeController,
-                      clearOnSubmit: false,
-                      suggestions: suggestions,
-                      textInputAction: TextInputAction.done,
-                      decoration: InputDecoration(
-                        counter: Offstage(),
-                        // labelText: _label,
-                        // helperText: _helperText,
-                        filled: true,
-                        fillColor: DefaultTheme.GREY_BUTTON.withOpacity(0.8),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.fromLTRB(
-                            DefaultNumeralUI.PADDING,
-                            0,
-                            DefaultNumeralUI.PADDING,
-                            0),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                            width: 0.25,
-                            color: DefaultTheme.TRANSPARENT,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                            width: 0.25,
-                            color: DefaultTheme.TRANSPARENT,
-                          ),
-                        ),
-                        errorBorder: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                      ),
-                      itemFilter: (suggestion, input) => suggestion
-                          .toLowerCase()
-                          .contains(input.toLowerCase()),
-                      itemSorter: (a, b) {
-                        return a.compareTo(b);
-                      },
-                      itemSubmitted: (item) => _placeController.text = item,
-                      itemBuilder: (context, suggestion) => new Padding(
-                          child: new ListTile(title: new Text(suggestion)),
-                          padding: EdgeInsets.all(8.0)),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10, right: 0),
-                      child: Text(
-                        'Nhập tên bệnh viện, tên bác sĩ hoặc địa chỉ chăm khám...',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: DefaultTheme.GREY_TEXT,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 12),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10, bottom: 20),
-                      child: Divider(
-                        color: DefaultTheme.GREY_LIGHT,
-                        height: 0.1,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 5, left: 10),
-                      child: Text(
-                        'Ghi chú',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                            color: DefaultTheme.BLACK_BUTTON,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16),
-                      ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.only(bottom: 10, top: 20),
+                      child: Text('Thông tin hồ sơ',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w500)),
                     ),
                     Container(
-                      alignment: Alignment.topLeft,
-                      height: 150,
-                      child: TextFieldHDr(
-                          keyboardAction: TextInputAction.done,
-                          placeHolder: 'Mô tả thêm các vấn đề khác',
-                          style: TFStyle.TEXT_AREA,
-                          onChange: (text) {
-                            setState(() {
-                              _note = text;
-                            });
-                          }),
+                      padding: EdgeInsets.only(
+                          bottom: 10, top: 10, left: 20, right: 20),
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.GREY_VIEW,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 75,
+                                child: Text(
+                                  'Ngày khám',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: DefaultTheme.BLACK),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                              Container(
+                                width: 10,
+                                child: Text(
+                                  '*',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: DefaultTheme.RED_CALENDAR),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  DateTime newDateTime =
+                                      await showRoundedDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime(
+                                              DateTime.now().year - 100),
+                                          lastDate: DateTime.now(),
+                                          borderRadius: 16,
+                                          theme: ThemeData.dark());
+                                  if (newDateTime != null) {
+                                    setState(() {
+                                      dateCreate = newDateTime.toString();
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  height: 45,
+                                  width:
+                                      MediaQuery.of(context).size.width - 180,
+                                  child: Row(
+                                    children: [
+                                      // SizedBox(
+                                      //   width: 20,
+                                      //   height: 20,
+                                      //   child: Image.asset(
+                                      //       'assets/images/ic-calendar.png'),
+                                      // ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                      ),
+                                      Text(
+                                          (dateCreate == null)
+                                              ? 'Chọn ngày khám'
+                                              : '${_dateValidator.parseToDateView3(dateCreate)}',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: (dateCreate == null)
+                                                  ? DefaultTheme.BLUE_REFERENCE
+                                                  : DefaultTheme.BLACK))
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Divider(
+                            color: DefaultTheme.GREY_TOP_TAB_BAR,
+                            height: 2,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 75,
+                                child: Text(
+                                  'Nơi khám',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: DefaultTheme.BLACK),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                              Container(
+                                width: 10,
+                                child: Text(
+                                  '*',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: DefaultTheme.RED_CALENDAR),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 10),
+                                width: MediaQuery.of(context).size.width - 190,
+                                height: 45,
+                                child: AutoCompleteTextField(
+                                  controller: _placeController,
+                                  clearOnSubmit: false,
+                                  suggestions: suggestions,
+                                  textInputAction: TextInputAction.done,
+                                  decoration: InputDecoration(
+                                    counter: Offstage(),
+                                    // labelText: _label,
+                                    // helperText: _helperText,
+                                    filled: true,
+                                    fillColor: DefaultTheme.GREY_BUTTON
+                                        .withOpacity(0.8),
+                                    border: InputBorder.none,
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                      borderSide: BorderSide(
+                                        width: 0.25,
+                                        color: DefaultTheme.TRANSPARENT,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                      borderSide: BorderSide(
+                                        width: 0.25,
+                                        color: DefaultTheme.TRANSPARENT,
+                                      ),
+                                    ),
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                  ),
+                                  itemFilter: (suggestion, input) => suggestion
+                                      .toLowerCase()
+                                      .contains(input.toLowerCase()),
+                                  itemSorter: (a, b) {
+                                    return a.compareTo(b);
+                                  },
+                                  itemSubmitted: (item) =>
+                                      _placeController.text = item,
+                                  itemBuilder: (context, suggestion) =>
+                                      new Padding(
+                                          child: new ListTile(
+                                              title: new Text(suggestion)),
+                                          padding: EdgeInsets.all(8.0)),
+                                ),
+                              )
+                            ],
+                          ),
+                          Divider(
+                            color: DefaultTheme.GREY_TOP_TAB_BAR,
+                            height: 2,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(top: 20),
+                                width: 85,
+                                child: Text(
+                                  'Ghi chú',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: DefaultTheme.BLACK),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                width: MediaQuery.of(context).size.width - 170,
+                                height: 150,
+                                padding: EdgeInsets.all(0),
+                                child: TextFieldHDr(
+                                    keyboardAction: TextInputAction.done,
+                                    placeHolder: 'Mô tả thêm các vấn đề khác',
+                                    style: TFStyle.TEXT_AREA,
+                                    onChange: (text) {
+                                      setState(() {
+                                        _note = text;
+                                      });
+                                    }),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 30),
@@ -362,25 +415,29 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                         style: BtnStyle.BUTTON_BLACK,
                         label: 'Tạo hồ sơ',
                         onTap: () {
-                          if (_patientId != 0 &&
-                              _placeController.text != null &&
-                              _placeController.text != '' &&
-                              _placeController.text.length > 0 &&
-                              (_listLv3IdSelected.length > 0 ||
-                                  _diseaseIds.length > 0)) {
-                            healthRecordDTO = HealthRecordDTO(
-                                patientId: _patientId,
-                                diceaseIds: _diseaseIds.length <= 0
-                                    ? _listLv3IdSelected
-                                    : _diseaseIds,
-                                place: _placeController.text,
-                                description: _note,
-                                dateCreated: dateCreate.split(' ')[0]);
-                            // dateCreated: _dateValidator.convertDateCreate(
-                            //     dateCreate, 'yyyy-MM-dd', 'yyyy-MM-dd'));
-                            _insertHealthRecord(healthRecordDTO);
+                          if (dateCreate == null || dateCreate == '') {
+                            alertError('Vui lòng chọn ngày khám');
                           } else {
-                            _insertHealthRecord(null);
+                            if (_patientId != 0 &&
+                                _placeController.text != null &&
+                                _placeController.text != '' &&
+                                _placeController.text.length > 0 &&
+                                (_listLv3IdSelected.length > 0 ||
+                                    _diseaseIds.length > 0)) {
+                              healthRecordDTO = HealthRecordDTO(
+                                  patientId: _patientId,
+                                  diceaseIds: _diseaseIds.length <= 0
+                                      ? _listLv3IdSelected
+                                      : _diseaseIds,
+                                  place: _placeController.text,
+                                  description: _note,
+                                  dateCreated: dateCreate.split(' ')[0]);
+                              // dateCreated: _dateValidator.convertDateCreate(
+                              //     dateCreate, 'yyyy-MM-dd', 'yyyy-MM-dd'));
+                              _insertHealthRecord(healthRecordDTO);
+                            } else {
+                              _insertHealthRecord(null);
+                            }
                           }
                         },
                       ),
@@ -483,22 +540,22 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
               children: [
                 Container(
                   height: 25,
-                  width: MediaQuery.of(context).size.width - 90,
+                  width: MediaQuery.of(context).size.width - 84,
                   margin: EdgeInsets.only(top: 15, bottom: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Bệnh lý đã chọn',
+                        'Bệnh lý cụ thể',
                         style: TextStyle(
-                          color: DefaultTheme.BLACK,
+                          color: DefaultTheme.BLUE_REFERENCE,
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
                         ),
                       ),
                       SizedBox(
-                        width: 30,
-                        height: 30,
+                        width: 20,
+                        height: 20,
                         child: Image.asset('assets/images/ic-dropdown.png'),
                       ),
                     ],
@@ -846,7 +903,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Container(
-        padding: EdgeInsets.only(left: 20),
+        padding: EdgeInsets.only(left: 20, right: 20),
         margin: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
@@ -862,17 +919,36 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
               ),
             );
           }).toList(),
+          icon: SizedBox(
+            width: 20,
+            height: 20,
+            child: Image.asset('assets/images/ic-dropdown.png'),
+          ),
           dropdownColor: DefaultTheme.GREY_VIEW,
           elevation: 1,
           hint: Container(
-            width: MediaQuery.of(context).size.width - 84,
-            child: Text(
-              'Chọn loại bệnh(*)',
-              style: TextStyle(fontWeight: FontWeight.w600),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
+              width: MediaQuery.of(context).size.width - 104,
+              child: Row(
+                children: [
+                  Text(
+                    'Loại bệnh',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: DefaultTheme.BLUE_REFERENCE),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  Text(
+                    ' *',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: DefaultTheme.RED_CALENDAR),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ],
+              )),
           underline: Container(
             width: 0,
           ),
@@ -903,43 +979,46 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
 
   _insertHealthRecord(HealthRecordDTO dto) {
     if (dto == null) {
-      alertError('Hãy điền vào hồ sơ');
+      alertError('Vui lòng nhập đầy đủ các thông tin yêu cầu');
     } else {
       setState(() {
         showDialog(
           barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
-            return Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(5)),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                  child: Container(
-                    width: 250,
-                    height: 180,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: DefaultTheme.WHITE.withOpacity(0.8)),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          height: 120,
-                          child: Image.asset('assets/images/loading.gif'),
-                        ),
-                        Text(
-                          'Đang tạo',
-                          style: TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              decoration: TextDecoration.none),
-                        ),
-                        Spacer(),
-                      ],
+            return Material(
+              color: DefaultTheme.TRANSPARENT,
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                    child: Container(
+                      width: 250,
+                      height: 180,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: DefaultTheme.WHITE.withOpacity(0.8)),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 150,
+                            height: 120,
+                            child: Image.asset('assets/images/loading.gif'),
+                          ),
+                          Text(
+                            'Đang tạo',
+                            style: TextStyle(
+                                color: DefaultTheme.GREY_TEXT,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                decoration: TextDecoration.none),
+                          ),
+                          Spacer(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -960,118 +1039,128 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                     barrierDismissible: false,
                     context: context,
                     builder: (context) {
-                      return Center(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                            child: Container(
-                              padding:
-                                  EdgeInsets.only(left: 10, top: 10, right: 10),
-                              width: 250,
-                              height: 185,
-                              decoration: BoxDecoration(
-                                color: DefaultTheme.WHITE.withOpacity(0.7),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    padding:
-                                        EdgeInsets.only(bottom: 10, top: 10),
-                                    child: Text(
-                                      'Tạo thành công',
-                                      style: TextStyle(
-                                        decoration: TextDecoration.none,
-                                        color: DefaultTheme.BLACK,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.only(
-                                        left: 20, right: 20, top: 15),
-                                    child: Align(
-                                      alignment: Alignment.center,
+                      return Material(
+                        color: DefaultTheme.TRANSPARENT,
+                        child: Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                              child: Container(
+                                padding: EdgeInsets.only(
+                                    left: 10, top: 10, right: 10),
+                                width: 250,
+                                height: 185,
+                                decoration: BoxDecoration(
+                                  color: DefaultTheme.WHITE.withOpacity(0.7),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      padding:
+                                          EdgeInsets.only(bottom: 10, top: 10),
                                       child: Text(
-                                        'Bạn có muốn tạo thêm y lệnh ngay không?',
-                                        textAlign: TextAlign.center,
+                                        'Tạo thành công',
                                         style: TextStyle(
                                           decoration: TextDecoration.none,
-                                          color: DefaultTheme.GREY_TEXT,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 13,
+                                          color: DefaultTheme.BLACK,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Spacer(),
-                                  Divider(
-                                    height: 1,
-                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      FlatButton(
-                                        height: 40,
-                                        minWidth: 250 / 2 - 10.5,
-                                        child: Text('Không',
-                                            style: TextStyle(
-                                                color: DefaultTheme.BLUE_TEXT)),
-                                        onPressed: () async {
-                                          Navigator.of(context).pop();
-                                          int currentIndex = 2;
-                                          Navigator.of(context)
-                                              .pushNamedAndRemoveUntil(
-                                                  RoutesHDr.MAIN_HOME,
-                                                  (Route<dynamic> route) =>
-                                                      false,
-                                                  arguments: currentIndex);
-                                        },
+                                    //Spacer(),
+                                    Container(
+                                      padding: EdgeInsets.only(
+                                          left: 20, right: 20, top: 20),
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          'Bạn có muốn tạo thêm y lệnh ngay không?',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            decoration: TextDecoration.none,
+                                            color: DefaultTheme.BLACK,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 15,
+                                          ),
+                                        ),
                                       ),
-                                      Container(
-                                        height: 40,
-                                        width: 0.5,
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                      ),
-                                      FlatButton(
-                                        height: 40,
-                                        minWidth: 250 / 2 - 10.5,
-                                        child: Text('Tiếp tục',
-                                            style: TextStyle(
-                                                color: DefaultTheme.BLUE_TEXT)),
-                                        onPressed: () async {
-                                          //refresh data
-                                          setState(() {
-                                            _listDiseaseSelected = [];
-                                            _diseaseIds = [];
-                                            _listLv3Selected = [];
-                                            _listLv3IdSelected = [];
-                                            _listDiseaseForHeartForSearch = [];
-                                            _placeController.text = '';
-                                          });
+                                    ),
+                                    Spacer(),
+                                    Divider(
+                                      height: 1,
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        FlatButton(
+                                          height: 40,
+                                          minWidth: 250 / 2 - 10.5,
+                                          child: Text('Không',
+                                              style: TextStyle(
+                                                  color:
+                                                      DefaultTheme.BLUE_TEXT)),
+                                          onPressed: () async {
+                                            Navigator.of(context).pop();
+                                            int currentIndex = 2;
+                                            Navigator.of(context)
+                                                .pushNamedAndRemoveUntil(
+                                                    RoutesHDr.MAIN_HOME,
+                                                    (Route<dynamic> route) =>
+                                                        false,
+                                                    arguments: currentIndex);
+                                          },
+                                        ),
+                                        Container(
+                                          height: 40,
+                                          width: 0.5,
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        ),
+                                        FlatButton(
+                                          height: 40,
+                                          minWidth: 250 / 2 - 10.5,
+                                          child: Text('Tiếp tục',
+                                              style: TextStyle(
+                                                  color:
+                                                      DefaultTheme.BLUE_TEXT)),
+                                          onPressed: () async {
+                                            //refresh data
+                                            setState(() {
+                                              _listDiseaseSelected = [];
+                                              _diseaseIds = [];
+                                              _listLv3Selected = [];
+                                              _listLv3IdSelected = [];
+                                              _listDiseaseForHeartForSearch =
+                                                  [];
+                                              _placeController.text = '';
+                                            });
 
-                                          _diseaseListBloc
-                                              .add(DiseaseEventSetInitial());
-                                          //navigate to health record detail
-                                          Navigator.of(context).pop();
-                                          hrHelper.setHealthReCordId(value);
-                                          //
-                                          await _medicalInstructionHelper
-                                              .updateCheckToCreateOrList(true);
-                                          Navigator.of(context)
-                                              .pushNamed(RoutesHDr
-                                                  .HEALTH_RECORD_DETAIL)
-                                              .then((value) =>
-                                                  Navigator.of(context).pop());
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                            _diseaseListBloc
+                                                .add(DiseaseEventSetInitial());
+                                            //navigate to health record detail
+                                            Navigator.of(context).pop();
+                                            hrHelper.setHealthReCordId(value);
+                                            //
+                                            await _medicalInstructionHelper
+                                                .updateCheckToCreateOrList(
+                                                    true);
+                                            Navigator.of(context)
+                                                .pushNamed(RoutesHDr
+                                                    .HEALTH_RECORD_DETAIL)
+                                                .then((value) =>
+                                                    Navigator.of(context)
+                                                        .pop());
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -1096,39 +1185,45 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
-          return Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: DefaultTheme.WHITE.withOpacity(0.8)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: Image.asset('assets/images/ic-failed.png'),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          '$title',
-                          style: TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              decoration: TextDecoration.none),
-                          textAlign: TextAlign.center,
+          return Material(
+            color: DefaultTheme.TRANSPARENT,
+            child: Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: DefaultTheme.WHITE.withOpacity(0.8)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Spacer(),
+                        SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: Image.asset('assets/images/ic-failed.png'),
                         ),
-                      ),
-                    ],
+                        Spacer(),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            '$title',
+                            style: TextStyle(
+                                color: DefaultTheme.BLACK,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                decoration: TextDecoration.none),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        Spacer(),
+                      ],
+                    ),
                   ),
                 ),
               ),

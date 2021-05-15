@@ -226,10 +226,8 @@ class DateValidator {
     } else if (value == 'Friday') {
       result = 'Thứ sáu';
     } else if (value.contains('Saturday')) {
-      print('go int to t7-----------------------');
       result = 'Thứ bảy';
     } else if (value == 'Sunday') {
-      print('go int to cn-----------------------');
       result = 'Chủ nhật';
     }
 

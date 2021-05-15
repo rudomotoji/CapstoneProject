@@ -182,7 +182,7 @@ class _DoctorInformation extends State<DoctorInformation>
           margin: EdgeInsets.only(left: 10, right: 10, top: 20),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(25),
-              color: DefaultTheme.GREY_BUTTON),
+              color: DefaultTheme.WHITE),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,10 +191,11 @@ class _DoctorInformation extends State<DoctorInformation>
                 padding: EdgeInsets.only(top: 20),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(left: 20),
+                    padding: EdgeInsets.only(left: 10),
                   ),
                   //avt
                   SizedBox(
@@ -206,12 +207,14 @@ class _DoctorInformation extends State<DoctorInformation>
                     ),
                   ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Container(
-                            margin: EdgeInsets.only(left: 20),
-                            width: 50,
+                            margin: EdgeInsets.only(left: 10),
+                            width: 90,
                             child: Text(
                               'Bác sĩ',
                               style: TextStyle(
@@ -220,11 +223,11 @@ class _DoctorInformation extends State<DoctorInformation>
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 10),
-                          ),
+                          // Padding(
+                          //   padding: EdgeInsets.only(left: 10),
+                          // ),
                           Container(
-                            width: MediaQuery.of(context).size.width - (200),
+                            width: MediaQuery.of(context).size.width - (230),
                             child: Text(
                               '${state.dto.fullName}',
                               overflow: TextOverflow.ellipsis,
@@ -232,38 +235,42 @@ class _DoctorInformation extends State<DoctorInformation>
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 color: Colors.black,
-                                fontSize: 15,
+                                fontSize: 18,
                               ),
                             ),
                           ),
                         ],
                       ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 5),
+                      ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Container(
-                            margin: EdgeInsets.only(left: 20),
-                            width: 50,
+                            margin: EdgeInsets.only(left: 10),
+                            width: 90,
                             child: Text(
-                              (state.dto.email != null) ? 'Email' : '',
+                              (state.dto.phone != null) ? 'Điện thoại' : '',
                               style: TextStyle(
                                 color: DefaultTheme.GREY_TEXT,
                                 fontSize: 15,
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 10),
-                          ),
+                          // Padding(
+                          //   padding: EdgeInsets.only(left: 10),
+                          // ),
                           Container(
-                            width: MediaQuery.of(context).size.width - (200),
+                            width: MediaQuery.of(context).size.width - (230),
                             child: Text(
                               (state.dto.email != null)
-                                  ? '${state.dto.email}'
+                                  ? '${_arrayValidator.parsePhoneToView(state.dto.phone)}'
                                   : '',
                               overflow: TextOverflow.ellipsis,
                               maxLines: 3,
                               style: TextStyle(
-                                color: Colors.black,
+                                color: DefaultTheme.SUCCESS_STATUS,
                                 fontSize: 15,
                               ),
                             ),
@@ -279,43 +286,50 @@ class _DoctorInformation extends State<DoctorInformation>
 
               //
               Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: Divider(
-                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                  height: 1,
-                ),
+                padding: EdgeInsets.only(bottom: 3),
               ),
               //
               InkWell(
                 onTap: () async => await launch(
                     'tel://${_arrayValidator.parsePhoneToPhoneNo(state.dto.phone)}'),
                 child: Container(
+                    //     margin: EdgeInsets.only(left: 100),
                     height: 40,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                      color: DefaultTheme.SUCCESS_STATUS.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(50),
+                      border:
+                          Border.all(color: DefaultTheme.GREY_VIEW, width: 1),
+                      color: DefaultTheme.WHITE,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // Padding(
+                        //   padding: EdgeInsets.only(left: 20),
+                        // ),
                         SizedBox(
-                          width: 20,
-                          height: 20,
+                          width: 25,
+                          height: 25,
                           child: Image.asset('assets/images/ic-call.png'),
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 10),
                         ),
-                        Text('Gọi ngay')
+                        Text('Gọi ngay',
+                            style: TextStyle(
+                              color: DefaultTheme.BLACK,
+                              fontSize: 16,
+                            )),
+                        // Spacer(),
+                        // Padding(
+                        //   padding: EdgeInsets.only(left: 20),
+                        // ),
                       ],
                     )),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: 20),
-                child: Divider(
-                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                  height: 1,
-                ),
               ),
               Row(
                 children: [

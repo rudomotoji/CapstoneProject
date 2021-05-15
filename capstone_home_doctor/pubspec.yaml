@@ -204,7 +204,13 @@ flutter:
     - assets/images/ic-move-next.png
     - assets/images/ic-private.png
     - assets/images/ic-otp.png
-    - assets/images/ic-register.png
+    - assets/images/ad-appointment.png
+    - assets/images/ad-connect.png
+    - assets/images/ad-contract.png
+    - assets/images/ad-hr.png
+    - assets/images/ad-med-ins.png
+    - assets/images/ad-medicine.png
+    - assets/images/ad-vital-sign.png
 
 
   

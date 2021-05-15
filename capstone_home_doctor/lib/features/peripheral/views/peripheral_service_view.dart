@@ -572,7 +572,7 @@ class _PeripheralService extends State<PeripheralService>
                   width: 250,
                   height: 185,
                   decoration: BoxDecoration(
-                    color: DefaultTheme.WHITE.withOpacity(0.7),
+                    color: DefaultTheme.DARK_VIEW2.withOpacity(0.7),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -584,7 +584,7 @@ class _PeripheralService extends State<PeripheralService>
                           'Huỷ ghép nối',
                           style: TextStyle(
                             decoration: TextDecoration.none,
-                            color: DefaultTheme.BLACK,
+                            color: DefaultTheme.WHITE,
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
                           ),
@@ -600,7 +600,7 @@ class _PeripheralService extends State<PeripheralService>
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               decoration: TextDecoration.none,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: DefaultTheme.WHITE,
                               fontWeight: FontWeight.w400,
                               fontSize: 13,
                             ),

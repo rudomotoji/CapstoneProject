@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
 import 'package:capstone_home_doctor/commons/routes/routes.dart';
@@ -91,7 +92,7 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
 
   Future _scanBluetoothDevice() async {
     listScanned = [];
-    await _peripheralBloc.add(PeripheralEventScan());
+    _peripheralBloc.add(PeripheralEventScan());
   }
 
   Widget _availableBluetooth() {
@@ -169,38 +170,7 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                                         image: Image.asset(_getImageDevice(
                                             listScanned[index].device.name)),
                                         onTap: () async {
-                                          print(
-                                              'id device when tap: ${listScanned[index].device.name}');
-                                          print('TAPPED');
-                                          //connect, update SharePreferenced, navigate
-                                          _peripheralBloc.add(
-                                              PeripheralEventConnectFirstTime(
-                                                  scanResult:
-                                                      listScanned[index]));
-                                          Navigator.of(context).pushNamed(
-                                              RoutesHDr.PERIPHERAL_SERVICE);
-                                          await _authenticateHelper
-                                              .getPatientId()
-                                              .then((value) async {
-                                            _patientId = value;
-                                            print('_patient id? ${_patientId}');
-
-                                            //R
-                                            if (_patientId != 0) {
-                                              await _peripheralSeverRepository
-                                                  .updatePeripheralConnect(
-                                                      _patientId, true)
-                                                  .then(
-                                                      (isConnectedSendingServer) async {
-                                                print(
-                                                    'is connected with sever? ${isConnectedSendingServer}');
-                                                if (isConnectedSendingServer) {
-                                                  print(
-                                                      'update connected with server');
-                                                }
-                                              });
-                                            }
-                                          });
+                                          _showConfirm(listScanned[index]);
                                         },
                                       );
                                       // Container(
@@ -216,7 +186,14 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                                     },
                                   ),
                                 )
-                              : Container();
+                              : Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.45,
+                                  width: MediaQuery.of(context).size.width - 40,
+                                  child: Center(
+                                    child: Text(
+                                        'Không tìm thấy thiết bị nào. Vui lòng quét lại'),
+                                  ));
                         }
                         return Container();
                       },
@@ -301,6 +278,131 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
       //     }
       //   },
       // ),
+    );
+  }
+
+  _showConfirm(ScanResult scanResult) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return Material(
+          color: DefaultTheme.TRANSPARENT,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                child: Container(
+                  padding: EdgeInsets.only(left: 10, top: 10, right: 10),
+                  width: 250,
+                  height: 185,
+                  decoration: BoxDecoration(
+                    color: DefaultTheme.WHITE.withOpacity(0.7),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.only(bottom: 10, top: 10),
+                        child: Text(
+                          'Xác nhận kết nối',
+                          style: TextStyle(
+                            decoration: TextDecoration.none,
+                            color: DefaultTheme.BLACK,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+                      //Spacer(),
+                      Container(
+                        padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'Hãy đảm bảo rằng thiết bị đã được kết nối với điện thoại bạn trước đó.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.BLACK,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Spacer(),
+                      Divider(
+                        height: 1,
+                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FlatButton(
+                            height: 40,
+                            minWidth: 250 / 2 - 10.5,
+                            child: Text('Huỷ',
+                                style: TextStyle(
+                                    color: DefaultTheme.RED_CALENDAR)),
+                            onPressed: () async {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          Container(
+                            height: 40,
+                            width: 0.5,
+                            color: DefaultTheme.GREY_TOP_TAB_BAR,
+                          ),
+                          FlatButton(
+                            height: 40,
+                            minWidth: 250 / 2 - 10.5,
+                            child: Text('Kết nối',
+                                style:
+                                    TextStyle(color: DefaultTheme.BLUE_TEXT)),
+                            onPressed: () async {
+                              print(
+                                  'id device when tap: ${scanResult.device.name}');
+                              print('TAPPED');
+                              //connect, update SharePreferenced, navigate
+                              _peripheralBloc.add(
+                                  PeripheralEventConnectFirstTime(
+                                      scanResult: scanResult));
+                              Navigator.of(context)
+                                  .pushNamed(RoutesHDr.PERIPHERAL_SERVICE);
+                              await _authenticateHelper
+                                  .getPatientId()
+                                  .then((value) async {
+                                _patientId = value;
+                                print('_patient id? ${_patientId}');
+
+                                //R
+                                if (_patientId != 0) {
+                                  await _peripheralSeverRepository
+                                      .updatePeripheralConnect(_patientId, true)
+                                      .then((isConnectedSendingServer) async {
+                                    print(
+                                        'is connected with sever? ${isConnectedSendingServer}');
+                                    if (isConnectedSendingServer) {
+                                      print('update connected with server');
+                                    }
+                                  });
+                                }
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 

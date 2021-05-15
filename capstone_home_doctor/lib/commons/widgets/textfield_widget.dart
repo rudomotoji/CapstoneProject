@@ -266,6 +266,7 @@ class _TextFieldHDr extends State<TextFieldHDr> with WidgetsBindingObserver {
         break;
       case TFStyle.TEXT_AREA:
         return Material(
+          color: DefaultTheme.TRANSPARENT,
           child: Row(
             children: [
               if (_isMultipleInRow == false)

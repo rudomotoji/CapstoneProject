@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:capstone_home_doctor/features/advertisement/repositories/advertisement_repository.dart';
 import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
+import 'package:capstone_home_doctor/models/advertisement_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_push_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
@@ -92,6 +94,8 @@ final BackgroundRepository _backgroundRepository =
 final VitalSignServerRepository _vitalSignServerRepository =
     VitalSignServerRepository(httpClient: http.Client());
 final TimeSystemHelper _timeSystemHelper = TimeSystemHelper();
+final AdvertisementRepository _advertisementRepository =
+    AdvertisementRepository(httpClient: http.Client());
 //
 List<int> listTimeMeasure = [3, 5, 10, 15, 30];
 //
@@ -124,6 +128,7 @@ class _DashboardState extends State<DashboardPage>
   List<ContractListDTO> listContract = [];
   bool checkPeopleStatusLocal = false;
 
+  List<AdvertisementDTO> listAd = [];
   //measure kicked on
   bool isMeasureOn = false;
   String timeChosen = '';
@@ -214,6 +219,15 @@ class _DashboardState extends State<DashboardPage>
       isMeasureOn = isMeasureOn;
       isMeasureDone = isMeasureDone;
       countDurationM = countDurationM;
+    });
+  }
+
+  _getListAd() async {
+    await _advertisementRepository.getListAd().then((list) {
+      if (!mounted) return;
+      setState(() {
+        listAd = list;
+      });
     });
   }
 
@@ -331,6 +345,7 @@ class _DashboardState extends State<DashboardPage>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+    _getListAd();
     _getTimeSystem();
     _getPatientId();
     _getMeasureCounting();
@@ -634,7 +649,7 @@ class _DashboardState extends State<DashboardPage>
               ? _buildReminder()
               : Container(),
           _showMedicineSchedule(),
-          _buildShorcut(),
+
           //  _buildVitalSign(),
           //
           //
@@ -646,7 +661,7 @@ class _DashboardState extends State<DashboardPage>
                   : Container(),
           _showLastHeartRateMeasure(),
           _showLastBloodPressureMeasure(),
-
+          _buildShorcut(),
           Padding(
             padding: EdgeInsets.only(bottom: 50),
           ),
@@ -806,33 +821,7 @@ class _DashboardState extends State<DashboardPage>
           ),
         ),
         //
-        CarouselSlider(
-          options: CarouselOptions(
-            height: 200,
-            autoPlay: true,
-            aspectRatio: 2.0,
-            autoPlayInterval: Duration(seconds: 5),
-            enlargeCenterPage: true,
-            autoPlayCurve: Curves.easeIn,
-          ),
-          items: [1, 2, 3, 4, 5].map((i) {
-            return Builder(
-              builder: (BuildContext context) {
-                return Container(
-                    width: MediaQuery.of(context).size.width,
-                    // margin: EdgeInsets.symmetric(horizontal: 2.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: DefaultTheme.GREY_TEXT, width: 1)),
-                    child: Text(
-                      'text $i',
-                      style: TextStyle(fontSize: 16.0),
-                    ));
-              },
-            );
-          }).toList(),
-        ),
-//
+
         Divider(color: DefaultTheme.GREY_TOP_TAB_BAR, height: 1),
         Container(
           width: MediaQuery.of(context).size.width,
@@ -1080,6 +1069,59 @@ class _DashboardState extends State<DashboardPage>
           ),
         ),
         Divider(color: DefaultTheme.GREY_TOP_TAB_BAR, height: 1),
+        CarouselSlider(
+          options: CarouselOptions(
+            height: 180,
+            autoPlay: true,
+            viewportFraction: 0.6,
+            aspectRatio: 2.0,
+            autoPlayInterval: Duration(seconds: 5),
+            enlargeCenterPage: false,
+            autoPlayCurve: Curves.easeIn,
+          ),
+          items: listAd.map((i) {
+            return Builder(
+              builder: (BuildContext context) {
+                return Container(
+                    padding: EdgeInsets.only(left: 10, right: 10),
+                    margin: EdgeInsets.only(left: 10),
+                    width: 280,
+                    height: 180,
+                    // margin: EdgeInsets.symmetric(horizontal: 2.0),
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('${i.adImage}'),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 40),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '${i.title}',
+                            style: TextStyle(
+                                fontSize: 16.0,
+                                color: DefaultTheme.WHITE,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        Text(
+                          '${i.description}',
+                          style: TextStyle(
+                              fontSize: 12, color: DefaultTheme.WHITE),
+                        ),
+                      ],
+                    ));
+              },
+            );
+          }).toList(),
+        ),
+//
       ],
     );
   }
@@ -3739,15 +3781,15 @@ class _DashboardState extends State<DashboardPage>
                                                 child: Text(
                                                   (isMeasureDone &&
                                                           countDurationM > 0)
-                                                      ? 'Trạng thái: Đo hoàn tất'
+                                                      ? 'Đo hoàn tất'
                                                       : (!isMeasureDone &&
                                                               countDurationM ==
                                                                   0)
-                                                          ? 'Trạng thái: Đang đo'
+                                                          ? 'Đang đo'
                                                           : (!isMeasureDone &&
                                                                   countDurationM >
                                                                       0)
-                                                              ? 'Trạng thái: Đang đo ${countDurationM} phút'
+                                                              ? 'Đang đo ${countDurationM} phút'
                                                               : '',
                                                   style: TextStyle(
                                                       color:

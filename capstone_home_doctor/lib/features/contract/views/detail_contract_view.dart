@@ -3805,6 +3805,7 @@ class _DetailContractView extends State<DetailContractView>
                                                                                   ),
                                                                                 ),
                                                                               ).then((value) {
+                                                                                print('----------VALUE VNPAY:$value');
                                                                                 _paymentHelper.isPaymentCheck().then((isChecked) {
                                                                                   if (isChecked) {
                                                                                     _contractUpdateBloc.add(ContractUpdateEventUpdate(dto: dto));
