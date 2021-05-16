@@ -140,34 +140,41 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
           _placeController.text = value.place;
           _noteController.text = value.description;
           List<Diseases> listDiseases = value.diseases;
-          // var listDiseases = value.diseases.map((dto) {
-          // return Disease.fromJson(dto);
-          // }).toList();
+          // if (value.diseases.first.diseaseId.contains('-')) {
+          //   //bệnh khác
+          //   setState(() {
+          //     _valueTypeIns = _listType.last;
+          //     _listDiseaseSelected = listDiseases.map((dto) {
+          //       _diseaseIds.add(dto.diseaseId);
+          //       return new DiseaseDTO(
+          //           diseaseId: dto.diseaseId, name: dto.diseaseName);
+          //     }).toList();
+          //   });
+          //   _diseaseListBloc.add(DiseaseListEventSetStatus());
+          // } else {
+          //   //bệnh tim
+          //   setState(() {
+          //     _valueTypeIns = _listType.first;
+          //     _listLv3Selected = listDiseases.map((dto) {
+          //       _listLv3IdSelected.add(dto.diseaseId);
+          //       return new DiseaseLeverThrees(
+          //           diseaseLevelThreeId: dto.diseaseId,
+          //           diseaseLevelThreeName: dto.diseaseName);
+          //     }).toList();
+          //   });
+          //   _diseaseListBloc.add(DiseaseEventGetHealthList());
+          // }
 
-          if (value.diseases.first.diseaseId.contains('-')) {
-            //bệnh khác
-            setState(() {
-              _valueTypeIns = _listType.last;
-              _listDiseaseSelected = listDiseases.map((dto) {
-                _diseaseIds.add(dto.diseaseId);
-                return new DiseaseDTO(
-                    diseaseId: dto.diseaseId, name: dto.diseaseName);
-              }).toList();
-            });
-            _diseaseListBloc.add(DiseaseListEventSetStatus());
-          } else {
-            //bệnh tim
-            setState(() {
-              _valueTypeIns = _listType.first;
-              _listLv3Selected = listDiseases.map((dto) {
-                _listLv3IdSelected.add(dto.diseaseId);
-                return new DiseaseLeverThrees(
-                    diseaseLevelThreeId: dto.diseaseId,
-                    diseaseLevelThreeName: dto.diseaseName);
-              }).toList();
-            });
-            _diseaseListBloc.add(DiseaseEventGetHealthList());
-          }
+          setState(() {
+            _valueTypeIns = _listType.first;
+            _listLv3Selected = listDiseases.map((dto) {
+              _listLv3IdSelected.add(dto.diseaseId);
+              return new DiseaseLeverThrees(
+                  diseaseLevelThreeId: dto.diseaseId,
+                  diseaseLevelThreeName: dto.diseaseName);
+            }).toList();
+          });
+          _diseaseListBloc.add(DiseaseEventGetHealthList());
           setState(() {
             _healthRecordDTO = value;
           });
@@ -227,12 +234,13 @@ class _UpdateHealthRecord extends State<UpdateHealthRecord>
                     // _selectTypeIns(),
                     // _checkSelectIns(),
                     //
+                    _selectBoxInsHeart(),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
                         padding: EdgeInsets.only(top: 5, left: 10, right: 20),
                         child: Text(
-                          'Chọn loại bệnh chính xác được ghi trên hồ sơ bệnh án của bạn',
+                          'Đây là danh sách bệnh lý của bạn',
                           style: TextStyle(
                               color: DefaultTheme.GREY_TEXT,
                               fontSize: 15,

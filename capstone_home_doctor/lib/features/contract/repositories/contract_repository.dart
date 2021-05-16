@@ -108,16 +108,35 @@ class ContractRepository extends BaseApiClient {
   }
 
   //update status contract
-  Future<bool> changeStatusContract(ContractUpdateDTO dto) async {
-    //
-    final url = '/Contracts/${dto.contractId}';
+  // Future<bool> changeStatusContract(ContractUpdateDTO dto) async {
+  //   //
+  //   final url = '/Contracts/${dto.contractId}';
+  //   try {
+  //     //
+  //     print('this is from API: $url');
+  //     print('?????????? ${dto.status}');
+  //     final request = await putApi(url, null, dto.toJson());
+  //     print('${request.body}');
+  //     if (request.statusCode == 204) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     print('ERROR AT UPDATE STATUS CONTRACT API: ${e}');
+  //   }
+  // }
+
+  Future<bool> changeStatusContract(String urlRespone, int contractId) async {
+    final url = '/Payments/CheckPaymentStatus';
+
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['contractId'] = contractId;
+    data['urlRespone'] = urlRespone;
+
     try {
-      //
-      print('this is from API: $url');
-      print('?????????? ${dto.status}');
-      final request = await putApi(url, null, dto.toJson());
-      print('${request.body}');
-      if (request.statusCode == 204) {
+      final request = await postApi(url, null, data);
+      if (request.statusCode == 201) {
         return true;
       } else {
         return false;
