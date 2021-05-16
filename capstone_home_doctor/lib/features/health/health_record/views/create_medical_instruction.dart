@@ -10,6 +10,9 @@ import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
 import 'package:capstone_home_doctor/commons/widgets/multiple_select_tag/multi_select_chip_display.dart';
 import 'package:capstone_home_doctor/commons/widgets/multiple_select_tag/multi_select_item.dart';
 import 'package:capstone_home_doctor/commons/widgets/textfield_widget.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/disease_list_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/events/disease_list_event.dart';
+import 'package:capstone_home_doctor/features/contract/states/disease_list_state.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_create_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/blocs/med_ins_type_list_bloc.dart';
 import 'package:capstone_home_doctor/features/health/health_record/events/med_ins_create_event.dart';
@@ -26,6 +29,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:expandable_group/expandable_group_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 // import 'package:diff_image/diff_image.dart';
@@ -55,7 +59,7 @@ class _CreateMedicalInstructionViewState
   List<MedicalInstructionTypeDTO> _listMedInsType = [];
   double percenntCompare = 100;
   var f = NumberFormat("###.0#", "en_US");
-
+  var _diseaseIDController = TextEditingController();
   //
   List<String> listImage = [];
   // List<String> listImage64Bit = [];
@@ -64,6 +68,7 @@ class _CreateMedicalInstructionViewState
   List<Disease> listDisease = [];
   List<Disease> listDiseaseSelected = [];
   List<String> _diseaseIds = [];
+  List<String> _diseaseViews = [];
   DateValidator _dateValidator = DateValidator();
 
   var _dianoseController = TextEditingController();
@@ -79,6 +84,15 @@ class _CreateMedicalInstructionViewState
   // MedInsScanTextBloc _medicalScanText;
   MedInsTypeListBloc _medInsTypeListBloc;
 
+  // List<String> _diseaseIds = [];
+  List<DiseaseLeverThrees> _listLv3Selected = [];
+  //
+  DiseaseListBloc _diseaseListBloc;
+
+  //list disease
+  List<DiseaseContractDTO> _listDiseaseForHeart = [];
+  List<DiseaseContractDTO> _listDiseaseForHeartForSearch = [];
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
@@ -86,6 +100,8 @@ class _CreateMedicalInstructionViewState
     _medInsCreateBloc = BlocProvider.of(context);
     // _medicalScanText = BlocProvider.of(context);
     _medInsTypeListBloc = BlocProvider.of(context);
+    _diseaseListBloc = BlocProvider.of(context);
+    _diseaseListBloc.add(DiseaseListEventSetStatus());
     getDataFromJSONFile();
     _getPatientId();
     getHRId();
@@ -121,6 +137,7 @@ class _CreateMedicalInstructionViewState
   void dispose() {
     // TODO: implement dispose
     _medInsCreateBloc.add(MedInsGetTextEventInitial());
+    _diseaseListBloc.add(DiseaseEventSetInitial());
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -545,6 +562,7 @@ class _CreateMedicalInstructionViewState
                   style: BtnStyle.BUTTON_BLACK,
                   label: 'Thêm',
                   onTap: () async {
+                    print('---disease Ids when submit: $_diseaseIds');
                     if (selectType == null) {
                       alertError('Hãy chọn loại bệnh lý');
                     } else if (listImage.length <= 0
@@ -561,6 +579,7 @@ class _CreateMedicalInstructionViewState
                       alertError('Vui lòng chọn thêm triệu chứng của bệnh');
                     } else if (_patientId != 0) {
                       MedicalInstructionDTO medInsDTO;
+
                       if (selectType.status.contains('SCOPE')) {
                         if (
                             // _diseaseIds.length == listDisease.length ||
@@ -817,25 +836,24 @@ class _CreateMedicalInstructionViewState
     } else if (selectType.status.contains('SCOPE')) {
       return Container(
         width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.only(left: 20, right: 20),
+        // padding: EdgeInsets.only(left: 20, right: 20),
         margin: EdgeInsets.only(top: 10),
-        decoration: BoxDecoration(
-            color: DefaultTheme.GREY_VIEW,
-            borderRadius: BorderRadius.circular(6)),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),
         child: Column(
           children: [
             InkWell(
               child: Row(
                 children: [
                   Container(
-                    height: 25,
-                    width: MediaQuery.of(context).size.width - 90,
+                    color: DefaultTheme.GREY_VIEW,
+                    height: 50,
+                    width: MediaQuery.of(context).size.width - 40,
                     margin: EdgeInsets.only(top: 15, bottom: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Chọn bệnh lý (*)',
+                          'Chọn bệnh lý *',
                           style: TextStyle(
                             color: DefaultTheme.BLACK,
                             fontWeight: FontWeight.w500,
@@ -843,8 +861,8 @@ class _CreateMedicalInstructionViewState
                           ),
                         ),
                         SizedBox(
-                          width: 30,
-                          height: 30,
+                          width: 20,
+                          height: 20,
                           child: Image.asset('assets/images/ic-dropdown.png'),
                         ),
                       ],
@@ -856,7 +874,12 @@ class _CreateMedicalInstructionViewState
                 _getListDisease();
               },
             ),
-            _buildInheritedChipDisplayForDisease()
+
+            //
+            (listDiseaseSelected.length == 0 || listDiseaseSelected == null)
+                ? Container()
+                : Container(child: Text('Bệnh lý đã chọn')),
+            _buildSelectedDisease(),
           ],
         ),
       );
@@ -865,29 +888,49 @@ class _CreateMedicalInstructionViewState
     }
   }
 
-  Widget _buildInheritedChipDisplayForDisease() {
-    final _itemsView = listDiseaseSelected
-        .map((disease) => MultiSelectItem<Disease>(disease, disease.toString()))
-        .toList();
-
-    List<MultiSelectItem<Disease>> chipDisplayItems = [];
-    chipDisplayItems = listDiseaseSelected
-        .map((e) => _itemsView.firstWhere((element) => e == element.value,
-            orElse: () => null))
-        .toList();
-
-    chipDisplayItems.removeWhere((element) => element == null);
-    return MultiSelectChipDisplay<Disease>(
-      items: chipDisplayItems,
-      onTap: (item) {},
-      chipColor: DefaultTheme.BLUE_REFERENCE,
-      textStyle: TextStyle(
-        color: DefaultTheme.BLACK,
-      ),
-    );
+  _buildSelectedDisease() {
+    return (_diseaseViews.length == 0 || _diseaseViews == null)
+        ? Container()
+        : ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            //
+            itemCount: _diseaseViews.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.only(bottom: 5),
+                child: Row(children: [
+                  Container(
+                    width: 50,
+                    child: Text(
+                      '${_diseaseViews[index].split(':')[0]}:',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width - 130,
+                    child: Text('${_diseaseViews[index].split(':')[1]}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        )),
+                  ),
+                ]),
+              );
+            },
+          );
   }
 
   _getListDisease() {
+    int _tabIndex = 0;
     return showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -900,7 +943,7 @@ class _CreateMedicalInstructionViewState
               child: Stack(
                 children: <Widget>[
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.6,
+                    height: MediaQuery.of(context).size.height * 0.95,
                     padding: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.05),
                     color: DefaultTheme.TRANSPARENT,
@@ -932,140 +975,449 @@ class _CreateMedicalInstructionViewState
                                         'Danh sách bệnh lý',
                                         style: TextStyle(
                                             color: DefaultTheme.BLACK,
-                                            fontSize: 22,
+                                            fontSize: 25,
                                             fontWeight: FontWeight.w600),
                                       ),
-                                      // Text(
-                                      //   'Hãy chọn 1 bệnh lý trong danh sách này',
-                                      //   style: TextStyle(
-                                      //       color: DefaultTheme.BLACK,
-                                      //       fontSize: 16,
-                                      //       fontWeight: FontWeight.w600),
-                                      // ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 20),
-                                      ),
-                                      Expanded(
-                                        child: ListView.builder(
-                                          itemCount: listDisease.length,
-                                          itemBuilder: (context, index) {
-                                            bool checkTemp = false;
-                                            var e = listDisease[index];
-
-                                            if (_diseaseIds
-                                                .contains(e.diseaseId)) {
-                                              checkTemp = true;
-                                            }
-                                            return ListTile(
-                                              title: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Container(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width -
-                                                            100,
-                                                        child: Text(
-                                                          '${e.diseaseId} - ${e.diseaseName}',
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 3,
-                                                          style: TextStyle(
+                                      Container(
+                                          margin: EdgeInsets.only(
+                                              top: 10, bottom: 20),
+                                          height: 35,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: ListView(
+                                            scrollDirection: Axis.horizontal,
+                                            children: [
+                                              //
+                                              InkWell(
+                                                onTap: () {
+                                                  setModalState(() {
+                                                    _tabIndex = 0;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.only(
+                                                    left: 15,
+                                                    right: 15,
+                                                  ),
+                                                  decoration: (_tabIndex == 0)
+                                                      ? BoxDecoration(
+                                                          color: DefaultTheme
+                                                              .GREY_TOP_TAB_BAR,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(30),
+                                                        )
+                                                      : BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 1,
                                                               color: DefaultTheme
-                                                                  .BLUE_REFERENCE,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500),
+                                                                  .GREY_TOP_TAB_BAR),
+                                                          color: DefaultTheme
+                                                              .WHITE,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(30),
                                                         ),
-                                                      ),
-                                                      Spacer(),
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(6),
-                                                        child: Container(
-                                                          width: 20,
-                                                          height: 20,
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5)),
-                                                          child: Checkbox(
-                                                            materialTapTargetSize:
-                                                                MaterialTapTargetSize
-                                                                    .padded,
-                                                            checkColor:
-                                                                DefaultTheme
-                                                                    .GRADIENT_1,
-                                                            activeColor:
-                                                                DefaultTheme
-                                                                    .GREY_VIEW,
-                                                            hoverColor:
-                                                                DefaultTheme
-                                                                    .GREY_VIEW,
-                                                            value: checkTemp,
-                                                            onChanged: (_) {
-                                                              setModalState(
-                                                                () {
-                                                                  checkTemp =
-                                                                      !checkTemp;
+                                                  child: Center(
+                                                    child: Text('Trong hồ sơ',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                (_tabIndex == 0)
+                                                                    ? FontWeight
+                                                                        .w500
+                                                                    : FontWeight
+                                                                        .normal,
+                                                            color: DefaultTheme
+                                                                .BLACK,
+                                                            fontSize:
+                                                                (_tabIndex == 0)
+                                                                    ? 17
+                                                                    : 16),
+                                                        textAlign:
+                                                            TextAlign.center),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 10)),
+                                              InkWell(
+                                                onTap: () {
+                                                  setModalState(() {
+                                                    _tabIndex = 1;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  padding: EdgeInsets.only(
+                                                    left: 15,
+                                                    right: 15,
+                                                  ),
+                                                  decoration: (_tabIndex == 1)
+                                                      ? BoxDecoration(
+                                                          color: DefaultTheme
+                                                              .GREY_TOP_TAB_BAR,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(30),
+                                                        )
+                                                      : BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 1,
+                                                              color: DefaultTheme
+                                                                  .GREY_TOP_TAB_BAR),
+                                                          color: DefaultTheme
+                                                              .WHITE,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(30),
+                                                        ),
+                                                  child: Center(
+                                                    child: Text('Khác',
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                (_tabIndex == 1)
+                                                                    ? FontWeight
+                                                                        .w500
+                                                                    : FontWeight
+                                                                        .normal,
+                                                            color: DefaultTheme
+                                                                .BLACK,
+                                                            fontSize:
+                                                                (_tabIndex == 1)
+                                                                    ? 17
+                                                                    : 16),
+                                                        textAlign:
+                                                            TextAlign.center),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )),
+                                      Expanded(
+                                          child: (_tabIndex == 0)
+                                              ? ListView.builder(
+                                                  itemCount: listDisease.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    bool checkTemp = false;
+                                                    var e = listDisease[index];
 
-                                                                  setState(
-                                                                    () {
-                                                                      if (checkTemp) {
-                                                                        _diseaseIds.removeWhere((item) =>
-                                                                            item ==
-                                                                            e.diseaseId);
+                                                    if (_diseaseIds.contains(
+                                                        e.diseaseId)) {
+                                                      checkTemp = true;
+                                                    }
+                                                    return ListTile(
+                                                      title: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: <Widget>[
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: <Widget>[
+                                                              Container(
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width -
+                                                                    100,
+                                                                child: Text(
+                                                                  '${e.diseaseId} - ${e.diseaseName}',
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  maxLines: 3,
+                                                                  style: TextStyle(
+                                                                      color: DefaultTheme
+                                                                          .BLUE_REFERENCE,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500),
+                                                                ),
+                                                              ),
+                                                              Spacer(),
+                                                              ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            6),
+                                                                child:
+                                                                    Container(
+                                                                  width: 20,
+                                                                  height: 20,
+                                                                  decoration: BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5)),
+                                                                  child:
+                                                                      Checkbox(
+                                                                    materialTapTargetSize:
+                                                                        MaterialTapTargetSize
+                                                                            .padded,
+                                                                    checkColor:
+                                                                        DefaultTheme
+                                                                            .GRADIENT_1,
+                                                                    activeColor:
+                                                                        DefaultTheme
+                                                                            .GREY_VIEW,
+                                                                    hoverColor:
+                                                                        DefaultTheme
+                                                                            .GREY_VIEW,
+                                                                    value:
+                                                                        checkTemp,
+                                                                    onChanged:
+                                                                        (_) {
+                                                                      setModalState(
+                                                                        () {
+                                                                          checkTemp =
+                                                                              !checkTemp;
 
-                                                                        // _diseaseIds
-                                                                        //     .clear();
-                                                                        _diseaseIds
-                                                                            .add(e.diseaseId);
+                                                                          setState(
+                                                                            () {
+                                                                              if (checkTemp) {
+                                                                                _diseaseIds.removeWhere((item) => item == e.diseaseId);
+                                                                                _diseaseViews.removeWhere((item) => item.split(':')[0] == e.diseaseId);
+                                                                                // _diseaseIds
+                                                                                //     .clear();
+                                                                                _diseaseIds.add(e.diseaseId);
+                                                                                _diseaseViews.add(e.diseaseId + ':' + e.diseaseName);
 
-                                                                        // listDiseaseSelected.removeWhere((item) =>
-                                                                        //     item.diseaseId ==
-                                                                        //     e.diseaseId);
-                                                                        //
-                                                                        // listDiseaseSelected
-                                                                        //     .clear();
-                                                                        listDiseaseSelected
-                                                                            .add(e);
-                                                                      } else {
-                                                                        _diseaseIds.removeWhere((item) =>
-                                                                            item ==
-                                                                            e.diseaseId);
-                                                                        listDiseaseSelected.removeWhere((item) =>
-                                                                            item.diseaseId ==
-                                                                            e.diseaseId);
-                                                                      }
+                                                                                // listDiseaseSelected.removeWhere((item) =>
+                                                                                //     item.diseaseId ==
+                                                                                //     e.diseaseId);
+                                                                                //
+                                                                                // listDiseaseSelected
+                                                                                //     .clear();
+                                                                                listDiseaseSelected.add(e);
+                                                                              } else {
+                                                                                _diseaseIds.removeWhere((item) => item == e.diseaseId);
+                                                                                _diseaseViews.removeWhere((item) => item.split(':')[0] == e.diseaseId);
+                                                                                listDiseaseSelected.removeWhere((item) => item.diseaseId == e.diseaseId);
+                                                                              }
+                                                                            },
+                                                                          );
+                                                                        },
+                                                                      );
                                                                     },
-                                                                  );
-                                                                },
-                                                              );
-                                                            },
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              : Container(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.5,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  child: BlocBuilder<
+                                                          DiseaseListBloc,
+                                                          DiseaseListState>(
+                                                      builder:
+                                                          (context, state) {
+                                                    if (state
+                                                        is DiseaseListStateLoading) {
+                                                      return Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: 20,
+                                                            right: 20),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6),
+                                                            color: DefaultTheme
+                                                                .GREY_BUTTON),
+                                                        child: Center(
+                                                          child: SizedBox(
+                                                            width: 30,
+                                                            height: 30,
+                                                            child: Image.asset(
+                                                                'assets/images/loading.gif'),
                                                           ),
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
+                                                      );
+                                                    }
+                                                    if (state
+                                                        is DiseaseListStateFailure) {
+                                                      return Container(
+                                                        margin: EdgeInsets.only(
+                                                            left: 20,
+                                                            right: 20,
+                                                            bottom: 10,
+                                                            top: 10),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5),
+                                                            color: DefaultTheme
+                                                                .GREY_BUTTON),
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  top: 10,
+                                                                  bottom: 10,
+                                                                  left: 20,
+                                                                  right: 20),
+                                                          child: Text(
+                                                              'Không có dữ liệu',
+                                                              style: TextStyle(
+                                                                color: DefaultTheme
+                                                                    .GREY_TEXT,
+                                                                fontSize: 16,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              )),
+                                                        ),
+                                                      );
+                                                    }
+                                                    if (state
+                                                        is DiseaseListStateSuccess) {
+                                                      // if (state.listDisease != null) {
+                                                      //   _listDisease = [];
+                                                      //   for (var item in state.listDisease) {
+                                                      //     String alpha = item.diseaseId[0];
+                                                      //     String strDisID = '';
+                                                      //     var listDiseasesID = item.diseaseId.split('-');
+                                                      //     int num1 = int.parse(listDiseasesID[0].substring(1));
+                                                      //     int num2 = int.parse(listDiseasesID[1].substring(1));
+                                                      //     for (var num = num1; num <= num2; num++) {
+                                                      //       strDisID += '$alpha$num';
+                                                      //     }
+                                                      //     item.strDiseaseID = strDisID;
+                                                      //     _listDisease.add(item);
+                                                      //   }
+
+                                                      //   // _listDisease = state.listDisease;
+                                                      // }
+                                                      // return _selectBoxInsOtherDissease();
+                                                      if (state.listDisease !=
+                                                          null) {
+                                                        _listDiseaseForHeart =
+                                                            state.listDisease;
+                                                      }
+                                                      return Column(
+                                                        children: [
+                                                          _searchDiseases(
+                                                              setModalState),
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 10),
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.55,
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            child: ListView(
+                                                              // shrinkWrap: true,
+                                                              // physics:
+                                                              //     NeverScrollableScrollPhysics(),
+                                                              children: (_listDiseaseForHeartForSearch
+                                                                              .length >
+                                                                          0
+                                                                      ? _listDiseaseForHeartForSearch
+                                                                      : _listDiseaseForHeart)
+                                                                  .asMap()
+                                                                  .map(
+                                                                    (key, value) =>
+                                                                        MapEntry(
+                                                                      key,
+                                                                      Container(
+                                                                        child: showItem(
+                                                                            context,
+                                                                            value,
+                                                                            setModalState),
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                  .values
+                                                                  .toList(),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+                                                    if (state
+                                                        is DiseaseHeartListStateSuccess) {
+                                                      if (state
+                                                              .listDiseaseContract !=
+                                                          null) {
+                                                        _listDiseaseForHeart = state
+                                                            .listDiseaseContract;
+                                                      }
+                                                      return Column(
+                                                        children: [
+                                                          _searchDiseases(
+                                                              setModalState),
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 10),
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.55,
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            child: ListView(
+                                                              shrinkWrap: true,
+                                                              // physics:
+                                                              //     NeverScrollableScrollPhysics(),
+                                                              children: (_listDiseaseForHeartForSearch
+                                                                              .length >
+                                                                          0
+                                                                      ? _listDiseaseForHeartForSearch
+                                                                      : _listDiseaseForHeart)
+                                                                  .asMap()
+                                                                  .map(
+                                                                    (key, value) =>
+                                                                        MapEntry(
+                                                                      key,
+                                                                      Container(
+                                                                        child: showItem(
+                                                                            context,
+                                                                            value,
+                                                                            setModalState),
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                  .values
+                                                                  .toList(),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+                                                    return Container();
+                                                  }),
+                                                )),
                                       Container(
                                         width:
                                             MediaQuery.of(context).size.width,
@@ -1107,6 +1459,239 @@ class _CreateMedicalInstructionViewState
           },
         );
       },
+    );
+  }
+
+  Widget showItem(context, diseaseContractDTO, StateSetter setModalState) {
+    return ExpandableGroup(
+      collapsedIcon: SizedBox(
+          width: 20,
+          height: 20,
+          child: Image.asset('assets/images/ic-navigator.png')),
+      expandedIcon: SizedBox(
+          width: 20,
+          height: 20,
+          child: Image.asset('assets/images/ic-down.png')),
+      isExpanded: true,
+      header: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 20,
+            height: 20,
+            child: Image.asset('assets/images/ic-add-disease.png'),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width - 122,
+            child: Text(
+              '${diseaseContractDTO.diseaseLevelTwoId}: ${diseaseContractDTO.diseaseLevelTwoName}',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+          ),
+        ],
+      ),
+      items: _buildItems(
+          context, diseaseContractDTO.diseaseLevelThrees, setModalState),
+    );
+  }
+
+  List<ListTile> _buildItems(BuildContext context,
+      List<DiseaseLeverThrees> items, StateSetter setModalState) {
+    return items.map((e) {
+      bool checkTemp = false;
+      if (_diseaseIds.contains(e.diseaseLevelThreeId)) {
+        checkTemp = true;
+      }
+
+      return ListTile(
+        title: InkWell(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width - 100,
+                    child: Text(
+                      '${e.diseaseLevelThreeId} - ${e.diseaseLevelThreeName}',
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 3,
+                      style: TextStyle(
+                          color: DefaultTheme.BLUE_REFERENCE,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Spacer(),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Checkbox(
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        checkColor: DefaultTheme.GRADIENT_1,
+                        activeColor: DefaultTheme.GREY_VIEW,
+                        hoverColor: DefaultTheme.GREY_VIEW,
+                        value: checkTemp,
+                        onChanged: (_) {
+                          bool temp = false;
+                          if (_diseaseIds.contains(e.diseaseLevelThreeId)) {
+                            temp = true;
+                          }
+
+                          setModalState(() {
+                            setState(() {
+                              if (!temp) {
+                                _diseaseIds.add(e.diseaseLevelThreeId);
+                                _diseaseViews.add(e.diseaseLevelThreeId +
+                                    ':' +
+                                    e.diseaseLevelThreeName);
+                                _listLv3Selected.add(e);
+                              } else {
+                                _diseaseIds.removeWhere(
+                                    (item) => item == e.diseaseLevelThreeId);
+                                _listLv3Selected.removeWhere((item) =>
+                                    item.diseaseLevelThreeId ==
+                                    e.diseaseLevelThreeId);
+                                _diseaseViews.removeWhere((item) =>
+                                    item.split(':')[0] ==
+                                    e.diseaseLevelThreeId);
+                              }
+                            });
+                          });
+
+                          print(_diseaseIds);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          onTap: () {
+            bool temp = false;
+            if (_diseaseIds.contains(e.diseaseLevelThreeId)) {
+              temp = true;
+            }
+
+            setModalState(() {
+              setState(() {
+                if (!temp) {
+                  _diseaseIds.add(e.diseaseLevelThreeId);
+                  _listLv3Selected.add(e);
+                } else {
+                  _diseaseIds
+                      .removeWhere((item) => item == e.diseaseLevelThreeId);
+                  _listLv3Selected.removeWhere((item) =>
+                      item.diseaseLevelThreeId == e.diseaseLevelThreeId);
+                }
+              });
+            });
+
+            print(_diseaseIds);
+          },
+        ),
+      );
+    }).toList();
+  }
+
+  List<DiseaseContractDTO> updateSearchQueryForInsurance(
+      String val, List<DiseaseContractDTO> allItems) {
+    if (val != null && val.trim().isNotEmpty) {
+      List<DiseaseContractDTO> filteredItems = [];
+      for (var item in allItems) {
+        for (var el in item.diseaseLevelThrees) {
+          if (el.strDiseaseID.toLowerCase().contains(val.toLowerCase()) &&
+              !filteredItems.contains(item)) {
+            filteredItems.add(item);
+          }
+        }
+        // if (item.diseaseLevelTwoId
+        //         .toLowerCase()
+        //         .contains(val[0].toLowerCase()) &&
+        //     !filteredItems.contains(item)) {
+        //   var listDiseases = item.diseaseLevelTwoId.split('-');
+        //   if (listDiseases.length > 1) {
+        //     int num1 = int.parse(listDiseases[0].substring(1));
+        //     int num2 = int.parse(listDiseases[1].substring(1));
+        //     if (val.substring(1) != '') {
+        //       if (num1 <= int.parse(val.substring(1)) &&
+        //           int.parse(val.substring(1)) <= num2) {
+        //         filteredItems.add(item);
+        //       }
+        //     } else {
+        //       if (item.diseaseLevelTwoId
+        //           .toLowerCase()
+        //           .contains(val.toLowerCase())) {
+        //         filteredItems.add(item);
+        //       }
+        //     }
+        //   } else {
+        //     if (item.diseaseLevelTwoId
+        //         .toLowerCase()
+        //         .contains(val.toLowerCase())) {
+        //       filteredItems.add(item);
+        //     }
+        //   }
+        // } else {
+        //   for (var itemLV3 in item.diseaseLevelThrees) {
+        //     if (itemLV3.diseaseLevelThreeName
+        //             .toLowerCase()
+        //             .contains(val.toLowerCase()) &&
+        //         !filteredItems.contains(item)) {
+        //       filteredItems.add(item);
+        //     }
+        //   }
+        // }
+      }
+      return filteredItems;
+    } else {
+      return allItems;
+    }
+  }
+
+  Widget _searchDiseases(StateSetter setModalState) {
+    return Container(
+      padding: EdgeInsets.only(left: 10, top: 10),
+      child: TextField(
+        controller: _diseaseIDController,
+        autofocus: false,
+        decoration: InputDecoration(
+          hintText: "Tìm kiếm mã bệnh",
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Theme.of(context).primaryColor),
+          ),
+        ),
+        onChanged: (val) {
+          // const duration = Duration(
+          //     milliseconds:
+          //         1000); // set the duration that you want call search() after that.
+          // if (searchOnStoppedTyping != null) {
+          //   setModalState(() => searchOnStoppedTyping.cancel()); // clear timer
+          // }
+          // setModalState(() =>
+          //     searchOnStoppedTyping = new Timer(duration, () => print(val)));
+
+          setModalState(() {
+            setState(() {
+              _listDiseaseForHeartForSearch =
+                  updateSearchQueryForInsurance(val, _listDiseaseForHeart);
+            });
+          });
+        },
+      ),
     );
   }
 

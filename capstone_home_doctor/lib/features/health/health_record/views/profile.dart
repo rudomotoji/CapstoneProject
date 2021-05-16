@@ -208,14 +208,16 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
                       borderRadius: BorderRadius.circular(30),
                     ),
               child: Center(
-                child: Text('Từ hệ thống',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontWeight: (_listIndex == 1)
-                            ? FontWeight.w500
-                            : FontWeight.normal,
-                        color: DefaultTheme.BLACK,
-                        fontSize: 16)),
+                child: Text(
+                  'Từ hệ thống',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontWeight: (_listIndex == 1)
+                          ? FontWeight.w500
+                          : FontWeight.normal,
+                      color: DefaultTheme.BLACK,
+                      fontSize: 16),
+                ),
               ),
             ),
           ),

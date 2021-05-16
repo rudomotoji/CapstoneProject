@@ -1267,14 +1267,39 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                     child: Container(
                       width: 20,
                       height: 20,
-                      decoration:
-                          BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                       child: Checkbox(
                         materialTapTargetSize: MaterialTapTargetSize.padded,
                         checkColor: DefaultTheme.GRADIENT_1,
                         activeColor: DefaultTheme.GREY_VIEW,
                         hoverColor: DefaultTheme.GREY_VIEW,
                         value: checkTemp,
+                        onChanged: (_) {
+                          bool temp = false;
+                          if (_listLv3IdSelected
+                              .contains(e.diseaseLevelThreeId)) {
+                            temp = true;
+                          }
+
+                          setModalState(() {
+                            setState(() {
+                              if (!temp) {
+                                _listLv3IdSelected.add(e.diseaseLevelThreeId);
+                                _listLv3Selected.add(e);
+                              } else {
+                                _listLv3IdSelected.removeWhere(
+                                    (item) => item == e.diseaseLevelThreeId);
+                                _listLv3Selected.removeWhere((item) =>
+                                    item.diseaseLevelThreeId ==
+                                    e.diseaseLevelThreeId);
+                              }
+                            });
+                          });
+
+                          print(_listLv3IdSelected);
+                        },
                       ),
                     ),
                   ),
