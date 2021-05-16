@@ -8,10 +8,12 @@ abstract class ContractUpdateEvent extends Equatable {
 
 class ContractUpdateEventUpdate extends ContractUpdateEvent {
   final ContractUpdateDTO dto;
+  final String urlRespone;
+  final int contractId;
 
-  const ContractUpdateEventUpdate({@required this.dto}) : assert(dto != null);
+  const ContractUpdateEventUpdate({this.dto, this.urlRespone, this.contractId});
 
   @override
   // TODO: implement props
-  List<Object> get props => [dto];
+  List<Object> get props => [dto, urlRespone, contractId];
 }

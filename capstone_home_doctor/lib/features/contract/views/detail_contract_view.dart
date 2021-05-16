@@ -3808,7 +3808,7 @@ class _DetailContractView extends State<DetailContractView>
                                                                                 print('----------VALUE VNPAY:$value');
                                                                                 _paymentHelper.isPaymentCheck().then((isChecked) {
                                                                                   if (isChecked) {
-                                                                                    _contractUpdateBloc.add(ContractUpdateEventUpdate(dto: dto));
+                                                                                    _contractUpdateBloc.add(ContractUpdateEventUpdate(urlRespone: value, contractId: dto.contractId));
                                                                                     Future.delayed(const Duration(seconds: 2), () {
                                                                                       _refreshData();
                                                                                     });
