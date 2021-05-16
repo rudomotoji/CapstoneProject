@@ -128,14 +128,14 @@ class ContractRepository extends BaseApiClient {
   // }
 
   Future<bool> changeStatusContract(String urlRespone, int contractId) async {
-    final url = '/Payments/CheckPaymentStatus';
+    final url = '/Payments/CheckPaymentStatus?contractId=${contractId}';
 
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['contractId'] = contractId;
-    data['urlRespone'] = urlRespone;
+    // final Map<String, dynamic> data = new Map<String, dynamic>();
+    // data['contractId'] = contractId;
+    // data['urlRespone'] = urlRespone;
 
     try {
-      final request = await postApi(url, null, data);
+      final request = await postApi(url, null, urlRespone);
       if (request.statusCode == 201) {
         return true;
       } else {
