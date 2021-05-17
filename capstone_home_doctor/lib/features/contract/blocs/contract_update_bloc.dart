@@ -17,8 +17,14 @@ class ContractUpdateBloc
       yield ContractUpdateStateLoading();
       try {
         //
-        final bool isUpdated = await contractRepository.changeStatusContract(
-            event.urlRespone, event.contractId);
+        bool isUpdated = false;
+
+        if (event.dto == null) {
+          isUpdated = await contractRepository.changeStatusContract(
+              event.urlRespone, event.contractId);
+        } else {
+          isUpdated = await contractRepository.cancelContract(event.dto);
+        }
         // await contractRepository.changeStatusContract(event.dto);
         if (isUpdated) {
           yield ContractUpdateStateSuccess(isUpdated: isUpdated);

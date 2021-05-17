@@ -323,7 +323,7 @@ class _CreateMedicalInstructionViewState
                           padding: EdgeInsets.only(top: 10, bottom: 10),
                           child: Column(
                             children: [
-                              Text('Chẩn đoán(*)'),
+                              Text('Kết luận'),
                               Container(
                                 height: 200,
                                 child: TextFieldHDr(
@@ -570,11 +570,13 @@ class _CreateMedicalInstructionViewState
                         //     listImage64Bit.length <= 0
                         ) {
                       alertError('Hãy thêm hình ảnh của y lệnh');
-                    } else if (_dianoseController.text == '' ||
-                        _dianoseController.text.isEmpty ||
-                        _dianoseController.text == null) {
-                      alertError('Vui lòng điền thêm chẩn đoán bệnh');
-                    } else if (_diseaseIds.length <= 0 &&
+                    }
+                    // else if (_dianoseController.text == '' ||
+                    //     _dianoseController.text.isEmpty ||
+                    //     _dianoseController.text == null) {
+                    //   alertError('Vui lòng điền thêm chẩn đoán bệnh');
+                    // }
+                    else if (_diseaseIds.length <= 0 &&
                         selectType.status.contains('SCOPE')) {
                       alertError('Vui lòng chọn thêm triệu chứng của bệnh');
                     } else if (_patientId != 0) {

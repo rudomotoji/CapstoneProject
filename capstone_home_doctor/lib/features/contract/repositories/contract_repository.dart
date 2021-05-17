@@ -53,6 +53,8 @@ class ContractRepository extends BaseApiClient {
       final request = await postApi(url, null, dto.toJson());
       // print('request body: ${request.request.body.toString()}');
 
+      print(dto.toJson());
+
       if (request.statusCode == 400) {
         _contractHelper.updateContractSendStatus(
             false, 'Bạn đang có hợp đồng với bác sĩ này');
@@ -108,24 +110,24 @@ class ContractRepository extends BaseApiClient {
   }
 
   //update status contract
-  // Future<bool> changeStatusContract(ContractUpdateDTO dto) async {
-  //   //
-  //   final url = '/Contracts/${dto.contractId}';
-  //   try {
-  //     //
-  //     print('this is from API: $url');
-  //     print('?????????? ${dto.status}');
-  //     final request = await putApi(url, null, dto.toJson());
-  //     print('${request.body}');
-  //     if (request.statusCode == 204) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     print('ERROR AT UPDATE STATUS CONTRACT API: ${e}');
-  //   }
-  // }
+  Future<bool> cancelContract(ContractUpdateDTO dto) async {
+    //
+    final url = '/Contracts/${dto.contractId}';
+    try {
+      //
+      print('this is from API: $url');
+      print('?????????? ${dto.status}');
+      final request = await putApi(url, null, dto.toJson());
+      print('${request.body}');
+      if (request.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('ERROR AT UPDATE STATUS CONTRACT API: ${e}');
+    }
+  }
 
   Future<bool> changeStatusContract(String urlRespone, int contractId) async {
     final url = '/Payments/CheckPaymentStatus?contractId=${contractId}';
