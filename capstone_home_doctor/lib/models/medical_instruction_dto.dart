@@ -129,6 +129,7 @@ class MedicalInstructionDTO {
   VitalSignScheduleRespone vitalSignScheduleRespone;
   //appointmemt
   AppointmentDetail appointmentDetail;
+  int appointmentId;
 
   MedicalInstructionDTO({
     this.medicalInstructionType,
@@ -149,6 +150,7 @@ class MedicalInstructionDTO {
     this.appointmentDetail,
     this.diseaseIds,
     this.diseases,
+    this.appointmentId,
   });
 
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
@@ -159,7 +161,8 @@ class MedicalInstructionDTO {
     description = json['description'];
     diagnose = json['conclusion'];
     placeHealthRecord = json['placeHealthRecord'];
-    diseases = json['diseases'].cast<String>();
+    diseases =
+        json['diseases'] != null ? json['diseases'].cast<String>() : null;
     // dateStarted = json['dateStarted'];
     // dateFinished = json['dateFinished'];
     dateCreate = json['dateCreate'];
@@ -177,6 +180,7 @@ class MedicalInstructionDTO {
     appointmentDetail = json['appointmentDetail'] != null
         ? new AppointmentDetail.fromJson(json['appointmentDetail'])
         : null;
+    appointmentId = json['appointmentId'];
   }
 
   Map<String, dynamic> toJson() {

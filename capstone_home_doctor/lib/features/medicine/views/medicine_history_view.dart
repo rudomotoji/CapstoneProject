@@ -76,11 +76,6 @@ class _MedicineHistory extends State<MedicineHistory>
                   );
                 }
 
-                ///comment to install
-                ///comment to install
-                ///comment to install
-                ///comment to install
-                ///comment to install
                 if (state is PrescriptionListStateFailure) {
                   ///comment to install
                   return Container(
