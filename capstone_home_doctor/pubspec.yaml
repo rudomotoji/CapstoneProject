@@ -211,6 +211,10 @@ flutter:
     - assets/images/ad-med-ins.png
     - assets/images/ad-medicine.png
     - assets/images/ad-vital-sign.png
+    - assets/images/ic-add-hr2.png
+    - assets/images/ic-add-mi2.png
+    - assets/images/ic-edit-hr2.png
+
 
 
   

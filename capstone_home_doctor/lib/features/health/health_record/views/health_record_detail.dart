@@ -124,90 +124,43 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         });
         return new Future(() => false);
       },
-      child: DefaultTabController(
-        length: 1,
-        child: Scaffold(
-          body: SafeArea(
-            child: Column(
-              children: [
-                HeaderWidget(
-                  title: 'Chi tiết hồ sơ',
-                  isMainView: false,
-                  buttonHeaderType: ButtonHeaderType.CREATE_HEALTH_RECORD,
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 20),
-                  child: Row(
-                    children: [
-                      InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () {
-                          setState(() {
-                            _indexTab = 0;
-                          });
-                        },
-                        child: Container(
-                            width: 150,
-                            height: 40,
-                            child: Center(
-                              child: Text(
-                                'Thông tin hồ sơ',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: (_indexTab == 1)
-                                        ? FontWeight.normal
-                                        : FontWeight.w500,
-                                    decoration: (_indexTab == 1)
-                                        ? TextDecoration.underline
-                                        : null),
-                              ),
-                            ),
-                            decoration: (_indexTab == 1)
-                                ? null
-                                : BoxDecoration(
-                                    boxShadow: [
-                                        BoxShadow(
-                                          color: DefaultTheme.GREY_TOP_TAB_BAR
-                                              .withOpacity(0.5),
-                                          spreadRadius: 3,
-                                          blurRadius: 5,
-                                          offset: Offset(5,
-                                              3), // changes position of shadow
-                                        ),
-                                      ],
-                                    color: DefaultTheme.GREY_VIEW,
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10))
-                                    // border: Border.all(
-                                    //     width: 1,
-                                    //     color: DefaultTheme.GREY_TOP_TAB_BAR),
-                                    )),
-                      ),
-                      InkWell(
-                        borderRadius: BorderRadius.circular(20),
-                        onTap: () {
-                          setState(() {
-                            _indexTab = 1;
-                          });
-                        },
-                        child: Container(
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              HeaderWidget(
+                title: 'Chi tiết hồ sơ',
+                isMainView: false,
+                buttonHeaderType: ButtonHeaderType.BACK_HOME,
+              ),
+              Container(
+                padding: EdgeInsets.only(left: 20),
+                child: Row(
+                  children: [
+                    InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () {
+                        setState(() {
+                          _indexTab = 0;
+                        });
+                      },
+                      child: Container(
                           width: 150,
                           height: 40,
                           child: Center(
                             child: Text(
-                              'Danh sách y lệnh',
+                              'Thông tin hồ sơ',
                               style: TextStyle(
                                   fontSize: 16,
-                                  fontWeight: (_indexTab == 0)
+                                  fontWeight: (_indexTab == 1)
                                       ? FontWeight.normal
                                       : FontWeight.w500,
-                                  decoration: (_indexTab == 0)
+                                  decoration: (_indexTab == 1)
                                       ? TextDecoration.underline
                                       : null),
                             ),
                           ),
-                          decoration: (_indexTab == 0)
+                          decoration: (_indexTab == 1)
                               ? null
                               : BoxDecoration(
                                   boxShadow: [
@@ -216,8 +169,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             .withOpacity(0.5),
                                         spreadRadius: 3,
                                         blurRadius: 5,
-                                        offset: Offset(-5,
-                                            3), // changes position of shadow
+                                        offset: Offset(
+                                            5, 3), // changes position of shadow
                                       ),
                                     ],
                                   color: DefaultTheme.GREY_VIEW,
@@ -227,73 +180,123 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   // border: Border.all(
                                   //     width: 1,
                                   //     color: DefaultTheme.GREY_TOP_TAB_BAR),
-                                  ),
+                                  )),
+                    ),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () {
+                        setState(() {
+                          _indexTab = 1;
+                        });
+                      },
+                      child: Container(
+                        width: 150,
+                        height: 40,
+                        child: Center(
+                          child: Text(
+                            'Danh sách y lệnh',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: (_indexTab == 0)
+                                    ? FontWeight.normal
+                                    : FontWeight.w500,
+                                decoration: (_indexTab == 0)
+                                    ? TextDecoration.underline
+                                    : null),
+                          ),
                         ),
+                        decoration: (_indexTab == 0)
+                            ? null
+                            : BoxDecoration(
+                                boxShadow: [
+                                    BoxShadow(
+                                      color: DefaultTheme.GREY_TOP_TAB_BAR
+                                          .withOpacity(0.5),
+                                      spreadRadius: 3,
+                                      blurRadius: 5,
+                                      offset: Offset(
+                                          -5, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                color: DefaultTheme.GREY_VIEW,
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10))
+                                // border: Border.all(
+                                //     width: 1,
+                                //     color: DefaultTheme.GREY_TOP_TAB_BAR),
+                                ),
                       ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: RefreshIndicator(
+                  child: ListView(
+                    children: [
+                      (_indexTab == 0)
+                          ? Container(
+                              padding: EdgeInsets.only(
+                                  left: 10, right: 10, top: 20, bottom: 20),
+                              margin: EdgeInsets.only(left: 20, right: 20),
+                              decoration: BoxDecoration(
+                                  color: DefaultTheme.GREY_VIEW,
+                                  borderRadius: BorderRadius.only(
+                                      bottomLeft: Radius.circular(20),
+                                      bottomRight: Radius.circular(20),
+                                      topRight: Radius.circular(20))),
+                              width: MediaQuery.of(context).size.width,
+                              child: _buildHealthRecordInfo(),
+                            )
+                          : Container(
+                              padding: EdgeInsets.only(
+                                  left: 10, right: 10, top: 20, bottom: 20),
+                              margin: EdgeInsets.only(
+                                  left: 20, right: 20, bottom: 50),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: DefaultTheme.GREY_VIEW),
+                              width: MediaQuery.of(context).size.width,
+                              child: buildTabbarViewHasContract(),
+                            ),
+                      // Container(
+                      //   child: (_healthRecordDTO != null)
+                      //       ? Container(
+                      //           height:
+                      //               MediaQuery.of(context).size.height * 0.85,
+                      //           child: CustomScrollView(
+                      //             physics: NeverScrollableScrollPhysics(),
+                      //             slivers: [
+                      //               buildSliverToBoxAdapterHeader(),
+                      //               buildSliverAppBarCollepse(),
+                      //               buildTabbarViewHasContract(),
+                      //             ],
+                      //           ),
+                      //         )
+                      //       : Container(
+                      //           width: MediaQuery.of(context).size.width,
+                      //           child: Center(
+                      //             child: Text(
+                      //               'Không thể tải danh sách hồ sơ',
+                      //             ),
+                      //           ),
+                      //         ),
+                      // ),
                     ],
                   ),
+                  onRefresh: _pullRefresh,
                 ),
-                Expanded(
-                  child: RefreshIndicator(
-                    child: ListView(
-                      children: [
-                        (_indexTab == 0)
-                            ? Container(
-                                padding: EdgeInsets.only(
-                                    left: 10, right: 10, top: 20, bottom: 20),
-                                margin: EdgeInsets.only(left: 20, right: 20),
-                                decoration: BoxDecoration(
-                                    color: DefaultTheme.GREY_VIEW,
-                                    borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(20),
-                                        bottomRight: Radius.circular(20),
-                                        topRight: Radius.circular(20))),
-                                width: MediaQuery.of(context).size.width,
-                                child: _buildHealthRecordInfo(),
-                              )
-                            : Container(
-                                padding: EdgeInsets.only(
-                                    left: 10, right: 10, top: 20, bottom: 20),
-                                margin: EdgeInsets.only(left: 20, right: 20),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: DefaultTheme.GREY_VIEW),
-                                width: MediaQuery.of(context).size.width,
-                                child: buildTabbarViewHasContract(),
-                              ),
-                        // Container(
-                        //   child: (_healthRecordDTO != null)
-                        //       ? Container(
-                        //           height:
-                        //               MediaQuery.of(context).size.height * 0.85,
-                        //           child: CustomScrollView(
-                        //             physics: NeverScrollableScrollPhysics(),
-                        //             slivers: [
-                        //               buildSliverToBoxAdapterHeader(),
-                        //               buildSliverAppBarCollepse(),
-                        //               buildTabbarViewHasContract(),
-                        //             ],
-                        //           ),
-                        //         )
-                        //       : Container(
-                        //           width: MediaQuery.of(context).size.width,
-                        //           child: Center(
-                        //             child: Text(
-                        //               'Không thể tải danh sách hồ sơ',
-                        //             ),
-                        //           ),
-                        //         ),
-                        // ),
-                      ],
-                    ),
-                    onRefresh: _pullRefresh,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          floatingActionButton: buttonAddMedicalIns(),
         ),
+        floatingActionButton: buttonAddMedicalIns(),
+        floatingActionButtonLocation: (_healthRecordDTO == null)
+            ? null
+            : (_healthRecordDTO.contractStatus != null)
+                ? FloatingActionButtonLocation.endDocked
+                : FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
@@ -489,27 +492,182 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
       //   );
       // }
 
-      return Container();
-    } else {
-      return FloatingActionButton.extended(
-        elevation: 3,
-        label:
-            Text('Y lệnh mới', style: TextStyle(color: DefaultTheme.BLUE_DARK)),
-        backgroundColor: DefaultTheme.GREY_VIEW,
-        icon: SizedBox(
-          width: 20,
-          height: 20,
-          child: Image.asset('assets/images/ic-medical-instruction.png'),
+      return Container(
+        padding: EdgeInsets.only(bottom: 10, top: 10),
+        margin: EdgeInsets.only(bottom: 10),
+        height: 70,
+        decoration: BoxDecoration(
+          color: DefaultTheme.GREY_VIEW,
+          //border: Border.all(color: DefaultTheme.GREY_TOP_TAB_BAR, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 3,
+              offset: Offset(2, 2), // changes position of shadow
+            ),
+          ],
+          borderRadius: BorderRadius.circular(20),
         ),
-        onPressed: () {
-          Navigator.of(context)
-              .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
-                  arguments: _healthRecordDTO.diseases)
-              .then((value) async {
-            await _pullRefresh();
-          });
-        },
+        width: MediaQuery.of(context).size.width * 0.25,
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              //
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+              ),
+              InkWell(
+                onTap: () async {
+                  await _medicalInstructionHelper
+                      .updateCreateHRFromDetail(true);
+                  Navigator.of(context)
+                      .pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
+                },
+                child: Container(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: Image.asset('assets/images/ic-add-hr2.png')),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 5),
+                      ),
+                      Text('Hồ sơ mới', style: TextStyle(fontSize: 12))
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+              ),
+            ]),
       );
+    } else {
+      return Container(
+          padding: EdgeInsets.only(bottom: 10, top: 10),
+          margin: EdgeInsets.only(bottom: 10),
+          height: 70,
+          decoration: BoxDecoration(
+            color: DefaultTheme.GREY_VIEW,
+            //border: Border.all(color: DefaultTheme.GREY_TOP_TAB_BAR, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 3,
+                offset: Offset(2, 2), // changes position of shadow
+              ),
+            ],
+            borderRadius: BorderRadius.circular(25),
+          ),
+          width: MediaQuery.of(context).size.width * 0.65,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+              ),
+              InkWell(
+                onTap: () async {
+                  await _medicalInstructionHelper
+                      .updateCreateHRFromDetail(true);
+                  Navigator.of(context)
+                      .pushNamed(RoutesHDr.CREATE_HEALTH_RECORD);
+                },
+                child: Container(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: Image.asset('assets/images/ic-add-hr2.png')),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 5),
+                      ),
+                      Text('Hồ sơ mới', style: TextStyle(fontSize: 12))
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context)
+                      .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
+                          arguments: _healthRecordDTO.diseases)
+                      .then((value) async {
+                    await _pullRefresh();
+                  });
+                },
+                child: Container(
+                    child: Column(
+                  children: [
+                    SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: Image.asset('assets/images/ic-add-mi2.png')),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 5),
+                    ),
+                    Text('Thêm y lệnh', style: TextStyle(fontSize: 12))
+                  ],
+                )),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+              ),
+              InkWell(
+                onTap: () async {
+                  Navigator.of(context)
+                      .pushNamed(RoutesHDr.UPDATE_HEALTH_RECORD,
+                          arguments: _hrId)
+                      .then((value) => _pullRefresh());
+                },
+                child: Container(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: Image.asset('assets/images/ic-edit-hr2.png')),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 5),
+                      ),
+                      Text('Sửa hồ sơ', style: TextStyle(fontSize: 12))
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+              ),
+            ],
+          ));
+      // return FloatingActionButton.extended(
+      //   elevation: 3,
+      //   label:
+      //       Text('Y lệnh mới', style: TextStyle(color: DefaultTheme.BLUE_DARK)),
+      //   backgroundColor: DefaultTheme.GREY_VIEW,
+      //   icon: SizedBox(
+      //     width: 20,
+      //     height: 20,
+      //     child: Image.asset('assets/images/ic-medical-instruction.png'),
+      //   ),
+      //   onPressed: () {
+      //     Navigator.of(context)
+      //         .pushNamed(RoutesHDr.CREATE_MEDICAL_INSTRUCTION,
+      //             arguments: _healthRecordDTO.diseases)
+      //         .then((value) async {
+      //       await _pullRefresh();
+      //     });
+      //   },
+      // );
     }
   }
 
