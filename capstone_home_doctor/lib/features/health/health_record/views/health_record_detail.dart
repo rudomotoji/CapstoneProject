@@ -2228,7 +2228,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   String titleForStatusMI(String status) {
     if (status.contains('DOCTOR')) {
       return 'Bác sĩ';
-    } else if (status.contains('CONTRACT') || status.contains('APPROVED')) {
+    } else if (status.contains('CONTRACT') || status.contains('SHARE')) {
       return 'Được chia sẻ';
     } else if (status.contains('PENDING')) {
       return 'Chờ duyệt';
@@ -2240,7 +2240,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   Color checkColorStatus(String status) {
     if (status.contains('DOCTOR')) {
       return DefaultTheme.GREY_VIEW;
-    } else if (status.contains('CONTRACT') || status.contains('APPROVED')) {
+    } else if (status.contains('CONTRACT') || status.contains('SHARE')) {
       return DefaultTheme.GREY_VIEW;
     } else {
       return DefaultTheme.ORANGE_TEXT;
@@ -2251,7 +2251,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 Color checkColorStatusForTitle(String status) {
   if (status.contains('DOCTOR')) {
     return DefaultTheme.BLUE_DARK;
-  } else if (status.contains('CONTRACT') || status.contains('APPROVED')) {
+  } else if (status.contains('CONTRACT') || status.contains('SHARE')) {
     return DefaultTheme.BLUE_DARK;
   } else {
     return DefaultTheme.WHITE;

@@ -213,22 +213,32 @@ class MedicalInstructionRepository extends BaseApiClient {
                 strCompare.replaceAll(" ", "").toString().toUpperCase());
 
             for (var itemString in str_list) {
+              //
               if (strSymptom != null && strSymptom != '') {
-                if (itemString.contains('-') && itemString.contains('/')) {
-                  strSymptom += itemString;
-                }
+                // if (itemString.contains('-') && itemString.contains('/')) {
+                //   strSymptom += itemString;
+                // }
+                strSymptom += itemString;
               } else {
-                if ((itemString.contains('Triệu') ||
-                        itemString.contains('chứng') ||
-                        itemString.contains('Chẩn') ||
-                        itemString.contains('đoán') ||
-                        itemString.contains('kết') ||
-                        itemString.contains('luận') ||
-                        itemString.contains('KẾT') ||
+                // strSymptom = value;
+                if ((itemString.contains('KẾT') ||
+                        itemString.contains('KET') ||
+                        itemString.contains('LUAN') ||
                         itemString.contains('LUẬN')) &&
                     strSymptom == '') {
                   strSymptom = itemString;
                 }
+                // if ((itemString.contains('Triệu') ||
+                //         itemString.contains('chứng') ||
+                //         itemString.contains('Chẩn') ||
+                //         itemString.contains('đoán') ||
+                //         itemString.contains('kết') ||
+                //         itemString.contains('luận') ||
+                //         itemString.contains('KẾT') ||
+                //         itemString.contains('LUẬN')) &&
+                //     strSymptom == '') {
+                //   strSymptom = itemString;
+                // }
               }
             }
           }
