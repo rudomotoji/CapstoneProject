@@ -3684,6 +3684,9 @@ class _DashboardState extends State<DashboardPage>
   }
 
   Future<void> _pullRefresh() async {
+    // curentDateNow = new DateFormat('yyyy-MM-dd')
+    //     .parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+    _getTimeSystem();
     _getPatientId();
   }
 
