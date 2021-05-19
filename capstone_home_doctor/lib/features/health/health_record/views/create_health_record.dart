@@ -437,60 +437,117 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
     );
   }
 
-  Widget _buildInheritedChipDisplay() {
-    final _itemsView = _listLv3Selected
-        .map((disease) =>
-            MultiSelectItem<DiseaseLeverThrees>(disease, disease.toString()))
-        .toList();
-
-    List<MultiSelectItem<DiseaseLeverThrees>> chipDisplayItems = [];
-    chipDisplayItems = _listLv3Selected
-        .map((e) => _itemsView.firstWhere((element) => e == element.value,
-            orElse: () => null))
-        .toList();
-    chipDisplayItems.removeWhere((element) => element == null);
-    return MultiSelectChipDisplay<DiseaseLeverThrees>(
-      items: chipDisplayItems,
-      // colorator: widget.chipDisplay.colorator ?? widget.colorator,
-      onTap: (item) {},
-      chipColor: DefaultTheme.BLUE_REFERENCE,
-      textStyle: TextStyle(
-        color: DefaultTheme.BLACK,
-      ),
-    );
+  _buildSelectedDisease() {
+    return (_listLv3Selected.length == 0 || _listLv3Selected == null)
+        ? Container()
+        : Container(
+            width: MediaQuery.of(context).size.width,
+            child: ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: _listLv3Selected.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(bottom: 5),
+                  padding:
+                      EdgeInsets.only(top: 15, bottom: 15, left: 20, right: 5),
+                  decoration: BoxDecoration(
+                    color: DefaultTheme.GREY_VIEW,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  child: Stack(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 50,
+                            child: Text(
+                                '${_listLv3Selected[index].diseaseLevelThreeId}:',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: DefaultTheme.BLUE_DARK,
+                                  fontSize: 15,
+                                )),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width - 130,
+                            child: Text(
+                                '${_listLv3Selected[index].diseaseLevelThreeName}',
+                                style: TextStyle(fontSize: 15)),
+                          ),
+                        ],
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: InkWell(
+                          onTap: () {
+                            setState(() {
+                              _listLv3IdSelected.removeAt(index);
+                              _listLv3Selected.removeAt(index);
+                            });
+                          },
+                          child: SizedBox(
+                            width: 15,
+                            height: 15,
+                            child: Image.asset('assets/images/ic-close.png'),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
   }
 
   _selectBoxInsHeart() {
     return Container(
       width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.only(left: 20, right: 20),
+      // padding: EdgeInsets.only(left: 20, right: 20),
       decoration: BoxDecoration(
-          color: DefaultTheme.GREY_VIEW,
+          // color: DefaultTheme.GREY_VIEW,
           borderRadius: BorderRadius.circular(6)),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
+          _buildSelectedDisease(),
           InkWell(
             child: Row(
               children: [
                 Container(
-                  height: 25,
-                  width: MediaQuery.of(context).size.width - 84,
-                  margin: EdgeInsets.only(top: 15, bottom: 10),
+                  alignment: Alignment.center,
+                  height: 40,
+                  width: MediaQuery.of(context).size.width - 40,
+                  margin: EdgeInsets.only(top: 10, bottom: 10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                          width: 1, color: DefaultTheme.GREY_TOP_TAB_BAR)),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        'Bệnh lý cụ thể',
-                        style: TextStyle(
-                          color: DefaultTheme.BLUE_REFERENCE,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      ),
                       SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: Image.asset('assets/images/ic-dropdown.png'),
+                        width: 18,
+                        height: 18,
+                        child: Image.asset('assets/images/ic-add-disease.png'),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 15),
+                      ),
+                      Text(
+                        'Thêm bệnh lý',
+                        style: TextStyle(
+                          color: DefaultTheme.BLACK_BUTTON,
+                          // fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                        ),
                       ),
                     ],
                   ),
@@ -500,8 +557,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
             onTap: () {
               _getListDiseaseContract();
             },
-          ),
-          _buildInheritedChipDisplay()
+          )
         ],
       ),
     );

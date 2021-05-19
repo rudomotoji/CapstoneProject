@@ -53,6 +53,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   final picker = ImagePicker();
   var uuid = Uuid();
 
+  //
+  int _indexTab = 0;
+
   TabController controller;
 
   HealthRecordRepository healthRecordRepository =
@@ -92,7 +95,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
   @override
   void dispose() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     _medicalShareInsBloc.add(MedicalShareInsEventInitial());
     _medInsCreateBloc.add(MedInsGetTextEventInitial());
     super.dispose();
@@ -132,33 +135,155 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                   isMainView: false,
                   buttonHeaderType: ButtonHeaderType.CREATE_HEALTH_RECORD,
                 ),
+                Container(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Row(
+                    children: [
+                      InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
+                          setState(() {
+                            _indexTab = 0;
+                          });
+                        },
+                        child: Container(
+                            width: 150,
+                            height: 40,
+                            child: Center(
+                              child: Text(
+                                'Thông tin hồ sơ',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: (_indexTab == 1)
+                                        ? FontWeight.normal
+                                        : FontWeight.w500,
+                                    decoration: (_indexTab == 1)
+                                        ? TextDecoration.underline
+                                        : null),
+                              ),
+                            ),
+                            decoration: (_indexTab == 1)
+                                ? null
+                                : BoxDecoration(
+                                    boxShadow: [
+                                        BoxShadow(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR
+                                              .withOpacity(0.5),
+                                          spreadRadius: 3,
+                                          blurRadius: 5,
+                                          offset: Offset(5,
+                                              3), // changes position of shadow
+                                        ),
+                                      ],
+                                    color: DefaultTheme.GREY_VIEW,
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10))
+                                    // border: Border.all(
+                                    //     width: 1,
+                                    //     color: DefaultTheme.GREY_TOP_TAB_BAR),
+                                    )),
+                      ),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: () {
+                          setState(() {
+                            _indexTab = 1;
+                          });
+                        },
+                        child: Container(
+                          width: 150,
+                          height: 40,
+                          child: Center(
+                            child: Text(
+                              'Danh sách y lệnh',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: (_indexTab == 0)
+                                      ? FontWeight.normal
+                                      : FontWeight.w500,
+                                  decoration: (_indexTab == 0)
+                                      ? TextDecoration.underline
+                                      : null),
+                            ),
+                          ),
+                          decoration: (_indexTab == 0)
+                              ? null
+                              : BoxDecoration(
+                                  boxShadow: [
+                                      BoxShadow(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR
+                                            .withOpacity(0.5),
+                                        spreadRadius: 3,
+                                        blurRadius: 5,
+                                        offset: Offset(-5,
+                                            3), // changes position of shadow
+                                      ),
+                                    ],
+                                  color: DefaultTheme.GREY_VIEW,
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10))
+                                  // border: Border.all(
+                                  //     width: 1,
+                                  //     color: DefaultTheme.GREY_TOP_TAB_BAR),
+                                  ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: RefreshIndicator(
                     child: ListView(
                       children: [
-                        Container(
-                          child: (_healthRecordDTO != null)
-                              ? Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.85,
-                                  child: CustomScrollView(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    slivers: [
-                                      buildSliverToBoxAdapterHeader(),
-                                      buildSliverAppBarCollepse(),
-                                      buildTabbarViewHasContract(),
-                                    ],
-                                  ),
-                                )
-                              : Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Center(
-                                    child: Text(
-                                      'Không thể tải danh sách hồ sơ',
-                                    ),
-                                  ),
-                                ),
-                        ),
+                        (_indexTab == 0)
+                            ? Container(
+                                padding: EdgeInsets.only(
+                                    left: 10, right: 10, top: 20, bottom: 20),
+                                margin: EdgeInsets.only(left: 20, right: 20),
+                                decoration: BoxDecoration(
+                                    color: DefaultTheme.GREY_VIEW,
+                                    borderRadius: BorderRadius.only(
+                                        bottomLeft: Radius.circular(20),
+                                        bottomRight: Radius.circular(20),
+                                        topRight: Radius.circular(20))),
+                                width: MediaQuery.of(context).size.width,
+                                child: _buildHealthRecordInfo(),
+                              )
+                            : Container(
+                                padding: EdgeInsets.only(
+                                    left: 10, right: 10, top: 20, bottom: 20),
+                                margin: EdgeInsets.only(left: 20, right: 20),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: DefaultTheme.GREY_VIEW),
+                                width: MediaQuery.of(context).size.width,
+                                child: buildTabbarViewHasContract(),
+                              ),
+                        // Container(
+                        //   child: (_healthRecordDTO != null)
+                        //       ? Container(
+                        //           height:
+                        //               MediaQuery.of(context).size.height * 0.85,
+                        //           child: CustomScrollView(
+                        //             physics: NeverScrollableScrollPhysics(),
+                        //             slivers: [
+                        //               buildSliverToBoxAdapterHeader(),
+                        //               buildSliverAppBarCollepse(),
+                        //               buildTabbarViewHasContract(),
+                        //             ],
+                        //           ),
+                        //         )
+                        //       : Container(
+                        //           width: MediaQuery.of(context).size.width,
+                        //           child: Center(
+                        //             child: Text(
+                        //               'Không thể tải danh sách hồ sơ',
+                        //             ),
+                        //           ),
+                        //         ),
+                        // ),
                       ],
                     ),
                     onRefresh: _pullRefresh,
@@ -171,6 +296,168 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         ),
       ),
     );
+  }
+
+  _buildHealthRecordInfo() {
+    return (_healthRecordDTO == null || _healthRecordDTO.place == null)
+        ? Container()
+        : Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.only(bottom: 10),
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: [
+                    //
+                    SizedBox(
+                      width: 15,
+                      child: Image.asset('assets/images/ic-map.png'),
+                    ),
+                    Container(
+                        padding: EdgeInsets.only(left: 10),
+                        width: 70,
+                        child: Text('Nơi khám')),
+                    Container(
+                      padding: EdgeInsets.only(left: 10),
+                      width: MediaQuery.of(context).size.width - 145,
+                      child: Text(
+                        '${_healthRecordDTO.place}',
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(
+                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                height: 1,
+              ),
+              Container(
+                padding: EdgeInsets.only(bottom: 10, top: 10),
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: [
+                    //
+                    SizedBox(
+                      width: 15,
+                      child: Image.asset('assets/images/ic-calendar.png'),
+                    ),
+                    Container(
+                        padding: EdgeInsets.only(left: 10),
+                        width: 70,
+                        child: Text('Ngày tạo')),
+                    Container(
+                      padding: EdgeInsets.only(left: 10),
+                      width: MediaQuery.of(context).size.width - 145,
+                      child: Text(
+                        '${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
+                        style: TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(
+                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                height: 1,
+              ),
+              //
+              Container(
+                padding: EdgeInsets.only(bottom: 10, top: 10),
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: [
+                    //
+                    SizedBox(
+                      width: 15,
+                      child: Image.asset('assets/images/ic-add-disease.png'),
+                    ),
+                    Container(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text('Bệnh lý có trong hồ sơ')),
+                  ],
+                ),
+              ),
+              _genderDiseases(),
+              (_healthRecordDTO.description != null &&
+                      _healthRecordDTO.description != '')
+                  ? Divider(
+                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                      height: 1,
+                    )
+                  : Container(),
+              (_healthRecordDTO.description != null &&
+                      _healthRecordDTO.description != '')
+                  ? Container(
+                      padding: EdgeInsets.only(bottom: 10, top: 10),
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        children: [
+                          //
+                          SizedBox(
+                            width: 15,
+                            child: Image.asset('assets/images/ic-note.png'),
+                          ),
+                          Container(
+                              padding: EdgeInsets.only(left: 10),
+                              width: 150,
+                              child: Text('Thông tin thêm')),
+                        ],
+                      ),
+                    )
+                  : Container(),
+              (_healthRecordDTO.description != null &&
+                      _healthRecordDTO.description != '')
+                  ? Container(
+                      padding: EdgeInsets.only(left: 25),
+                      width: MediaQuery.of(context).size.width,
+                      child: Text(
+                        '${_healthRecordDTO.description}',
+                        style: TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                    )
+                  : Container(),
+            ],
+          );
+  }
+
+  _genderDiseases() {
+    //
+    return (_healthRecordDTO == null ||
+            _healthRecordDTO.diseases.length == 0 ||
+            _healthRecordDTO.diseases == null)
+        ? Container()
+        : ListView.builder(
+            itemCount: _healthRecordDTO.diseases.length,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                margin: EdgeInsets.only(bottom: 10),
+                width: MediaQuery.of(context).size.width - 40,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 25),
+                    ),
+                    Container(
+                        width: 50,
+                        child: Text(
+                            '${_healthRecordDTO.diseases[index].diseaseId}',
+                            style: TextStyle(
+                              color: DefaultTheme.BLUE_DARK,
+                              fontWeight: FontWeight.w500,
+                            ))),
+                    Container(
+                        width: MediaQuery.of(context).size.width - 135,
+                        child: Text(
+                            '${_healthRecordDTO.diseases[index].diseaseName}'))
+                  ],
+                ),
+              );
+            },
+          );
   }
 
   buttonAddMedicalIns() {
@@ -505,8 +792,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     }
   }
 
-  SliverFillRemaining buildTabbarViewHasContract() {
-    return SliverFillRemaining(
+  Widget buildTabbarViewHasContract() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
       child:
           BlocBuilder<MedicalInstructionListBloc, MedicalInstructionListState>(
         builder: (context, state) {
@@ -567,13 +855,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               listGroupMedIns = listGroupMed;
             }
           }
-          return TabBarView(
-            controller: controller,
-            children: <Widget>[
+          return
               // _medicalInsert(),
-              _medicalShare(),
-            ],
-          );
+              _medicalShare();
         },
       ),
     );
@@ -581,21 +865,28 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
 
   Widget _medicalShare() {
     if (listGroupMedIns.length > 0) {
-      return ListView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: listGroupMedIns.length,
-        itemBuilder: (BuildContext context, int index) {
-          var itemGroup = listGroupMedIns[index];
-          return ExpansionTile(
-              title: Text('${itemGroup.type}'),
-              trailing: Icon(Icons.expand_more),
-              children: itemGroup.listMedicalIns.map((e) {
-                return _itemRow(e);
-              }).toList());
-        },
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: ListView.builder(
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          itemCount: listGroupMedIns.length,
+          itemBuilder: (BuildContext context, int index) {
+            var itemGroup = listGroupMedIns[index];
+            return ExpansionTile(
+                tilePadding: EdgeInsets.only(left: 0, right: 0),
+                title: Text('${itemGroup.type}'),
+                trailing: Icon(Icons.expand_more),
+                children: itemGroup.listMedicalIns.map((e) {
+                  return _itemRow(e);
+                }).toList());
+          },
+        ),
       );
     } else {
       return Container(
+        height: 200,
         width: MediaQuery.of(context).size.width,
         child: Center(
           child: Column(
@@ -609,7 +900,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               Padding(
                 padding: EdgeInsets.only(bottom: 20),
               ),
-              Text('Bạn chưa có phiếu nào')
+              Text('Chưa có phiếu nào trong hồ sơ')
             ],
           ),
         ),
@@ -620,7 +911,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   Widget _itemRow(MedicalInstructionDTO dto) {
     DateTime dateCreated = DateFormat('yyyy-MM-dd').parse(dto.dateCreate);
     return Container(
-      padding: EdgeInsets.only(left: 20, right: 20),
+      width: MediaQuery.of(context).size.width,
+      // padding: EdgeInsets.only(left: 20, right: 20),
       child: Row(
         children: [
           Expanded(
@@ -632,9 +924,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                   children: [
                     Container(
                       // height: 180,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
+                      decoration: BoxDecoration(color: Colors.white,
+                          //  borderRadius: BorderRadius.circular(10),
                           boxShadow: [
                             BoxShadow(
                                 blurRadius: 10, color: DefaultTheme.GREY_VIEW)
@@ -751,7 +1042,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width -
-                                                  220,
+                                                  250,
                                               child: Text(
                                                 '${dto.diagnose}',
                                                 overflow: TextOverflow.ellipsis,
@@ -781,7 +1072,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width -
-                                                  220,
+                                                  250,
                                               child: Text(
                                                 '${dto.description}',
                                                 overflow: TextOverflow.ellipsis,
@@ -793,10 +1084,10 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       : Container(),
                                   Container(
                                     width:
-                                        MediaQuery.of(context).size.width - 150,
+                                        MediaQuery.of(context).size.width - 160,
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(dateCreated)}',
@@ -804,43 +1095,53 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                               color: DefaultTheme.BLACK,
                                               fontWeight: FontWeight.w600),
                                         ),
-                                        (_healthRecordDTO.contractId == null)
-                                            ? Container()
-                                            : Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 20)),
-                                                  Container(
-                                                    padding: EdgeInsets.only(
-                                                        left: 10,
-                                                        right: 10,
-                                                        bottom: 2,
-                                                        top: 2),
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                      color: checkColorStatus(
-                                                          dto.status),
-                                                    ),
-                                                    child: Text(
-                                                      titleForStatusMI(
-                                                          dto.status),
-                                                      style: TextStyle(
-                                                          color:
-                                                              checkColorStatusForTitle(
-                                                                  dto.status),
-                                                          fontSize: 12),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
                                       ],
                                     ),
                                   ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width - 160,
+                                    child: Text(
+                                      'Bệnh lý: ${dto.diseases}',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 5,
+                                      style: TextStyle(
+                                          color: DefaultTheme.BLACK,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 5),
+                                  ),
+                                  (_healthRecordDTO.contractId == null)
+                                      ? Container()
+                                      : Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  bottom: 2,
+                                                  top: 2),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                                color: checkColorStatus(
+                                                    dto.status),
+                                              ),
+                                              child: Text(
+                                                titleForStatusMI(dto.status),
+                                                style: TextStyle(
+                                                    color:
+                                                        checkColorStatusForTitle(
+                                                            dto.status),
+                                                    fontSize: 12),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                 ],
                               ),
                             ),
@@ -1868,32 +2169,34 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
             barrierDismissible: false,
             context: context,
             builder: (BuildContext context) {
-              return Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                    child: Container(
-                      width: 300,
-                      height: 300,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: DefaultTheme.WHITE.withOpacity(0.8)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 200,
-                            height: 200,
-                            child: Image.asset('assets/images/loading.gif'),
+              return Material(
+                  color: DefaultTheme.TRANSPARENT,
+                  child: Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                        child: Container(
+                          width: 200,
+                          height: 150,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: DefaultTheme.WHITE.withOpacity(0.8)),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 150,
+                                //height: 200,
+                                child: Image.asset('assets/images/loading.gif'),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              );
+                  ));
             },
           );
         });

@@ -114,6 +114,7 @@ class MedicalInstructionDTO {
   String diagnose;
   String placeHealthRecord;
   List<String> diseaseIds; // list mã bệnh để tạo medical instruction
+  List<String> diseases;
   // String diseaseIds; // list mã bệnh để tạo medical instruction
   String patientFullName;
   String status;
@@ -147,6 +148,7 @@ class MedicalInstructionDTO {
     this.medicationsRespone,
     this.appointmentDetail,
     this.diseaseIds,
+    this.diseases,
   });
 
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
@@ -157,6 +159,7 @@ class MedicalInstructionDTO {
     description = json['description'];
     diagnose = json['conclusion'];
     placeHealthRecord = json['placeHealthRecord'];
+    diseases = json['diseases'].cast<String>();
     // dateStarted = json['dateStarted'];
     // dateFinished = json['dateFinished'];
     dateCreate = json['dateCreate'];
@@ -188,6 +191,7 @@ class MedicalInstructionDTO {
     data['dateCreate'] = this.dateCreate;
     data['patientFullName'] = this.patientFullName;
     data['status'] = this.status;
+    data['diseases'] = this.diseases;
     return data;
   }
 }
