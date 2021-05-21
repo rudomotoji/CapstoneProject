@@ -239,7 +239,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                           ? Container(
                               padding: EdgeInsets.only(
                                   left: 10, right: 10, top: 20, bottom: 20),
-                              margin: EdgeInsets.only(left: 20, right: 20),
+                              margin: EdgeInsets.only(
+                                  left: 20, right: 20, bottom: 50),
                               decoration: BoxDecoration(
                                   color: DefaultTheme.GREY_VIEW,
                                   borderRadius: BorderRadius.only(
@@ -507,9 +508,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
               offset: Offset(2, 2), // changes position of shadow
             ),
           ],
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(25),
         ),
-        width: MediaQuery.of(context).size.width * 0.25,
+        width: MediaQuery.of(context).size.width * 0.3,
         child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -561,9 +562,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                 offset: Offset(2, 2), // changes position of shadow
               ),
             ],
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(50),
           ),
-          width: MediaQuery.of(context).size.width * 0.65,
+          width: MediaQuery.of(context).size.width * 0.72,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

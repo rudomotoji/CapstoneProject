@@ -685,11 +685,11 @@ void main() async {
                                         //
                                         if (isSMSOff == false) {
                                           //SEND SMS TO RELATIVE AND DOCTOR
-                                          // await _smsRepository.sendSmsMessage(
-                                          //     _accountId,
-                                          //     _vitalSignScheduleDTO
-                                          //         .doctorAccountId);
-                                          //
+                                          await _smsRepository.sendSmsMessage(
+                                              _accountId,
+                                              _vitalSignScheduleDTO
+                                                  .doctorAccountId);
+
                                           //UPDATE STATUS SMS IS SENT
                                           _vitalSignHelper
                                               .updateSendSMSTurnOffStatus(true)
@@ -713,7 +713,7 @@ void main() async {
                                   //
                                 } else {
                                   print(
-                                      'lose bluetooth connection but the last people status is normal');
+                                      'lose bluetooth connection but the last people status is normal 1');
                                   FlutterBlue.instance.state
                                       .listen((state) async {
                                     print('state is ${state}');
@@ -1058,6 +1058,7 @@ _connectInBackground(int timeInsert) async {
       int countLastValue = 0;
 
       //function get heart rate from device
+      print('peripheralId-----: ${peripheralId}}');
       await _vitalSignRepository.getHeartRateValueFromDevice(peripheralId);
       //
       //
@@ -1299,7 +1300,7 @@ _connectInBackground(int timeInsert) async {
                         //
                       } else {
                         print(
-                            'lose bluetooth connection but the last people status is normal');
+                            'lose bluetooth connection but the last people status is normal 2');
                         FlutterBlue.instance.state.listen((state) async {
                           print('state is ${state}');
                           if (state == BluetoothState.on) {
@@ -1485,8 +1486,8 @@ _connectInBackground(int timeInsert) async {
                               //
                               if (isSMSOff == false) {
                                 //SEND SMS TO RELATIVE AND DOCTOR
-                                // await _smsRepository.sendSmsMessage(_accountId,
-                                //     _vitalSignScheduleDTO.doctorAccountId);
+                                await _smsRepository.sendSmsMessage(_accountId,
+                                    _vitalSignScheduleDTO.doctorAccountId);
 
                                 //UPDATE STATUS SMS IS SENT
                                 _vitalSignHelper
@@ -1683,8 +1684,8 @@ _connectInBackground(int timeInsert) async {
                               //
                               if (isSMSOff == false) {
                                 //SEND SMS TO RELATIVE AND DOCTOR
-                                // await _smsRepository.sendSmsMessage(_accountId,
-                                //     _vitalSignScheduleDTO.doctorAccountId);
+                                await _smsRepository.sendSmsMessage(_accountId,
+                                    _vitalSignScheduleDTO.doctorAccountId);
                                 // //
                                 //UPDATE STATUS SMS IS SENT
                                 _vitalSignHelper
@@ -1714,7 +1715,7 @@ _connectInBackground(int timeInsert) async {
                       //
                     } else {
                       print(
-                          'lose bluetooth connection but the last people status is normal');
+                          'lose bluetooth connection but the last people status is normal 3');
                       FlutterBlue.instance.state.listen((state) async {
                         print('state is ${state}');
                         if (state == BluetoothState.on) {

@@ -54,7 +54,8 @@ class ContractRepository extends BaseApiClient {
       // print('request body: ${request.request.body.toString()}');
 
       print(dto.toJson());
-
+      print('request contract API: ${request.statusCode}');
+      print('request contract API: ${request.body}');
       if (request.statusCode == 400) {
         _contractHelper.updateContractSendStatus(
             false, 'Bạn đang có hợp đồng với bác sĩ này');

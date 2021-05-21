@@ -520,12 +520,12 @@ class _ScheduleView extends State<ScheduleView>
                 children: <Widget>[
                   //
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.7,
+                    height: MediaQuery.of(context).size.height * 0.8,
                     padding: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.05),
                     color: DefaultTheme.TRANSPARENT,
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 0.65,
+                      height: MediaQuery.of(context).size.height * 0.75,
                       decoration: BoxDecoration(
                         borderRadius:
                             BorderRadius.vertical(top: Radius.circular(20)),
@@ -720,45 +720,45 @@ class _ScheduleView extends State<ScheduleView>
                                                 height: 40,
                                                 child: Row(
                                                   children: [
-                                                    Container(
-                                                      width: 35,
-                                                      height: 35,
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            DefaultTheme.WHITE,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        border: Border.all(
-                                                            color: DefaultTheme
-                                                                .GREY_TOP_TAB_BAR,
-                                                            width: 0.5),
-                                                      ),
-                                                      child: Center(
-                                                        child: Text(
-                                                            '${state.dto.dateExamination.split('T')[1].split(':')[0]}'),
-                                                      ),
-                                                    ),
-                                                    Text(' : '),
-                                                    Container(
-                                                      width: 35,
-                                                      height: 35,
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            DefaultTheme.WHITE,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        border: Border.all(
-                                                            color: DefaultTheme
-                                                                .GREY_TOP_TAB_BAR,
-                                                            width: 0.5),
-                                                      ),
-                                                      child: Center(
-                                                        child: Text(
-                                                            '${state.dto.dateExamination.split('T')[1].split(':')[1]}'),
-                                                      ),
-                                                    ),
+                                                    // Container(
+                                                    //   width: 35,
+                                                    //   height: 35,
+                                                    //   decoration: BoxDecoration(
+                                                    //     color:
+                                                    //         DefaultTheme.WHITE,
+                                                    //     borderRadius:
+                                                    //         BorderRadius
+                                                    //             .circular(10),
+                                                    //     border: Border.all(
+                                                    //         color: DefaultTheme
+                                                    //             .GREY_TOP_TAB_BAR,
+                                                    //         width: 0.5),
+                                                    //   ),
+                                                    //   child: Center(
+                                                    //     child: Text(
+                                                    //         '${state.dto.dateExamination.split('T')[1].split(':')[0]}'),
+                                                    //   ),
+                                                    // ),
+                                                    // Text(' : '),
+                                                    // Container(
+                                                    //   width: 35,
+                                                    //   height: 35,
+                                                    //   decoration: BoxDecoration(
+                                                    //     color:
+                                                    //         DefaultTheme.WHITE,
+                                                    //     borderRadius:
+                                                    //         BorderRadius
+                                                    //             .circular(10),
+                                                    //     border: Border.all(
+                                                    //         color: DefaultTheme
+                                                    //             .GREY_TOP_TAB_BAR,
+                                                    //         width: 0.5),
+                                                    //   ),
+                                                    //   child: Center(
+                                                    //     child: Text(
+                                                    //         '${state.dto.dateExamination.split('T')[1].split(':')[1]}'),
+                                                    //   ),
+                                                    // ),
                                                     Container(
                                                       // width: MediaQuery.of(context)
                                                       //         .size
@@ -770,7 +770,7 @@ class _ScheduleView extends State<ScheduleView>
                                                           Alignment.centerLeft,
                                                       height: 40,
                                                       child: Text(
-                                                          ' ngày ${_dateValidator.parseToDateView(state.dto.dateExamination)}',
+                                                          '${state.dto.dateExamination.split('T')[1].split(':')[0]}:${state.dto.dateExamination.split('T')[1].split(':')[1]}, ngày ${_dateValidator.parseToDateView(state.dto.dateExamination)}',
                                                           style: TextStyle(
                                                               fontSize: 16)),
                                                     ),

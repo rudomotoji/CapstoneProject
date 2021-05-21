@@ -53,6 +53,7 @@ class _CreateMedicalInstructionViewState
   PickedFile _imgFile;
   String _note = '';
   double titleCompare;
+
   // String _imgString = '';
   // String nowDate = '${DateTime.now()}';
   String dateCreate;
@@ -153,7 +154,7 @@ class _CreateMedicalInstructionViewState
             HeaderWidget(
               title: 'Thêm y lệnh',
               isMainView: false,
-              buttonHeaderType: ButtonHeaderType.NONE,
+              buttonHeaderType: ButtonHeaderType.BACK_HOME,
             ),
             Expanded(
               child: ListView(
@@ -164,12 +165,27 @@ class _CreateMedicalInstructionViewState
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        (_selectedHRType == '')
+                            ? Container()
+                            : Container(
+                                margin: EdgeInsets.only(top: 20, bottom: 10),
+                                child: Text(
+                                  'Loại phiếu',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
                         Container(
-                          margin: EdgeInsets.only(top: 40),
-                          height: 40,
+                          margin: (_selectedHRType == '')
+                              ? EdgeInsets.only(top: 20)
+                              : null,
+                          height: 45,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: DefaultTheme.GREY_VIEW),
+                            borderRadius: BorderRadius.circular(5),
+                            color: DefaultTheme.GREY_VIEW,
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -219,8 +235,14 @@ class _CreateMedicalInstructionViewState
                                               : '${_selectedHRType}',
                                           style: TextStyle(
                                             color: DefaultTheme.BLUE_REFERENCE,
-                                            fontWeight: FontWeight.w500,
+                                            // fontWeight: FontWeight.w500,
                                           ),
+                                        ),
+                                        icon: SizedBox(
+                                          width: 15,
+                                          height: 15,
+                                          child: Image.asset(
+                                              'assets/images/ic-dropdown.png'),
                                         ),
                                         underline: Container(
                                           width: 0,
@@ -259,13 +281,6 @@ class _CreateMedicalInstructionViewState
                           ),
                         ),
                         _selectBoxDissease(),
-                        Padding(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Divider(
-                            height: 0.1,
-                            color: DefaultTheme.GREY_LIGHT,
-                          ),
-                        ),
 
                         ///
 
@@ -320,160 +335,141 @@ class _CreateMedicalInstructionViewState
                         ///
 
                         Padding(
-                          padding: EdgeInsets.only(top: 10, bottom: 10),
-                          child: Column(
-                            children: [
-                              Text('Kết luận'),
-                              Container(
-                                height: 200,
-                                child: TextFieldHDr(
-                                  controller: _dianoseController,
-                                  placeHolder: 'Nhập tên bệnh lý',
-                                  style: TFStyle.TEXT_AREA,
-                                  keyboardAction: TextInputAction.done,
-                                  onChange: (value) {
-                                    setState(() {
-                                      strDiseaseDraft = value;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Divider(
-                          height: 0.1,
-                          color: DefaultTheme.GREY_LIGHT,
-                        ),
-                        Divider(
-                          height: 0.1,
-                          color: DefaultTheme.GREY_LIGHT,
-                        ),
-                        Padding(
-                          padding:
-                              EdgeInsets.only(bottom: 5, left: 20, top: 10),
-                        ),
-                        Container(
-                          alignment: Alignment.topLeft,
-                          height: 80,
-                          child: TextFieldHDr(
-                              placeHolder: 'Mô tả thêm các vấn đề khác',
-                              style: TFStyle.TEXT_AREA,
-                              keyboardAction: TextInputAction.done,
-                              onChange: (text) {
-                                setState(() {
-                                  _note = text;
-                                });
-                              }),
-                        ),
-                        Padding(
                           padding: EdgeInsets.only(bottom: 10),
                         ),
-                        (listImage.length <= 0) ? Container() : checktitle(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            InkWell(
-                              child: Container(
-                                width: 100,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: DefaultTheme.TRANSPARENT,
-                                  border: Border.all(
-                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                    width: 0.5,
-                                  ),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Chọn ảnh +',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: DefaultTheme.BLUE_REFERENCE),
-                                  ),
+                        (_selectedHRType == '')
+                            ? Container()
+                            : Container(
+                                padding: EdgeInsets.only(bottom: 10, top: 15),
+                                width: MediaQuery.of(context).size.width,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Hình ảnh đính kèm',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              onTap: () async {
-                                if (_selectedHRType != '') {
-                                  _showPicker(context);
-                                } else {
-                                  setState(() {
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return Center(
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(5)),
-                                            child: BackdropFilter(
-                                              filter: ImageFilter.blur(
-                                                  sigmaX: 25, sigmaY: 25),
-                                              child: Container(
-                                                width: 200,
-                                                height: 200,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    color: DefaultTheme.WHITE
-                                                        .withOpacity(0.8)),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    SizedBox(
-                                                      width: 100,
-                                                      height: 100,
-                                                      child: Image.asset(
-                                                          'assets/images/ic-failed.png'),
-                                                    ),
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text(
-                                                        'Hãy chọn loại phiếu trước',
-                                                        style: TextStyle(
-                                                            color: DefaultTheme
-                                                                .GREY_TEXT,
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .none),
-                                                        textAlign:
-                                                            TextAlign.center,
+                        (listImage.length <= 0) ? Container() : checktitle(),
+                        (_selectedHRType == '')
+                            ? Container()
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    child: Container(
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        color: DefaultTheme.TRANSPARENT,
+                                        border: Border.all(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          width: 1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                          child: SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: Image.asset(
+                                            'assets/images/ic-create-dark.png'),
+                                      )),
+                                    ),
+                                    onTap: () async {
+                                      if (_selectedHRType != '') {
+                                        _showNewPicker();
+
+                                        //  _showPicker(context);
+                                      } else {
+                                        setState(() {
+                                          showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return Center(
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(5)),
+                                                  child: BackdropFilter(
+                                                    filter: ImageFilter.blur(
+                                                        sigmaX: 25, sigmaY: 25),
+                                                    child: Container(
+                                                      width: 200,
+                                                      height: 200,
+                                                      decoration: BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          color: DefaultTheme
+                                                              .WHITE
+                                                              .withOpacity(
+                                                                  0.8)),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 100,
+                                                            height: 100,
+                                                            child: Image.asset(
+                                                                'assets/images/ic-failed.png'),
+                                                          ),
+                                                          Align(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                              'Hãy chọn loại phiếu trước',
+                                                              style: TextStyle(
+                                                                  color: DefaultTheme
+                                                                      .GREY_TEXT,
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .none),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
-                                                  ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                    Future.delayed(const Duration(seconds: 2),
-                                        () {
-                                      Navigator.of(context).pop();
-                                    });
-                                  });
-                                }
-                              },
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(right: 10),
-                            ),
-                            (titleCompare != null)
-                                ? Text('${f.format(titleCompare * 100)} %')
-                                : Container(),
-                          ],
-                        ),
+                                              );
+                                            },
+                                          );
+                                          Future.delayed(
+                                              const Duration(seconds: 2), () {
+                                            Navigator.of(context).pop();
+                                          });
+                                        });
+                                      }
+                                    },
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(right: 10),
+                                  ),
+                                  (titleCompare != null)
+                                      ? Text(
+                                          '${f.format(titleCompare * 100)} %')
+                                      : Container(),
+                                ],
+                              ),
                         Padding(
                           padding: EdgeInsets.only(bottom: 10),
                         ),
@@ -539,9 +535,52 @@ class _CreateMedicalInstructionViewState
                                   },
                                 ),
                               ),
+
+                        Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Column(
+                            children: [
+                              Text('Kết luận'),
+                              Container(
+                                height: 200,
+                                child: TextFieldHDr(
+                                  controller: _dianoseController,
+                                  placeHolder: 'Nhập tên bệnh lý',
+                                  style: TFStyle.TEXT_AREA,
+                                  keyboardAction: TextInputAction.done,
+                                  onChange: (value) {
+                                    setState(() {
+                                      strDiseaseDraft = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        Padding(
+                          padding:
+                              EdgeInsets.only(bottom: 5, left: 20, top: 10),
+                        ),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          height: 80,
+                          child: TextFieldHDr(
+                              placeHolder: 'Mô tả thêm các vấn đề khác',
+                              style: TFStyle.TEXT_AREA,
+                              keyboardAction: TextInputAction.done,
+                              onChange: (text) {
+                                setState(() {
+                                  _note = text;
+                                });
+                              }),
+                        ),
                         Padding(
                           padding: EdgeInsets.only(bottom: 40),
                         ),
+
+                        ///
                       ],
                     ),
                   ),
@@ -839,33 +878,63 @@ class _CreateMedicalInstructionViewState
       return Container(
         width: MediaQuery.of(context).size.width,
         // padding: EdgeInsets.only(left: 20, right: 20),
-        margin: EdgeInsets.only(top: 10),
+
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(6)),
         child: Column(
           children: [
+            (listDiseaseSelected.length == 0 || listDiseaseSelected == null)
+                ? Container()
+                : Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(top: 20, bottom: 5),
+                    child: Text('Bệnh lý',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        )),
+                  ),
+            (listDiseaseSelected.length == 0 || listDiseaseSelected == null)
+                ? Container()
+                : Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: Text(
+                        'Chọn bệnh lý chính xác được ghi trên phiếu y lệnh.',
+                        style: TextStyle(
+                            color: DefaultTheme.GREY_TEXT,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400)),
+                  ),
+            _buildSelectedDisease(),
             InkWell(
               child: Row(
                 children: [
                   Container(
-                    color: DefaultTheme.GREY_VIEW,
-                    height: 50,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                            width: 1, color: DefaultTheme.GREY_TOP_TAB_BAR)),
+                    height: 45,
                     width: MediaQuery.of(context).size.width - 40,
-                    margin: EdgeInsets.only(top: 15, bottom: 10),
+                    margin: EdgeInsets.only(top: 15),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Chọn bệnh lý *',
-                          style: TextStyle(
-                            color: DefaultTheme.BLACK,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16,
-                          ),
-                        ),
                         SizedBox(
                           width: 20,
                           height: 20,
-                          child: Image.asset('assets/images/ic-dropdown.png'),
+                          child:
+                              Image.asset('assets/images/ic-add-disease.png'),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                        ),
+                        Text(
+                          'Thêm bệnh lý',
+                          style: TextStyle(
+                            color: DefaultTheme.BLACK,
+                            fontSize: 16,
+                          ),
                         ),
                       ],
                     ),
@@ -878,10 +947,6 @@ class _CreateMedicalInstructionViewState
             ),
 
             //
-            (listDiseaseSelected.length == 0 || listDiseaseSelected == null)
-                ? Container()
-                : Container(child: Text('Bệnh lý đã chọn')),
-            _buildSelectedDisease(),
           ],
         ),
       );
@@ -900,35 +965,64 @@ class _CreateMedicalInstructionViewState
             itemCount: _diseaseViews.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                width: MediaQuery.of(context).size.width,
+                alignment: Alignment.center,
                 margin: EdgeInsets.only(bottom: 5),
-                child: Row(children: [
-                  Container(
-                    width: 50,
-                    child: Text(
-                      '${_diseaseViews[index].split(':')[0]}:',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
+                padding:
+                    EdgeInsets.only(top: 15, bottom: 15, left: 20, right: 5),
+                decoration: BoxDecoration(
+                  color: DefaultTheme.GREY_VIEW,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                width: MediaQuery.of(context).size.width,
+                child: Stack(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 50,
+                          child: Text('${_diseaseViews[index].split(':')[0]}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: DefaultTheme.BLUE_DARK,
+                                fontSize: 15,
+                              )),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width - 130,
+                          child: Text('${_diseaseViews[index].split(':')[1]}',
+                              style: TextStyle(fontSize: 15)),
+                        ),
+                      ],
                     ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width - 130,
-                    child: Text('${_diseaseViews[index].split(':')[1]}',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        )),
-                  ),
-                ]),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            // _listLv3IdSelected.removeAt(index);
+                            // _listLv3Selected.removeAt(index);
+
+                            _diseaseIds.removeWhere((item) =>
+                                item == _diseaseViews[index].split(':')[0]);
+                            _listLv3Selected.removeWhere((item) =>
+                                item.diseaseLevelThreeId ==
+                                _diseaseViews[index].split(':')[0]);
+                            _diseaseViews.removeAt(index);
+                          });
+                        },
+                        child: SizedBox(
+                          width: 15,
+                          height: 15,
+                          child: Image.asset('assets/images/ic-close.png'),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               );
-            },
-          );
+            });
   }
 
   _getListDisease() {
@@ -1723,6 +1817,160 @@ class _CreateMedicalInstructionViewState
         ),
       );
     }
+  }
+
+//new show camera/gallery
+  _showNewPicker() {
+    showGeneralDialog(
+        barrierColor: DefaultTheme.BLACK.withOpacity(0.6),
+        transitionBuilder: (context, a1, a2, widget) {
+          return Material(
+            color: DefaultTheme.TRANSPARENT,
+            child: Transform.scale(
+              scale: a1.value,
+              child: Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.95),
+                      borderRadius: BorderRadius.circular(10)),
+                  height: 300,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      //
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 30),
+                      ),
+                      Container(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            children: [
+                              //
+                              Text(
+                                'Thêm hình ảnh',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500),
+                              ),
+                              Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: SizedBox(
+                                  width: 30,
+                                  height: 30,
+                                  child:
+                                      Image.asset('assets/images/ic-close.png'),
+                                ),
+                              ),
+                            ],
+                          )),
+                      Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.1 - 5,
+                            ),
+                          ),
+                          InkWell(
+                              child: Container(
+                                  height: 180,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.35,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          width: 1),
+                                      color: DefaultTheme.WHITE,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        height: 50,
+                                        child: Image.asset(
+                                            'assets/images/ic-add-img.png'),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          bottom: 10,
+                                        ),
+                                      ),
+                                      Text('Thư viện'),
+                                    ],
+                                  )),
+                              onTap: () {
+                                _onImageButtonPressed(ImageSource.gallery,
+                                    context: context);
+                                Navigator.of(context).pop();
+                              }),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: 10,
+                            ),
+                          ),
+                          InkWell(
+                              child: Container(
+                                  height: 180,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.35,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          width: 1),
+                                      color: DefaultTheme.WHITE,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        height: 50,
+                                        child: Image.asset(
+                                            'assets/images/ic-open-camera.png'),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                          bottom: 10,
+                                        ),
+                                      ),
+                                      Text('Máy ảnh'),
+                                    ],
+                                  )),
+                              onTap: () {
+                                _onImageButtonPressed(ImageSource.camera,
+                                    context: context);
+                                Navigator.of(context).pop();
+                              }),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: MediaQuery.of(context).size.width * 0.1 - 5,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 30),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+        transitionDuration: Duration(milliseconds: 200),
+        barrierDismissible: true,
+        barrierLabel: '',
+        context: context,
+        pageBuilder: (context, animation1, animation2) {});
   }
 
 //chọn loại để chọn hình: camera hoặc thư viện ảnh

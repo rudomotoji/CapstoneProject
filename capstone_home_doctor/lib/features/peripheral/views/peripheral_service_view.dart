@@ -57,6 +57,11 @@ class _PeripheralService extends State<PeripheralService>
     _getPeripheralId();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future _getPeripheralId() async {
     await _peripheralHelper.getPeripheralId().then((value) async {
       if (value != '') {

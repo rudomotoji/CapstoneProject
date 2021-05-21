@@ -70,7 +70,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
 //////////////
 ///
@@ -708,7 +707,7 @@ class _DashboardState extends State<DashboardPage>
                     Padding(
                       padding: EdgeInsets.only(left: 20),
                     ),
-                    Text('Bạn có lịch dùng thuốc vào buổi trưa',
+                    Text('Bạn có lịch dùng thuốc',
                         style: TextStyle(color: DefaultTheme.BLACK))
                   ],
                 ),
@@ -1069,59 +1068,59 @@ class _DashboardState extends State<DashboardPage>
           ),
         ),
         Divider(color: DefaultTheme.GREY_TOP_TAB_BAR, height: 1),
-        CarouselSlider(
-          options: CarouselOptions(
-            height: 180,
-            autoPlay: true,
-            viewportFraction: 0.6,
-            aspectRatio: 2.0,
-            autoPlayInterval: Duration(seconds: 5),
-            enlargeCenterPage: false,
-            autoPlayCurve: Curves.easeIn,
-          ),
-          items: listAd.map((i) {
-            return Builder(
-              builder: (BuildContext context) {
-                return Container(
-                    padding: EdgeInsets.only(left: 10, right: 10),
-                    margin: EdgeInsets.only(left: 10),
-                    width: 280,
-                    height: 180,
-                    // margin: EdgeInsets.symmetric(horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('${i.adImage}'),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 40),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '${i.title}',
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                color: DefaultTheme.WHITE,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                        Text(
-                          '${i.description}',
-                          style: TextStyle(
-                              fontSize: 12, color: DefaultTheme.WHITE),
-                        ),
-                      ],
-                    ));
-              },
-            );
-          }).toList(),
-        ),
-//
+//         CarouselSlider(
+//           options: CarouselOptions(
+//             height: 180,
+//             autoPlay: true,
+//             viewportFraction: 0.6,
+//             aspectRatio: 2.0,
+//             autoPlayInterval: Duration(seconds: 5),
+//             enlargeCenterPage: false,
+//             autoPlayCurve: Curves.easeIn,
+//           ),
+//           items: listAd.map((i) {
+//             return Builder(
+//               builder: (BuildContext context) {
+//                 return Container(
+//                     padding: EdgeInsets.only(left: 10, right: 10),
+//                     margin: EdgeInsets.only(left: 10),
+//                     width: 280,
+//                     height: 180,
+//                     // margin: EdgeInsets.symmetric(horizontal: 2.0),
+//                     decoration: BoxDecoration(
+//                       image: DecorationImage(
+//                         image: AssetImage('${i.adImage}'),
+//                         fit: BoxFit.fill,
+//                       ),
+//                     ),
+//                     child: Column(
+//                       mainAxisAlignment: MainAxisAlignment.center,
+//                       children: [
+//                         Padding(
+//                           padding: EdgeInsets.only(top: 40),
+//                         ),
+//                         Align(
+//                           alignment: Alignment.centerLeft,
+//                           child: Text(
+//                             '${i.title}',
+//                             style: TextStyle(
+//                                 fontSize: 16.0,
+//                                 color: DefaultTheme.WHITE,
+//                                 fontWeight: FontWeight.w600),
+//                           ),
+//                         ),
+//                         Text(
+//                           '${i.description}',
+//                           style: TextStyle(
+//                               fontSize: 12, color: DefaultTheme.WHITE),
+//                         ),
+//                       ],
+//                     ));
+//               },
+//             );
+//           }).toList(),
+//         ),
+// //
       ],
     );
   }
@@ -4300,7 +4299,7 @@ class _DashboardState extends State<DashboardPage>
                                     color: DefaultTheme.BLACK_BUTTON,
                                     borderRadius: BorderRadius.circular(10)),
                                 child: Center(
-                                  child: Text('Đồng bộ',
+                                  child: Text('Lưu',
                                       textAlign: TextAlign.center,
                                       style:
                                           TextStyle(color: DefaultTheme.WHITE)),

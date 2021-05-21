@@ -578,9 +578,7 @@ class _ReasonContractView extends State<ReasonContractView>
                                   arguments: {
                                     'REQUEST_OBJ': _requestContract,
                                     'NOTE': _note,
-                                    'DATE_START': (_availableDay == '')
-                                        ? _startDate
-                                        : time.toString().split(' ')[0],
+                                    'DATE_START': _startDate,
                                   });
                             },
                           ),

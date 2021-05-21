@@ -15,22 +15,18 @@ class PeripheralRepository {
   //scan bluetooth device
   Future<List<ScanResult>> scanBluetoothDevice() async {
     List<ScanResult> listScanned = [];
-    try {
-      //
-      await flutterBlue.stopScan();
-      await flutterBlue.startScan(timeout: Duration(seconds: 5));
-      flutterBlue.scanResults.listen((results) {
-        for (ScanResult r in results) {
-          //
-          listScanned.add(r);
-        }
-      });
-      await flutterBlue.stopScan();
-      return listScanned;
-    } catch (e) {
-      await flutterBlue.stopScan();
-      await scanBluetoothDevice();
-    }
+
+    //
+    await flutterBlue.stopScan();
+    await flutterBlue.startScan(timeout: Duration(seconds: 5));
+    flutterBlue.scanResults.listen((results) {
+      for (ScanResult r in results) {
+        //
+        listScanned.add(r);
+      }
+    });
+    await flutterBlue.stopScan();
+    return listScanned;
   }
 
   //stop scan device
