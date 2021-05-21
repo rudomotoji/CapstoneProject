@@ -350,12 +350,14 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     Container(
                         padding: EdgeInsets.only(left: 10),
                         width: 70,
-                        child: Text('Ngày tạo')),
+                        child: Text('Ngày bắt đầu')),
                     Container(
                       padding: EdgeInsets.only(left: 10),
                       width: MediaQuery.of(context).size.width - 145,
                       child: Text(
-                        '${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
+                        (_healthRecordDTO.dateStarted == null)
+                            ? ''
+                            : '${_dateValidator.parseToDateView(_healthRecordDTO.dateStarted)}',
                         style: TextStyle(fontWeight: FontWeight.normal),
                       ),
                     ),

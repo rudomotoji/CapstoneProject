@@ -416,7 +416,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                       : _diseaseIds,
                                   place: _placeController.text,
                                   description: _note,
-                                  dateCreated: dateCreate.split(' ')[0]);
+                                  dateStarted: dateCreate.split(' ')[0]);
                               // dateCreated: _dateValidator.convertDateCreate(
                               //     dateCreate, 'yyyy-MM-dd', 'yyyy-MM-dd'));
                               _insertHealthRecord(healthRecordDTO);
