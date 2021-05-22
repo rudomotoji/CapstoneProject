@@ -1,4 +1,5 @@
 import 'package:capstone_home_doctor/models/doctor_dto.dart';
+import 'package:capstone_home_doctor/models/doctor_tracking_dto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -20,7 +21,9 @@ class DoctorInfoStateSuccess extends DoctorInfoState {
 
   final DoctorDTO dto;
   final List<DoctorDTO> listDoctors;
-  const DoctorInfoStateSuccess({this.dto, this.listDoctors});
+  final List<DoctorTrackingDTO> listDoctorTracking;
+  const DoctorInfoStateSuccess(
+      {this.dto, this.listDoctors, this.listDoctorTracking});
 
   @override
   // TODO: implement props

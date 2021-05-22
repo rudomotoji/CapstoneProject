@@ -706,253 +706,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     );
   }
 
-  SliverToBoxAdapter buildSliverToBoxAdapterHeader() {
-    return SliverToBoxAdapter(
-      child: Column(
-        children: [
-          Column(
-            children: [
-              Container(
-                margin: EdgeInsets.only(left: 20, right: 20, top: 10),
-                padding: EdgeInsets.only(top: 10, bottom: 10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: DefaultTheme.GREY_VIEW,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 20),
-                        ),
-                        Container(
-                          width: 125,
-                          child: Text(
-                            'Bệnh lý ',
-                            style: TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width -
-                              (155 + 40 + 10),
-                          child: Text(
-                            (_healthRecordDTO.diseases.length > 0)
-                                ? '${getDisease(_healthRecordDTO.diseases)}'
-                                : '', //lấy tên bệnh lý
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.right,
-                            maxLines: 3,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: 10,
-                        top: 10,
-                        left: 30,
-                        right: 30,
-                      ),
-                      child: Divider(
-                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                        height: 1,
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 20),
-                        ),
-                        Container(
-                          width: 125,
-                          child: Text(
-                            'Nơi khám ',
-                            style: TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width -
-                              (155 + 40 + 10),
-                          child: Text(
-                            '${_healthRecordDTO.place}',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 3,
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: 10,
-                        top: 10,
-                        left: 30,
-                        right: 30,
-                      ),
-                      child: Divider(
-                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                        height: 1,
-                      ),
-                    ),
-                    (_healthRecordDTO.description != '')
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              (_healthRecordDTO.description != null)
-                                  ? Row(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                        Container(
-                                          width: 125,
-                                          child: Text(
-                                            'Ghi chú',
-                                            style: TextStyle(
-                                              color: DefaultTheme.GREY_TEXT,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 10),
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width -
-                                              (155 + 50),
-                                          child: Text(
-                                            '${_healthRecordDTO.description}',
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 3,
-                                            textAlign: TextAlign.right,
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : Container(),
-                            ],
-                          )
-                        : Container(
-                            height: 0,
-                            width: 0,
-                          ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 5),
-              ),
-              buttonUpdateHealthRecord(),
-              Padding(
-                padding: EdgeInsets.only(bottom: 10),
-              ),
-              Divider(
-                color: DefaultTheme.GREY_TOP_TAB_BAR,
-                height: 0.1,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  buttonUpdateHealthRecord() {
-    if (_healthRecordDTO.contractId != null) {
-      return Align(
-        alignment: Alignment.centerLeft,
-        child: Container(
-          padding: EdgeInsets.only(left: 30, bottom: 5, top: 5),
-          child: Text(
-            'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: DefaultTheme.BLUE_DARK, fontSize: 13),
-          ),
-        ),
-      );
-    } else {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              padding: EdgeInsets.only(left: 30, bottom: 5, top: 5),
-              child: Text(
-                'Tạo ngày ${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}',
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: DefaultTheme.BLUE_DARK, fontSize: 13),
-              ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(padding: EdgeInsets.only(left: 20)),
-              InkWell(
-                splashColor: DefaultTheme.TRANSPARENT,
-                highlightColor: DefaultTheme.TRANSPARENT,
-                onTap: () async {
-                  Navigator.of(context)
-                      .pushNamed(RoutesHDr.UPDATE_HEALTH_RECORD,
-                          arguments: _hrId)
-                      .then((value) => _pullRefresh());
-                },
-                child: Container(
-                  padding:
-                      EdgeInsets.only(left: 15, right: 15, bottom: 5, top: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: DefaultTheme.GREY_VIEW,
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Cập nhật hồ sơ',
-                        style: TextStyle(
-                            color: DefaultTheme.BLUE_DARK, fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      );
-    }
-  }
-
   Widget buildTabbarViewHasContract() {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -1107,7 +860,9 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                           dto.dateCreate,
                                           'dd/MM/yyyy',
                                           'yyyy-MM-ddThh:mm:ss'),
-                                      dto.diagnose);
+                                      dto.diagnose,
+                                      dto.diseases,
+                                      dto.description);
                                 } else {
                                   if (dto.medicalInstructionTypeId == 1) {
                                     Navigator.pushNamed(context,
@@ -1182,7 +937,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  (dto.diagnose == null)
+                                  (dto.diagnose == null || dto.diagnose == '')
                                       ? Container()
                                       : Row(
                                           mainAxisAlignment:
@@ -1193,7 +948,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             Container(
                                               width: 80,
                                               child: Text(
-                                                'Chẩn đoán:',
+                                                'Kết luận:',
                                                 style: TextStyle(
                                                     color:
                                                         DefaultTheme.GREY_TEXT),
@@ -1212,7 +967,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             ),
                                           ],
                                         ),
-                                  (dto.description != null)
+                                  (dto.description != null &&
+                                          dto.description != '')
                                       ? Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
@@ -1253,24 +1009,28 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                         Text(
                                           'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(dateCreated)}',
                                           style: TextStyle(
-                                              color: DefaultTheme.BLACK,
-                                              fontWeight: FontWeight.w600),
+                                            color: DefaultTheme.BLACK,
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width - 160,
-                                    child: Text(
-                                      'Bệnh lý: ${dto.diseases}',
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 5,
-                                      style: TextStyle(
-                                          color: DefaultTheme.BLACK,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ),
+                                  (dto.diseases == null || dto.diseases == [])
+                                      ? Container()
+                                      : Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              160,
+                                          child: Text(
+                                            'Bệnh lý: ${dto.diseases}',
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 5,
+                                            style: TextStyle(
+                                                color: DefaultTheme.BLACK,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ),
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 5),
                                   ),
@@ -1832,8 +1592,8 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     });
   }
 
-  showFullDetailComponent(
-      List<String> imgs, String miName, String dateCreate, String dianose) {
+  showFullDetailComponent(List<String> imgs, String miName, String dateCreate,
+      String dianose, List<String> diseases, String note) {
     int positionImage = 0;
     bool isTappedOut = false;
 
@@ -2041,6 +1801,16 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                     ),
+                                    (diseases != null &&
+                                            diseases.isNotEmpty &&
+                                            diseases != [])
+                                        ? Text(
+                                            'Chẩn đoán: $diseases',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                          )
+                                        : Container(),
                                     (dianose == null)
                                         ? Text(
                                             '',
@@ -2051,7 +1821,24 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             maxLines: 5,
                                           )
                                         : Text(
-                                            'Chẩn đoán $dianose',
+                                            'Kết luận: $dianose',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 5,
+                                          ),
+                                    (note == null)
+                                        ? Text(
+                                            '',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 5,
+                                          )
+                                        : Text(
+                                            'Mô tả thêm: $note',
                                             style: TextStyle(
                                                 color: DefaultTheme.WHITE,
                                                 fontSize: 15),
@@ -2062,7 +1849,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       padding: EdgeInsets.only(bottom: 10),
                                     ),
                                     Text(
-                                      'Ngày tạo $dateCreate',
+                                      'Ngày tạo: $dateCreate',
                                       style: TextStyle(
                                           color: DefaultTheme.WHITE,
                                           fontSize: 15),

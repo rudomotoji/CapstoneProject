@@ -232,7 +232,42 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
               height: 0.1,
             ),
           ),
+         
           Row(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 20),
+                width: 140,
+                child: Text(
+                  'Chuẩn đoán:',
+                  style: TextStyle(
+                    color: DefaultTheme.GREY_TEXT,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 10),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width - (40 + 120 + 20 + 30),
+                child: Text(
+                  '${_currentPrescription.diseases}',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 5,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          Padding(
+            padding: EdgeInsets.only(bottom: 5),
+          ),
+           Row(
             children: [
               Container(
                 padding: EdgeInsets.only(left: 20),
@@ -261,9 +296,6 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
                 ),
               ),
             ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 5),
           ),
           //dsach thuốc
           Padding(

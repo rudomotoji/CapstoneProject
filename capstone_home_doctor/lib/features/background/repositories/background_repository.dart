@@ -46,6 +46,26 @@ class BackgroundRepository extends BaseApiClient {
     }
   }
 
+  //
+  Future<bool> pushVitalShare(
+      int healthRecordId, String timeShare, int minuteShare) async {
+    //
+    final String url =
+        '/VitalSigns/ShareVitalSignValue?healthRecordId=$healthRecordId&timeShare=$timeShare&minuteShare=$minuteShare';
+    try {
+      //
+      final request = await postApi(url, null, null);
+      print('URL PUSH VITAL SHARE: ${request.request.url}');
+      if (request.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('ERROR AT PUSH VITAL SHARE: $e');
+    }
+  }
+
   //get default safe border heart rate
   // Future<SafeScopeHeartRateDTO> getSafeScopeHeartRate() async {
   //   String url = '/DefaultScopeHeartRate';

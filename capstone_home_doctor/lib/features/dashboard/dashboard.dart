@@ -3,10 +3,16 @@ import 'dart:ui';
 
 import 'package:capstone_home_doctor/features/advertisement/repositories/advertisement_repository.dart';
 import 'package:capstone_home_doctor/features/background/repositories/background_repository.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/events/doctor_info_event.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
+import 'package:capstone_home_doctor/features/contract/states/doctor_info_state.dart';
+import 'package:capstone_home_doctor/features/contract/views/doctor_information_view.dart';
 import 'package:capstone_home_doctor/models/advertisement_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_push_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
+import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:capstone_home_doctor/services/time_system_helper.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -80,12 +86,14 @@ import 'package:url_launcher/url_launcher.dart';
 //
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final MobileDeviceHelper _mobileDeviceHelper = MobileDeviceHelper();
+final HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
 final VitalSignHelper vitalSignHelper = VitalSignHelper();
 final ContractHelper contractHelper = ContractHelper();
 final ReminderHelper _reminderHelper = ReminderHelper();
 final ArrayValidator _arrayValidator = ArrayValidator();
 final MeasureHelper _measureHelper = MeasureHelper();
 DateValidator _dateValidator = DateValidator();
+final ContractHelper _contractHelper = ContractHelper();
 List<ContractListDTO> _listExecuting = [];
 final VitalSignRepository _vitalSignRepository = VitalSignRepository();
 final BackgroundRepository _backgroundRepository =
@@ -139,7 +147,7 @@ class _DashboardState extends State<DashboardPage>
   int _patientId = 0;
   String _tokenDevice = '';
   int _accountId = 0;
-
+  String _timeSystem = '';
   int _heartRateValue = 0;
 
   TokenDeviceDTO _tokenDeviceDTO = TokenDeviceDTO();
@@ -151,7 +159,11 @@ class _DashboardState extends State<DashboardPage>
       ContractRepository(httpClient: http.Client());
   PaymentRepository paymentRepository =
       PaymentRepository(httpClient: http.Client());
+  DoctorRepository _doctorRepository =
+      DoctorRepository(httpClient: http.Client());
+  //
 
+  DoctorInfoBloc _doctorInfoBloc;
   PrescriptionListBloc _prescriptionListBloc;
   AppointmentBloc _appointmentBloc;
   TokenDeviceBloc _tokenDeviceBloc;
@@ -336,6 +348,7 @@ class _DashboardState extends State<DashboardPage>
         curentDateNow = new DateFormat('yyyy-MM-dd').parse(
             DateFormat('yyyy-MM-dd')
                 .format(DateTime.parse(value.split('"')[1].split('"')[0])));
+        print('CURRENT DATE NOW: ${curentDateNow}');
       });
     });
   }
@@ -347,8 +360,10 @@ class _DashboardState extends State<DashboardPage>
     _getListAd();
     _getTimeSystem();
     _getPatientId();
+
     _getMeasureCounting();
     _getsOffline();
+    _doctorInfoBloc = BlocProvider.of(context);
     _appointmentBloc = BlocProvider.of(context);
     _prescriptionListBloc = BlocProvider.of(context);
     _tokenDeviceBloc = BlocProvider.of(context);
@@ -440,6 +455,7 @@ class _DashboardState extends State<DashboardPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+
     //  _animationController.dispose();
   }
 
@@ -954,8 +970,15 @@ class _DashboardState extends State<DashboardPage>
               ),
               InkWell(
                 onTap: () async {
+                  print(
+                      'curentDateNow.toString():---------${curentDateNow.toString().split(' ')[0]}');
                   if (_isConnectedWithPeripheral) {
-                    _chooseMeasure();
+                    if (isMeasureOn) {
+                      await _getMeasureCounting();
+                      _showMeasureDuration();
+                    } else {
+                      _chooseMeasure();
+                    }
                   } else {
                     showDialog(
                       barrierDismissible: false,
@@ -3717,435 +3740,423 @@ class _DashboardState extends State<DashboardPage>
                 _refreshBottomSheet(setModalState);
               }
             });
-            return BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-              child: Stack(
-                children: <Widget>[
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.95,
-                    padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.05),
-                    color: DefaultTheme.TRANSPARENT,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.9,
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(15)),
-                        color: DefaultTheme.WHITE.withOpacity(0.9),
-                      ),
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            //
+            return Container(
+              height: (isMeasureOn)
+                  ? MediaQuery.of(context).size.height * 0.95
+                  : MediaQuery.of(context).size.height * 0.6,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                color: DefaultTheme.WHITE.withOpacity(0.95),
+              ),
+              child: Column(
+                  // shrinkWrap: true,
+                  // physics: NeverScrollableScrollPhysics(),
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    //
 
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(top: 30, left: 20, right: 20),
-                              child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: Image.asset(
-                                            'assets/images/ic-measure.png'),
+                    Padding(
+                      padding: EdgeInsets.only(top: 30, left: 20, right: 20),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 30,
+                                height: 30,
+                                child:
+                                    Image.asset('assets/images/ic-measure.png'),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 15),
+                              ),
+                              Text(
+                                'Đo nhịp tim',
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Spacer(),
+                              (isMeasureOn)
+                                  ? Container(
+                                      padding: EdgeInsets.only(
+                                          left: 12,
+                                          right: 12,
+                                          bottom: 8,
+                                          top: 8),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: (isMeasureDone)
+                                              ? DefaultTheme.BLUE_TEXT
+                                                  .withOpacity(0.7)
+                                              : DefaultTheme.RED_CALENDAR
+                                                  .withOpacity(0.7)),
+                                      child: Center(
+                                        child: Text(
+                                          (isMeasureDone && countDurationM > 0)
+                                              ? 'Đo hoàn tất'
+                                              : (!isMeasureDone &&
+                                                      countDurationM == 0)
+                                                  ? 'Đang đo'
+                                                  : (!isMeasureDone &&
+                                                          countDurationM > 0)
+                                                      ? 'Đang đo ${countDurationM} phút'
+                                                      : '',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: DefaultTheme.WHITE),
+                                        ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 15),
+                                    )
+                                  : Container(),
+                            ],
+                          )),
+                    ),
+                    (isMeasureOn)
+                        ? Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * 0.85,
+                            child: Column(
+                              children: [
+                                Padding(padding: EdgeInsets.only(top: 10)),
+                                _getMeasureInformation(),
+                              ],
+                            ),
+                          )
+                        : Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height * 0.5,
+                            child: Column(
+                              children: [
+                                Padding(padding: EdgeInsets.only(top: 20)),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 0.25,
+                                ),
+                                Container(
+                                  height: 50,
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 140,
+                                        child: Text(
+                                          'Ngày',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600),
+                                        ),
                                       ),
                                       Text(
-                                        'Đo nhịp tim',
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
+                                          '${_dateValidator.parseToDateView3(dateNow.toString())}'),
+                                    ],
+                                  ),
+                                ),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 0.25,
+                                ),
+                                Container(
+                                  height: 50,
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 140,
+                                        child: Text(
+                                          'Bắt đầu từ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600),
                                         ),
                                       ),
+                                      Text(
+                                          '${_dateValidator.getHourAndMinute(dateNow.toString())}'),
                                       Spacer(),
-                                      (isMeasureOn)
-                                          ? Container(
-                                              padding: EdgeInsets.only(
-                                                  left: 15,
-                                                  right: 15,
-                                                  bottom: 10,
-                                                  top: 10),
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                  color: (isMeasureDone)
-                                                      ? DefaultTheme.BLUE_TEXT
-                                                          .withOpacity(0.7)
-                                                      : DefaultTheme
-                                                          .RED_CALENDAR
-                                                          .withOpacity(0.7)),
-                                              child: Center(
-                                                child: Text(
-                                                  (isMeasureDone &&
-                                                          countDurationM > 0)
-                                                      ? 'Đo hoàn tất'
-                                                      : (!isMeasureDone &&
-                                                              countDurationM ==
-                                                                  0)
-                                                          ? 'Đang đo'
-                                                          : (!isMeasureDone &&
-                                                                  countDurationM >
-                                                                      0)
-                                                              ? 'Đang đo ${countDurationM} phút'
-                                                              : '',
-                                                  style: TextStyle(
-                                                      color:
-                                                          DefaultTheme.WHITE),
-                                                ),
-                                              ),
-                                            )
-                                          : Container(),
                                     ],
-                                  )),
-                            ),
-                            (isMeasureOn)
-                                ? Expanded(
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                            padding: EdgeInsets.only(top: 10)),
-                                        _getMeasureInformation(),
-                                      ],
-                                    ),
-                                  )
-                                : Expanded(
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                            padding: EdgeInsets.only(top: 20)),
-                                        Divider(
-                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                          height: 0.25,
+                                  ),
+                                ),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 0.25,
+                                ),
+                                Container(
+                                  height: 50,
+                                  padding: EdgeInsets.only(left: 20, right: 20),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 140,
+                                        child: Text(
+                                          'Trong khoảng',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600),
                                         ),
-                                        Container(
-                                          height: 50,
-                                          padding: EdgeInsets.only(
-                                              left: 20, right: 20),
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                width: 140,
-                                                child: Text(
-                                                  'Ngày',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
+                                      ),
+                                      //
+                                      Container(
+                                        height: 40,
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                180,
+                                        child: DropdownButton<int>(
+                                          items:
+                                              listTimeMeasure.map((int value) {
+                                            return new DropdownMenuItem<int>(
+                                              value: value,
+                                              child: new Text(
+                                                '${value} phút',
+                                                textAlign: TextAlign.center,
                                               ),
-                                              Text(
-                                                  '${_dateValidator.parseToDateView3(dateNow.toString())}'),
-                                            ],
+                                            );
+                                          }).toList(),
+                                          hint: Container(
+                                            padding: EdgeInsets.only(left: 0),
+                                            child: Text(
+                                              '$timeChosen',
+                                              style: TextStyle(
+                                                  color: DefaultTheme.BLACK,
+                                                  fontSize: 15),
+                                            ),
                                           ),
-                                        ),
-                                        Divider(
-                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                          height: 0.25,
-                                        ),
-                                        Container(
-                                          height: 50,
-                                          padding: EdgeInsets.only(
-                                              left: 20, right: 20),
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                width: 140,
-                                                child: Text(
-                                                  'Bắt đầu từ',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                              ),
-                                              Text(
-                                                  '${_dateValidator.getHourAndMinute(dateNow.toString())}'),
-                                              Spacer(),
-                                            ],
+                                          underline: Container(
+                                            width: 0,
                                           ),
+                                          isExpanded: true,
+                                          onChanged: (_) {
+                                            print('$_');
+                                            setModalState(() {
+                                              timeChosen =
+                                                  _.toString() + ' phút';
+                                            });
+                                          },
                                         ),
-                                        Divider(
-                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                          height: 0.25,
-                                        ),
-                                        Container(
-                                          height: 50,
-                                          padding: EdgeInsets.only(
-                                              left: 20, right: 20),
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                width: 140,
-                                                child: Text(
-                                                  'Trong vòng',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                              ),
-                                              //
-                                              Container(
-                                                height: 40,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width -
-                                                    180,
-                                                child: DropdownButton<int>(
-                                                  items: listTimeMeasure
-                                                      .map((int value) {
-                                                    return new DropdownMenuItem<
-                                                        int>(
-                                                      value: value,
-                                                      child: new Text(
-                                                        '${value} phút',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                  hint: Container(
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Divider(
+                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                  height: 0.25,
+                                ),
+                                // Spacer(),
+                                Padding(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      left: 20, right: 20, top: 20),
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 45,
+                                  child: ButtonHDr(
+                                    style: BtnStyle.BUTTON_BLACK,
+                                    label: 'Bắt đầu đo',
+                                    onTap: () async {
+                                      ///
+                                      ///
+                                      //PUSH VITAL SIGN INTO SERVER
+                                      String listValue = '';
+                                      String listTime = '';
+                                      int countGetList = 0;
+                                      _sqfLiteHelper
+                                          .getListVitalSign(
+                                              'HEART_RATE', _patientId)
+                                          .then((listHeartRate) async {
+                                        if (countGetList == 0) {
+                                          for (VitalSignDTO dto
+                                              in listHeartRate) {
+                                            listValue +=
+                                                dto.value1.toString() + ',';
+                                            listTime += dto.toDatePush() + ',';
+                                          }
+                                        }
+                                        //
+
+                                        countGetList++;
+                                        print('list value: $listValue');
+                                        print('list time: $listTime');
+                                        VitalSignPushDTO vitalSignPush =
+                                            VitalSignPushDTO(
+                                          // vitalSignScheduleId:
+                                          //     heartRateSchedule.vitalSignScheduleId,
+                                          // currentDate:
+                                          //     DateTime.now().toString().split(' ')[0],
+                                          patientId: _patientId,
+                                          vitalSignTypeId: 1,
+                                          numberValue: listValue,
+                                          timeValue: listTime,
+                                        );
+                                        print(
+                                            'DTO HEREEE: \nnumberValue: ${vitalSignPush.numberValue}\ntimeValue: ${vitalSignPush.timeValue}');
+
+                                        print(
+                                            '\n\nJSON OBJECT: \n\n ${vitalSignPush.toJson().toString()}\n\n');
+                                        await _vitalSignServerRepository
+                                            .pushVitalSign(vitalSignPush)
+                                            .then((isSuccess) {
+                                          if (isSuccess) {
+                                            print(
+                                                'SUCCESSFUL PUSH DATA HEART RATE');
+                                          } else {
+                                            print(
+                                                'FAILED TO PUSH DATA HEART RATE');
+                                          }
+                                        });
+                                      });
+
+///////////
+                                      //
+                                      setState(() {
+                                        if (!mounted) return;
+                                        isMeasureOn = true;
+                                      });
+                                      setModalState(() {
+                                        if (!mounted) return;
+                                        isMeasureOn = true;
+                                      });
+                                      await _measureHelper
+                                          .updateMeasureOn(true);
+                                      //
+                                      //SAVE TIME START
+                                      await _measureHelper.updateTimeStartM(
+                                          _dateValidator.getHourAndMinute(
+                                              dateNow.toString()));
+                                      //
+                                      //SAVE DURATION TIME
+                                      await _measureHelper.updateDurationM(
+                                          int.tryParse(
+                                              timeChosen.split(' ')[0]));
+                                      //
+                                      // Navigator.of(context).pop();
+                                      await _getMeasureCounting();
+
+                                      ///
+                                      ///
+
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Material(
+                                            color: DefaultTheme.TRANSPARENT,
+                                            child: Center(
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(15)),
+                                                child: BackdropFilter(
+                                                  filter: ImageFilter.blur(
+                                                      sigmaX: 25, sigmaY: 25),
+                                                  child: Container(
                                                     padding: EdgeInsets.only(
-                                                        left: 0),
-                                                    child: Text(
-                                                      '$timeChosen',
-                                                      style: TextStyle(
-                                                          color: DefaultTheme
-                                                              .BLACK,
-                                                          fontSize: 15),
+                                                        left: 10,
+                                                        top: 10,
+                                                        right: 10),
+                                                    width: 250,
+                                                    height: 150,
+                                                    decoration: BoxDecoration(
+                                                      color: DefaultTheme.WHITE
+                                                          .withOpacity(0.9),
                                                     ),
-                                                  ),
-                                                  underline: Container(
-                                                    width: 0,
-                                                  ),
-                                                  isExpanded: true,
-                                                  onChanged: (_) {
-                                                    print('$_');
-                                                    setModalState(() {
-                                                      timeChosen =
-                                                          _.toString() +
-                                                              ' phút';
-                                                    });
-                                                  },
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        Divider(
-                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                          height: 0.25,
-                                        ),
-                                        Spacer(),
-                                        Container(
-                                          margin: EdgeInsets.only(
-                                              left: 20, right: 20),
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: 45,
-                                          child: ButtonHDr(
-                                            style: BtnStyle.BUTTON_BLACK,
-                                            label: 'Bắt đầu đo',
-                                            onTap: () async {
-                                              setState(() {
-                                                if (!mounted) return;
-                                                isMeasureOn = true;
-                                              });
-                                              setModalState(() {
-                                                if (!mounted) return;
-                                                isMeasureOn = true;
-                                              });
-                                              await _measureHelper
-                                                  .updateMeasureOn(true);
-                                              //
-                                              //SAVE TIME START
-                                              await _measureHelper
-                                                  .updateTimeStartM(
-                                                      _dateValidator
-                                                          .getHourAndMinute(
-                                                              dateNow
-                                                                  .toString()));
-                                              //
-                                              //SAVE DURATION TIME
-                                              await _measureHelper
-                                                  .updateDurationM(int.tryParse(
-                                                      timeChosen
-                                                          .split(' ')[0]));
-                                              //
-                                              // Navigator.of(context).pop();
-                                              await _getMeasureCounting();
-
-                                              ///
-                                              ///
-
-                                              showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return Material(
-                                                    color: DefaultTheme
-                                                        .TRANSPARENT,
-                                                    child: Center(
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    15)),
-                                                        child: BackdropFilter(
-                                                          filter:
-                                                              ImageFilter.blur(
-                                                                  sigmaX: 25,
-                                                                  sigmaY: 25),
-                                                          child: Container(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 10,
-                                                                    top: 10,
-                                                                    right: 10),
-                                                            width: 250,
-                                                            height: 150,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: DefaultTheme
-                                                                  .WHITE
-                                                                  .withOpacity(
-                                                                      0.7),
-                                                            ),
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: <
-                                                                  Widget>[
-                                                                Container(
-                                                                  padding: EdgeInsets
-                                                                      .only(
-                                                                          bottom:
-                                                                              10,
-                                                                          top:
-                                                                              10),
-                                                                  child: Text(
-                                                                    'Bắt đầu đo nhịp tim',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      decoration:
-                                                                          TextDecoration
-                                                                              .none,
-                                                                      color: DefaultTheme
-                                                                          .BLACK,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                      fontSize:
-                                                                          18,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Container(
-                                                                  padding: EdgeInsets
-                                                                      .only(
-                                                                          left:
-                                                                              20,
-                                                                          right:
-                                                                              20),
-                                                                  child: Align(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .center,
-                                                                    child: Text(
-                                                                      'Hệ thống sẽ ghi nhận nhịp tim của bạn trong khoảng thời gian này',
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                      style:
-                                                                          TextStyle(
-                                                                        decoration:
-                                                                            TextDecoration.none,
-                                                                        color: DefaultTheme
-                                                                            .GREY_TEXT,
-                                                                        fontWeight:
-                                                                            FontWeight.w400,
-                                                                        fontSize:
-                                                                            13,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                Spacer(),
-                                                                Divider(
-                                                                  height: 1,
-                                                                  color: DefaultTheme
-                                                                      .GREY_TOP_TAB_BAR,
-                                                                ),
-                                                                ButtonHDr(
-                                                                  height: 40,
-                                                                  style: BtnStyle
-                                                                      .BUTTON_TRANSPARENT,
-                                                                  label:
-                                                                      'Đồng ý',
-                                                                  labelColor:
-                                                                      DefaultTheme
-                                                                          .BLUE_TEXT,
-                                                                  onTap: () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                  },
-                                                                ),
-                                                              ],
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 10,
+                                                                  top: 10),
+                                                          child: Text(
+                                                            'Bắt đầu đo nhịp tim',
+                                                            style: TextStyle(
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .none,
+                                                              color:
+                                                                  DefaultTheme
+                                                                      .BLACK,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 18,
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 20,
+                                                                  right: 20),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                              'Hệ thống sẽ ghi nhận nhịp tim của bạn trong khoảng thời gian này',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: TextStyle(
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .none,
+                                                                color: DefaultTheme
+                                                                    .GREY_TEXT,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                fontSize: 13,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Spacer(),
+                                                        Divider(
+                                                          height: 1,
+                                                          color: DefaultTheme
+                                                              .GREY_TOP_TAB_BAR,
+                                                        ),
+                                                        ButtonHDr(
+                                                          height: 40,
+                                                          style: BtnStyle
+                                                              .BUTTON_TRANSPARENT,
+                                                          label: 'Đồng ý',
+                                                          labelColor:
+                                                              DefaultTheme
+                                                                  .BLUE_TEXT,
+                                                          onTap: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
                                                     ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                        Padding(
-                                            padding: EdgeInsets.only(top: 30)),
-                                      ],
-                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
                                   ),
-                          ]),
-                    ),
-                  ),
-                  Positioned(
-                    top: 23,
-                    left: MediaQuery.of(context).size.width * 0.3,
-                    height: 5,
-                    child: Container(
-                      padding: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width * 0.3),
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: 15,
-                      decoration: BoxDecoration(
-                          color: DefaultTheme.WHITE.withOpacity(0.8),
-                          borderRadius: BorderRadius.circular(50)),
-                    ),
-                  ),
-                ],
-              ),
+                                ),
+                                Padding(padding: EdgeInsets.only(top: 30)),
+                              ],
+                            ),
+                          ),
+                  ]),
             );
           });
         });
@@ -4155,95 +4166,30 @@ class _DashboardState extends State<DashboardPage>
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       child: ListView(
+        // shrinkWrap: true,
+        // physics: NeverScrollableScrollPhysics(),
         // mainAxisAlignment: MainAxisAlignment.start,
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.only(left: 20, right: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                ),
-                Column(
-                  children: [
-                    Text(
-                      'Thời gian bắt đầu đo',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 3),
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                width: 0.75),
-                            borderRadius: BorderRadius.circular(8),
-                            color: DefaultTheme.WHITE,
-                          ),
-                          child: Center(
-                              child: Text(
-                            '${timeStartM.split(':')[0]}:${timeStartM.split(':')[1]}',
-                            textAlign: TextAlign.center,
-                            style:
-                                TextStyle(wordSpacing: 2.0, letterSpacing: 2),
-                          )),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                Spacer(),
-                Column(
-                  children: [
-                    Text(
-                      'Đo trong khoảng',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 8),
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          height: 25,
-                          child: Text(
-                            '$durationM',
-                            style: TextStyle(
-                                fontSize: 20, color: DefaultTheme.RED_CALENDAR),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 5),
-                        ),
-                        Container(
-                          alignment: Alignment.bottomCenter,
-                          padding: EdgeInsets.only(bottom: 2),
-                          height: 25,
-                          child: Text(
-                            'phút',
-                            style: TextStyle(fontSize: 16),
-                            // textAlign: TextAlign.end,
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ],
+            child: Text(
+              'Nhịp tim được đo trong vòng $durationM phút',
+              style: TextStyle(fontSize: 15, color: DefaultTheme.BLACK),
             ),
           ),
+          (listTimeString == '' || listTimeString == null)
+              ? Container()
+              : Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.only(left: 20, right: 20, top: 5),
+                  child: Text(
+                    'Bắt đầu đo: ${listTimeString.split(',')[0].split(':')[0]} giờ ${listTimeString.split(',')[0].split(':')[1]} phút',
+                    style: TextStyle(fontSize: 15, color: DefaultTheme.BLACK),
+                  ),
+                ),
           _heartRateChartToday(listTimeM, listValueM),
-          Spacer(),
           Container(
             width: MediaQuery.of(context).size.width,
             padding: EdgeInsets.only(left: 20, right: 20),
@@ -4255,43 +4201,30 @@ class _DashboardState extends State<DashboardPage>
                           //
                           InkWell(
                             onTap: () async {
-                              VitalSignPushDTO vitalSignPush = VitalSignPushDTO(
-                                patientId: _patientId,
-                                vitalSignTypeId: 1,
-                                timeStartValue: listTimeString,
-                                numberStartValue: listValueM,
-                              );
-                              await _vitalSignServerRepository
-                                  .pushVitalSign(vitalSignPush)
-                                  .then((isSuccess) async {
-                                if (isSuccess) {
-                                  print('SUCCESSFUL PUSH DATA HEART RATE');
-                                }
-                              });
+                              Navigator.of(context).pop();
+                              if (_patientId != 0) {
+                                _doctorInfoBloc.add(DoctorTrackingEventGet(
+                                    patientId: _patientId));
+                                _showSavingDialog();
+                              }
+
+                              // VitalSignPushDTO vitalSignPush = VitalSignPushDTO(
+                              //   patientId: _patientId,
+                              //   vitalSignTypeId: 1,
+                              //   timeStartValue: listTimeString,
+                              //   numberStartValue: listValueM,
+                              // );
+                              // await _vitalSignServerRepository
+                              //     .pushVitalSign(vitalSignPush)
+                              //     .then((isSuccess) async {
+                              //   if (isSuccess) {
+                              //     print('SUCCESSFUL PUSH DATA HEART RATE');
+                              //   }
+                              // });
                               /////
                               ///
-                              setState(() {
-                                if (!mounted) return;
-                                isMeasureOn = false;
-                              });
-
-                              await _measureHelper.updateMeasureOn(false);
-                              //
-                              //SAVE TIME START
-                              await _measureHelper.updateTimeStartM('');
-                              //
-                              //SAVE DURATION TIME
-                              await _measureHelper.updateDurationM(0);
-
-                              //
-                              await _measureHelper.updateCountingM(0);
-                              //UPDATE TIME AND VALUE LIST HR INTO INITIAL
-                              await _measureHelper.updateListTime('');
-                              await _measureHelper.updateListValueHr('');
-                              //
                               ///
-                              ///
-                              Navigator.of(context).pop();
+
                               //
                             },
                             child: Container(
@@ -4400,6 +4333,7 @@ class _DashboardState extends State<DashboardPage>
                           await _measureHelper.updateListTime('');
                           await _measureHelper.updateListValueHr('');
                           //
+
                           Navigator.of(context).pop();
                         },
                         child: Container(
@@ -4448,6 +4382,698 @@ class _DashboardState extends State<DashboardPage>
           )
         ],
       ),
+    );
+  }
+
+  _showSavingDialog() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Material(
+          color: DefaultTheme.TRANSPARENT,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width - 20,
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  decoration: BoxDecoration(
+                    color: DefaultTheme.WHITE.withOpacity(0.9),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: Image.asset('assets/images/ic-close.png'),
+                          ),
+                        ),
+                      ),
+
+                      Row(
+                        children: <Widget>[
+                          // Padding(
+                          //   padding: EdgeInsets.only(left: 20),
+                          // ),
+                          SizedBox(
+                            height: 40,
+                            width: 40,
+                            child: Image.asset('assets/images/ic-measure.png'),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 20),
+                          ),
+                          Text(
+                            'Lưu nhịp tim',
+                            style: TextStyle(
+                              fontSize: 25,
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.BLACK,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                left: 10,
+                                // right: 10,
+                                top: 10,
+                                bottom: 20,
+                              ),
+                              child: Text(
+                                'Chọn bác sĩ mà muốn chia sẻ dữ liệu nhịp tim, hệ thống sẽ ghi nhận và thông báo tới bác sĩ.',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  decoration: TextDecoration.none,
+                                  color: DefaultTheme.BLACK,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                            //
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.5,
+                              width: MediaQuery.of(context).size.width,
+                              child:
+                                  BlocBuilder<DoctorInfoBloc, DoctorInfoState>(
+                                builder: (context, state) {
+                                  if (state is DoctorInfoStateLoading) {
+                                    return Container(
+                                      margin:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          color: DefaultTheme.GREY_BUTTON),
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 150,
+                                          height: 150,
+                                          child: Image.asset(
+                                              'assets/images/loading.gif'),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  if (state is DoctorInfoStateFailure) {
+                                    return Container(
+                                      margin: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          bottom: 10,
+                                          top: 10),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          color: DefaultTheme.GREY_BUTTON),
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 10,
+                                            bottom: 10,
+                                            left: 20,
+                                            right: 20),
+                                        child: Text(
+                                            'Hiện không có bác sĩ nào theo dõi bạn.',
+                                            style: TextStyle(
+                                              color: DefaultTheme.GREY_TEXT,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                            )),
+                                      ),
+                                    );
+                                  }
+                                  if (state is DoctorInfoStateSuccess) {
+                                    if (state == null ||
+                                        state.listDoctorTracking == null ||
+                                        state.listDoctorTracking == []) {
+                                      return Container(
+                                        margin: EdgeInsets.only(
+                                            left: 20,
+                                            right: 20,
+                                            bottom: 10,
+                                            top: 10),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            color: DefaultTheme.GREY_BUTTON),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 10,
+                                              bottom: 10,
+                                              left: 20,
+                                              right: 20),
+                                          child: Text(
+                                              'Hiện không có bác sĩ nào theo dõi bạn.',
+                                              style: TextStyle(
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                              )),
+                                        ),
+                                      );
+                                    } else {
+                                      return ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount:
+                                            state.listDoctorTracking.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return InkWell(
+                                            onTap: () {
+                                              showDialog(
+                                                barrierDismissible: false,
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return Material(
+                                                    color: DefaultTheme
+                                                        .TRANSPARENT,
+                                                    child: Center(
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15)),
+                                                        child: BackdropFilter(
+                                                          filter:
+                                                              ImageFilter.blur(
+                                                                  sigmaX: 25,
+                                                                  sigmaY: 25),
+                                                          child: Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 10,
+                                                                    top: 10,
+                                                                    right: 10),
+                                                            width: 250,
+                                                            height: 150,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: DefaultTheme
+                                                                  .WHITE
+                                                                  .withOpacity(
+                                                                      0.9),
+                                                            ),
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: <
+                                                                  Widget>[
+                                                                Container(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          bottom:
+                                                                              8,
+                                                                          top:
+                                                                              10),
+                                                                  child: Text(
+                                                                    'Lưu nhịp tim',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      decoration:
+                                                                          TextDecoration
+                                                                              .none,
+                                                                      color: DefaultTheme
+                                                                          .BLACK,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      fontSize:
+                                                                          18,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              20,
+                                                                          right:
+                                                                              20),
+                                                                  child: Align(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    child: Text(
+                                                                      'Nhịp tim được lưu vào hồ sơ sức khoẻ giữa bạn và bác sĩ ${state.listDoctorTracking[index].doctorName}',
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style:
+                                                                          TextStyle(
+                                                                        decoration:
+                                                                            TextDecoration.none,
+                                                                        color: DefaultTheme
+                                                                            .GREY_TEXT,
+                                                                        fontWeight:
+                                                                            FontWeight.w400,
+                                                                        fontSize:
+                                                                            13,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Spacer(),
+                                                                Divider(
+                                                                  height: 1,
+                                                                  color: DefaultTheme
+                                                                      .GREY_TOP_TAB_BAR,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    ButtonHDr(
+                                                                      width: 250 /
+                                                                              2 -
+                                                                          10.25,
+                                                                      height:
+                                                                          40,
+                                                                      style: BtnStyle
+                                                                          .BUTTON_TRANSPARENT,
+                                                                      label:
+                                                                          'Huỷ',
+                                                                      labelColor:
+                                                                          DefaultTheme
+                                                                              .RED_TEXT,
+                                                                      onTap:
+                                                                          () {
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                    ),
+                                                                    Container(
+                                                                        height:
+                                                                            40,
+                                                                        width:
+                                                                            0.5,
+                                                                        color: DefaultTheme
+                                                                            .GREY_TOP_TAB_BAR),
+                                                                    ButtonHDr(
+                                                                      width: 250 /
+                                                                              2 -
+                                                                          10.25,
+                                                                      height:
+                                                                          40,
+                                                                      style: BtnStyle
+                                                                          .BUTTON_TRANSPARENT,
+                                                                      label:
+                                                                          'Đồng ý',
+                                                                      labelColor:
+                                                                          DefaultTheme
+                                                                              .BLUE_TEXT,
+                                                                      onTap:
+                                                                          () async {
+                                                                        //PUSH VITAL SIGN INTO SERVER
+                                                                        String
+                                                                            listValue =
+                                                                            '';
+                                                                        String
+                                                                            listTime =
+                                                                            '';
+                                                                        int countGetList =
+                                                                            0;
+                                                                        _sqfLiteHelper
+                                                                            .getListVitalSign('HEART_RATE',
+                                                                                _patientId)
+                                                                            .then((listHeartRate) async {
+                                                                          if (countGetList ==
+                                                                              0) {
+                                                                            for (VitalSignDTO dto
+                                                                                in listHeartRate) {
+                                                                              listValue += dto.value1.toString() + ',';
+                                                                              listTime += dto.toDatePush() + ',';
+                                                                            }
+                                                                          }
+                                                                          //
+
+                                                                          countGetList++;
+                                                                          print(
+                                                                              'list value: $listValue');
+                                                                          print(
+                                                                              'list time: $listTime');
+                                                                          VitalSignPushDTO
+                                                                              vitalSignPush =
+                                                                              VitalSignPushDTO(
+                                                                            // vitalSignScheduleId:
+                                                                            //     heartRateSchedule.vitalSignScheduleId,
+                                                                            // currentDate:
+                                                                            //     DateTime.now().toString().split(' ')[0],
+                                                                            patientId:
+                                                                                _patientId,
+                                                                            vitalSignTypeId:
+                                                                                1,
+                                                                            numberValue:
+                                                                                listValue,
+                                                                            timeValue:
+                                                                                listTime,
+                                                                          );
+                                                                          print(
+                                                                              'DTO HEREEE: \nnumberValue: ${vitalSignPush.numberValue}\ntimeValue: ${vitalSignPush.timeValue}');
+
+                                                                          print(
+                                                                              '\n\nJSON OBJECT: \n\n ${vitalSignPush.toJson().toString()}\n\n');
+                                                                          await _vitalSignServerRepository
+                                                                              .pushVitalSign(vitalSignPush)
+                                                                              .then((isSuccess) {
+                                                                            if (isSuccess) {
+                                                                              print('SUCCESSFUL PUSH DATA HEART RATE');
+                                                                            } else {
+                                                                              print('FAILED TO PUSH DATA HEART RATE');
+                                                                            }
+                                                                          });
+                                                                        });
+
+                                                                        //PUSH SHARE VITAL SIGN VALUES
+                                                                        //
+                                                                        String
+                                                                            dateShare =
+                                                                            '${curentDateNow.toString().split(' ')[0]}T${listTimeString.split(',')[0].split(':')[0]}%3A${listTimeString.split(',')[0].split(':')[1]}';
+
+                                                                        await _backgroundRepository
+                                                                            .pushVitalShare(
+                                                                                state.listDoctorTracking[index].healthRecordId,
+                                                                                dateShare,
+                                                                                durationM)
+                                                                            .then((isSuccess) {
+                                                                          if (isSuccess) {
+                                                                            print('SHARE VT SUCCESS!!!!!!!!!!!!\nOBJ: hrid: ${state.listDoctorTracking[index].healthRecordId} - dateshare:$dateShare - duration: $durationM');
+                                                                          } else {
+                                                                            print('SHARE VT FAILED!!!!!!!!!!!!\nOBJ: hrid: ${state.listDoctorTracking[index].healthRecordId} - dateshare:$dateShare - duration: $durationM');
+                                                                          }
+                                                                        });
+
+                                                                        ///SET ALL THE VAR INTO INITIAL
+                                                                        setState(
+                                                                            () {
+                                                                          if (!mounted)
+                                                                            return;
+                                                                          isMeasureOn =
+                                                                              false;
+                                                                        });
+
+                                                                        await _measureHelper
+                                                                            .updateMeasureOn(false);
+                                                                        //
+                                                                        //SAVE TIME START
+                                                                        await _measureHelper
+                                                                            .updateTimeStartM('');
+                                                                        //
+                                                                        //SAVE DURATION TIME
+                                                                        await _measureHelper
+                                                                            .updateDurationM(0);
+
+                                                                        //
+                                                                        await _measureHelper
+                                                                            .updateCountingM(0);
+                                                                        //UPDATE TIME AND VALUE LIST HR INTO INITIAL
+                                                                        await _measureHelper
+                                                                            .updateListTime('');
+                                                                        await _measureHelper
+                                                                            .updateListValueHr('');
+                                                                        //
+                                                                        ///
+                                                                        ///
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                    ),
+                                                                  ],
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              decoration: BoxDecoration(
+                                                color: DefaultTheme.WHITE,
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                              padding:
+                                                  EdgeInsets.only(right: 20),
+                                              margin:
+                                                  EdgeInsets.only(bottom: 20),
+                                              height: 100,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(children: [
+                                                    Container(
+                                                      width: 100,
+                                                      height: 100,
+                                                      decoration: BoxDecoration(
+                                                        // borderRadius:
+                                                        //     BorderRadius.circular(
+                                                        //         5),
+                                                        image: DecorationImage(
+                                                          image: AssetImage(
+                                                              "assets/images/avatar-default.jpg"),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Column(
+                                                      children: [
+                                                        Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width -
+                                                              160,
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 20),
+                                                          child: Text(
+                                                              'Bác sĩ ${state.listDoctorTracking[index].doctorName}',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    DefaultTheme
+                                                                        .BLACK,
+                                                                fontSize: 17,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              )),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 10),
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () async {
+                                                            await _contractHelper
+                                                                .updateContractId(state
+                                                                    .listDoctorTracking[
+                                                                        index]
+                                                                    .contractId);
+                                                            Navigator.pushNamed(
+                                                                    context,
+                                                                    RoutesHDr
+                                                                        .DETAIL_CONTRACT_VIEW)
+                                                                .then((value) {
+                                                              _getPatientId();
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width -
+                                                                160,
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20),
+                                                            child: Text(
+                                                                'Chi tiết hợp đồng',
+                                                                style: TextStyle(
+                                                                    color: DefaultTheme
+                                                                        .BLUE_TEXT,
+                                                                    decoration:
+                                                                        TextDecoration
+                                                                            .underline)),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 3),
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () async {
+                                                            await _healthRecordHelper
+                                                                .setHealthReCordId(state
+                                                                    .listDoctorTracking[
+                                                                        index]
+                                                                    .healthRecordId);
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pushNamed(RoutesHDr
+                                                                    .HEALTH_RECORD_DETAIL);
+                                                          },
+                                                          child: Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width -
+                                                                160,
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20),
+                                                            child: Text(
+                                                                'Chi tiết hồ sơ sức khoẻ',
+                                                                style: TextStyle(
+                                                                    color: DefaultTheme
+                                                                        .BLUE_TEXT,
+                                                                    decoration:
+                                                                        TextDecoration
+                                                                            .underline)),
+                                                          ),
+                                                        ),
+                                                        // Container(
+                                                        //   width: MediaQuery.of(
+                                                        //               context)
+                                                        //           .size
+                                                        //           .width -
+                                                        //       160,
+                                                        //   padding:
+                                                        //       EdgeInsets.only(
+                                                        //           left: 20),
+                                                        //   child: Row(
+                                                        //     mainAxisAlignment:
+                                                        //         MainAxisAlignment
+                                                        //             .start,
+                                                        //     children: [
+                                                        //       //
+                                                        //       Container(
+                                                        //         decoration:
+                                                        //             BoxDecoration(
+                                                        //                 borderRadius:
+                                                        //                     BorderRadius.circular(
+                                                        //                         20),
+                                                        //                 border:
+                                                        //                     Border
+                                                        //                         .all(
+                                                        //                   color: DefaultTheme
+                                                        //                       .GREY_TOP_TAB_BAR,
+                                                        //                   width:
+                                                        //                       1,
+                                                        //                 )),
+                                                        //         padding:
+                                                        //             EdgeInsets
+                                                        //                 .all(8),
+                                                        //         child: SizedBox(
+                                                        //           width: 15,
+                                                        //           height: 15,
+                                                        //           child: Image.asset(
+                                                        //               'assets/images/ic-contract.png'),
+                                                        //         ),
+                                                        //       ),
+                                                        //       Padding(
+                                                        //         padding: EdgeInsets
+                                                        //             .only(
+                                                        //                 left: 10),
+                                                        //       ),
+                                                        //       Container(
+                                                        //         decoration:
+                                                        //             BoxDecoration(
+                                                        //                 borderRadius:
+                                                        //                     BorderRadius.circular(
+                                                        //                         20),
+                                                        //                 border:
+                                                        //                     Border
+                                                        //                         .all(
+                                                        //                   color: DefaultTheme
+                                                        //                       .GREY_TOP_TAB_BAR,
+                                                        //                   width:
+                                                        //                       1,
+                                                        //                 )),
+                                                        //         padding:
+                                                        //             EdgeInsets
+                                                        //                 .all(8),
+                                                        //         child: SizedBox(
+                                                        //           width: 15,
+                                                        //           height: 15,
+                                                        //           child: Image.asset(
+                                                        //               'assets/images/ic-health-record.png'),
+                                                        //         ),
+                                                        //       ),
+                                                        //     ],
+                                                        //   ),
+                                                        // ),
+                                                      ],
+                                                    ),
+                                                  ]),
+                                                  // Text(
+                                                  //     'Bác sĩ: ${state.listDoctorTracking[index].doctorName}'),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }
+                                  }
+                                  return Container();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // ButtonHDr(
+                      //   style: BtnStyle.BUTTON_BLACK,
+                      //   label: 'Tiếp theo',
+                      //   onTap: () {
+                      //     Navigator.of(context).pop();
+                      //     Navigator.pushNamed(
+                      //         context, RoutesHDr.DOCTOR_INFORMATION,
+                      //         arguments: _idDoctor);
+                      //   },
+                      // ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 15),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -4578,7 +5204,7 @@ class _DashboardState extends State<DashboardPage>
                     Text('Biểu đồ nhịp tim'.toUpperCase(),
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                           color: DefaultTheme.BLUE_REFERENCE,
                         )),
                   ],

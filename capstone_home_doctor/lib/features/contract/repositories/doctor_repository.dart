@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
 import 'package:capstone_home_doctor/models/doctor_dto.dart';
 import 'package:capstone_home_doctor/models/doctor_list_dto.dart';
+import 'package:capstone_home_doctor/models/doctor_tracking_dto.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -59,6 +60,24 @@ class DoctorRepository extends BaseApiClient {
       }
     } catch (e) {
       print('ERROR AT GET DOCTOR BY PATIENT $e');
+    }
+  }
+
+  Future<List<DoctorTrackingDTO>> getDoctorTrackingList(int patientId) async {
+    final String url =
+        '/Doctors/GetDoctorTrackingByPatientId?patientId=$patientId';
+    try {
+      //
+      final response = await getApi(url, null);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as List;
+        List<DoctorTrackingDTO> list = data.map((dto) {
+          return DoctorTrackingDTO.fromJson(dto);
+        }).toList();
+        return list;
+      }
+    } catch (e) {
+      print('ERROR AT GET DOCTOR TRACKING LIST: $e');
     }
   }
 }

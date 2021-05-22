@@ -134,8 +134,8 @@ class _ContractShareView extends State<ContractShareView>
                     if (e.images == null || e.images.isEmpty) {
                       _showDetailVitalSign(e.medicalInstructionId);
                     } else {
-                      showFullDetailComponent(
-                          e.images, nameOfList, e.dateCreate, e.diagnose);
+                      showFullDetailComponent(e.images, nameOfList,
+                          e.dateCreate, e.disease, e.conclusion);
                     }
                   },
                   child: ClipRRect(
@@ -425,7 +425,8 @@ class _ContractShareView extends State<ContractShareView>
                           e.images,
                           e.medicalInstructionTypeName,
                           e.dateCreate,
-                          e.diagnose);
+                          e.disease,
+                          e.conclusion);
                     }
                   },
                   child: ClipRRect(
@@ -716,7 +717,8 @@ class _ContractShareView extends State<ContractShareView>
                           e.images,
                           e.medicalInstructionTypeName,
                           e.dateCreate,
-                          e.diagnose);
+                          e.disease,
+                          e.conclusion);
                     }
                   },
                   child: ClipRRect(
@@ -1487,7 +1489,9 @@ class _ContractShareView extends State<ContractShareView>
                                                   .images,
                                               '${medicalInstructions3[index].medicalInstructionTypeName}',
                                               '${medicalInstructions3[index].dateCreate}',
-                                              '${medicalInstructions3[index].diagnose}');
+                                              medicalInstructions3[index]
+                                                  .disease,
+                                              '${medicalInstructions3[index].conclusion}');
                                         }
                                       },
                                       child:
@@ -2272,7 +2276,8 @@ class _ContractShareView extends State<ContractShareView>
                                                                             listMi[insideCountNow - 1][index3].images,
                                                                             '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
                                                                             '${listMi[insideCountNow - 1][index3].dateCreate}',
-                                                                            '${listMi[insideCountNow - 1][index3].diagnose}');
+                                                                            listMi[insideCountNow - 1][index3].disease,
+                                                                            '${listMi[insideCountNow - 1][index3].conclusion}');
                                                                       }
                                                                     },
                                                                     child: (listMi[insideCountNow - 1][index3].images ==
@@ -2524,7 +2529,10 @@ class _ContractShareView extends State<ContractShareView>
                                                                   .images,
                                                               '${listMiOther[insideCountOtherNow - 1][index3].medicalInstructionTypeName}',
                                                               '${listMiOther[insideCountOtherNow - 1][index3].dateCreate}',
-                                                              '${listMiOther[insideCountOtherNow - 1][index3].diagnose}');
+                                                              listMiOther[insideCountOtherNow -
+                                                                      1][index3]
+                                                                  .disease,
+                                                              '${listMiOther[insideCountOtherNow - 1][index3].conclusion}');
                                                         }
                                                       },
                                                       child: (listMiOther[insideCountOtherNow -
@@ -3052,11 +3060,11 @@ class _ContractShareView extends State<ContractShareView>
         });
   }
 
-  showFullDetailComponent(
-      List<String> imgs, String miName, String dateCreate, String dianose) {
+  showFullDetailComponent(List<String> imgs, String miName, String dateCreate,
+      String diseases, String conclusion) {
     int positionImage = 0;
     bool isTappedOut = false;
-
+    print('disease list: $diseases');
     return showDialog(
         barrierDismissible: false,
         context: context,
@@ -3268,10 +3276,18 @@ class _ContractShareView extends State<ContractShareView>
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                     ),
+                                    (diseases == null || diseases == '')
+                                        ? Container()
+                                        : Text(
+                                            'Chẩn đoán: $diseases',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                          ),
                                     Text(
-                                      (dianose == null)
+                                      (conclusion == null)
                                           ? ''
-                                          : 'Chuẩn đoán $dianose',
+                                          : 'Kết luận: $conclusion',
                                       style: TextStyle(
                                           color: DefaultTheme.WHITE,
                                           fontSize: 15),
@@ -3282,7 +3298,7 @@ class _ContractShareView extends State<ContractShareView>
                                       padding: EdgeInsets.only(bottom: 10),
                                     ),
                                     Text(
-                                      'Ngày tạo $dateCreate',
+                                      'Ngày tạo: $dateCreate',
                                       style: TextStyle(
                                           color: DefaultTheme.WHITE,
                                           fontSize: 15),

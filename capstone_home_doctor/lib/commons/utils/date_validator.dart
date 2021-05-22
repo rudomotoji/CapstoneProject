@@ -140,25 +140,20 @@ class DateValidator {
       result = 'Hôm qua';
     } else {
       String tempDW = '';
+      print('dateInWeek:$dateInWeek');
       if (dateInWeek == 'Monday') {
         tempDW = 'Thứ hai';
-      }
-      if (dateInWeek == 'Tuesday') {
+      } else if (dateInWeek.contains('Tuesday')) {
         tempDW = 'Thứ ba';
-      }
-      if (dateInWeek == 'Wednesday') {
+      } else if (dateInWeek.contains('Wednesday')) {
         tempDW = 'Thứ tư';
-      }
-      if (dateInWeek == 'Thursday') {
+      } else if (dateInWeek.contains('Thursday')) {
         tempDW = 'Thứ năm';
-      }
-      if (dateInWeek == 'Friday') {
+      } else if (dateInWeek.contains('Friday')) {
         tempDW = 'Thứ sáu';
-      }
-      if (dateInWeek == 'Saturday') {
-        result = 'Thứ bảy';
-      }
-      if (dateInWeek == 'Sunday') {
+      } else if (dateInWeek.contains('Saturday')) {
+        tempDW = 'Thứ bảy';
+      } else if (dateInWeek.contains('Sunday')) {
         tempDW = 'Chủ nhật';
       }
       result = tempDW +

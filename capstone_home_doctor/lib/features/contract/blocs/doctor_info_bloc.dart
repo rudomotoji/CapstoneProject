@@ -3,6 +3,7 @@ import 'package:capstone_home_doctor/features/contract/repositories/doctor_repos
 import 'package:capstone_home_doctor/features/contract/states/doctor_info_state.dart';
 
 import 'package:capstone_home_doctor/models/doctor_dto.dart';
+import 'package:capstone_home_doctor/models/doctor_tracking_dto.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -31,6 +32,20 @@ class DoctorInfoBloc extends Bloc<DoctorInfoEvent, DoctorInfoState> {
         final List<DoctorDTO> lists = await doctorAPI.getListDoctor();
         if (lists.length > 0) {
           yield DoctorInfoStateSuccess(listDoctors: lists);
+        } else {
+          yield DoctorInfoStateFailure();
+        }
+      } catch (e) {
+        yield DoctorInfoStateFailure();
+      }
+    }
+    if (event is DoctorTrackingEventGet) {
+      yield DoctorInfoStateLoading();
+      try {
+        final List<DoctorTrackingDTO> list =
+            await doctorAPI.getDoctorTrackingList(event.patientId);
+        if (list.length > 0) {
+          yield DoctorInfoStateSuccess(listDoctorTracking: list);
         } else {
           yield DoctorInfoStateFailure();
         }

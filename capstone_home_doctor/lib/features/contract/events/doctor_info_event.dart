@@ -22,3 +22,13 @@ class DoctorInfoEventGetDoctors extends DoctorInfoEvent {
   // TODO: implement props
   List<Object> get props => [];
 }
+
+class DoctorTrackingEventGet extends DoctorInfoEvent {
+  final int patientId;
+  const DoctorTrackingEventGet({@required this.patientId})
+      : assert(patientId != null);
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [patientId];
+}
