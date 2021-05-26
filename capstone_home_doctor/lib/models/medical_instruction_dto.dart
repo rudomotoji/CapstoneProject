@@ -123,6 +123,8 @@ class MedicalInstructionDTO {
   int medicalInstructionTypeId;
   int healthRecordId;
   String dateCreate;
+  String dateStarted;
+  String dateFinished;
   int patientId;
   List<String> imageFile;
   //vitalsign
@@ -151,6 +153,8 @@ class MedicalInstructionDTO {
     this.diseaseIds,
     this.diseases,
     this.appointmentId,
+    this.dateFinished,
+    this.dateStarted,
   });
 
   MedicalInstructionDTO.fromJson(Map<String, dynamic> json) {
@@ -163,8 +167,8 @@ class MedicalInstructionDTO {
     placeHealthRecord = json['placeHealthRecord'];
     diseases =
         json['diseases'] != null ? json['diseases'].cast<String>() : null;
-    // dateStarted = json['dateStarted'];
-    // dateFinished = json['dateFinished'];
+    dateStarted = json['dateStarted'];
+    dateFinished = json['dateFinished'];
     dateCreate = json['dateCreate'];
     patientFullName = json['patientFullName'];
     status = json['status'];

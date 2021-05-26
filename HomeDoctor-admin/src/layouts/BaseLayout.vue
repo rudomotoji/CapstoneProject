@@ -10,14 +10,14 @@
 </template>
 
 <script>
-import HeaderDefault from "../components/header";
-import FooterDefault from "../components/footer";
+import HeaderDefault from '../components/header'
+import FooterDefault from '../components/footer'
 export default {
   components: {
-    "header-default": HeaderDefault,
-    "footer-default": FooterDefault,
-  },
-};
+    'header-default': HeaderDefault,
+    'footer-default': FooterDefault
+  }
+}
 </script>
 
 <style style="scss">

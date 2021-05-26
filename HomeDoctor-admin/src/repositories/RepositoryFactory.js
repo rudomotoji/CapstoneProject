@@ -6,14 +6,14 @@ import TimeRepository from './TimeRepository'
 import LicenceRepository from './LicenceRepository'
 
 const repositories = {
-    // userRepository: UserRepository,
-    doctorRepository: DoctorRepository,
-    patientRepository: PatientRepository,
-    timeRepository: TimeRepository,
-    contractRepository: ContractRepository,
-    licenceRepository: LicenceRepository,
+  // userRepository: UserRepository,
+  doctorRepository: DoctorRepository,
+  patientRepository: PatientRepository,
+  timeRepository: TimeRepository,
+  contractRepository: ContractRepository,
+  licenceRepository: LicenceRepository
 }
 
 export const RepositoryFactory = {
-    get: name => repositories[name]
+  get: name => repositories[name]
 }

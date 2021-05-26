@@ -165,58 +165,60 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import moment from "moment";
+import { mapState, mapActions } from 'vuex'
+import moment from 'moment'
 export default {
-  data() {
+  data () {
     return {
       dialogVisible: false,
-      contractDetail: {},
-    };
+      contractDetail: {}
+    }
   },
   computed: {
-    ...mapState("contract", ["listContracts", "contractDetail"]),
+    ...mapState('contract', ['listContracts', 'contractDetail'])
   },
-  mounted() {
-    this.getListContracts();
+  mounted () {
+    this.getListContracts()
   },
   methods: {
-    ...mapActions("contract", ["getListContracts", "activeContract"]),
+    ...mapActions('contract', ['getListContracts', 'activeContract']),
 
-    ChangeStatus(id, status) {
-      if (status === "LOCKED") {
-        if (confirm("Bạn chắc chắn muốn khóa hợp đồng này?"))
+    ChangeStatus (id, status) {
+      if (status === 'LOCKED') {
+        if (confirm('Bạn chắc chắn muốn khóa hợp đồng này?')) {
           this.activeContract({ id, status })
             .then((resp) => {
-              console.log(resp);
+              console.log(resp)
             })
             .catch((error) => {
-              console.log(error);
-            });
-      } else if (status === "ACTIVE") {
-        if (confirm("Bạn chắc chắn muốn mở khóa hợp đồng này?"))
+              console.log(error)
+            })
+        }
+      } else if (status === 'ACTIVE') {
+        if (confirm('Bạn chắc chắn muốn mở khóa hợp đồng này?')) {
           this.activeContract({ id, status })
             .then((resp) => {
-              console.log(resp);
+              console.log(resp)
             })
             .catch((error) => {
-              console.log(error);
-            });
+              console.log(error)
+            })
+        }
       }
     },
-    formatDateTime(dateStr) {
-      return moment(dateStr).format("DD/MM/YYYY");
+    formatDateTime (dateStr) {
+      return moment(dateStr).format('DD/MM/YYYY')
     },
-    viewDetail(row) {
-      this.dialogVisible = true;
-      this.contractDetail = row;
+    viewDetail (row) {
+      this.dialogVisible = true
+      this.contractDetail = row
     },
-    closeDialog() {
-      this.dialogVisible = false;
-      this.contractDetail = {};
-    },
-  },
-};
+    closeDialog () {
+      this.dialogVisible = false
+      this.contractDetail = {}
+    }
+  }
+}
 </script>
 
 <style lang="scss">

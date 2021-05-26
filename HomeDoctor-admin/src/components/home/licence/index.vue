@@ -84,73 +84,70 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import moment from "moment";
+import { mapState, mapActions } from 'vuex'
+import moment from 'moment'
 export default {
-  data() {
+  data () {
     return {
       dialogVisible: false,
       ruleForm: {
         price: 0,
         days: 0,
-        name: "",
-        description: "",
+        name: '',
+        description: ''
       },
       rules: {
         price: [
           {
             required: true,
-            message: "Giá tiền không thể bỏ trông",
-            trigger: "blur",
-            trigger: "change",
-          },
+            message: 'Giá tiền không thể bỏ trông',
+            trigger: 'change'
+          }
         ],
         days: [
           {
             required: true,
-            message: "Ngày theo dõi không thể bỏ trống",
-            trigger: "blur",
-            trigger: "change",
-          },
+            message: 'Ngày theo dõi không thể bỏ trống',
+            trigger: 'change'
+          }
         ],
         name: [
           {
             required: true,
-            message: "Tên gói không thể bỏ trống",
-            trigger: "blur",
-            trigger: "change",
-          },
-        ],
-      },
-    };
+            message: 'Tên gói không thể bỏ trống',
+            trigger: 'change'
+          }
+        ]
+      }
+    }
   },
   computed: {
-    ...mapState("licence", ["licences"]),
+    ...mapState('licence', ['licences'])
   },
-  mounted() {
-    this.getLicences();
+  mounted () {
+    this.getLicences()
   },
   methods: {
-    ...mapActions("licence", ["getLicences", "createLicense"]),
-    formatDateTime(dateStr) {
-      return moment(dateStr).format("DD/MM/YYYY");
+    ...mapActions('licence', ['getLicences', 'createLicense']),
+    formatDateTime (dateStr) {
+      return moment(dateStr).format('DD/MM/YYYY')
     },
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.dialogVisible = false;
-          this.createLicense(ruleForm);
+          this.dialogVisible = false
+          this.createLicense(this.ruleForm)
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
-  },
-};
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+    }
+  }
+}
 </script>
 
 <style lang="scss">

@@ -350,13 +350,40 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     Container(
                         padding: EdgeInsets.only(left: 10),
                         width: 70,
-                        child: Text('Ngày tạo')),
+                        child: Text('Ngày khám')),
                     Container(
                       padding: EdgeInsets.only(left: 10),
                       width: MediaQuery.of(context).size.width - 145,
                       child: Text(
                         (_healthRecordDTO.dateStarted != null)
-                            ? '${_dateValidator.parseToDateView(_healthRecordDTO.dateCreated)}'
+                            ? '${_dateValidator.parseToDateView(_healthRecordDTO.dateStarted)}'
+                            : '',
+                        style: TextStyle(fontWeight: FontWeight.normal),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.only(bottom: 10, top: 10),
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: [
+                    //
+                    SizedBox(
+                      width: 15,
+                      child: Image.asset('assets/images/ic-calendar.png'),
+                    ),
+                    Container(
+                        padding: EdgeInsets.only(left: 10),
+                        width: 70,
+                        child: Text('Ngày kết thúc')),
+                    Container(
+                      padding: EdgeInsets.only(left: 10),
+                      width: MediaQuery.of(context).size.width - 145,
+                      child: Text(
+                        (_healthRecordDTO.dateFinished != null)
+                            ? '${_dateValidator.parseToDateView(_healthRecordDTO.dateFinished)}'
                             : '',
                         style: TextStyle(fontWeight: FontWeight.normal),
                       ),

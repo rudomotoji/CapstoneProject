@@ -4,8 +4,8 @@
 // const userRepository = RepositoryFactory.get('userRepository')
 
 const state = () => ({
-    status: '',
-    user: []
+  status: '',
+  user: []
 })
 const getters = {
 }
@@ -16,9 +16,9 @@ const mutations = {
 
 }
 export default {
-    namespaced: true,
-    state,
-    getters,
-    actions,
-    mutations
+  namespaced: true,
+  state,
+  getters,
+  actions,
+  mutations
 }

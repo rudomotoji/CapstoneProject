@@ -32,34 +32,34 @@
 </template>
 
 <script>
-import BaseLayout from "../../layouts/BaseLayout.vue";
-import LeftContent from "../../components/left-content";
-import { mapState, mapActions } from "vuex";
-import moment from "moment";
+import BaseLayout from '../../layouts/BaseLayout.vue'
+import LeftContent from '../../components/left-content'
+import { mapState, mapActions } from 'vuex'
+import moment from 'moment'
 export default {
-  data() {
+  data () {
     return {
-      dateSelect: "",
-    };
+      dateSelect: ''
+    }
   },
   methods: {
-    ...mapActions("time", ["setTimeSystem", "getTimeSystem", "openDialog"]),
-    closeDialog() {
-      this.openDialog(false);
+    ...mapActions('time', ['setTimeSystem', 'getTimeSystem', 'openDialog']),
+    closeDialog () {
+      this.openDialog(false)
     },
-    setDateOfSystem() {
-      var date = new Date(this.dateSelect);
-      this.setTimeSystem(moment(date).format("YYYY-MM-DDTHH:mm:ss"));
-    },
+    setDateOfSystem () {
+      var date = new Date(this.dateSelect)
+      this.setTimeSystem(moment(date).format('YYYY-MM-DDTHH:mm:ss'))
+    }
   },
   computed: {
-    ...mapState("time", ["openDialogTime", "timeSystem"]),
+    ...mapState('time', ['openDialogTime', 'timeSystem'])
   },
   components: {
-    "base-layout": BaseLayout,
-    "left-content": LeftContent,
-  },
-};
+    'base-layout': BaseLayout,
+    'left-content': LeftContent
+  }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -100,153 +100,145 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import { isValidEmail, isPhone } from "../../utils/validation";
+import { mapState, mapActions } from 'vuex'
+import { isValidEmail, isPhone } from '../../utils/validation'
 export default {
-  data() {
+  data () {
     var checkEmail = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error("Vui long nhap email"));
+        return callback(new Error('Vui long nhap email'))
       }
       setTimeout(() => {
         if (!isValidEmail(value)) {
-          callback(new Error("Vui long nhap dung format email"));
+          callback(new Error('Vui long nhap dung format email'))
         } else {
-          callback();
+          callback()
         }
-      }, 1000);
-    };
+      }, 1000)
+    }
     var checkPhone = (rule, value, callback) => {
       if (!value) {
-        return callback(new Error("Vui long nhap SDT"));
+        return callback(new Error('Vui long nhap SDT'))
       }
       setTimeout(() => {
         if (!isPhone(value)) {
-          callback(new Error("Vui long nhap dung format SDT"));
+          callback(new Error('Vui long nhap dung format SDT'))
         } else {
-          callback();
+          callback()
         }
-      }, 1000);
-    };
+      }, 1000)
+    }
     return {
       dialogVisible: false,
       ruleForm: {
-        username: "",
-        fullName: "",
-        workLocation: "",
-        experience: "",
-        specialization: "",
-        address: "",
-        details: "",
-        phone: "",
-        email: "",
-        dateOfBirth: "",
+        username: '',
+        fullName: '',
+        workLocation: '',
+        experience: '',
+        specialization: '',
+        address: '',
+        details: '',
+        phone: '',
+        email: '',
+        dateOfBirth: ''
       },
       rules: {
         username: [
           {
             required: true,
-            message: "Khong duoc bo trong",
-            trigger: "blur",
+            message: 'Khong duoc bo trong',
+            trigger: 'blur'
           },
           {
             min: 3,
             max: 5,
-            message: "Ten danng nhap can lon hon 3 va nho hon 5",
-            trigger: "blur",
-          },
+            message: 'Ten danng nhap can lon hon 3 va nho hon 5',
+            trigger: 'blur'
+          }
         ],
         fullName: [
           {
             required: true,
-            message: "Khong duoc bo trong",
-            trigger: "blur",
-          },
+            message: 'Khong duoc bo trong',
+            trigger: 'blur'
+          }
         ],
         dateOfBirth: [
           {
             required: true,
-            message: "Khong duoc bo trong",
-            trigger: "blur",
-            trigger: "change",
-          },
+            message: 'Khong duoc bo trong',
+            trigger: 'change'
+          }
         ],
         phone: [
           {
-            trigger: "blur",
+            trigger: 'blur',
             validator: checkPhone,
-            required: true,
-          },
+            required: true
+          }
         ],
         email: [
           {
-            trigger: "blur",
+            trigger: 'blur',
             validator: checkEmail,
-            required: true,
+            required: true
           },
           {
-            type: "email",
-            message: "Vui long nhap dung email format ",
-            trigger: ["blur", "change"],
-          },
+            type: 'email',
+            message: 'Vui long nhap dung email format ',
+            trigger: ['blur', 'change']
+          }
         ],
         address: [
           {
             required: true,
-            message: "Khong duoc bo trong",
-            trigger: "blur",
-          },
-        ],
-        address: [
-          {
-            required: true,
-            message: "Khong duoc bo trong",
-            trigger: "blur",
-          },
+            message: 'Khong duoc bo trong',
+            trigger: 'blur'
+          }
         ],
         workLocation: [
           {
             required: true,
-            message: "Khong duoc bo trong",
-            trigger: "blur",
-          },
+            message: 'Khong duoc bo trong',
+            trigger: 'blur'
+          }
         ],
         specialization: [
           {
             required: true,
-            message: "Khong duoc bo trong",
-            trigger: "blur",
-          },
-        ],
-      },
-    };
+            message: 'Khong duoc bo trong',
+            trigger: 'blur'
+          }
+        ]
+      }
+    }
   },
   computed: {
-    ...mapState("doctor", ["listDoctor"]),
-    ...mapState("time", ["openDialogTime", "timeSystem"]),
+    ...mapState('doctor', ['listDoctor']),
+    ...mapState('time', ['openDialogTime', 'timeSystem'])
   },
-  mounted() {
-    this.getListDoctor();
+  mounted () {
+    this.getListDoctor()
   },
   methods: {
-    ...mapActions("doctor", ["getListDoctor"]),
-    ...mapActions("time", ["setTimeSystem", "getTimeSystem"]),
-    submitForm(formName) {
+    ...mapActions('doctor', ['getListDoctor']),
+    ...mapActions('time', ['setTimeSystem', 'getTimeSystem']),
+    submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
-          this.dialogVisible = false;
+          alert('submit!')
+          this.dialogVisible = false
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
-  },
-};
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+    }
+  }
+}
 </script>
 
 <style lang="scss">

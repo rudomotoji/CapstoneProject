@@ -39,14 +39,14 @@
   </header>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapActions } from 'vuex'
 export default {
-  name: "HeaderDefault",
+  name: 'HeaderDefault',
   methods: {
-    ...mapActions("users", ["handleLogout"]),
-    ...mapActions("time", ["openDialog"]),
-  },
-};
+    ...mapActions('users', ['handleLogout']),
+    ...mapActions('time', ['openDialog'])
+  }
+}
 </script>
 
 <style style="scss" scoped>

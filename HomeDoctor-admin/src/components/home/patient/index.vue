@@ -47,25 +47,25 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import moment from "moment";
+import { mapState, mapActions } from 'vuex'
+import moment from 'moment'
 export default {
-  data() {
-    return {};
+  data () {
+    return {}
   },
   computed: {
-    ...mapState("patient", ["patients"]),
+    ...mapState('patient', ['patients'])
   },
-  mounted() {
-    this.getPatients();
+  mounted () {
+    this.getPatients()
   },
   methods: {
-    ...mapActions("patient", ["getPatients"]),
-    formatDateTime(dateStr) {
-      return moment(dateStr).format("DD/MM/YYYY");
-    },
-  },
-};
+    ...mapActions('patient', ['getPatients']),
+    formatDateTime (dateStr) {
+      return moment(dateStr).format('DD/MM/YYYY')
+    }
+  }
+}
 </script>
 
 <style lang="scss">

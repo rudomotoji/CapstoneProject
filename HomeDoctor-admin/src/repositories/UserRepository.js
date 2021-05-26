@@ -5,7 +5,7 @@ import request from '../utils/request.js'
 // Tương tác với database
 export default {
   // Đăng nhập vào hệ thống.
-  async loginApp(account) {
+  async loginApp (account) {
     return await request({
       method: 'POST',
       url: '/Accounts/Login/',
@@ -17,5 +17,5 @@ export default {
         "password": `${account.password}`
       }
     })
-  },
+  }
 }

@@ -63,6 +63,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
 
   String _valueTypeIns;
   String dateCreate;
+  String dateFinished;
 
   //
   //SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
@@ -218,7 +219,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                       fontWeight: FontWeight.w500,
                                       color: DefaultTheme.BLACK),
                                   overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
+                                  maxLines: 2,
                                 ),
                               ),
                               Container(
@@ -230,7 +231,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                       fontWeight: FontWeight.w700,
                                       color: DefaultTheme.RED_CALENDAR),
                                   overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
+                                  maxLines: 2,
                                 ),
                               ),
                               InkWell(
@@ -266,6 +267,73 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                           style: TextStyle(
                                               fontSize: 15,
                                               color: (dateCreate == null)
+                                                  ? DefaultTheme.BLUE_REFERENCE
+                                                  : DefaultTheme.BLACK))
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 75,
+                                child: Text(
+                                  'Ngày kết thúc',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: DefaultTheme.BLACK),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                              ),
+                              Container(
+                                width: 10,
+                                child: Text(
+                                  '*',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: DefaultTheme.RED_CALENDAR),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () async {
+                                  DateTime newDateTime =
+                                      await showRoundedDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime(
+                                              DateTime.now().year - 100),
+                                          lastDate: DateTime.now(),
+                                          borderRadius: 16,
+                                          theme: ThemeData.dark());
+                                  if (newDateTime != null) {
+                                    setState(() {
+                                      dateFinished = newDateTime.toString();
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  height: 45,
+                                  width:
+                                      MediaQuery.of(context).size.width - 180,
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 20),
+                                      ),
+                                      Text(
+                                          (dateFinished == null)
+                                              ? 'Chọn ngày kết thúc'
+                                              : '${_dateValidator.parseToDateView3(dateFinished)}',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: (dateFinished == null)
                                                   ? DefaultTheme.BLUE_REFERENCE
                                                   : DefaultTheme.BLACK))
                                     ],
@@ -400,8 +468,20 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                         style: BtnStyle.BUTTON_BLACK,
                         label: 'Tạo hồ sơ',
                         onTap: () {
+                          var dateTime1 =
+                              DateFormat('yyyy-MM-dd').parse(dateCreate);
+                          var dateTime2 =
+                              DateFormat('yyyy-MM-dd').parse(dateFinished);
+
                           if (dateCreate == null || dateCreate == '') {
                             alertError('Vui lòng chọn ngày khám');
+                          } else if (dateFinished == null ||
+                              dateFinished == '') {
+                            alertError('Vui lòng chọn ngày kết thúc');
+                          } else if (dateTime1.millisecondsSinceEpoch >
+                              dateTime2.millisecondsSinceEpoch) {
+                            alertError(
+                                'Ngày bắt đầu và ngày kết thúc không phù hợp');
                           } else {
                             if (_patientId != 0 &&
                                 _placeController.text != null &&
@@ -410,13 +490,15 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                 (_listLv3IdSelected.length > 0 ||
                                     _diseaseIds.length > 0)) {
                               healthRecordDTO = HealthRecordDTO(
-                                  patientId: _patientId,
-                                  diceaseIds: _diseaseIds.length <= 0
-                                      ? _listLv3IdSelected
-                                      : _diseaseIds,
-                                  place: _placeController.text,
-                                  description: _note,
-                                  dateStarted: dateCreate.split(' ')[0]);
+                                patientId: _patientId,
+                                diceaseIds: _diseaseIds.length <= 0
+                                    ? _listLv3IdSelected
+                                    : _diseaseIds,
+                                place: _placeController.text,
+                                description: _note,
+                                dateStarted: dateCreate.split(' ')[0],
+                                dateFinished: dateFinished.split(' ')[0],
+                              );
                               // dateCreated: _dateValidator.convertDateCreate(
                               //     dateCreate, 'yyyy-MM-dd', 'yyyy-MM-dd'));
                               _insertHealthRecord(healthRecordDTO);

@@ -3,10 +3,10 @@ import request from '../utils/request'
 // import patientTracking from '../assets/data/patient-tracking.json'
 
 export default {
-  async getListPatients() {
+  async getListPatients () {
     return await request({
       method: 'get',
-      url: `Patients/GetAllPatient`
+      url: 'Patients/GetAllPatient'
     })
   }
 }

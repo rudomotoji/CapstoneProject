@@ -1,4 +1,4 @@
-export function parseJwt(token) {
+export function parseJwt (token) {
   var base64Url = token.split('.')[1]
   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
   var jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
@@ -7,7 +7,7 @@ export function parseJwt(token) {
 
   return JSON.parse(jsonPayload)
 }
-export function formatPrice(price, char) {
+export function formatPrice (price, char) {
   var length = price.toString().length + 1
   var tmpPrice = price.toString().split('').reverse().join('')
   var finalPrice = ''
@@ -24,7 +24,7 @@ export function formatPrice(price, char) {
   }
   return finalPrice
 }
-export function toPriceWord(price, char) {
+export function toPriceWord (price, char) {
   // var tmpPriceNoSpecChar = (price + '').replace(/[^a-zA-Z ]/g, '') // Xoá ký tự đặc biệt
   var priceArr = price.split(char) // cắt price thành từng chuỗi
   var priceLength = priceArr.length // Độ dài chuỗi price
@@ -32,7 +32,7 @@ export function toPriceWord(price, char) {
   }
 }
 // Thursday, 18/03/2021
-export function toDateTitle(dateStr) {
+export function toDateTitle (dateStr) {
   var weekDay = dateStr.split(',')[0].trim()
   var date = dateStr.split(',')[1].trim().split('/').reverse().join('/') // Convert 18/03/2021 to 2021/03/18
   const now = new Date() // Ngày hiện tại
@@ -98,7 +98,7 @@ export function toDateTitle(dateStr) {
 }
 
 // minutes ago . Chuyển đổ thời gian hiển thị thông báo
-export function toTimeAgo(time) {
+export function toTimeAgo (time) {
   const minuteTime = parseInt(time) // Số phút
   const hourTime = parseInt(minuteTime / 60) // Số giờ
   const dateTime = parseInt(hourTime / 24) // Số ngày
@@ -130,11 +130,11 @@ export function toTimeAgo(time) {
   }
   return timeAgo
 }
-export function formatDateToInsertDb(date) {
+export function formatDateToInsertDb (date) {
   var dateInsert = new Date(date)
   return `${dateInsert.getFullYear()}-${dateInsert.getMonth() + 1 < 10 ? '0' + (dateInsert.getMonth() + 1) : (dateInsert.getMonth() + 1)}-${dateInsert.getDate() < 10 ? '0' + dateInsert.getDate() : dateInsert.getDate()}`
 }
-export function groupBy(array, key, keyName, keyCollection) {
+export function groupBy (array, key, keyName, keyCollection) {
   const tmpArr = array.reduce((objectsByKeyValue, obj) => {
     const value = obj[key]
     objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj)

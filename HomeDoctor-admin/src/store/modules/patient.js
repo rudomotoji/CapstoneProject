@@ -9,20 +9,20 @@ const state = () => ({
 const getters = {
 }
 const actions = {
-  async getPatients({ commit, state }) {
+  async getPatients ({ commit, state }) {
     await patientRepository.getListPatients().then(response => {
       if (response.status === 200) {
         commit('success', response.data)
       } else {
         state.patients = []
       }
-    });
+    })
   }
 }
 const mutations = {
-  success(state, data) {
+  success (state, data) {
     state.patients = data
-  },
+  }
 }
 export default {
   namespaced: true,

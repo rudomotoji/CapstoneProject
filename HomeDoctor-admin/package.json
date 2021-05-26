@@ -53,15 +53,7 @@
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {
-      "quotes": [
-        2,
-        "single",
-        {
-          "avoidEscape": true
-        }
-      ]
-    }
+    "rules": {}
   },
   "browserslist": [
     "> 1%",
