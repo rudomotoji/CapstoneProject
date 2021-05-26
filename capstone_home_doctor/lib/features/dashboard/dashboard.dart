@@ -4235,7 +4235,7 @@ class _DashboardState extends State<DashboardPage>
                                     color: DefaultTheme.BLACK_BUTTON,
                                     borderRadius: BorderRadius.circular(10)),
                                 child: Center(
-                                  child: Text('Lưu',
+                                  child: Text('Gửi bác sĩ',
                                       textAlign: TextAlign.center,
                                       style:
                                           TextStyle(color: DefaultTheme.WHITE)),
@@ -4435,7 +4435,7 @@ class _DashboardState extends State<DashboardPage>
                             padding: EdgeInsets.only(left: 20),
                           ),
                           Text(
-                            'Lưu nhịp tim',
+                            'Gửi bác sĩ',
                             style: TextStyle(
                               fontSize: 25,
                               decoration: TextDecoration.none,
@@ -4606,7 +4606,7 @@ class _DashboardState extends State<DashboardPage>
                                                                           top:
                                                                               10),
                                                                   child: Text(
-                                                                    'Lưu nhịp tim',
+                                                                    'Gửi bác sĩ',
                                                                     style:
                                                                         TextStyle(
                                                                       decoration:
@@ -4892,76 +4892,77 @@ class _DashboardState extends State<DashboardPage>
                                                               EdgeInsets.only(
                                                                   bottom: 10),
                                                         ),
-                                                        InkWell(
-                                                          onTap: () async {
-                                                            await _contractHelper
-                                                                .updateContractId(state
-                                                                    .listDoctorTracking[
-                                                                        index]
-                                                                    .contractId);
-                                                            Navigator.pushNamed(
-                                                                    context,
-                                                                    RoutesHDr
-                                                                        .DETAIL_CONTRACT_VIEW)
-                                                                .then((value) {
-                                                              _getPatientId();
-                                                            });
-                                                          },
-                                                          child: Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width -
-                                                                160,
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 20),
-                                                            child: Text(
-                                                                'Chi tiết hợp đồng',
-                                                                style: TextStyle(
-                                                                    color: DefaultTheme
-                                                                        .BLUE_TEXT,
-                                                                    decoration:
-                                                                        TextDecoration
-                                                                            .underline)),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  bottom: 3),
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () async {
-                                                            await _healthRecordHelper
-                                                                .setHealthReCordId(state
-                                                                    .listDoctorTracking[
-                                                                        index]
-                                                                    .healthRecordId);
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pushNamed(RoutesHDr
-                                                                    .HEALTH_RECORD_DETAIL);
-                                                          },
-                                                          child: Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width -
-                                                                160,
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 20),
-                                                            child: Text(
-                                                                'Chi tiết hồ sơ sức khoẻ',
-                                                                style: TextStyle(
-                                                                    color: DefaultTheme
-                                                                        .BLUE_TEXT,
-                                                                    decoration:
-                                                                        TextDecoration
-                                                                            .underline)),
-                                                          ),
-                                                        ),
+                                                        // InkWell(
+                                                        //   onTap: () async {
+                                                        //     await _contractHelper
+                                                        //         .updateContractId(state
+                                                        //             .listDoctorTracking[
+                                                        //                 index]
+                                                        //             .contractId);
+                                                        //     Navigator.pushNamed(
+                                                        //             context,
+                                                        //             RoutesHDr
+                                                        //                 .DETAIL_CONTRACT_VIEW)
+                                                        //         .then((value) {
+                                                        //       _getPatientId();
+                                                        //     });
+                                                        //   },
+                                                        //   child: Container(
+                                                        //     width: MediaQuery.of(
+                                                        //                 context)
+                                                        //             .size
+                                                        //             .width -
+                                                        //         160,
+                                                        //     padding:
+                                                        //         EdgeInsets.only(
+                                                        //             left: 20),
+                                                        //     child: Text(
+                                                        //         'Chi tiết hợp đồng',
+                                                        //         style: TextStyle(
+                                                        //             color: DefaultTheme
+                                                        //                 .BLUE_TEXT,
+                                                        //             decoration:
+                                                        //                 TextDecoration
+                                                        //                     .underline)),
+                                                        //   ),
+                                                        // ),
+                                                        // Padding(
+                                                        //   padding:
+                                                        //       EdgeInsets.only(
+                                                        //           bottom: 3),
+                                                        // ),
+                                                        // InkWell(
+                                                        //   onTap: () async {
+                                                        //     await _healthRecordHelper
+                                                        //         .setHealthReCordId(state
+                                                        //             .listDoctorTracking[
+                                                        //                 index]
+                                                        //             .healthRecordId);
+                                                        //     Navigator.of(
+                                                        //             context)
+                                                        //         .pushNamed(RoutesHDr
+                                                        //             .HEALTH_RECORD_DETAIL);
+                                                        //   },
+                                                        //   child: Container(
+                                                        //     width: MediaQuery.of(
+                                                        //                 context)
+                                                        //             .size
+                                                        //             .width -
+                                                        //         160,
+                                                        //     padding:
+                                                        //         EdgeInsets.only(
+                                                        //             left: 20),
+                                                        //     child: Text(
+                                                        //         'Chi tiết hồ sơ sức khoẻ',
+                                                        //         style: TextStyle(
+                                                        //             color: DefaultTheme
+                                                        //                 .BLUE_TEXT,
+                                                        //             decoration:
+                                                        //                 TextDecoration
+                                                        //                     .underline)),
+                                                        //   ),
+                                                        // ),
+                                                        ///////////////////////
                                                         // Container(
                                                         //   width: MediaQuery.of(
                                                         //               context)

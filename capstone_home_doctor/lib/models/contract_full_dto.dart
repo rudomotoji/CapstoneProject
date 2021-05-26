@@ -193,7 +193,10 @@ class MedicalInstructions {
   String medicalInstructionTypeName;
   List<String> images;
   List<String> diseases;
-  String diagnose;
+  //
+  String conclusion;
+  String dateCreated;
+  //
   String description;
 
   MedicalInstructions(
@@ -201,7 +204,8 @@ class MedicalInstructions {
       this.medicalInstructionTypeName,
       this.images,
       this.diseases,
-      this.diagnose,
+      this.dateCreated,
+      this.conclusion,
       this.description});
 
   MedicalInstructions.fromJson(Map<String, dynamic> json) {
@@ -217,7 +221,8 @@ class MedicalInstructions {
     } else {
       diseases = json['diseases'].cast<String>();
     }
-    diagnose = json['diagnose'];
+    dateCreated = json['dateCreated'];
+    conclusion = json['conclusion'];
     description = json['description'];
   }
 
@@ -227,7 +232,8 @@ class MedicalInstructions {
     data['medicalInstructionTypeName'] = this.medicalInstructionTypeName;
     data['images'] = this.images;
     data['diseases'] = this.diseases;
-    data['diagnose'] = this.diagnose;
+    data['dateCreated'] = this.dateCreated;
+    data['conclusion'] = this.conclusion;
     data['description'] = this.description;
     return data;
   }
@@ -238,7 +244,8 @@ class MedicalInstructionOthers {
   String medicalInstructionTypeName;
   List<String> images;
   List<String> diseases;
-  String diagnose;
+  String conclusion;
+  String dateCreated;
   String description;
 
   MedicalInstructionOthers(
@@ -246,7 +253,8 @@ class MedicalInstructionOthers {
       this.medicalInstructionTypeName,
       this.images,
       this.diseases,
-      this.diagnose,
+      this.conclusion,
+      this.dateCreated,
       this.description});
 
   MedicalInstructionOthers.fromJson(Map<String, dynamic> json) {
@@ -263,7 +271,8 @@ class MedicalInstructionOthers {
     } else {
       diseases = json['diseases'].cast<String>();
     }
-    diagnose = json['diagnose'];
+    conclusion = json['conclusion'];
+    dateCreated = json['dateCreated'];
     description = json['description'];
   }
 
@@ -273,7 +282,8 @@ class MedicalInstructionOthers {
     data['medicalInstructionTypeName'] = this.medicalInstructionTypeName;
     data['images'] = this.images;
     data['diseases'] = this.diseases;
-    data['diagnose'] = this.diagnose;
+    data['conclusion'] = this.conclusion;
+    data['dateCreated'] = this.dateCreated;
     data['description'] = this.description;
     return data;
   }
@@ -284,7 +294,8 @@ class MedicalInstructionChoosed {
   String medicalInstructionTypeName;
   List<String> images;
   List<String> diseases;
-  String diagnose;
+  String conclusion;
+  String dateCreated;
   String description;
 
   MedicalInstructionChoosed(
@@ -292,7 +303,8 @@ class MedicalInstructionChoosed {
       this.medicalInstructionTypeName,
       this.images,
       this.diseases,
-      this.diagnose,
+      this.conclusion,
+      this.dateCreated,
       this.description});
 
   MedicalInstructionChoosed.fromJson(Map<String, dynamic> json) {
@@ -309,7 +321,8 @@ class MedicalInstructionChoosed {
       diseases = json['diseases'].cast<String>();
     }
 
-    diagnose = json['diagnose'];
+    conclusion = json['conclusion'];
+    dateCreated = json['dateCreated'];
     description = json['description'];
   }
 
@@ -319,7 +332,8 @@ class MedicalInstructionChoosed {
     data['medicalInstructionTypeName'] = this.medicalInstructionTypeName;
     data['images'] = this.images;
     data['diseases'] = this.diseases;
-    data['diagnose'] = this.diagnose;
+    data['conclusion'] = this.conclusion;
+    data['dateCreated'] = this.dateCreated;
     data['description'] = this.description;
     return data;
   }

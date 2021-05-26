@@ -1569,10 +1569,17 @@ class _DetailContractView extends State<DetailContractView>
                                                                               .medicalInstructions[
                                                                                   index]
                                                                               .medicalInstructionTypeName,
-                                                                          '',
+                                                                          medDisease
+                                                                              .medicalInstructions[
+                                                                                  index]
+                                                                              .dateCreated,
+                                                                          medDisease
+                                                                              .medicalInstructions[
+                                                                                  index]
+                                                                              .conclusion,
                                                                           medDisease
                                                                               .medicalInstructions[index]
-                                                                              .diagnose);
+                                                                              .diseases);
                                                                     }
                                                                   },
                                                                   child: Stack(
@@ -1894,12 +1901,21 @@ class _DetailContractView extends State<DetailContractView>
                                                             .medicalInstructionOthers[
                                                                 index]
                                                             .medicalInstructionTypeName,
-                                                        '',
                                                         state
                                                             .dto
                                                             .medicalInstructionOthers[
                                                                 index]
-                                                            .diagnose);
+                                                            .dateCreated,
+                                                        state
+                                                            .dto
+                                                            .medicalInstructionOthers[
+                                                                index]
+                                                            .conclusion,
+                                                        state
+                                                            .dto
+                                                            .medicalInstructionOthers[
+                                                                index]
+                                                            .diseases);
                                                   }
                                                 },
                                                 child: Stack(
@@ -2077,12 +2093,21 @@ class _DetailContractView extends State<DetailContractView>
                                                             .medicalInstructionChoosed[
                                                                 index]
                                                             .medicalInstructionTypeName,
-                                                        '',
                                                         state
                                                             .dto
                                                             .medicalInstructionChoosed[
                                                                 index]
-                                                            .diagnose);
+                                                            .dateCreated,
+                                                        state
+                                                            .dto
+                                                            .medicalInstructionChoosed[
+                                                                index]
+                                                            .conclusion,
+                                                        state
+                                                            .dto
+                                                            .medicalInstructionChoosed[
+                                                                index]
+                                                            .diseases);
                                                   }
                                                 },
                                                 child: Stack(
@@ -4480,8 +4505,8 @@ class _DetailContractView extends State<DetailContractView>
     });
   }
 
-  showFullDetailComponent(
-      List<String> imgs, String miName, String dateCreate, String dianose) {
+  showFullDetailComponent(List<String> imgs, String miName, String dateCreate,
+      String conclusion, List<String> diseases) {
     int positionImage = 0;
     bool isTappedOut = false;
 
@@ -4696,14 +4721,29 @@ class _DetailContractView extends State<DetailContractView>
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                     ),
-                                    Text(
-                                      'Chuẩn đoán $dianose',
-                                      style: TextStyle(
-                                          color: DefaultTheme.WHITE,
-                                          fontSize: 15),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 5,
+                                    (diseases == null || diseases == [])
+                                        ? Container()
+                                        : Text(
+                                            'Chuẩn đoán $diseases',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 5,
+                                          ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
                                     ),
+                                    (conclusion == null || conclusion == '')
+                                        ? Container()
+                                        : Text(
+                                            'Kết luận: $conclusion',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 5,
+                                          ),
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                     ),
