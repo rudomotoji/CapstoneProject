@@ -100,6 +100,11 @@ class _HeartDetailView extends State<HeartDetailView>
     _getsOffline();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   _getsOffline() async {
     await _sqfLiteHelper.getVitalSignScheduleOffline().then((sOffline) async {
       if (sOffline.isNotEmpty && sOffline != null) {

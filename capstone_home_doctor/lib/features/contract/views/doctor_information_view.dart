@@ -62,9 +62,14 @@ class _DoctorInformation extends State<DoctorInformation>
 
   @override
   Widget build(BuildContext context) {
-    //
     String arguments = ModalRoute.of(context).settings.arguments;
-    _idDoctor = int.tryParse(arguments);
+
+    if (arguments.contains('HDR')) {
+      _idDoctor = int.tryParse(arguments.split('R')[1].toString());
+    } else {
+      _idDoctor = int.tryParse(arguments);
+    }
+
     // TODO: implement build
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -88,33 +93,40 @@ class _DoctorInformation extends State<DoctorInformation>
                 isMainView: false,
                 buttonHeaderType: ButtonHeaderType.BACK_HOME,
               ),
-              Expanded(
-                child: BlocProvider(
-                  create: (context) => DoctorInfoBloc(
-                      doctorAPI: doctorRepository)
-                    ..add(DoctorInfoEventSetId(id: int.tryParse(arguments))),
-                  child: _getDoctorInfo(),
-                ),
-              ),
-              Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width - 40,
-                margin: EdgeInsets.only(left: 20, bottom: 30, top: 30),
-                child: ButtonHDr(
-                  style: BtnStyle.BUTTON_BLACK,
-                  label: 'Yêu cầu hợp đồng',
-                  onTap: () {
-                    _checkContractAvailable(arguments);
+              (_idDoctor == null)
+                  ? Container(
+                      child: Center(
+                      child: Text('Không tìm thấy bác sĩ'),
+                    ))
+                  : Expanded(
+                      child: BlocProvider(
+                        create: (context) =>
+                            DoctorInfoBloc(doctorAPI: doctorRepository)
+                              ..add(DoctorInfoEventSetId(id: _idDoctor)),
+                        child: _getDoctorInfo(),
+                      ),
+                    ),
+              (_idDoctor == null)
+                  ? Container()
+                  : Container(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width - 40,
+                      margin: EdgeInsets.only(left: 20, bottom: 30, top: 30),
+                      child: ButtonHDr(
+                        style: BtnStyle.BUTTON_BLACK,
+                        label: 'Yêu cầu hợp đồng',
+                        onTap: () {
+                          _checkContractAvailable(arguments);
 
-                    ///
-                    ///
-                    ///
-                    // Navigator.of(context).pop();
-                    // Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
-                    //     arguments: arguments);
-                  },
-                ),
-              )
+                          ///
+                          ///
+                          ///
+                          // Navigator.of(context).pop();
+                          // Navigator.pushNamed(context, RoutesHDr.CONTRACT_SHARE_VIEW,
+                          //     arguments: arguments);
+                        },
+                      ),
+                    )
             ],
           ),
         ),

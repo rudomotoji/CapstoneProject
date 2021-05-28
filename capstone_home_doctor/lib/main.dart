@@ -847,7 +847,7 @@ void main() async {
           }
 
           ///cach cun`
-          //await _saveVitalSignScheduleOffline();
+          await _saveVitalSignScheduleOffline();
         } else {
           print('user has logged out of system');
         }
@@ -1861,6 +1861,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('TIME_SYSTEM')) {
       _timeSystemHelper.initialTimeSystem();
+    }
+    if (!prefs.containsKey('IS_WARNING') || !prefs.containsKey('WARNING_MSG')) {
+      _vitalSignHelper.initialWarning();
     }
   }
 

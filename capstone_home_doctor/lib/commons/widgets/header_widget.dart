@@ -685,6 +685,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                                   }
                                 });
                                 await _measureHelper.updateMeasureOn(false);
+                                _vitalSignHelper.updateWarning(false, '');
                                 //
                                 //SAVE TIME START
                                 await _measureHelper.updateTimeStartM('');
@@ -2516,6 +2517,7 @@ class _Header extends State<Header> {
                                     //remove all shared preference
                                     await _authenticateHelper.updateAuth(
                                         false, null, null);
+                                    _vitalSignHelper.updateWarning(false, '');
                                     await _peripheralHelper
                                         .updatePeripheralChecking(false, '');
                                     await _vitalSignHelper

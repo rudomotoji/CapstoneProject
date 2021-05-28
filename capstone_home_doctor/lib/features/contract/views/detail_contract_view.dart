@@ -160,2114 +160,379 @@ class _DetailContractView extends State<DetailContractView>
                       child: Text('Kiểm tra lại đường truyền kết nối mạng')));
             }
             if (state is ContractFullStateSuccess) {
-              _contractFullDTO = state.dto;
-              _stateContract = state.dto.status;
-              _doctorId = state.dto.doctorId;
-              //
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  //
-                  HeaderWidget(
-                    title: 'Chi tiết hợp đồng',
-                    isMainView: false,
-                    buttonHeaderType: ButtonHeaderType.BACK_HOME,
-                  ),
-                  Divider(
-                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                    height: 1,
-                  ),
+              print('state dto: ${state.dto}');
+              if (state.dto == null ||
+                  state.dto.contractCode == null ||
+                  state.dto.status == null) {
+                return Container(
+                    child: Center(child: Text('Không tìm thấy hợp đồng')));
+              } else {
+                _contractFullDTO = state.dto;
+                _stateContract = state.dto.status;
+                _doctorId = state.dto.doctorId;
+                //
+                ///
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    //
+                    HeaderWidget(
+                      title: 'Chi tiết hợp đồng',
+                      isMainView: false,
+                      buttonHeaderType: ButtonHeaderType.BACK_HOME,
+                    ),
+                    Divider(
+                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                      height: 1,
+                    ),
 
-                  (state.dto.status == 'CANCELP' ||
-                          state.dto.status == 'CANCELD')
-                      ? Container(
-                          height: 60,
-                          width: MediaQuery.of(context).size.width,
-                          color: DefaultTheme.RED_CALENDAR,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                width: 60,
-                                height: 25,
-                                child: Image.asset(
-                                    'assets/images/ic-c-cancel.png'),
-                              ),
-                              Text(
-                                (state.dto.status == 'CANCELP')
-                                    ? 'Hợp đồng ở trạng thái bị huỷ'
-                                    : 'Bác sĩ đã huỷ hợp đồng yêu cầu của bạn',
-                                style: TextStyle(color: DefaultTheme.WHITE),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Stack(
-                          children: [
-                            Positioned(
-                                top: 0,
-                                child: Container(
-                                  color: DefaultTheme.WHITE,
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(bottom: 5),
-                                  height: 60,
-                                  child: Column(
-                                    children: [
-                                      //
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 21,
-                                      ),
-                                      Container(
+                    (state.dto.status == 'CANCELP' ||
+                            state.dto.status == 'CANCELD')
+                        ? Container(
+                            height: 60,
+                            width: MediaQuery.of(context).size.width,
+                            color: DefaultTheme.RED_CALENDAR,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: 60,
+                                  height: 25,
+                                  child: Image.asset(
+                                      'assets/images/ic-c-cancel.png'),
+                                ),
+                                Text(
+                                  (state.dto.status == 'CANCELP')
+                                      ? 'Hợp đồng ở trạng thái bị huỷ'
+                                      : 'Bác sĩ đã huỷ hợp đồng yêu cầu của bạn',
+                                  style: TextStyle(color: DefaultTheme.WHITE),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Stack(
+                            children: [
+                              Positioned(
+                                  top: 0,
+                                  child: Container(
+                                    color: DefaultTheme.WHITE,
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(bottom: 5),
+                                    height: 60,
+                                    child: Column(
+                                      children: [
+                                        //
+                                        Container(
                                           width:
                                               MediaQuery.of(context).size.width,
-                                          margin: EdgeInsets.only(
-                                            left: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.1,
-                                            right: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.1,
-                                          ),
-                                          height: 1,
-                                          color: DefaultTheme.GREY_TOP_TAB_BAR)
-                                    ],
-                                  ),
-                                )),
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              padding: EdgeInsets.only(bottom: 10, top: 5),
-                              height: 60,
-                              child: Row(
-                                children: <Widget>[
-                                  //
-
-                                  (_stateContract.contains('PENDING'))
-                                      ? Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2,
-                                          height: 60,
-                                          child: Column(
-                                            children: [
-                                              Spacer(),
-                                              SizedBox(
-                                                width: 60,
-                                                height: 25,
-                                                child: Image.asset(
-                                                    'assets/images/ic-c-pending.png'),
-                                              ),
-                                              Spacer(),
-                                              Text('Xét duyệt',
-                                                  style:
-                                                      TextStyle(fontSize: 11)),
-                                            ],
-                                          ),
-                                        )
-                                      : Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2,
-                                          height: 60,
-                                          child: Column(
-                                            children: [
-                                              Spacer(),
-                                              SizedBox(
-                                                width: 60,
-                                                height: 25,
-                                                child: Image.asset(
-                                                    'assets/images/ic-c-pending-u.png'),
-                                              ),
-                                              Spacer(),
-                                              Text('Xét duyệt',
-                                                  style:
-                                                      TextStyle(fontSize: 11)),
-                                            ],
-                                          ),
+                                          height: 21,
                                         ),
-
-                                  (_stateContract.contains('APPROVED'))
-                                      ? Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2,
-                                          height: 60,
-                                          child: Column(
-                                            children: [
-                                              Spacer(),
-                                              SizedBox(
-                                                width: 60,
-                                                height: 25,
-                                                child: Image.asset(
-                                                    'assets/images/ic-c-approved.png'),
-                                              ),
-                                              Spacer(),
-                                              Text('Chấp thuận',
-                                                  style:
-                                                      TextStyle(fontSize: 11)),
-                                            ],
-                                          ),
-                                        )
-                                      : Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2,
-                                          height: 60,
-                                          child: Column(
-                                            children: [
-                                              Spacer(),
-                                              SizedBox(
-                                                width: 60,
-                                                height: 25,
-                                                child: Image.asset(
-                                                    'assets/images/ic-c-approved-u.png'),
-                                              ),
-                                              Spacer(),
-                                              Text('Chấp thuận',
-                                                  style:
-                                                      TextStyle(fontSize: 11)),
-                                            ],
-                                          ),
-                                        ),
-                                  //
-
-                                  (_stateContract.contains('SIGNED'))
-                                      ? Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2,
-                                          height: 60,
-                                          child: Column(
-                                            children: [
-                                              Spacer(),
-                                              SizedBox(
-                                                width: 60,
-                                                height: 25,
-                                                child: Image.asset(
-                                                    'assets/images/ic-c-signed.png'),
-                                              ),
-                                              Spacer(),
-                                              Text('Đã ký',
-                                                  style:
-                                                      TextStyle(fontSize: 11)),
-                                            ],
-                                          ),
-                                        )
-                                      : Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2,
-                                          height: 60,
-                                          child: Column(
-                                            children: [
-                                              Spacer(),
-                                              SizedBox(
-                                                width: 60,
-                                                height: 25,
-                                                child: Image.asset(
-                                                    'assets/images/ic-c-signed-u.png'),
-                                              ),
-                                              Spacer(),
-                                              Text('Đã ký',
-                                                  style:
-                                                      TextStyle(fontSize: 11)),
-                                            ],
-                                          ),
-                                        ),
-                                  (_stateContract.contains('ACTIVE'))
-                                      ? Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2,
-                                          height: 60,
-                                          child: Column(
-                                            children: [
-                                              Spacer(),
-                                              SizedBox(
-                                                width: 60,
-                                                height: 25,
-                                                child: Image.asset(
-                                                    'assets/images/ic-c-active.png'),
-                                              ),
-                                              Spacer(),
-                                              Text('Hiện hành',
-                                                  style:
-                                                      TextStyle(fontSize: 11)),
-                                            ],
-                                          ),
-                                        )
-                                      : Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2,
-                                          height: 60,
-                                          child: Column(
-                                            children: [
-                                              Spacer(),
-                                              SizedBox(
-                                                width: 60,
-                                                height: 25,
-                                                child: Image.asset(
-                                                    'assets/images/ic-c-active-u.png'),
-                                              ),
-                                              Spacer(),
-                                              Text('Hiện hành',
-                                                  style:
-                                                      TextStyle(fontSize: 11)),
-                                            ],
-                                          ),
-                                        ),
-                                  (_stateContract.contains('FINISHED'))
-                                      ? Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2,
-                                          height: 60,
-                                          child: Column(
-                                            children: [
-                                              Spacer(),
-                                              SizedBox(
-                                                width: 60,
-                                                height: 25,
-                                                child: Image.asset(
-                                                    'assets/images/ic-c-finished.png'),
-                                              ),
-                                              Spacer(),
-                                              Text('Kết thúc',
-                                                  style:
-                                                      TextStyle(fontSize: 11)),
-                                            ],
-                                          ),
-                                        )
-                                      : Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2,
-                                          height: 60,
-                                          child: Column(
-                                            children: [
-                                              Spacer(),
-                                              SizedBox(
-                                                width: 60,
-                                                height: 25,
-                                                child: Image.asset(
-                                                    'assets/images/ic-c-finished-u.png'),
-                                              ),
-                                              Spacer(),
-                                              Text('Kết thúc',
-                                                  style:
-                                                      TextStyle(fontSize: 11)),
-                                            ],
-                                          ),
-                                        ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                  Divider(
-                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                    height: 1,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.only(top: 5, bottom: 5),
-                    color: DefaultTheme.WHITE,
-                    child: Text(
-                      'Trạng thái hợp đồng mã ${state.dto.contractCode}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 13, color: DefaultTheme.BLACK_BUTTON),
-                    ),
-                  ),
-
-                  Divider(
-                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                    height: 1,
-                  ),
-                  (_stateContract.contains('APPROVED'))
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            //
-                            Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: 30,
-                              padding: EdgeInsets.only(top: 5, bottom: 5),
-                              color:
-                                  DefaultTheme.SUCCESS_STATUS.withOpacity(0.3),
-                              child: InkWell(
-                                onTap: () {
-                                  if (_patientId != 0 &&
-                                      _contractId != 0 &&
-                                      _doctorId != 0) {
-                                    ContractUpdateDTO contractUpdateDTO =
-                                        ContractUpdateDTO(
-                                      contractId: _contractId,
-                                      doctorId: _doctorId,
-                                      patientId: _patientId,
-                                      status: 'SIGNED',
-                                    );
-                                    return showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Material(
-                                            color: DefaultTheme.TRANSPARENT,
-                                            child: Center(
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(15)),
-                                                child: BackdropFilter(
-                                                  filter: ImageFilter.blur(
-                                                      sigmaX: 25, sigmaY: 25),
-                                                  child: Container(
-                                                    padding: EdgeInsets.only(
-                                                        left: 10,
-                                                        top: 10,
-                                                        right: 10),
-                                                    width: 250,
-                                                    height: 210,
-                                                    decoration: BoxDecoration(
-                                                      color: DefaultTheme.WHITE
-                                                          .withOpacity(0.7),
-                                                    ),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: <Widget>[
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  bottom: 5,
-                                                                  top: 10),
-                                                          child: Text(
-                                                            'Lưu ý',
-                                                            style: TextStyle(
-                                                              decoration:
-                                                                  TextDecoration
-                                                                      .none,
-                                                              color:
-                                                                  DefaultTheme
-                                                                      .BLACK,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 18,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Spacer(),
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 20,
-                                                                  right: 20),
-                                                          child: Align(
-                                                            alignment: Alignment
-                                                                .center,
-                                                            child: Text(
-                                                              'Bạn vui lòng đọc kĩ nội dung hợp đồng tiếp theo bởi vì hợp đồng sẽ có hiệu lực kể từ khi bạn xác nhận và mọi thông tin trong hợp đồng sẽ thực hiện đúng qui định của pháp luật.',
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                              style: TextStyle(
-                                                                decoration:
-                                                                    TextDecoration
-                                                                        .none,
-                                                                color: DefaultTheme
-                                                                    .GREY_TEXT,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize: 13,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Spacer(),
-                                                        Divider(
-                                                          height: 1,
-                                                          color: DefaultTheme
-                                                              .GREY_TOP_TAB_BAR,
-                                                        ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            FlatButton(
-                                                              height: 40,
-                                                              minWidth:
-                                                                  250 / 2 -
-                                                                      10.5,
-                                                              child: Text(
-                                                                  'Đóng',
-                                                                  style: TextStyle(
-                                                                      color: DefaultTheme
-                                                                          .BLUE_TEXT)),
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                            ),
-                                                            Container(
-                                                              height: 40,
-                                                              width: 0.5,
-                                                              color: DefaultTheme
-                                                                  .GREY_TOP_TAB_BAR,
-                                                            ),
-                                                            FlatButton(
-                                                              height: 40,
-                                                              minWidth:
-                                                                  250 / 2 -
-                                                                      10.5,
-                                                              child: Text(
-                                                                  'Tiếp tục',
-                                                                  style: TextStyle(
-                                                                      color: DefaultTheme
-                                                                          .BLUE_TEXT)),
-                                                              onPressed: () {
-                                                                //
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                                _showContractDocument(
-                                                                    contractUpdateDTO,
-                                                                    true);
-                                                              },
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            margin: EdgeInsets.only(
+                                              left: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.1,
+                                              right: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.1,
                                             ),
-                                          );
-                                        });
-                                  }
-                                },
+                                            height: 1,
+                                            color:
+                                                DefaultTheme.GREY_TOP_TAB_BAR)
+                                      ],
+                                    ),
+                                  )),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: EdgeInsets.only(bottom: 10, top: 5),
+                                height: 60,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: Image.asset(
-                                          'assets/images/ic-checked.png'),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 10),
-                                    ),
-                                    Text(
-                                      'XÁC NHẬN HỢP ĐỒNG',
-                                      style: TextStyle(
-                                          color: DefaultTheme.BLUE_DARK,
-                                          fontWeight: FontWeight.w600),
-                                    )
+                                  children: <Widget>[
+                                    //
+
+                                    (_stateContract.contains('PENDING'))
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-pending.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Xét duyệt',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-pending-u.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Xét duyệt',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          ),
+
+                                    (_stateContract.contains('APPROVED'))
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-approved.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Chấp thuận',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-approved-u.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Chấp thuận',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          ),
+                                    //
+
+                                    (_stateContract.contains('SIGNED'))
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-signed.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Đã ký',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-signed-u.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Đã ký',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          ),
+                                    (_stateContract.contains('ACTIVE'))
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-active.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Hiện hành',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-active-u.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Hiện hành',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          ),
+                                    (_stateContract.contains('FINISHED'))
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-finished.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Kết thúc',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-finished-u.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Kết thúc',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          ),
                                   ],
                                 ),
                               ),
-                            ),
-                            Divider(
-                              color: DefaultTheme.GREY_TOP_TAB_BAR,
-                              height: 1,
-                            ),
-                          ],
-                        )
-                      : Container(),
-
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: _refreshData,
-                      child: ListView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        children: <Widget>[
-                          //
-
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding:
-                                EdgeInsets.only(top: 30, left: 20, bottom: 10),
-                            child: Text(
-                              'Hợp đồng theo dõi',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: DefaultTheme.BLACK_BUTTON),
-                            ),
+                            ],
                           ),
-                          //
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            color: DefaultTheme.WHITE,
-                            child: Column(
-                              children: [
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 20),
-                                  color: DefaultTheme.WHITE,
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: Image.asset(
-                                            'assets/images/ic-add-disease.png'),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                      ),
-                                      Text(
-                                        'Bệnh lý',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: DefaultTheme.BLACK_BUTTON),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                for (String i in state.dto.diseaseContracts)
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    padding: EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                        left: 30,
-                                        right: 20),
-                                    color: DefaultTheme.WHITE,
-                                    child: Text('${i}',
-                                        style: TextStyle(
-                                            color: DefaultTheme.BLUE_DARK)),
-                                  ),
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-//
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding:
-                                EdgeInsets.only(top: 30, left: 20, bottom: 10),
-                            child: Text(
-                              'Thông tin hai bên',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: DefaultTheme.BLACK_BUTTON),
-                            ),
-                          ),
-//
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            color: DefaultTheme.WHITE,
-                            child: Column(
-                              children: [
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 20),
-                                  color: DefaultTheme.WHITE,
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: Image.asset(
-                                            'assets/images/ic-people.png'),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                      ),
-                                      Text(
-                                        'Bác sĩ',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: DefaultTheme.BLACK_BUTTON),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                //
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(left: 20, right: 20),
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 10),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              'Họ và tên:',
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                100 -
-                                                40,
-                                            child: Text(
-                                              '${_contractFullDTO.fullNameDoctor}',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 7),
-                                      ),
-                                      Row(
-                                        children: [
-                                          //
+                    Divider(
+                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                      height: 1,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.only(top: 5, bottom: 5),
+                      color: DefaultTheme.WHITE,
+                      child: Text(
+                        'Trạng thái hợp đồng mã ${state.dto.contractCode}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 13, color: DefaultTheme.BLACK_BUTTON),
+                      ),
+                    ),
 
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              'Nơi làm việc:',
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                100 -
-                                                40,
-                                            child: Text(
-                                              '${_contractFullDTO.workLocationDoctor}',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 7),
-                                      ),
-                                      Row(
-                                        children: [
-                                          //
-
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              'Điện thoại:',
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                100 -
-                                                40,
-                                            child: Text(
-                                              '${_arrayValidator.parsePhoneToView(_contractFullDTO.phoneNumberDoctor)}',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 7),
-                                      ),
-                                      Row(
-                                        children: [
-                                          //
-
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              'Chuyên khoa:',
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                100 -
-                                                40,
-                                            child: Text(
-                                              '${_contractFullDTO.specialization}',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 7),
-                                      ),
-                                      Row(
-                                        children: [
-                                          //
-
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              'Kinh nghiệm:',
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                100 -
-                                                40,
-                                            child: Text(
-                                              '${_contractFullDTO.experience} năm',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 7),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                //
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-//
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            color: DefaultTheme.WHITE,
-                            child: Column(
-                              children: [
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 20),
-                                  color: DefaultTheme.WHITE,
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: Image.asset(
-                                            'assets/images/ic-people.png'),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                      ),
-                                      Text(
-                                        'Bệnh nhân',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: DefaultTheme.BLACK_BUTTON),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                //
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(left: 20, right: 20),
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 10),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              'Họ và tên:',
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                100 -
-                                                40,
-                                            child: Text(
-                                              '${_contractFullDTO.fullNamePatient}',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 7),
-                                      ),
-                                      Row(
-                                        children: [
-                                          //
-
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              'Địa chỉ:',
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                100 -
-                                                40,
-                                            child: Text(
-                                              '${_contractFullDTO.addressPatient}',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 7),
-                                      ),
-                                      Row(
-                                        children: [
-                                          //
-
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              'Điện thoại:',
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                100 -
-                                                40,
-                                            child: Text(
-                                              '${_arrayValidator.parsePhoneToView(_contractFullDTO.phoneNumberPatient)}',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 7),
-                                      ),
-                                      Row(
-                                        children: [
-                                          //
-
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              'Ngày sinh:',
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                100 -
-                                                40,
-                                            child: Text(
-                                              '${_dateValidator.parseToDateView2(_contractFullDTO.dobPatient)}',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 7),
-                                      ),
-                                      Row(
-                                        children: [
-                                          //
-
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              'Giới tính:',
-                                            ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                100 -
-                                                40,
-                                            child: Text(
-                                              '${_getGender(_contractFullDTO.genderPatient)}',
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(bottom: 7),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                //
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-//
-//
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding:
-                                EdgeInsets.only(top: 30, left: 20, bottom: 10),
-                            child: Text(
-                              'Thông tin về hợp đồng',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: DefaultTheme.BLACK_BUTTON),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            color: DefaultTheme.WHITE,
-                            child: Column(
-                              children: [
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 20),
-                                  color: DefaultTheme.WHITE,
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: Image.asset(
-                                            'assets/images/ic-calendar.png'),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                      ),
-                                      Text(
-                                        'Thời gian',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: DefaultTheme.BLACK_BUTTON),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                //
-                                Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    padding:
-                                        EdgeInsets.only(left: 20, right: 20),
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 10),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Container(
-                                              width: 100,
-                                              child: Text(
-                                                'Ngày bắt đầu:',
-                                              ),
-                                            ),
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width -
-                                                  100 -
-                                                  40,
-                                              child: Text(
-                                                '${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)}',
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 7),
-                                        ),
-                                        (_contractFullDTO.dateFinished ==
-                                                    null ||
-                                                _contractFullDTO.dateFinished ==
-                                                    '0001-01-01T00:00:00')
-                                            ? Row(
-                                                children: [
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width -
-                                                            40,
-                                                    child: Text(
-                                                      'Ngày kết thúc sẽ được cập nhật sau khi bác sĩ xét duyệt.',
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            : Row(
-                                                children: [
-                                                  //
-
-                                                  Container(
-                                                    width: 100,
-                                                    child: Text(
-                                                      'Ngày kết thúc:',
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width -
-                                                            100 -
-                                                            40,
-                                                    child: Text(
-                                                      '${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}',
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 7),
-                                        ),
-                                      ],
-                                    )),
-                                //
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-//
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width,
-                            color: DefaultTheme.WHITE,
-                            child: Column(
-                              children: [
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 20),
-                                  color: DefaultTheme.WHITE,
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: Image.asset(
-                                            'assets/images/ic-money.png'),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                      ),
-                                      Text(
-                                        'Giá tiền',
-                                        textAlign: TextAlign.left,
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: DefaultTheme.BLACK_BUTTON),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                                //
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(left: 20, right: 20),
-                                  child: (state.dto.priceLicense != 0 &&
-                                          state.dto.daysOfTracking != 0)
-                                      ? Column(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(bottom: 10),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  width: 100,
-                                                  child: Text(
-                                                    'Số ngày:',
-                                                  ),
-                                                ),
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width -
-                                                      100 -
-                                                      40,
-                                                  child: Text(
-                                                    '${_contractFullDTO.daysOfTracking} ngày',
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(bottom: 7),
-                                            ),
-                                            Row(
-                                              children: [
-                                                //
-
-                                                Container(
-                                                  width: 100,
-                                                  child: Text(
-                                                    'Thành tiền:',
-                                                  ),
-                                                ),
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width -
-                                                      100 -
-                                                      40,
-                                                  child: Text(
-                                                    '${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)}',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: DefaultTheme
-                                                            .SUCCESS_STATUS,
-                                                        wordSpacing: 1,
-                                                        letterSpacing: 0.4),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(bottom: 7),
-                                            ),
-                                          ],
-                                        )
-                                      : Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: 50,
-                                          child: Center(
-                                              child: Text(
-                                                  'Giá tiền sẽ được cập nhật sau khi bác sĩ xét duyệt')),
-                                        ),
-                                ),
-                                //
-                                Divider(
-                                  color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  height: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-//
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                          ),
-                          (state.dto.medicalInstructionDiseases != null &&
-                                  state.dto.medicalInstructionDiseases
-                                      .isNotEmpty)
-                              ? Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  color: DefaultTheme.WHITE,
-                                  child: Column(
-                                    children: [
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 1,
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        padding: EdgeInsets.only(
-                                            top: 10, bottom: 10, left: 20),
-                                        color: DefaultTheme.WHITE,
-                                        child: Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: Image.asset(
-                                                  'assets/images/ic-medical-instruction.png'),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 10),
-                                            ),
-                                            Text(
-                                              'Phiếu y lệnh tương ứng với bệnh đã chọn',
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: DefaultTheme
-                                                      .BLACK_BUTTON),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 1,
-                                      ),
-                                      (state.dto.medicalInstructionDiseases !=
-                                                  null &&
-                                              state
-                                                  .dto
-                                                  .medicalInstructionDiseases
-                                                  .isNotEmpty)
-                                          ? Column(
-                                              children: [
-                                                for (MedicalInstructionDiseases medDisease
-                                                    in state.dto
-                                                        .medicalInstructionDiseases)
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    height: 250,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  left: 20,
-                                                                  top: 10),
-                                                          child: Text(
-                                                              '${medDisease.diseaseId}-${medDisease.nameDisease}'),
-                                                        ),
-                                                        Container(
-                                                          height: 200,
-                                                          width: MediaQuery.of(
-                                                                  context)
-                                                              .size
-                                                              .width,
-                                                          child:
-                                                              ListView.builder(
-                                                            scrollDirection:
-                                                                Axis.horizontal,
-                                                            itemCount: medDisease
-                                                                .medicalInstructions
-                                                                .length,
-                                                            itemBuilder:
-                                                                (BuildContext
-                                                                        context,
-                                                                    int index) {
-                                                              return Container(
-                                                                height: 200,
-                                                                width: 150,
-                                                                margin: EdgeInsets
-                                                                    .only(
-                                                                        left:
-                                                                            10),
-                                                                child: InkWell(
-                                                                  onTap: () {
-                                                                    if (medDisease.medicalInstructions[index].images ==
-                                                                            null ||
-                                                                        medDisease
-                                                                            .medicalInstructions[index]
-                                                                            .images
-                                                                            .isEmpty) {
-                                                                      if (medDisease
-                                                                          .medicalInstructions
-                                                                          .contains(
-                                                                              'Đơn thuốc')) {
-                                                                        _showDetailVitalSign(medDisease
-                                                                            .medicalInstructions[index]
-                                                                            .medicalInstructionId);
-                                                                      } else {
-                                                                        print(
-                                                                            'THIS IS MEDICAL INSTRUCTION ID: ${medDisease.medicalInstructions[index].medicalInstructionId}');
-                                                                        _showDetailVitalSign(medDisease
-                                                                            .medicalInstructions[index]
-                                                                            .medicalInstructionId);
-                                                                      }
-                                                                    } else {
-                                                                      showFullDetailComponent(
-                                                                          medDisease
-                                                                              .medicalInstructions[
-                                                                                  index]
-                                                                              .images,
-                                                                          medDisease
-                                                                              .medicalInstructions[
-                                                                                  index]
-                                                                              .medicalInstructionTypeName,
-                                                                          medDisease
-                                                                              .medicalInstructions[
-                                                                                  index]
-                                                                              .dateCreated,
-                                                                          medDisease
-                                                                              .medicalInstructions[
-                                                                                  index]
-                                                                              .conclusion,
-                                                                          medDisease
-                                                                              .medicalInstructions[index]
-                                                                              .diseases);
-                                                                    }
-                                                                  },
-                                                                  child: Stack(
-                                                                    children: [
-                                                                      //
-                                                                      // SizedBox(
-                                                                      //   width: 150,
-                                                                      //   height: 200,
-                                                                      //   child: Image
-                                                                      //       .network(
-                                                                      //           'http://45.76.186.233:8000/api/v1/Images?pathImage=${medDisease.medicalInstructions[index].images.first}'),
-                                                                      // ),
-                                                                      checkTypeMedIns(
-                                                                          medDisease.medicalInstructions[
-                                                                              index],
-                                                                          medDisease
-                                                                              .medicalInstructions[index]
-                                                                              .medicalInstructionTypeName),
-                                                                      Positioned(
-                                                                        bottom:
-                                                                            0,
-                                                                        child:
-                                                                            Container(
-                                                                          width:
-                                                                              150,
-                                                                          height:
-                                                                              100,
-                                                                          padding:
-                                                                              EdgeInsets.only(bottom: 10),
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            gradient:
-                                                                                LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-                                                                              DefaultTheme.TRANSPARENT,
-                                                                              DefaultTheme.BLACK.withOpacity(0.9),
-                                                                            ]),
-                                                                          ),
-                                                                          child:
-                                                                              Align(
-                                                                            alignment:
-                                                                                Alignment.bottomCenter,
-                                                                            child:
-                                                                                Text(
-                                                                              '${medDisease.medicalInstructions[index].medicalInstructionTypeName}',
-                                                                              style: TextStyle(color: DefaultTheme.WHITE, fontWeight: FontWeight.w500),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ),
-                                                        Divider(
-                                                          color: DefaultTheme
-                                                              .GREY_TOP_TAB_BAR,
-                                                          height: 2,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                              ],
-                                            )
-                                          : Container(),
-                                      //
-                                      // Container(
-                                      //   width: MediaQuery.of(context).size.width,
-                                      //   height: 200,
-                                      //   child: ListView(
-                                      //     scrollDirection: Axis.horizontal,
-                                      //     children: [
-                                      //       for (MedicalInstructionTypes x
-                                      //           in state.dto.medicalInstructionChoosed)
-                                      //         Container(
-                                      //           height: 200,
-                                      //           child: ListView.builder(
-                                      //             scrollDirection: Axis.horizontal,
-                                      //             shrinkWrap: true,
-                                      //             physics:
-                                      //                 NeverScrollableScrollPhysics(),
-                                      //             itemCount:
-                                      //                 x.medicalInstructions.length,
-                                      //             itemBuilder: (BuildContext context,
-                                      //                 int index) {
-                                      //               return Container(
-                                      //                 height: 200,
-                                      //                 width: 150,
-                                      //                 margin:
-                                      //                     EdgeInsets.only(left: 10),
-                                      //                 child:
-                                      // InkWell(
-                                      //                   onTap: () {
-                                      //                     if (x
-                                      //                                 .medicalInstructions[
-                                      //                                     index]
-                                      //                                 .images ==
-                                      //                             null ||
-                                      //                         x
-                                      //                             .medicalInstructions[
-                                      //                                 index]
-                                      //                             .images
-                                      //                             .isEmpty) {
-                                      //                       if (x
-                                      //                           .medicalInstructionTypeName
-                                      //                           .contains(
-                                      //                               'Đơn thuốc')) {
-                                      //                         _showDetailVitalSign(x
-                                      //                             .medicalInstructions[
-                                      //                                 index]
-                                      //                             .medicalInstructionId);
-                                      //                       } else {
-                                      //                         print(
-                                      //                             'THIS IS MEDICAL INSTRUCTION ID: ${x.medicalInstructions[index].medicalInstructionId}');
-                                      //                         _showDetailVitalSign(x
-                                      //                             .medicalInstructions[
-                                      //                                 index]
-                                      //                             .medicalInstructionId);
-                                      //                       }
-                                      //                     } else {
-                                      //                       showFullDetailComponent(
-                                      //                           x
-                                      //                               .medicalInstructions[
-                                      //                                   index]
-                                      //                               .images,
-                                      //                           x
-                                      //                               .medicalInstructionTypeName,
-                                      //                           '',
-                                      //                           x
-                                      //                               .medicalInstructions[
-                                      //                                   index]
-                                      //                               .diagnose);
-                                      //                       // _showFullImageDescription(
-                                      //                       //     x.medicalInstructions[
-                                      //                       //         index],
-                                      //                       //     x.medicalInstructionTypeName);
-                                      //                     }
-                                      //                   },
-                                      //                   child:
-                                      // Stack(
-                                      //                     children: [
-                                      //                       //
-                                      //                       // SizedBox(
-                                      //                       //   width: 150,
-                                      //                       //   height: 200,
-                                      //                       //   child: Image.network(
-                                      //                       //       'http://45.76.186.233:8000/api/v1/Images?pathImage=${x.medicalInstructions[index].image}'),
-                                      //                       // ),
-                                      //                       checkTypeMedIns(
-                                      //                           x.medicalInstructions[
-                                      //                               index],
-                                      //                           x.medicalInstructionTypeName),
-                                      //                       Positioned(
-                                      //                         bottom: 0,
-                                      //                         child: Container(
-                                      //                           width: 150,
-                                      //                           height: 100,
-                                      //                           padding:
-                                      //                               EdgeInsets.only(
-                                      //                                   bottom: 10),
-                                      //                           decoration:
-                                      //                               BoxDecoration(
-                                      //                             gradient: LinearGradient(
-                                      //                                 begin: Alignment
-                                      //                                     .topCenter,
-                                      //                                 end: Alignment
-                                      //                                     .bottomCenter,
-                                      //                                 colors: [
-                                      //                                   DefaultTheme
-                                      //                                       .TRANSPARENT,
-                                      //                                   DefaultTheme
-                                      //                                       .BLACK
-                                      //                                       .withOpacity(
-                                      //                                           0.9),
-                                      //                                 ]),
-                                      //                           ),
-                                      //                           child: Align(
-                                      //                             alignment: Alignment
-                                      //                                 .bottomCenter,
-                                      //                             child: Text(
-                                      //                               '${x.medicalInstructionTypeName}',
-                                      //                               style: TextStyle(
-                                      //                                   color:
-                                      //                                       DefaultTheme
-                                      //                                           .WHITE,
-                                      //                                   fontWeight:
-                                      //                                       FontWeight
-                                      //                                           .w500),
-                                      //                             ),
-                                      //                           ),
-                                      //                         ),
-                                      //                       ),
-                                      //                     ],
-                                      //                   ),
-                                      //                 ),
-                                      //               );
-                                      //             },
-                                      //           ),
-                                      //         )
-                                      //     ],
-                                      //   ),
-                                      // ),
-                                    ],
-                                  ),
-                                )
-                              : Container(),
-                          Divider(
-                            color: DefaultTheme.GREY_TOP_TAB_BAR,
-                            height: 1,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 30),
-                          ),
-                          ///////
-                          ///
-                          ///
-                          ///
-                          (state.dto.medicalInstructionOthers != null &&
-                                  state.dto.medicalInstructionOthers.isNotEmpty)
-                              ? Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  color: DefaultTheme.WHITE,
-                                  child: Column(
-                                    children: [
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 1,
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        padding: EdgeInsets.only(
-                                            top: 10, bottom: 10, left: 20),
-                                        color: DefaultTheme.WHITE,
-                                        child: Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: Image.asset(
-                                                  'assets/images/ic-medical-instruction.png'),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 10),
-                                            ),
-                                            Text(
-                                              'Phiếu y lệnh đã chọn khác',
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: DefaultTheme
-                                                      .BLACK_BUTTON),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 1,
-                                      ),
-                                      Container(
-                                        height: 200,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: state.dto
-                                              .medicalInstructionOthers.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Container(
-                                              height: 200,
-                                              width: 150,
-                                              margin: EdgeInsets.only(left: 10),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  if (state
-                                                              .dto
-                                                              .medicalInstructionOthers[
-                                                                  index]
-                                                              .images ==
-                                                          null ||
-                                                      state
-                                                          .dto
-                                                          .medicalInstructionOthers[
-                                                              index]
-                                                          .images
-                                                          .isEmpty) {
-                                                    if (state.dto
-                                                        .medicalInstructionOthers
-                                                        .contains(
-                                                            'Đơn thuốc')) {
-                                                      _showDetailVitalSign(state
-                                                          .dto
-                                                          .medicalInstructionOthers[
-                                                              index]
-                                                          .medicalInstructionId);
-                                                    } else {
-                                                      print(
-                                                          'THIS IS MEDICAL INSTRUCTION ID: ${state.dto.medicalInstructionOthers[index].medicalInstructionId}');
-                                                      _showDetailVitalSign(state
-                                                          .dto
-                                                          .medicalInstructionOthers[
-                                                              index]
-                                                          .medicalInstructionId);
-                                                    }
-                                                  } else {
-                                                    showFullDetailComponent(
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionOthers[
-                                                                index]
-                                                            .images,
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionOthers[
-                                                                index]
-                                                            .medicalInstructionTypeName,
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionOthers[
-                                                                index]
-                                                            .dateCreated,
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionOthers[
-                                                                index]
-                                                            .conclusion,
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionOthers[
-                                                                index]
-                                                            .diseases);
-                                                  }
-                                                },
-                                                child: Stack(
-                                                  children: [
-                                                    checkTypeMedIns2(
-                                                        state.dto
-                                                                .medicalInstructionOthers[
-                                                            index],
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionOthers[
-                                                                index]
-                                                            .medicalInstructionTypeName),
-                                                    Positioned(
-                                                      bottom: 0,
-                                                      child: Container(
-                                                        width: 150,
-                                                        height: 100,
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 10),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          gradient: LinearGradient(
-                                                              begin: Alignment
-                                                                  .topCenter,
-                                                              end: Alignment
-                                                                  .bottomCenter,
-                                                              colors: [
-                                                                DefaultTheme
-                                                                    .TRANSPARENT,
-                                                                DefaultTheme
-                                                                    .BLACK
-                                                                    .withOpacity(
-                                                                        0.9),
-                                                              ]),
-                                                        ),
-                                                        child: Align(
-                                                          alignment: Alignment
-                                                              .bottomCenter,
-                                                          child: Text(
-                                                            '${state.dto.medicalInstructionOthers[index].medicalInstructionTypeName}',
-                                                            style: TextStyle(
-                                                                color:
-                                                                    DefaultTheme
-                                                                        .WHITE,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 2,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Container(),
-
-                          ///////
-                          ///
-                          ///
-                          ///
-
-                          (state.dto.medicalInstructionChoosed != null &&
-                                  state
-                                      .dto.medicalInstructionChoosed.isNotEmpty)
-                              ? Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  color: DefaultTheme.WHITE,
-                                  child: Column(
-                                    children: [
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 1,
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        padding: EdgeInsets.only(
-                                            top: 10, bottom: 10, left: 20),
-                                        color: DefaultTheme.WHITE,
-                                        child: Row(
-                                          children: [
-                                            SizedBox(
-                                              width: 20,
-                                              height: 20,
-                                              child: Image.asset(
-                                                  'assets/images/ic-medical-instruction.png'),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 10),
-                                            ),
-                                            Text(
-                                              'Phiếu y lệnh mà bác sĩ đã chọn',
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: DefaultTheme
-                                                      .BLACK_BUTTON),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 1,
-                                      ),
-                                      Container(
-                                        height: 200,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: ListView.builder(
-                                          scrollDirection: Axis.horizontal,
-                                          itemCount: state.dto
-                                              .medicalInstructionChoosed.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Container(
-                                              height: 200,
-                                              width: 150,
-                                              margin: EdgeInsets.only(left: 10),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  if (state
-                                                              .dto
-                                                              .medicalInstructionChoosed[
-                                                                  index]
-                                                              .images ==
-                                                          null ||
-                                                      state
-                                                          .dto
-                                                          .medicalInstructionChoosed[
-                                                              index]
-                                                          .images
-                                                          .isEmpty) {
-                                                    if (state.dto
-                                                        .medicalInstructionChoosed
-                                                        .contains(
-                                                            'Đơn thuốc')) {
-                                                      _showDetailVitalSign(state
-                                                          .dto
-                                                          .medicalInstructionChoosed[
-                                                              index]
-                                                          .medicalInstructionId);
-                                                    } else {
-                                                      print(
-                                                          'THIS IS MEDICAL INSTRUCTION ID: ${state.dto.medicalInstructionChoosed[index].medicalInstructionId}');
-                                                      _showDetailVitalSign(state
-                                                          .dto
-                                                          .medicalInstructionChoosed[
-                                                              index]
-                                                          .medicalInstructionId);
-                                                    }
-                                                  } else {
-                                                    showFullDetailComponent(
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionChoosed[
-                                                                index]
-                                                            .images,
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionChoosed[
-                                                                index]
-                                                            .medicalInstructionTypeName,
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionChoosed[
-                                                                index]
-                                                            .dateCreated,
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionChoosed[
-                                                                index]
-                                                            .conclusion,
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionChoosed[
-                                                                index]
-                                                            .diseases);
-                                                  }
-                                                },
-                                                child: Stack(
-                                                  children: [
-                                                    checkTypeMedIns3(
-                                                        state.dto
-                                                                .medicalInstructionChoosed[
-                                                            index],
-                                                        state
-                                                            .dto
-                                                            .medicalInstructionChoosed[
-                                                                index]
-                                                            .medicalInstructionTypeName),
-                                                    Positioned(
-                                                      bottom: 0,
-                                                      child: Container(
-                                                        width: 150,
-                                                        height: 100,
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                bottom: 10),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          gradient: LinearGradient(
-                                                              begin: Alignment
-                                                                  .topCenter,
-                                                              end: Alignment
-                                                                  .bottomCenter,
-                                                              colors: [
-                                                                DefaultTheme
-                                                                    .TRANSPARENT,
-                                                                DefaultTheme
-                                                                    .BLACK
-                                                                    .withOpacity(
-                                                                        0.9),
-                                                              ]),
-                                                        ),
-                                                        child: Align(
-                                                          alignment: Alignment
-                                                              .bottomCenter,
-                                                          child: Text(
-                                                            '${state.dto.medicalInstructionChoosed[index].medicalInstructionTypeName}',
-                                                            style: TextStyle(
-                                                                color:
-                                                                    DefaultTheme
-                                                                        .WHITE,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      Divider(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                        height: 2,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Container(),
-
-                          ///
-                          ///
-                          ///
-
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 20),
-                          ),
-
-                          //
-                          Divider(
-                            color: DefaultTheme.GREY_TOP_TAB_BAR,
-                            height: 1,
-                          ),
-                          //
-                          (_stateContract == 'APPROVED')
-                              ? Container()
-                              : Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.only(
-                                      left: 20, right: 20, top: 10, bottom: 10),
-                                  color: DefaultTheme.YELLOW.withOpacity(0.2),
-                                  child: InkWell(
-                                    onTap: () {
-                                      print('contractId ${_contractId}');
-                                      print('patientId ${_patientId}');
-                                      print('doctorId ${_doctorId}');
-
-                                      if (_contractId != 0 &&
-                                          _patientId != 0 &&
-                                          _doctorId != 0) {
-                                        ContractUpdateDTO contractUpdateDTO =
-                                            ContractUpdateDTO(
-                                          contractId: _contractId,
-                                          doctorId: _doctorId,
-                                          patientId: _patientId,
-                                          status: 'SIGNED',
-                                        );
-
-                                        _showContractDocument(
-                                            contractUpdateDTO, false);
-                                      }
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        //
-                                        SizedBox(
-                                          width: 30,
-                                          height: 30,
-                                          child: Image.asset(
-                                              'assets/images/ic-contract.png'),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 20),
-                                        ),
-                                        Text(
-                                          'Xem bản hợp đồng',
-                                          style: TextStyle(
-                                              color: DefaultTheme.ORANGE_TEXT),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                          Divider(
-                            color: DefaultTheme.GREY_TOP_TAB_BAR,
-                            height: 1,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 10),
-                          ),
-                          (_stateContract.contains('PENDING'))
-                              ? Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 40,
-                                  child: InkWell(
-                                    onTap: () {
-                                      //
-                                      if (_patientId != 0 &&
-                                          _contractId != 0 &&
-                                          _doctorId != 0) {
-                                        ContractUpdateDTO contractCancelDTO =
-                                            ContractUpdateDTO(
-                                          contractId: _contractId,
-                                          doctorId: _doctorId,
-                                          patientId: _patientId,
-                                          status: 'CANCELP',
-                                        );
-                                        //
-                                        return showDialog(
+                    Divider(
+                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                      height: 1,
+                    ),
+                    (_stateContract.contains('APPROVED'))
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              //
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: 30,
+                                padding: EdgeInsets.only(top: 5, bottom: 5),
+                                color: DefaultTheme.SUCCESS_STATUS
+                                    .withOpacity(0.3),
+                                child: InkWell(
+                                  onTap: () {
+                                    if (_patientId != 0 &&
+                                        _contractId != 0 &&
+                                        _doctorId != 0) {
+                                      ContractUpdateDTO contractUpdateDTO =
+                                          ContractUpdateDTO(
+                                        contractId: _contractId,
+                                        doctorId: _doctorId,
+                                        patientId: _patientId,
+                                        status: 'SIGNED',
+                                      );
+                                      return showDialog(
                                           barrierDismissible: false,
                                           context: context,
                                           builder: (BuildContext context) {
@@ -2287,7 +552,7 @@ class _DetailContractView extends State<DetailContractView>
                                                           top: 10,
                                                           right: 10),
                                                       width: 250,
-                                                      height: 185,
+                                                      height: 210,
                                                       decoration: BoxDecoration(
                                                         color: DefaultTheme
                                                             .WHITE
@@ -2301,12 +566,11 @@ class _DetailContractView extends State<DetailContractView>
                                                             CrossAxisAlignment
                                                                 .center,
                                                         children: <Widget>[
-                                                          Spacer(),
                                                           Container(
                                                             padding:
                                                                 EdgeInsets.only(
-                                                                    bottom: 10,
-                                                                    top: 0),
+                                                                    bottom: 5,
+                                                                    top: 10),
                                                             child: Text(
                                                               'Lưu ý',
                                                               style: TextStyle(
@@ -2323,6 +587,7 @@ class _DetailContractView extends State<DetailContractView>
                                                               ),
                                                             ),
                                                           ),
+                                                          Spacer(),
                                                           Container(
                                                             padding:
                                                                 EdgeInsets.only(
@@ -2333,7 +598,7 @@ class _DetailContractView extends State<DetailContractView>
                                                                   Alignment
                                                                       .center,
                                                               child: Text(
-                                                                'Huỷ yêu cầu đồng nghĩa bác sĩ sẽ không xem xét được tình trạng bệnh lý và yêu cầu chăm khám. Bạn có muốn huỷ?',
+                                                                'Bạn vui lòng đọc kĩ nội dung hợp đồng tiếp theo bởi vì hợp đồng sẽ có hiệu lực kể từ khi bạn xác nhận và mọi thông tin trong hợp đồng sẽ thực hiện đúng qui định của pháp luật.',
                                                                 textAlign:
                                                                     TextAlign
                                                                         .center,
@@ -2369,7 +634,7 @@ class _DetailContractView extends State<DetailContractView>
                                                                     250 / 2 -
                                                                         10.5,
                                                                 child: Text(
-                                                                    'ĐÓNG',
+                                                                    'Đóng',
                                                                     style: TextStyle(
                                                                         color: DefaultTheme
                                                                             .BLUE_TEXT)),
@@ -2381,7 +646,7 @@ class _DetailContractView extends State<DetailContractView>
                                                               ),
                                                               Container(
                                                                 height: 40,
-                                                                width: 1,
+                                                                width: 0.5,
                                                                 color: DefaultTheme
                                                                     .GREY_TOP_TAB_BAR,
                                                               ),
@@ -2391,30 +656,18 @@ class _DetailContractView extends State<DetailContractView>
                                                                     250 / 2 -
                                                                         10.5,
                                                                 child: Text(
-                                                                    'XÁC NHẬN',
+                                                                    'Tiếp tục',
                                                                     style: TextStyle(
                                                                         color: DefaultTheme
-                                                                            .RED_TEXT)),
-                                                                onPressed:
-                                                                    () async {
+                                                                            .BLUE_TEXT)),
+                                                                onPressed: () {
                                                                   //
                                                                   Navigator.of(
                                                                           context)
                                                                       .pop();
-                                                                  //
-                                                                  print(
-                                                                      'CONTRACT CANCEL DTO:\n contractId:${contractCancelDTO.contractId} -dateStart: ${contractCancelDTO.dateStart} -daysOfTracking: ${contractCancelDTO.daysOfTracking} - status:${contractCancelDTO.status} -patientId: ${contractCancelDTO.patientId} - doctorId: ${contractCancelDTO.doctorId} ');
-                                                                  await _contractUpdateBloc.add(
-                                                                      ContractUpdateEventUpdate(
-                                                                          dto:
-                                                                              contractCancelDTO));
-
-                                                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                                                      RoutesHDr
-                                                                          .MAIN_HOME,
-                                                                      (Route<dynamic>
-                                                                              route) =>
-                                                                          false);
+                                                                  _showContractDocument(
+                                                                      contractUpdateDTO,
+                                                                      true);
                                                                 },
                                                               ),
                                                             ],
@@ -2426,33 +679,1805 @@ class _DetailContractView extends State<DetailContractView>
                                                 ),
                                               ),
                                             );
-                                          },
-                                        );
-                                      }
-                                    },
-                                    child: Center(
-                                      child: Text(
-                                        'Huỷ yêu cầu hợp đồng',
+                                          });
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: Image.asset(
+                                            'assets/images/ic-checked.png'),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      Text(
+                                        'XÁC NHẬN HỢP ĐỒNG',
                                         style: TextStyle(
-                                            color: DefaultTheme.RED_CALENDAR,
-                                            decoration:
-                                                TextDecoration.underline),
+                                            color: DefaultTheme.BLUE_DARK,
+                                            fontWeight: FontWeight.w600),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                height: 1,
+                              ),
+                            ],
+                          )
+                        : Container(),
+
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: _refreshData,
+                        child: ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: <Widget>[
+                            //
+
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: EdgeInsets.only(
+                                  top: 30, left: 20, bottom: 10),
+                              child: Text(
+                                'Hợp đồng theo dõi',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: DefaultTheme.BLACK_BUTTON),
+                              ),
+                            ),
+                            //
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: DefaultTheme.WHITE,
+                              child: Column(
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10, bottom: 10, left: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Image.asset(
+                                              'assets/images/ic-add-disease.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Text(
+                                          'Bệnh lý',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: DefaultTheme.BLACK_BUTTON),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  for (String i in state.dto.diseaseContracts)
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      padding: EdgeInsets.only(
+                                          top: 10,
+                                          bottom: 10,
+                                          left: 30,
+                                          right: 20),
+                                      color: DefaultTheme.WHITE,
+                                      child: Text('${i}',
+                                          style: TextStyle(
+                                              color: DefaultTheme.BLUE_DARK)),
+                                    ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+//
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: EdgeInsets.only(
+                                  top: 30, left: 20, bottom: 10),
+                              child: Text(
+                                'Thông tin hai bên',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: DefaultTheme.BLACK_BUTTON),
+                              ),
+                            ),
+//
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: DefaultTheme.WHITE,
+                              child: Column(
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10, bottom: 10, left: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Image.asset(
+                                              'assets/images/ic-people.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Text(
+                                          'Bác sĩ',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: DefaultTheme.BLACK_BUTTON),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  //
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Họ và tên:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.fullNameDoctor}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Nơi làm việc:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.workLocationDoctor}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Điện thoại:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_arrayValidator.parsePhoneToView(_contractFullDTO.phoneNumberDoctor)}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Chuyên khoa:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.specialization}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Kinh nghiệm:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.experience} năm',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  //
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+//
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: DefaultTheme.WHITE,
+                              child: Column(
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10, bottom: 10, left: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Image.asset(
+                                              'assets/images/ic-people.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Text(
+                                          'Bệnh nhân',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: DefaultTheme.BLACK_BUTTON),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  //
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Họ và tên:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.fullNamePatient}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Địa chỉ:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.addressPatient}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Điện thoại:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_arrayValidator.parsePhoneToView(_contractFullDTO.phoneNumberPatient)}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Ngày sinh:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_dateValidator.parseToDateView2(_contractFullDTO.dobPatient)}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Giới tính:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_getGender(_contractFullDTO.genderPatient)}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  //
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+//
+//
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: EdgeInsets.only(
+                                  top: 30, left: 20, bottom: 10),
+                              child: Text(
+                                'Thông tin về hợp đồng',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: DefaultTheme.BLACK_BUTTON),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: DefaultTheme.WHITE,
+                              child: Column(
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10, bottom: 10, left: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Image.asset(
+                                              'assets/images/ic-calendar.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Text(
+                                          'Thời gian',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: DefaultTheme.BLACK_BUTTON),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  //
+                                  Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 10),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 100,
+                                                child: Text(
+                                                  'Ngày bắt đầu:',
+                                                ),
+                                              ),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    100 -
+                                                    40,
+                                                child: Text(
+                                                  '${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)}',
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 7),
+                                          ),
+                                          (_contractFullDTO.dateFinished ==
+                                                      null ||
+                                                  _contractFullDTO
+                                                          .dateFinished ==
+                                                      '0001-01-01T00:00:00')
+                                              ? Row(
+                                                  children: [
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width -
+                                                              40,
+                                                      child: Text(
+                                                        'Ngày kết thúc sẽ được cập nhật sau khi bác sĩ xét duyệt.',
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              : Row(
+                                                  children: [
+                                                    //
+
+                                                    Container(
+                                                      width: 100,
+                                                      child: Text(
+                                                        'Ngày kết thúc:',
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width -
+                                                              100 -
+                                                              40,
+                                                      child: Text(
+                                                        '${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}',
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 7),
+                                          ),
+                                        ],
+                                      )),
+                                  //
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+//
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: DefaultTheme.WHITE,
+                              child: Column(
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10, bottom: 10, left: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Image.asset(
+                                              'assets/images/ic-money.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Text(
+                                          'Giá tiền',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: DefaultTheme.BLACK_BUTTON),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  //
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: (state.dto.priceLicense != 0 &&
+                                            state.dto.daysOfTracking != 0)
+                                        ? Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 10),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 100,
+                                                    child: Text(
+                                                      'Số ngày:',
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                            100 -
+                                                            40,
+                                                    child: Text(
+                                                      '${_contractFullDTO.daysOfTracking} ngày',
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 7),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  //
+
+                                                  Container(
+                                                    width: 100,
+                                                    child: Text(
+                                                      'Thành tiền:',
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                            100 -
+                                                            40,
+                                                    child: Text(
+                                                      '${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: DefaultTheme
+                                                              .SUCCESS_STATUS,
+                                                          wordSpacing: 1,
+                                                          letterSpacing: 0.4),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 7),
+                                              ),
+                                            ],
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: 50,
+                                            child: Center(
+                                                child: Text(
+                                                    'Giá tiền sẽ được cập nhật sau khi bác sĩ xét duyệt')),
+                                          ),
+                                  ),
+                                  //
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+//
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            (state.dto.medicalInstructionDiseases != null &&
+                                    state.dto.medicalInstructionDiseases
+                                        .isNotEmpty)
+                                ? Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    color: DefaultTheme.WHITE,
+                                    child: Column(
+                                      children: [
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: EdgeInsets.only(
+                                              top: 10, bottom: 10, left: 20),
+                                          color: DefaultTheme.WHITE,
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child: Image.asset(
+                                                    'assets/images/ic-medical-instruction.png'),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                              ),
+                                              Text(
+                                                'Phiếu y lệnh tương ứng với bệnh đã chọn',
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: DefaultTheme
+                                                        .BLACK_BUTTON),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        (state.dto.medicalInstructionDiseases !=
+                                                    null &&
+                                                state
+                                                    .dto
+                                                    .medicalInstructionDiseases
+                                                    .isNotEmpty)
+                                            ? Column(
+                                                children: [
+                                                  for (MedicalInstructionDiseases medDisease
+                                                      in state.dto
+                                                          .medicalInstructionDiseases)
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      height: 250,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20,
+                                                                    top: 10),
+                                                            child: Text(
+                                                                '${medDisease.diseaseId}-${medDisease.nameDisease}'),
+                                                          ),
+                                                          Container(
+                                                            height: 200,
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            child: ListView
+                                                                .builder(
+                                                              scrollDirection:
+                                                                  Axis.horizontal,
+                                                              itemCount: medDisease
+                                                                  .medicalInstructions
+                                                                  .length,
+                                                              itemBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      int index) {
+                                                                return Container(
+                                                                  height: 200,
+                                                                  width: 150,
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              10),
+                                                                  child:
+                                                                      InkWell(
+                                                                    onTap: () {
+                                                                      if (medDisease.medicalInstructions[index].images ==
+                                                                              null ||
+                                                                          medDisease
+                                                                              .medicalInstructions[index]
+                                                                              .images
+                                                                              .isEmpty) {
+                                                                        if (medDisease
+                                                                            .medicalInstructions
+                                                                            .contains('Đơn thuốc')) {
+                                                                          _showDetailVitalSign(medDisease
+                                                                              .medicalInstructions[index]
+                                                                              .medicalInstructionId);
+                                                                        } else {
+                                                                          print(
+                                                                              'THIS IS MEDICAL INSTRUCTION ID: ${medDisease.medicalInstructions[index].medicalInstructionId}');
+                                                                          _showDetailVitalSign(medDisease
+                                                                              .medicalInstructions[index]
+                                                                              .medicalInstructionId);
+                                                                        }
+                                                                      } else {
+                                                                        showFullDetailComponent(
+                                                                            medDisease.medicalInstructions[index].images,
+                                                                            medDisease.medicalInstructions[index].medicalInstructionTypeName,
+                                                                            medDisease.medicalInstructions[index].dateCreated,
+                                                                            medDisease.medicalInstructions[index].conclusion,
+                                                                            medDisease.medicalInstructions[index].diseases);
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                        Stack(
+                                                                      children: [
+                                                                        //
+                                                                        // SizedBox(
+                                                                        //   width: 150,
+                                                                        //   height: 200,
+                                                                        //   child: Image
+                                                                        //       .network(
+                                                                        //           'http://45.76.186.233:8000/api/v1/Images?pathImage=${medDisease.medicalInstructions[index].images.first}'),
+                                                                        // ),
+                                                                        checkTypeMedIns(
+                                                                            medDisease.medicalInstructions[index],
+                                                                            medDisease.medicalInstructions[index].medicalInstructionTypeName),
+                                                                        Positioned(
+                                                                          bottom:
+                                                                              0,
+                                                                          child:
+                                                                              Container(
+                                                                            width:
+                                                                                150,
+                                                                            height:
+                                                                                100,
+                                                                            padding:
+                                                                                EdgeInsets.only(bottom: 10),
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+                                                                                DefaultTheme.TRANSPARENT,
+                                                                                DefaultTheme.BLACK.withOpacity(0.9),
+                                                                              ]),
+                                                                            ),
+                                                                            child:
+                                                                                Align(
+                                                                              alignment: Alignment.bottomCenter,
+                                                                              child: Text(
+                                                                                '${medDisease.medicalInstructions[index].medicalInstructionTypeName}',
+                                                                                style: TextStyle(color: DefaultTheme.WHITE, fontWeight: FontWeight.w500),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                          Divider(
+                                                            color: DefaultTheme
+                                                                .GREY_TOP_TAB_BAR,
+                                                            height: 2,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                ],
+                                              )
+                                            : Container(),
+                                        //
+                                        // Container(
+                                        //   width: MediaQuery.of(context).size.width,
+                                        //   height: 200,
+                                        //   child: ListView(
+                                        //     scrollDirection: Axis.horizontal,
+                                        //     children: [
+                                        //       for (MedicalInstructionTypes x
+                                        //           in state.dto.medicalInstructionChoosed)
+                                        //         Container(
+                                        //           height: 200,
+                                        //           child: ListView.builder(
+                                        //             scrollDirection: Axis.horizontal,
+                                        //             shrinkWrap: true,
+                                        //             physics:
+                                        //                 NeverScrollableScrollPhysics(),
+                                        //             itemCount:
+                                        //                 x.medicalInstructions.length,
+                                        //             itemBuilder: (BuildContext context,
+                                        //                 int index) {
+                                        //               return Container(
+                                        //                 height: 200,
+                                        //                 width: 150,
+                                        //                 margin:
+                                        //                     EdgeInsets.only(left: 10),
+                                        //                 child:
+                                        // InkWell(
+                                        //                   onTap: () {
+                                        //                     if (x
+                                        //                                 .medicalInstructions[
+                                        //                                     index]
+                                        //                                 .images ==
+                                        //                             null ||
+                                        //                         x
+                                        //                             .medicalInstructions[
+                                        //                                 index]
+                                        //                             .images
+                                        //                             .isEmpty) {
+                                        //                       if (x
+                                        //                           .medicalInstructionTypeName
+                                        //                           .contains(
+                                        //                               'Đơn thuốc')) {
+                                        //                         _showDetailVitalSign(x
+                                        //                             .medicalInstructions[
+                                        //                                 index]
+                                        //                             .medicalInstructionId);
+                                        //                       } else {
+                                        //                         print(
+                                        //                             'THIS IS MEDICAL INSTRUCTION ID: ${x.medicalInstructions[index].medicalInstructionId}');
+                                        //                         _showDetailVitalSign(x
+                                        //                             .medicalInstructions[
+                                        //                                 index]
+                                        //                             .medicalInstructionId);
+                                        //                       }
+                                        //                     } else {
+                                        //                       showFullDetailComponent(
+                                        //                           x
+                                        //                               .medicalInstructions[
+                                        //                                   index]
+                                        //                               .images,
+                                        //                           x
+                                        //                               .medicalInstructionTypeName,
+                                        //                           '',
+                                        //                           x
+                                        //                               .medicalInstructions[
+                                        //                                   index]
+                                        //                               .diagnose);
+                                        //                       // _showFullImageDescription(
+                                        //                       //     x.medicalInstructions[
+                                        //                       //         index],
+                                        //                       //     x.medicalInstructionTypeName);
+                                        //                     }
+                                        //                   },
+                                        //                   child:
+                                        // Stack(
+                                        //                     children: [
+                                        //                       //
+                                        //                       // SizedBox(
+                                        //                       //   width: 150,
+                                        //                       //   height: 200,
+                                        //                       //   child: Image.network(
+                                        //                       //       'http://45.76.186.233:8000/api/v1/Images?pathImage=${x.medicalInstructions[index].image}'),
+                                        //                       // ),
+                                        //                       checkTypeMedIns(
+                                        //                           x.medicalInstructions[
+                                        //                               index],
+                                        //                           x.medicalInstructionTypeName),
+                                        //                       Positioned(
+                                        //                         bottom: 0,
+                                        //                         child: Container(
+                                        //                           width: 150,
+                                        //                           height: 100,
+                                        //                           padding:
+                                        //                               EdgeInsets.only(
+                                        //                                   bottom: 10),
+                                        //                           decoration:
+                                        //                               BoxDecoration(
+                                        //                             gradient: LinearGradient(
+                                        //                                 begin: Alignment
+                                        //                                     .topCenter,
+                                        //                                 end: Alignment
+                                        //                                     .bottomCenter,
+                                        //                                 colors: [
+                                        //                                   DefaultTheme
+                                        //                                       .TRANSPARENT,
+                                        //                                   DefaultTheme
+                                        //                                       .BLACK
+                                        //                                       .withOpacity(
+                                        //                                           0.9),
+                                        //                                 ]),
+                                        //                           ),
+                                        //                           child: Align(
+                                        //                             alignment: Alignment
+                                        //                                 .bottomCenter,
+                                        //                             child: Text(
+                                        //                               '${x.medicalInstructionTypeName}',
+                                        //                               style: TextStyle(
+                                        //                                   color:
+                                        //                                       DefaultTheme
+                                        //                                           .WHITE,
+                                        //                                   fontWeight:
+                                        //                                       FontWeight
+                                        //                                           .w500),
+                                        //                             ),
+                                        //                           ),
+                                        //                         ),
+                                        //                       ),
+                                        //                     ],
+                                        //                   ),
+                                        //                 ),
+                                        //               );
+                                        //             },
+                                        //           ),
+                                        //         )
+                                        //     ],
+                                        //   ),
+                                        // ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            Divider(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                              height: 1,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 30),
+                            ),
+                            ///////
+                            ///
+                            ///
+                            ///
+                            (state.dto.medicalInstructionOthers != null &&
+                                    state.dto.medicalInstructionOthers
+                                        .isNotEmpty)
+                                ? Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    color: DefaultTheme.WHITE,
+                                    child: Column(
+                                      children: [
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: EdgeInsets.only(
+                                              top: 10, bottom: 10, left: 20),
+                                          color: DefaultTheme.WHITE,
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child: Image.asset(
+                                                    'assets/images/ic-medical-instruction.png'),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                              ),
+                                              Text(
+                                                'Phiếu y lệnh đã chọn khác',
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: DefaultTheme
+                                                        .BLACK_BUTTON),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          height: 200,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: state
+                                                .dto
+                                                .medicalInstructionOthers
+                                                .length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Container(
+                                                height: 200,
+                                                width: 150,
+                                                margin:
+                                                    EdgeInsets.only(left: 10),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    if (state
+                                                                .dto
+                                                                .medicalInstructionOthers[
+                                                                    index]
+                                                                .images ==
+                                                            null ||
+                                                        state
+                                                            .dto
+                                                            .medicalInstructionOthers[
+                                                                index]
+                                                            .images
+                                                            .isEmpty) {
+                                                      if (state.dto
+                                                          .medicalInstructionOthers
+                                                          .contains(
+                                                              'Đơn thuốc')) {
+                                                        _showDetailVitalSign(state
+                                                            .dto
+                                                            .medicalInstructionOthers[
+                                                                index]
+                                                            .medicalInstructionId);
+                                                      } else {
+                                                        print(
+                                                            'THIS IS MEDICAL INSTRUCTION ID: ${state.dto.medicalInstructionOthers[index].medicalInstructionId}');
+                                                        _showDetailVitalSign(state
+                                                            .dto
+                                                            .medicalInstructionOthers[
+                                                                index]
+                                                            .medicalInstructionId);
+                                                      }
+                                                    } else {
+                                                      showFullDetailComponent(
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .images,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .medicalInstructionTypeName,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .dateCreated,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .conclusion,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .diseases);
+                                                    }
+                                                  },
+                                                  child: Stack(
+                                                    children: [
+                                                      checkTypeMedIns2(
+                                                          state.dto
+                                                                  .medicalInstructionOthers[
+                                                              index],
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .medicalInstructionTypeName),
+                                                      Positioned(
+                                                        bottom: 0,
+                                                        child: Container(
+                                                          width: 150,
+                                                          height: 100,
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 10),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            gradient: LinearGradient(
+                                                                begin: Alignment
+                                                                    .topCenter,
+                                                                end: Alignment
+                                                                    .bottomCenter,
+                                                                colors: [
+                                                                  DefaultTheme
+                                                                      .TRANSPARENT,
+                                                                  DefaultTheme
+                                                                      .BLACK
+                                                                      .withOpacity(
+                                                                          0.9),
+                                                                ]),
+                                                          ),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .bottomCenter,
+                                                            child: Text(
+                                                              '${state.dto.medicalInstructionOthers[index].medicalInstructionTypeName}',
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .WHITE,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 2,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+
+                            ///////
+                            ///
+                            ///
+                            ///
+
+                            (state.dto.medicalInstructionChoosed != null &&
+                                    state.dto.medicalInstructionChoosed
+                                        .isNotEmpty)
+                                ? Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    color: DefaultTheme.WHITE,
+                                    child: Column(
+                                      children: [
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: EdgeInsets.only(
+                                              top: 10, bottom: 10, left: 20),
+                                          color: DefaultTheme.WHITE,
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child: Image.asset(
+                                                    'assets/images/ic-medical-instruction.png'),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                              ),
+                                              Text(
+                                                'Phiếu y lệnh mà bác sĩ đã chọn',
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: DefaultTheme
+                                                        .BLACK_BUTTON),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          height: 200,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: state
+                                                .dto
+                                                .medicalInstructionChoosed
+                                                .length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Container(
+                                                height: 200,
+                                                width: 150,
+                                                margin:
+                                                    EdgeInsets.only(left: 10),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    if (state
+                                                                .dto
+                                                                .medicalInstructionChoosed[
+                                                                    index]
+                                                                .images ==
+                                                            null ||
+                                                        state
+                                                            .dto
+                                                            .medicalInstructionChoosed[
+                                                                index]
+                                                            .images
+                                                            .isEmpty) {
+                                                      if (state.dto
+                                                          .medicalInstructionChoosed
+                                                          .contains(
+                                                              'Đơn thuốc')) {
+                                                        _showDetailVitalSign(state
+                                                            .dto
+                                                            .medicalInstructionChoosed[
+                                                                index]
+                                                            .medicalInstructionId);
+                                                      } else {
+                                                        print(
+                                                            'THIS IS MEDICAL INSTRUCTION ID: ${state.dto.medicalInstructionChoosed[index].medicalInstructionId}');
+                                                        _showDetailVitalSign(state
+                                                            .dto
+                                                            .medicalInstructionChoosed[
+                                                                index]
+                                                            .medicalInstructionId);
+                                                      }
+                                                    } else {
+                                                      showFullDetailComponent(
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .images,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .medicalInstructionTypeName,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .dateCreated,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .conclusion,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .diseases);
+                                                    }
+                                                  },
+                                                  child: Stack(
+                                                    children: [
+                                                      checkTypeMedIns3(
+                                                          state.dto
+                                                                  .medicalInstructionChoosed[
+                                                              index],
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .medicalInstructionTypeName),
+                                                      Positioned(
+                                                        bottom: 0,
+                                                        child: Container(
+                                                          width: 150,
+                                                          height: 100,
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 10),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            gradient: LinearGradient(
+                                                                begin: Alignment
+                                                                    .topCenter,
+                                                                end: Alignment
+                                                                    .bottomCenter,
+                                                                colors: [
+                                                                  DefaultTheme
+                                                                      .TRANSPARENT,
+                                                                  DefaultTheme
+                                                                      .BLACK
+                                                                      .withOpacity(
+                                                                          0.9),
+                                                                ]),
+                                                          ),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .bottomCenter,
+                                                            child: Text(
+                                                              '${state.dto.medicalInstructionChoosed[index].medicalInstructionTypeName}',
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .WHITE,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 2,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+
+                            ///
+                            ///
+                            ///
+
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 20),
+                            ),
+
+                            //
+                            Divider(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                              height: 1,
+                            ),
+                            //
+                            (_stateContract == 'APPROVED')
+                                ? Container()
+                                : Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        left: 20,
+                                        right: 20,
+                                        top: 10,
+                                        bottom: 10),
+                                    color: DefaultTheme.YELLOW.withOpacity(0.2),
+                                    child: InkWell(
+                                      onTap: () {
+                                        print('contractId ${_contractId}');
+                                        print('patientId ${_patientId}');
+                                        print('doctorId ${_doctorId}');
+
+                                        if (_contractId != 0 &&
+                                            _patientId != 0 &&
+                                            _doctorId != 0) {
+                                          ContractUpdateDTO contractUpdateDTO =
+                                              ContractUpdateDTO(
+                                            contractId: _contractId,
+                                            doctorId: _doctorId,
+                                            patientId: _patientId,
+                                            status: 'SIGNED',
+                                          );
+
+                                          _showContractDocument(
+                                              contractUpdateDTO, false);
+                                        }
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          //
+                                          SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: Image.asset(
+                                                'assets/images/ic-contract.png'),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 20),
+                                          ),
+                                          Text(
+                                            'Xem bản hợp đồng',
+                                            style: TextStyle(
+                                                color:
+                                                    DefaultTheme.ORANGE_TEXT),
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ),
-                                )
-                              : Container(),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 30),
-                          ),
-                          //
-                          ///
-                        ],
+                            Divider(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                              height: 1,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            (_stateContract.contains('PENDING'))
+                                ? Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 40,
+                                    child: InkWell(
+                                      onTap: () {
+                                        //
+                                        if (_patientId != 0 &&
+                                            _contractId != 0 &&
+                                            _doctorId != 0) {
+                                          ContractUpdateDTO contractCancelDTO =
+                                              ContractUpdateDTO(
+                                            contractId: _contractId,
+                                            doctorId: _doctorId,
+                                            patientId: _patientId,
+                                            status: 'CANCELP',
+                                          );
+                                          //
+                                          return showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return Material(
+                                                color: DefaultTheme.TRANSPARENT,
+                                                child: Center(
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                15)),
+                                                    child: BackdropFilter(
+                                                      filter: ImageFilter.blur(
+                                                          sigmaX: 25,
+                                                          sigmaY: 25),
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10,
+                                                                top: 10,
+                                                                right: 10),
+                                                        width: 250,
+                                                        height: 185,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: DefaultTheme
+                                                              .WHITE
+                                                              .withOpacity(0.7),
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: <Widget>[
+                                                            Spacer(),
+                                                            Container(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      bottom:
+                                                                          10,
+                                                                      top: 0),
+                                                              child: Text(
+                                                                'Lưu ý',
+                                                                style:
+                                                                    TextStyle(
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .none,
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .BLACK,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize: 18,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 20,
+                                                                      right:
+                                                                          20),
+                                                              child: Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                child: Text(
+                                                                  'Huỷ yêu cầu đồng nghĩa bác sĩ sẽ không xem xét được tình trạng bệnh lý và yêu cầu chăm khám. Bạn có muốn huỷ?',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    decoration:
+                                                                        TextDecoration
+                                                                            .none,
+                                                                    color: DefaultTheme
+                                                                        .GREY_TEXT,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    fontSize:
+                                                                        13,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Spacer(),
+                                                            Divider(
+                                                              height: 1,
+                                                              color: DefaultTheme
+                                                                  .GREY_TOP_TAB_BAR,
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FlatButton(
+                                                                  height: 40,
+                                                                  minWidth:
+                                                                      250 / 2 -
+                                                                          10.5,
+                                                                  child: Text(
+                                                                      'ĐÓNG',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              DefaultTheme.BLUE_TEXT)),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                ),
+                                                                Container(
+                                                                  height: 40,
+                                                                  width: 1,
+                                                                  color: DefaultTheme
+                                                                      .GREY_TOP_TAB_BAR,
+                                                                ),
+                                                                FlatButton(
+                                                                  height: 40,
+                                                                  minWidth:
+                                                                      250 / 2 -
+                                                                          10.5,
+                                                                  child: Text(
+                                                                      'XÁC NHẬN',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              DefaultTheme.RED_TEXT)),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    //
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                    //
+                                                                    print(
+                                                                        'CONTRACT CANCEL DTO:\n contractId:${contractCancelDTO.contractId} -dateStart: ${contractCancelDTO.dateStart} -daysOfTracking: ${contractCancelDTO.daysOfTracking} - status:${contractCancelDTO.status} -patientId: ${contractCancelDTO.patientId} - doctorId: ${contractCancelDTO.doctorId} ');
+                                                                    await _contractUpdateBloc.add(
+                                                                        ContractUpdateEventUpdate(
+                                                                            dto:
+                                                                                contractCancelDTO));
+
+                                                                    Navigator.of(context).pushNamedAndRemoveUntil(
+                                                                        RoutesHDr
+                                                                            .MAIN_HOME,
+                                                                        (Route<dynamic>
+                                                                                route) =>
+                                                                            false);
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          'Huỷ yêu cầu hợp đồng',
+                                          style: TextStyle(
+                                              color: DefaultTheme.RED_CALENDAR,
+                                              decoration:
+                                                  TextDecoration.underline),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 30),
+                            ),
+                            //
+                            ///
+                          ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              );
+                    )
+                  ],
+                );
+              }
             }
             return Container(
                 width: MediaQuery.of(context).size.width,
@@ -3844,6 +3869,80 @@ class _DetailContractView extends State<DetailContractView>
                                                                             },
                                                                           ).catchError((e) {
                                                                             print('getPaymentUrl error');
+                                                                            Navigator.of(context).pop();
+                                                                            showDialog(
+                                                                              barrierDismissible: false,
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return Material(
+                                                                                  color: DefaultTheme.TRANSPARENT,
+                                                                                  child: Center(
+                                                                                    child: ClipRRect(
+                                                                                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                                                                                      child: BackdropFilter(
+                                                                                        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                                                                                        child: Container(
+                                                                                          padding: EdgeInsets.only(left: 10, top: 10, right: 10),
+                                                                                          width: 250,
+                                                                                          height: 150,
+                                                                                          decoration: BoxDecoration(
+                                                                                            color: DefaultTheme.WHITE.withOpacity(0.7),
+                                                                                          ),
+                                                                                          child: Column(
+                                                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                            children: <Widget>[
+                                                                                              Container(
+                                                                                                padding: EdgeInsets.only(bottom: 10, top: 10),
+                                                                                                child: Text(
+                                                                                                  'Không thể thanh toán',
+                                                                                                  style: TextStyle(
+                                                                                                    decoration: TextDecoration.none,
+                                                                                                    color: DefaultTheme.BLACK,
+                                                                                                    fontWeight: FontWeight.w600,
+                                                                                                    fontSize: 18,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                              Container(
+                                                                                                padding: EdgeInsets.only(left: 10, right: 10),
+                                                                                                child: Align(
+                                                                                                  alignment: Alignment.center,
+                                                                                                  child: Text(
+                                                                                                    'Vui lòng thanh toán lại. Kiểm tra đường truyền kết nối.',
+                                                                                                    textAlign: TextAlign.center,
+                                                                                                    style: TextStyle(
+                                                                                                      decoration: TextDecoration.none,
+                                                                                                      color: DefaultTheme.BLACK,
+                                                                                                      fontWeight: FontWeight.w400,
+                                                                                                      fontSize: 13,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                              Spacer(),
+                                                                                              Divider(
+                                                                                                height: 1,
+                                                                                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                                                                              ),
+                                                                                              ButtonHDr(
+                                                                                                height: 40,
+                                                                                                style: BtnStyle.BUTTON_TRANSPARENT,
+                                                                                                label: 'OK',
+                                                                                                labelColor: DefaultTheme.BLUE_TEXT,
+                                                                                                onTap: () {
+                                                                                                  Navigator.of(context).pop();
+                                                                                                },
+                                                                                              ),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                            );
                                                                           });
                                                                         },
                                                                       ),

@@ -25,7 +25,7 @@ class PeripheralRepository {
           listScanned.add(r);
         }
       });
-      await flutterBlue.stopScan();
+    //  await flutterBlue.stopScan();
       return listScanned;
     } catch (e) {
       print('ERROR AT SCAN BL DEVICE: $e');

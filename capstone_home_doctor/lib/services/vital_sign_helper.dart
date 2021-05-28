@@ -182,4 +182,38 @@ class VitalSignHelper {
     }
     return prefs.getBool('SMS_TURN_OFF');
   }
+
+////////
+  ///MESSAGE FOR DOCTOR
+  Future<void> initialWarning() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('IS_WARNING', false);
+    prefs.setString('WARNING_MSG', '');
+  }
+
+  Future<bool> updateWarning(bool isWarning, String msg) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('IS_WARNING') || !prefs.containsKey('WARNING_MSG')) {
+      initialWarning();
+    }
+    prefs.setBool('IS_WARNING', isWarning);
+    prefs.setString('WARNING_MSG', msg);
+    return true;
+  }
+
+  Future<bool> isWarning() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('IS_WARNING') || !prefs.containsKey('WARNING_MSG')) {
+      initialWarning();
+    }
+    return prefs.getBool('IS_WARNING');
+  }
+
+  Future<String> getWarning() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('IS_WARNING') || !prefs.containsKey('WARNING_MSG')) {
+      initialWarning();
+    }
+    return prefs.getString('WARNING_MSG');
+  }
 }

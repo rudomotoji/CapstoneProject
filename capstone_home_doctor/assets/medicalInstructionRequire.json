@@ -98,6 +98,10 @@
         {
           "medicalInstructionTypeId": 6,
           "medicalInstructionTypeName": "Phiếu điện tim"
+        },
+        {
+          "medicalInstructionTypeId": 1,
+          "medicalInstructionTypeName": "Đơn thuốc"
         }
     ]
   },
@@ -126,8 +130,12 @@
     "diseaseId": "I20",
     "medicalInstructions": [
         {
-          "medicalInstructionTypeId": 6,
-          "medicalInstructionTypeName": "Phiếu điện tim"
+          "medicalInstructionTypeId": 3,
+          "medicalInstructionTypeName": "Phiếu xét nghiệm huyết học"
+        },
+        {
+          "medicalInstructionTypeId": 8,
+          "medicalInstructionTypeName": "Sinh hiệu"
         }
     ]
   },

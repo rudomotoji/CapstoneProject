@@ -92,6 +92,7 @@ final ContractHelper contractHelper = ContractHelper();
 final ReminderHelper _reminderHelper = ReminderHelper();
 final ArrayValidator _arrayValidator = ArrayValidator();
 final MeasureHelper _measureHelper = MeasureHelper();
+final VitalSignHelper _vitalsignHelper = VitalSignHelper();
 DateValidator _dateValidator = DateValidator();
 final ContractHelper _contractHelper = ContractHelper();
 List<ContractListDTO> _listExecuting = [];
@@ -192,7 +193,8 @@ class _DashboardState extends State<DashboardPage>
   String listValueM = '';
   int minL = 0;
   int maxL = 0;
-
+  bool isWarning = false;
+  String msgW = '';
   //
   List<VitalSignDTO> listVitalSignDangerous = [];
 
@@ -386,6 +388,10 @@ class _DashboardState extends State<DashboardPage>
       _getTimeSystem();
       print(
           '--------NOTI BODY ${notification.body} - noti id: ${notification.id} -  - noti: ${notification.payload}');
+      if (notification.payload.contains('"notiTypeId":"27"')) {
+        /////
+        _vitalsignHelper.updateWarning(true, notification.body);
+      }
     });
     _measureStream = MeasureBloc.instance.notificationsStream;
     _measureStream.listen((rf) {
@@ -591,6 +597,18 @@ class _DashboardState extends State<DashboardPage>
         }
       });
     }
+    _vitalsignHelper.isWarning().then((isW) {
+      if (!mounted) return;
+      setState(() {
+        isWarning = isW;
+      });
+    });
+    _vitalsignHelper.getWarning().then((value) {
+      if (!mounted) return;
+      setState(() {
+        msgW = value;
+      });
+    });
     // await _authenticateHelper.getAccountId().then((value) {
     //   print('ACCOUNT ID ${value}');
     // });
@@ -1226,17 +1244,32 @@ class _DashboardState extends State<DashboardPage>
                     Padding(
                       padding: EdgeInsets.only(bottom: 10),
                     ),
-                    // Container(
-                    //   padding: EdgeInsets.only(bottom: 5),
-                    //   alignment: Alignment.centerLeft,
-                    //   child: Text(
-                    //     'Ghi chú của bác sĩ: ',
-                    //     style: TextStyle(
-                    //       color: DefaultTheme.WHITE,
-                    //       fontSize: 15,
-                    //     ),
-                    //   ),
-                    // ),
+                    (isWarning)
+                        ? Container(
+                            padding: EdgeInsets.only(bottom: 5),
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Ghi chú của bác sĩ:',
+                                  style: TextStyle(
+                                    color: DefaultTheme.WHITE,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  '${msgW}',
+                                  style: TextStyle(
+                                    color: DefaultTheme.WHITE,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Container(),
                     // Container(
                     //   height: 100,
                     //   width: MediaQuery.of(context).size.width,
