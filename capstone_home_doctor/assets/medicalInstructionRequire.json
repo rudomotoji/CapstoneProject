@@ -28,6 +28,20 @@
     ]
   },
   {
+    "medicalInstructionRequireId": 1,
+    "diseaseId": "I02",
+    "medicalInstructions": [
+        {
+          "medicalInstructionTypeId": 6,
+          "medicalInstructionTypeName": "Phiếu điện tim"
+        },
+        {
+          "medicalInstructionTypeId": 4,
+          "medicalInstructionTypeName": "Phiếu X-Quang"
+        }
+    ]
+  },
+  {
     "medicalInstructionRequireId": 2,
     "diseaseId": "I05",
     "medicalInstructions": [

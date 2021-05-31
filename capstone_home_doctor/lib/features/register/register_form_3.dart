@@ -18,6 +18,18 @@ class RegisterPage3 extends StatefulWidget {
 
 class _RegisterPage3State extends State<RegisterPage3> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: ListView(

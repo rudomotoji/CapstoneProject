@@ -246,7 +246,7 @@ class DateValidator {
     if (timeSystem != null && timeSystem != '') {
       DateFormat _format = DateFormat('yyyy-MM-dd-EEEE');
       String _formatted = _format
-          .format(DateTime.parse(timeSystem.split('"')[1].split('"')[0]));
+          .format(DateTime.parse(timeSystem.split('"')[1].split('"')[0].split('T')[0]));
       String _dateInWeek = parseDateInWeekToView(_formatted.split('-')[3]);
       String _day = _formatted.split('-')[2];
       String _month = _formatted.split('-')[1];

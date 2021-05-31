@@ -34,6 +34,11 @@ class _VitalSignTabState extends State<VitalSignTab> {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   //launch URL
   Future<void> _launchInBrowser(String url) async {
     if (await canLaunch(url)) {

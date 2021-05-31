@@ -72,6 +72,12 @@ class _PressureDetailView extends State<PressureDetailView> {
     });
   }
 
+
+  @override
+  void dispose(){
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

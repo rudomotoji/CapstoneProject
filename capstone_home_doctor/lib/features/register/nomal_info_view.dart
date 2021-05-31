@@ -76,6 +76,11 @@ class _NomalInfoViewState extends State<NomalInfoView> {
     getDataFromJSONFile();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future<void> getDataFromJSONFile() async {
     final String response = await rootBundle.loadString('assets/global.json');
 

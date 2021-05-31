@@ -68,6 +68,12 @@ class _ReasonContractView extends State<ReasonContractView>
     super.initState();
     _getDateRequestFromServer();
     _getAvailableDay();
+    _getTimeSystem();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   _getTimeSystem() async {
@@ -77,8 +83,8 @@ class _ReasonContractView extends State<ReasonContractView>
       if (!mounted) return;
       setState(() {
         curentDateNow = new DateFormat('yyyy-MM-dd').parse(
-            DateFormat('yyyy-MM-dd')
-                .format(DateTime.parse(value.split('"')[1].split('"')[0])));
+            DateFormat('yyyy-MM-dd').format(DateTime.parse(
+                value.split('"')[1].split('"')[0].split('T')[0])));
       });
     });
   }
@@ -600,65 +606,68 @@ class _ReasonContractView extends State<ReasonContractView>
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        return Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(15)),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                width: MediaQuery.of(context).size.width - 20,
-                height: MediaQuery.of(context).size.height * 0.5,
-                decoration: BoxDecoration(
-                  color: DefaultTheme.WHITE.withOpacity(0.6),
-                ),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Ngày bắt đầu',
-                          style: TextStyle(
-                            fontSize: 25,
-                            color: DefaultTheme.BLACK,
-                            decoration: TextDecoration.none,
-                            fontWeight: FontWeight.w500,
+        return Material(
+          color: DefaultTheme.TRANSPARENT,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width - 20,
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  decoration: BoxDecoration(
+                    color: DefaultTheme.WHITE.withOpacity(0.6),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Ngày bắt đầu',
+                            style: TextStyle(
+                              fontSize: 25,
+                              color: DefaultTheme.BLACK,
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: CupertinoDatePicker(
-                          mode: CupertinoDatePickerMode.date,
-                          initialDateTime: DateTime.now()
-                              .add(Duration(days: dateAfterFromServer)),
-                          onDateTimeChanged: (dateTime) {
-                            setState(() {
-                              _startDate = dateTime.toString().split(' ')[0];
-                              dateView = _dateValidator.parseToDateView2(
-                                  dateTime.toString().split(' ')[0]);
-                            });
-                          }),
-                    ),
-                    ButtonHDr(
-                      style: BtnStyle.BUTTON_BLACK,
-                      label: 'Chọn',
-                      onTap: () async {
-                        setState(() {
-                          if (dateView == 'Chọn ngày') {
-                            dateView =
-                                _dateValidator.parseToDateView2(_startDate);
-                          }
-                        });
-                        print('date view now: $dateView');
-                        Navigator.of(context).pop();
-                        _checkDateAvailable(
-                            dto.patientId, dto.doctorId, _startDate);
-                      },
-                    ),
-                  ],
+                      Expanded(
+                        child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.date,
+                            initialDateTime: curentDateNow
+                                .add(Duration(days: dateAfterFromServer)),
+                            onDateTimeChanged: (dateTime) {
+                              setState(() {
+                                _startDate = dateTime.toString().split(' ')[0];
+                                dateView = _dateValidator.parseToDateView2(
+                                    dateTime.toString().split(' ')[0]);
+                              });
+                            }),
+                      ),
+                      ButtonHDr(
+                        style: BtnStyle.BUTTON_BLACK,
+                        label: 'Chọn',
+                        onTap: () async {
+                          setState(() {
+                            if (dateView == 'Chọn ngày') {
+                              dateView =
+                                  _dateValidator.parseToDateView2(_startDate);
+                            }
+                          });
+                          print('date view now: $dateView');
+                          Navigator.of(context).pop();
+                          _checkDateAvailable(
+                              dto.patientId, dto.doctorId, _startDate);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

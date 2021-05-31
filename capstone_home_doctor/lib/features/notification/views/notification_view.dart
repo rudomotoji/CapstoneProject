@@ -36,6 +36,11 @@ class _NotificationState extends State<NotificationPage> {
     _getAccountId();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future _getAccountId() async {
     await _authenticateHelper.getAccountId().then((value) {
       _accountId = value;

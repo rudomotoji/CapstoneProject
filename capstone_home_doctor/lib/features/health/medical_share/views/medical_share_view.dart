@@ -1242,7 +1242,7 @@ class _MedicalShare extends State<MedicalShare> with WidgetsBindingObserver {
                         Container(
                           padding: EdgeInsets.only(bottom: 10),
                           child: Text(
-                            'Vui lòng chờ chút',
+                            'Đang tải',
                             style: TextStyle(
                               decoration: TextDecoration.none,
                               color: DefaultTheme.GREY_TEXT,

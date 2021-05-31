@@ -2709,7 +2709,7 @@ class _DetailContractView extends State<DetailContractView>
                         Container(
                           padding: EdgeInsets.only(bottom: 10),
                           child: Text(
-                            'Vui lòng chờ chút',
+                            'Đang tải',
                             style: TextStyle(
                               decoration: TextDecoration.none,
                               color: DefaultTheme.GREY_TEXT,
@@ -2924,7 +2924,7 @@ class _DetailContractView extends State<DetailContractView>
 
   _showContractDocument(ContractUpdateDTO dto, bool isSigned) {
     //
-
+    _isAccept = false;
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -3790,56 +3790,56 @@ class _DetailContractView extends State<DetailContractView>
                                                                               _contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense;
                                                                           print(
                                                                               'TIEN: ${_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense} ');
-                                                                          Navigator.of(context)
-                                                                              .pop();
+                                                                          // Navigator.of(context, rootNavigator: true)
+                                                                          //     .pop();
 
-                                                                          showDialog(
-                                                                              barrierDismissible: false,
-                                                                              context: context,
-                                                                              builder: (BuildContext context) {
-                                                                                return Material(
-                                                                                  color: DefaultTheme.TRANSPARENT,
-                                                                                  child: Center(
-                                                                                    child: ClipRRect(
-                                                                                      borderRadius: BorderRadius.all(Radius.circular(15)),
-                                                                                      child: BackdropFilter(
-                                                                                        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                                                                                        child: Container(
-                                                                                          padding: EdgeInsets.all(10),
-                                                                                          width: 250,
-                                                                                          height: 160,
-                                                                                          decoration: BoxDecoration(
-                                                                                            color: DefaultTheme.WHITE.withOpacity(0.7),
-                                                                                          ),
-                                                                                          child: Column(
-                                                                                            children: <Widget>[
-                                                                                              SizedBox(
-                                                                                                width: 130,
-                                                                                                // height: 100,
-                                                                                                child: Image.asset('assets/images/loading.gif'),
-                                                                                              ),
-                                                                                              // Spacer(),
-                                                                                              Container(
-                                                                                                padding: EdgeInsets.only(bottom: 10),
-                                                                                                child: Text(
-                                                                                                  'Đang tải',
-                                                                                                  style: TextStyle(
-                                                                                                    decoration: TextDecoration.none,
-                                                                                                    color: DefaultTheme.GREY_TEXT,
-                                                                                                    fontWeight: FontWeight.w400,
-                                                                                                    fontSize: 15,
-                                                                                                  ),
-                                                                                                ),
-                                                                                              ),
-                                                                                            ],
-                                                                                          ),
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                );
-                                                                              });
-/////////////
+//                                                                           showDialog(
+//                                                                               barrierDismissible: false,
+//                                                                               context: context,
+//                                                                               builder: (BuildContext context) {
+//                                                                                 return Material(
+//                                                                                   color: DefaultTheme.TRANSPARENT,
+//                                                                                   child: Center(
+//                                                                                     child: ClipRRect(
+//                                                                                       borderRadius: BorderRadius.all(Radius.circular(15)),
+//                                                                                       child: BackdropFilter(
+//                                                                                         filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+//                                                                                         child: Container(
+//                                                                                           padding: EdgeInsets.all(10),
+//                                                                                           width: 250,
+//                                                                                           height: 160,
+//                                                                                           decoration: BoxDecoration(
+//                                                                                             color: DefaultTheme.WHITE.withOpacity(0.7),
+//                                                                                           ),
+//                                                                                           child: Column(
+//                                                                                             children: <Widget>[
+//                                                                                               SizedBox(
+//                                                                                                 width: 130,
+//                                                                                                 // height: 100,
+//                                                                                                 child: Image.asset('assets/images/loading.gif'),
+//                                                                                               ),
+//                                                                                               // Spacer(),
+//                                                                                               Container(
+//                                                                                                 padding: EdgeInsets.only(bottom: 10),
+//                                                                                                 child: Text(
+//                                                                                                   'Đang tải',
+//                                                                                                   style: TextStyle(
+//                                                                                                     decoration: TextDecoration.none,
+//                                                                                                     color: DefaultTheme.GREY_TEXT,
+//                                                                                                     fontWeight: FontWeight.w400,
+//                                                                                                     fontSize: 15,
+//                                                                                                   ),
+//                                                                                                 ),
+//                                                                                               ),
+//                                                                                             ],
+//                                                                                           ),
+//                                                                                         ),
+//                                                                                       ),
+//                                                                                     ),
+//                                                                                   ),
+//                                                                                 );
+//                                                                               });
+// /////////////
 
                                                                           /////// process here
                                                                           await paymentRepository

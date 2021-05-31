@@ -34,6 +34,11 @@ class _ActivityView extends State<ActivityView> with WidgetsBindingObserver {
     _getPatientId();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   //
   _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) {

@@ -1950,6 +1950,9 @@ class _ScheduleView extends State<ScheduleView>
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Padding(
+            padding: EdgeInsets.only(top: 30),
+          ),
           // Container(
           //   width: MediaQuery.of(context).size.width,
           //   height: 60,

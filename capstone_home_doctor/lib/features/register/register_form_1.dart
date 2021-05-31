@@ -20,6 +20,18 @@ class RegisterPage1 extends StatefulWidget {
 
 class _RegisterPage1State extends State<RegisterPage1> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       // decoration: BoxDecoration(color: DefaultTheme.GREY_VIEW),

@@ -37,6 +37,17 @@ class _RegisterPage4State extends State<RegisterPage4> {
   ArrayValidator _validator = ArrayValidator();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: ListView(
@@ -114,7 +125,7 @@ class _RegisterPage4State extends State<RegisterPage4> {
                                               'assets/images/loading.gif'),
                                         ),
                                         Text(
-                                          'Vui lòng chờ chút...',
+                                          'Đang tải',
                                           style: TextStyle(
                                               color: DefaultTheme.GREY_TEXT,
                                               fontSize: 15,

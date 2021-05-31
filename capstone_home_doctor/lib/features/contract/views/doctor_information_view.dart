@@ -52,6 +52,11 @@ class _DoctorInformation extends State<DoctorInformation>
     _checkingContractBloc = BlocProvider.of(context);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) {
       setState(() {

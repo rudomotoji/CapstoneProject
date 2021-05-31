@@ -40,6 +40,11 @@ class _MedicineHistory extends State<MedicineHistory>
     _prescriptionListBloc = BlocProvider.of(context);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) {
       setState(() {

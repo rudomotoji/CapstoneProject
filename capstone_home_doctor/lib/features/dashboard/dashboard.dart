@@ -348,8 +348,8 @@ class _DashboardState extends State<DashboardPage>
       if (!mounted) return;
       setState(() {
         curentDateNow = new DateFormat('yyyy-MM-dd').parse(
-            DateFormat('yyyy-MM-dd')
-                .format(DateTime.parse(value.split('"')[1].split('"')[0])));
+            DateFormat('yyyy-MM-dd').format(DateTime.parse(
+                value.split('"')[1].split('"')[0].split('T')[0])));
         print('CURRENT DATE NOW: ${curentDateNow}');
       });
     });

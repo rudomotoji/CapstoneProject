@@ -49,6 +49,10 @@ class _ActivityTimeView extends State<ActivityTimeView>
     _getAccountId();
   }
 
+  void dispose() {
+    super.dispose();
+  }
+
   //
   _getAccountId() async {
     await _authenticateHelper.getAccountId().then((value) async {
@@ -602,8 +606,7 @@ class _ActivityTimeView extends State<ActivityTimeView>
                                             left: 30, right: 30),
                                         width:
                                             MediaQuery.of(context).size.width,
-                                        child: 
-                                        DropdownButton<TimeActDTO>(
+                                        child: DropdownButton<TimeActDTO>(
                                           items: state.list
                                               .map((TimeActDTO value) {
                                             return new DropdownMenuItem<
@@ -632,7 +635,6 @@ class _ActivityTimeView extends State<ActivityTimeView>
                                             });
                                           },
                                         ),
-                                     
                                       ),
                                       //
                                       Divider(

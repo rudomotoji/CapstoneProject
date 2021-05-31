@@ -21,6 +21,11 @@ class _VNPayWebViewState extends State<VNPayWebView> {
   WebViewController _webViewController;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(

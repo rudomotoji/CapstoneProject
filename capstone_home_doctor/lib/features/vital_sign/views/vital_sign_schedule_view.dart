@@ -17,6 +17,11 @@ class _VitalSignScheduleView extends State<VitalSignScheduleView>
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future refresh() {}
 
   @override

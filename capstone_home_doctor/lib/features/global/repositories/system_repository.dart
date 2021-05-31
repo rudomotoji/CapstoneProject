@@ -15,6 +15,7 @@ class SystemRepository extends BaseApiClient {
         'accept': 'aplication/json',
       });
       if (response.statusCode == 200) {
+        print('TIME SYSTEM: ${response.body}');
         return response.body;
       } else {
         return '';

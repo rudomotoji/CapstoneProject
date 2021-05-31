@@ -75,8 +75,8 @@ class _Register extends State<Register> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
     _pageController.dispose();
+    super.dispose();
   }
 
   onPageChanged(int index) {
