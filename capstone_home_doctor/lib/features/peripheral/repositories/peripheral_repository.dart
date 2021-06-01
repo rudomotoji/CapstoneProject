@@ -25,7 +25,7 @@ class PeripheralRepository {
           listScanned.add(r);
         }
       });
-    //  await flutterBlue.stopScan();
+      //  await flutterBlue.stopScan();
       return listScanned;
     } catch (e) {
       print('ERROR AT SCAN BL DEVICE: $e');
@@ -125,7 +125,7 @@ class PeripheralRepository {
   Future<bool> connectDeviceInBackground(String peripheralId) async {
     try {
       bool check = false;
-      await stopScanning();
+      await flutterBlue.stopScan();
       await FlutterBlue.instance.startScan(timeout: Duration(seconds: 5));
       print('Scanning to connect in background');
       FlutterBlue.instance.scanResults.listen((results) async {

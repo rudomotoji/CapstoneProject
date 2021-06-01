@@ -2,12 +2,14 @@ import 'package:capstone_home_doctor/commons/http/base_api_client.dart';
 import 'package:capstone_home_doctor/models/account_dto.dart';
 import 'package:capstone_home_doctor/models/account_token_dto.dart';
 import 'package:capstone_home_doctor/models/token_device_dto.dart';
+import 'package:capstone_home_doctor/services/token_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class AccountRepository extends BaseApiClient {
   final http.Client httpClient;
+  final TokenHelper _tokenHelper = TokenHelper();
   AccountRepository({@required this.httpClient}) : assert(httpClient != null);
 
   //
@@ -18,6 +20,7 @@ class AccountRepository extends BaseApiClient {
       if (request.statusCode == 200) {
         //
         String response = request.body;
+        await _tokenHelper.setToken(response);
         Map<String, dynamic> decodedToken = JwtDecoder.decode(response);
         //return int.tryParse(decodedToken["patientId"]);
         return AccountTokenDTO.fromJson(decodedToken);
