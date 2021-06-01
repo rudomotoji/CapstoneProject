@@ -486,53 +486,53 @@ class _CreateMedicalInstructionViewState
 
                         ///
 
-                        // Padding(padding: EdgeInsets.only(top: 20)),
-                        // InkWell(
-                        //   onTap: () async {
-                        //     DateTime newDateTime = await showRoundedDatePicker(
-                        //         context: context,
-                        //         initialDate: DateTime.now(),
-                        //         firstDate: DateTime(DateTime.now().year - 100),
-                        //         lastDate: DateTime.now(),
-                        //         borderRadius: 16,
-                        //         theme: ThemeData.dark());
-                        //     if (newDateTime != null) {
-                        //       // setState(() => widget.birthday = newDateTime);
-                        //       // widget.dateOfBirth = newDateTime.toString();
-                        //       print(newDateTime.toString());
-                        //       setState(() {
-                        //         dateCreate = newDateTime.toString();
-                        //       });
-                        //     }
-                        //   },
-                        //   child: Container(
-                        //     margin: EdgeInsets.only(bottom: 10),
-                        //     padding: EdgeInsets.only(
-                        //         left: 10, right: 20, bottom: 10, top: 10),
-                        //     decoration: BoxDecoration(
-                        //       color: DefaultTheme.GREY_VIEW,
-                        //       borderRadius: BorderRadius.circular(5),
-                        //     ),
-                        //     child: Row(
-                        //       children: [
-                        //         SizedBox(
-                        //           width: 20,
-                        //           height: 20,
-                        //           child: Image.asset(
-                        //               'assets/images/ic-calendar.png'),
-                        //         ),
-                        //         Padding(
-                        //           padding: EdgeInsets.only(left: 20),
-                        //         ),
-                        //         Text(
-                        //             (dateCreate == null)
-                        //                 ? 'Ngày khám'
-                        //                 : '${_dateValidator.convertDateCreate(dateCreate, 'dd/MM/yyyy', 'yyyy-MM-dd')}',
-                        //             style: TextStyle(color: DefaultTheme.BLACK))
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
+                        Padding(padding: EdgeInsets.only(top: 20)),
+                        InkWell(
+                          onTap: () async {
+                            DateTime newDateTime = await showRoundedDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(DateTime.now().year - 100),
+                                lastDate: DateTime.now(),
+                                borderRadius: 16,
+                                theme: ThemeData.dark());
+                            if (newDateTime != null) {
+                              // setState(() => widget.birthday = newDateTime);
+                              // widget.dateOfBirth = newDateTime.toString();
+                              print(newDateTime.toString());
+                              setState(() {
+                                dateCreate = newDateTime.toString();
+                              });
+                            }
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 10),
+                            padding: EdgeInsets.only(
+                                left: 10, right: 20, bottom: 10, top: 10),
+                            decoration: BoxDecoration(
+                              color: DefaultTheme.GREY_VIEW,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: Image.asset(
+                                      'assets/images/ic-calendar.png'),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                ),
+                                Text(
+                                    (dateCreate == null)
+                                        ? 'Ngày khám'
+                                        : '${_dateValidator.convertDateCreate(dateCreate, 'dd/MM/yyyy', 'yyyy-MM-dd')}',
+                                    style: TextStyle(color: DefaultTheme.BLACK))
+                              ],
+                            ),
+                          ),
+                        ),
 
                         ///
                         Padding(
@@ -632,6 +632,7 @@ class _CreateMedicalInstructionViewState
                             diagnose: _dianoseController.text,
                             diseaseIds: null,
                             imageFile: listImage,
+                            dateTreatment: dateCreate,
                           );
                         } else {
                           medInsDTO = MedicalInstructionDTO(
@@ -642,6 +643,7 @@ class _CreateMedicalInstructionViewState
                             diagnose: _dianoseController.text,
                             diseaseIds: _diseaseIds,
                             imageFile: listImage,
+                            dateTreatment: dateCreate,
                           );
                         }
                       } else {
@@ -653,6 +655,7 @@ class _CreateMedicalInstructionViewState
                           diagnose: _dianoseController.text,
                           diseaseIds: null,
                           imageFile: listImage,
+                          dateTreatment: dateCreate,
                         );
                       }
 
