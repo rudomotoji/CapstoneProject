@@ -84,14 +84,14 @@
                 Chi tiết
               </el-button>
               <el-button
-                v-if="scope.row.status === 'LOCKED'"
+                v-if="scope.row.status === 'LOCKED' && checkOpenContract(scope.row.dateFinished)"
                 v-on:click="ChangeStatus(scope.row.contractId, 'ACTIVE')"
                 type="text"
                 size="small"
               >
                 Mở lại
               </el-button>
-              <el-button
+              <!-- <el-button
                 v-if="
                   scope.row.status === 'SIGNED' || scope.row.status === 'ACTIVE'
                 "
@@ -100,7 +100,7 @@
                 size="small"
               >
                 Khóa
-              </el-button>
+              </el-button> -->
             </div>
           </template>
         </el-table-column>
@@ -175,13 +175,22 @@ export default {
     }
   },
   computed: {
-    ...mapState('contract', ['listContracts', 'contractDetail'])
+    ...mapState('contract', ['listContracts', 'contractDetail']),
+    checkOpenContract (dateFinished) {
+      // var timeNow = Date.now()
+      var timeNow = this.getTimeSystem()
+      if (Date.parse(dateFinished) < timeNow) {
+        return true
+      }
+      return false
+    }
   },
   mounted () {
     this.getListContracts()
   },
   methods: {
     ...mapActions('contract', ['getListContracts', 'activeContract']),
+    ...mapActions('time', ['getTimeSystem']),
 
     ChangeStatus (id, status) {
       if (status === 'LOCKED') {
