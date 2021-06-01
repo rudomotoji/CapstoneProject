@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 
-const tokenKey = 'hdr-key'
+const tokenKey = 'admin-key'
 const userNameKey = 'username-key'
 const firebaseKey = 'firebase-key'
 

@@ -179,7 +179,7 @@ export default {
     checkOpenContract (dateFinished) {
       // var timeNow = Date.now()
       var timeNow = this.getTimeSystem()
-      if (Date.parse(dateFinished) < timeNow) {
+      if (Date.parse(dateFinished) < Date.parse(timeNow)) {
         return true
       }
       return false

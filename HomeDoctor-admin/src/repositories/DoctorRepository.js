@@ -13,5 +13,12 @@ export default {
       method: 'post',
       data
     })
+  },
+  async login (data) {
+    return await request({
+      url: 'Accounts/Login',
+      method: 'post',
+      data
+    })
   }
 }
