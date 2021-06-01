@@ -53,7 +53,7 @@ final BackgroundRepository _backgroundRepository =
     BackgroundRepository(httpClient: http.Client());
 final VitalSignServerRepository _vitalSignServerRepository =
     VitalSignServerRepository(httpClient: http.Client());
-
+final VitalSignHelper _vitalsignHelper = VitalSignHelper();
 final MedicalInstructionHelper _medicalInstructionHelper =
     MedicalInstructionHelper();
 
@@ -182,6 +182,10 @@ class _MainHomeState extends State<MainHome> {
     _notificationsStream = NotificationsBloc.instance.notificationsStream;
     _notificationsStream.listen((notification) {
       _getAccountId();
+      if (notification.payload.contains('"notiTypeId":"27"')) {
+        /////
+        _vitalsignHelper.updateWarning(true, notification.body);
+      }
     });
 
     //check wifi/mobile or offline connection

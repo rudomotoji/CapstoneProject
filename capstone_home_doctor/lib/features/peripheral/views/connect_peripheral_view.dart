@@ -111,111 +111,141 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 color: DefaultTheme.GREY_BUTTON),
-            child: RefreshIndicator(
-              onRefresh: _scanBluetoothDevice,
+            child:
+                // RefreshIndicator(
+                //   onRefresh: _scanBluetoothDevice,
+                //   child: SingleChildScrollView(
+                //     child: Column(
+                //       children: <Widget>[
+                //         BlocBuilder<PeripheralBloc, PeripheralState>(
+                //           builder: (context, state) {
+                //             //
+                //             if (state is PeripheralStateLoading) {
+                //               return Container(
+                //                 height: MediaQuery.of(context).size.height * 0.45,
+                //                 width: MediaQuery.of(context).size.width - 40,
+                //                 child: SizedBox(
+                //                   width: 100,
+                //                   height: 100,
+                //                   child: Image.asset('assets/images/loading.gif'),
+                //                 ),
+                //               );
+                //             }
+                //             if (state is PeripheralStateFailure) {
+                //               //
+                //               return Container(
+                //                   height: MediaQuery.of(context).size.height * 0.45,
+                //                   width: MediaQuery.of(context).size.width - 40,
+                //                   child: Center(
+                //                     child:
+                //                         Text('Không thể quét.\nVui lòng quét lại.'),
+                //                   ));
+                //             }
+                //             if (state is PeripheralStateScanSuccess) {
+                //               listScanned = [];
+                //               for (ScanResult r in state.list) {
+                //                 if (r.device.name.toUpperCase().contains('MI') ||
+                //                     r.device.name
+                //                         .toUpperCase()
+                //                         .contains('GALAXY FIT')) {
+                //                   listScanned.add(r);
+                //                   print('device added: ${r.device.name}');
+                //                 }
+                //               }
+
+                //               return (listScanned != null)
+                //                   ? Container(
+                //                       padding: EdgeInsets.only(top: 20),
+                //                       height:
+                //                           MediaQuery.of(context).size.height * 0.45,
+                //                       width: MediaQuery.of(context).size.width - 40,
+                //                       child: ListView.builder(
+                //                         itemCount: listScanned.length,
+                //                         itemBuilder:
+                //                             (BuildContext context, int index) {
+                //                           return ButtonHDr(
+                //                             style: BtnStyle.BUTTON_IN_LIST,
+                //                             imgHeight: 50,
+                //                             label: listScanned[index].device.name,
+                //                             height: 100,
+                //                             image: Image.asset(_getImageDevice(
+                //                                 listScanned[index].device.name)),
+                //                             onTap: () async {
+                //                               _showConfirm(listScanned[index]);
+                //                             },
+                //                           );
+                //                           // Container(
+                //                           //   width:
+                //                           //       MediaQuery.of(context).size.width -
+                //                           //           40,
+                //                           //   height: 60,
+                //                           //   margin: EdgeInsets.only(top: 5),
+                //                           //   color: Colors.red,
+                //                           //   child: Text(
+                //                           //       '${listScanned[index].device.name}'),
+                //                           // );
+                //                         },
+                //                       ),
+                //                     )
+                //                   : Container(
+                //                       height:
+                //                           MediaQuery.of(context).size.height * 0.45,
+                //                       width: MediaQuery.of(context).size.width - 40,
+                //                       child: Center(
+                //                         child: Text(
+                //                             'Không tìm thấy thiết bị nào. Vui lòng quét lại'),
+                //                       ));
+                //             }
+                //             return Container();
+                //           },
+                //         ),
+                //         // StreamBuilder<List<ScanResult>>(
+                //         //   stream: FlutterBlue.instance.scanResults,
+                //         //   initialData: [],
+                //         //   builder: (c, snapshot) => Column(
+                //         //     children: snapshot.data.map((result) {
+                //         //       return ScannedList(
+                //         //           result: result,
+                //         //           onTap: () async {
+                //         //             result.device.connect();
+                //         //             Navigator.pushNamed(
+                //         //                 context, RoutesHDr.PERIPHERAL_SERVICE,
+                //         //                 arguments: {
+                //         //                   'PERIPHERAL_CONNECTED': result
+                //         //                 });
+                //         //           });
+                //         //     }).toList(),
+                //         //   ),
+                //         // ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                RefreshIndicator(
+              onRefresh: () =>
+                  FlutterBlue.instance.startScan(timeout: Duration(seconds: 4)),
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    BlocBuilder<PeripheralBloc, PeripheralState>(
-                      builder: (context, state) {
-                        //
-                        if (state is PeripheralStateLoading) {
-                          return Container(
-                            height: MediaQuery.of(context).size.height * 0.45,
-                            width: MediaQuery.of(context).size.width - 40,
-                            child: SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: Image.asset('assets/images/loading.gif'),
-                            ),
-                          );
-                        }
-                        if (state is PeripheralStateFailure) {
-                          //
-                          return Container(
-                              height: MediaQuery.of(context).size.height * 0.45,
-                              width: MediaQuery.of(context).size.width - 40,
-                              child: Center(
-                                child:
-                                    Text('Không thể quét.\nVui lòng quét lại.'),
-                              ));
-                        }
-                        if (state is PeripheralStateScanSuccess) {
-                          listScanned = [];
-                          for (ScanResult r in state.list) {
-                            if (r.device.name.toUpperCase().contains('MI') ||
-                                r.device.name
-                                    .toUpperCase()
-                                    .contains('GALAXY FIT')) {
-                              listScanned.add(r);
-                              print('device added: ${r.device.name}');
-                            }
-                          }
-
-                          return (listScanned != null)
-                              ? Container(
-                                  padding: EdgeInsets.only(top: 20),
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.45,
-                                  width: MediaQuery.of(context).size.width - 40,
-                                  child: ListView.builder(
-                                    itemCount: listScanned.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return ButtonHDr(
-                                        style: BtnStyle.BUTTON_IN_LIST,
-                                        imgHeight: 50,
-                                        label: listScanned[index].device.name,
-                                        height: 100,
-                                        image: Image.asset(_getImageDevice(
-                                            listScanned[index].device.name)),
-                                        onTap: () async {
-                                          _showConfirm(listScanned[index]);
-                                        },
-                                      );
-                                      // Container(
-                                      //   width:
-                                      //       MediaQuery.of(context).size.width -
-                                      //           40,
-                                      //   height: 60,
-                                      //   margin: EdgeInsets.only(top: 5),
-                                      //   color: Colors.red,
-                                      //   child: Text(
-                                      //       '${listScanned[index].device.name}'),
-                                      // );
-                                    },
-                                  ),
-                                )
-                              : Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.45,
-                                  width: MediaQuery.of(context).size.width - 40,
-                                  child: Center(
-                                    child: Text(
-                                        'Không tìm thấy thiết bị nào. Vui lòng quét lại'),
-                                  ));
-                        }
-                        return Container();
-                      },
+                    StreamBuilder<List<ScanResult>>(
+                      stream: FlutterBlue.instance.scanResults,
+                      initialData: [],
+                      builder: (c, snapshot) => Column(
+                        children: snapshot.data
+                            .map((r) => ButtonHDr(
+                                  style: BtnStyle.BUTTON_IN_LIST,
+                                  imgHeight: 50,
+                                  label: r.device.name,
+                                  height: 100,
+                                  image: Image.asset(
+                                      _getImageDevice(r.device.name)),
+                                  onTap: () async {
+                                    _showConfirm(r);
+                                  },
+                                ))
+                            .toList(),
+                      ),
                     ),
-                    // StreamBuilder<List<ScanResult>>(
-                    //   stream: FlutterBlue.instance.scanResults,
-                    //   initialData: [],
-                    //   builder: (c, snapshot) => Column(
-                    //     children: snapshot.data.map((result) {
-                    //       return ScannedList(
-                    //           result: result,
-                    //           onTap: () async {
-                    //             result.device.connect();
-                    //             Navigator.pushNamed(
-                    //                 context, RoutesHDr.PERIPHERAL_SERVICE,
-                    //                 arguments: {
-                    //                   'PERIPHERAL_CONNECTED': result
-                    //                 });
-                    //           });
-                    //     }).toList(),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -237,7 +267,7 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
         Padding(
           padding: EdgeInsets.only(top: 10, bottom: 40, left: 40, right: 40),
           child: Text(
-            'Danh sách thiết bị đeo khả dụng',
+            'Phía trên là sách thiết bị đeo khả dụng',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: DefaultTheme.GREY_TEXT,
@@ -246,13 +276,60 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
             ),
           ),
         ),
-        ButtonHDr(
-          style: BtnStyle.BUTTON_FULL,
-          image: Image.asset('assets/images/ic-reload.png'),
-          label: 'Quét lại',
-          onTap: () async {
-            await FlutterBlue.instance.stopScan();
-            await _scanBluetoothDevice();
+        // ButtonHDr(
+        //   style: BtnStyle.BUTTON_FULL,
+        //   image: Image.asset('assets/images/ic-reload.png'),
+        //   label: 'Quét lại',
+        //   onTap: () async {
+        //     await FlutterBlue.instance.stopScan();
+        //     await _scanBluetoothDevice();
+        //   },
+        // ),
+        StreamBuilder<bool>(
+          stream: FlutterBlue.instance.isScanning,
+          initialData: false,
+          builder: (c, snapshot) {
+            if (snapshot.data) {
+              return FlatButton(
+                // child: Icon(Icons.stop),
+                child: Container(
+                  width: MediaQuery.of(context).size.width - 40,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: DefaultTheme.RED_CALENDAR,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Ngừng quét',
+                          style: TextStyle(color: DefaultTheme.WHITE)),
+                    ],
+                  ),
+                ),
+                onPressed: () => FlutterBlue.instance.stopScan(),
+                // backgroundColor: Colors.red,
+              );
+            } else {
+              return FlatButton(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - 40,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.BLACK_BUTTON,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Quét lại',
+                            style: TextStyle(color: DefaultTheme.WHITE)),
+                      ],
+                    ),
+                  ),
+                  onPressed: () => FlutterBlue.instance
+                      .startScan(timeout: Duration(seconds: 4)));
+            }
           },
         ),
         Padding(

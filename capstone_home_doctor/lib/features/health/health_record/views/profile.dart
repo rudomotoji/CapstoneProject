@@ -92,7 +92,7 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

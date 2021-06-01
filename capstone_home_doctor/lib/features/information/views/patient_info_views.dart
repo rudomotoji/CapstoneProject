@@ -46,7 +46,7 @@ class _PatientInformation extends State<PatientInformation>
 
   @override
   void dispose() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

@@ -9,6 +9,7 @@ import 'package:capstone_home_doctor/services/measure_helper.dart';
 import 'package:capstone_home_doctor/services/payment_helper.dart';
 import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
 import 'package:capstone_home_doctor/services/time_system_helper.dart';
+import 'package:capstone_home_doctor/services/token_helper.dart';
 import 'package:intl/intl.dart';
 
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -154,6 +155,7 @@ final DoctorHelper _doctorHelper = DoctorHelper();
 final PaymentHelper _paymentHelper = PaymentHelper();
 final MeasureHelper _measureHelper = MeasureHelper();
 final TimeSystemHelper _timeSystemHelper = TimeSystemHelper();
+final TokenHelper _tokenHelper = TokenHelper();
 //
 /////////////////////
 final PeripheralHelper _peripheralHelper = PeripheralHelper();
@@ -214,12 +216,6 @@ void _handleGeneralMessage(Map<String, dynamic> message) async {
       payload: payload);
   localNotifyManager.show(receiveNotification);
   //
-  if (notification["body"]
-      .toString()
-      .contains('Bạn có một lịch đo sinh hiệu mới')) {
-    _saveVitalSignScheduleOffline();
-    print('CATCHED THIS NOTI TO DOWNLOAD NEW SCHEDULE');
-  }
 }
 
 void _handleIOSGeneralMessage(Map<String, dynamic> message) async {
@@ -233,12 +229,6 @@ void _handleIOSGeneralMessage(Map<String, dynamic> message) async {
       body: notification["body"],
       payload: payload);
   localNotifyManager.show(receiveNotification);
-  if (notification["body"]
-      .toString()
-      .contains('Bạn có một lịch đo sinh hiệu mới')) {
-    _saveVitalSignScheduleOffline();
-    print('CATCHED THIS NOTI TO DOWNLOAD NEW SCHEDULE');
-  }
 }
 
 void checkNotifiMedical() async {
@@ -847,7 +837,7 @@ void main() async {
           }
 
           ///cach cun`
-          await _saveVitalSignScheduleOffline();
+          // await _saveVitalSignScheduleOffline();
         } else {
           print('user has logged out of system');
         }
@@ -968,7 +958,7 @@ _saveVitalSignScheduleOffline() async {
       .getVitalSignSchedule(_patientId)
       .then((scheduleDTO) async {
     //insert schedule vitalsign into local db
-    if (scheduleDTO.vitalSignScheduleId != null || scheduleDTO != null) {
+    if (scheduleDTO.vitalSignScheduleId != null && scheduleDTO != null) {
       await _sqfLiteHelper.deleteVitalSignSchedule();
       _vitalSignScheduleDTO = scheduleDTO;
       for (VitalSigns x in scheduleDTO.vitalSigns) {
@@ -1864,6 +1854,9 @@ class _HomeDoctorState extends State<HomeDoctor> {
     }
     if (!prefs.containsKey('IS_WARNING') || !prefs.containsKey('WARNING_MSG')) {
       _vitalSignHelper.initialWarning();
+    }
+    if (!prefs.containsKey('TOKEN') || !prefs.containsKey('TOKEN')) {
+      _tokenHelper.initialToken();
     }
   }
 

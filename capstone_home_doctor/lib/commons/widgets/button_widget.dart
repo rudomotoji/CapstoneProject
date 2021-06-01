@@ -80,6 +80,17 @@ class _ButtonHDr extends State<ButtonHDr> {
   );
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (_isLabelLeft == null) {
       _isLabelLeft = false;
@@ -101,7 +112,7 @@ class _ButtonHDr extends State<ButtonHDr> {
       _height = DefaultNumeralUI.BUTTON_HEIGHT;
     }
     if (_label == null || _label == '') {
-      _label = 'Button';
+      _label = 'Unknown Device';
     }
     if (_isUnderline == null) {
       _isUnderline = false;

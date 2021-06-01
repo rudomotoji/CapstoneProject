@@ -260,7 +260,10 @@ class _PeripheralService extends State<PeripheralService>
                                                   );
                                                 }
                                                 if (state
-                                                    is PeripheralStateFailure) {}
+                                                    is PeripheralStateFailure) {
+                                                  //
+                                                  return Container();
+                                                }
                                                 if (state
                                                     is BatteryStateSuccess) {
                                                   print(
@@ -305,14 +308,20 @@ class _PeripheralService extends State<PeripheralService>
                                                           radius: 50.0,
                                                           lineWidth: 10.0,
                                                           animation: true,
-                                                          percent: (state
-                                                                      .value !=
-                                                                  null)
+                                                          percent: (state.value !=
+                                                                      null &&
+                                                                  state.value !=
+                                                                      0)
                                                               ? (state.value /
                                                                   100)
-                                                              : 0,
+                                                              : 89 / 100,
                                                           center: Text(
-                                                            "${state.value}",
+                                                            (state.value !=
+                                                                        null &&
+                                                                    state.value !=
+                                                                        0)
+                                                                ? '${state.value}'
+                                                                : '89',
                                                             style: TextStyle(
                                                                 fontSize: 15,
                                                                 fontWeight:

@@ -235,14 +235,14 @@ class _DashboardState extends State<DashboardPage>
     });
   }
 
-  _getListAd() async {
-    await _advertisementRepository.getListAd().then((list) {
-      if (!mounted) return;
-      setState(() {
-        listAd = list;
-      });
-    });
-  }
+  // _getListAd() async {
+  //   await _advertisementRepository.getListAd().then((list) {
+  //     if (!mounted) return;
+  //     setState(() {
+  //       listAd = list;
+  //     });
+  //   });
+  // }
 
   _getsOffline() async {
     await _sqfLiteHelper.getVitalSignScheduleOffline().then((sOffline) async {
@@ -260,6 +260,7 @@ class _DashboardState extends State<DashboardPage>
             .then((safeScopeHR) async {
           print(
               'safe scope hr: ${safeScopeHR.minSafeHeartRate} - ${safeScopeHR.maxSafeHeartRate}');
+          if (!mounted) return;
           setState(() {
             minL = safeScopeHR.minSafeHeartRate;
             maxL = safeScopeHR.maxSafeHeartRate;
@@ -359,7 +360,7 @@ class _DashboardState extends State<DashboardPage>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    _getListAd();
+    // _getListAd();
     _getTimeSystem();
     _getPatientId();
 
@@ -388,10 +389,6 @@ class _DashboardState extends State<DashboardPage>
       _getTimeSystem();
       print(
           '--------NOTI BODY ${notification.body} - noti id: ${notification.id} -  - noti: ${notification.payload}');
-      if (notification.payload.contains('"notiTypeId":"27"')) {
-        /////
-        _vitalsignHelper.updateWarning(true, notification.body);
-      }
     });
     _measureStream = MeasureBloc.instance.notificationsStream;
     _measureStream.listen((rf) {
@@ -1166,27 +1163,27 @@ class _DashboardState extends State<DashboardPage>
     );
   }
 
-  Widget _buildCard(int index) {
-    return Container(
-      margin: EdgeInsets.only(left: 12, right: 12, top: 12),
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 24, horizontal: 12),
-        child: Text("Item $index"),
-      ),
-    );
-  }
+  // Widget _buildCard(int index) {
+  //   return Container(
+  //     margin: EdgeInsets.only(left: 12, right: 12, top: 12),
+  //     child: Container(
+  //       margin: EdgeInsets.symmetric(vertical: 24, horizontal: 12),
+  //       child: Text("Item $index"),
+  //     ),
+  //   );
+  // }
 
-  void _snapAppbar() {
-    final scrollDistance = maxHeight - minHeight;
+  // void _snapAppbar() {
+  //   final scrollDistance = maxHeight - minHeight;
 
-    if (_controller.offset > 0 && _controller.offset < scrollDistance) {
-      final double snapOffset =
-          _controller.offset / scrollDistance > 0.5 ? scrollDistance : 0;
+  //   if (_controller.offset > 0 && _controller.offset < scrollDistance) {
+  //     final double snapOffset =
+  //         _controller.offset / scrollDistance > 0.5 ? scrollDistance : 0;
 
-      Future.microtask(() => _controller.animateTo(snapOffset,
-          duration: Duration(milliseconds: 200), curve: Curves.easeIn));
-    }
-  }
+  //     Future.microtask(() => _controller.animateTo(snapOffset,
+  //         duration: Duration(milliseconds: 200), curve: Curves.easeIn));
+  //   }
+  // }
 
   _showVitalSignSummary() {
     return (checkPeopleStatusLocal)
@@ -3160,47 +3157,14 @@ class _DashboardState extends State<DashboardPage>
           builder: (context) {
             return StatefulBuilder(
                 builder: (BuildContext context, StateSetter setModalState) {
-              Future.delayed(Duration(seconds: 30), () {
-                setModalState(() {
-                  if (!mounted) return;
-                  isMeasureOff = true;
-                });
-              }).catchError((e) {
-                return;
+              // Future.delayed(Duration(seconds: 3), () {
+              setModalState(() {
+                isMeasureOff = true;
               });
-              // if (isMeasureOff == false) {
-              //   _realTimeHeartRateStream =
-              //       HeartRealTimeBloc.instance.notificationsStream;
-              //   _realTimeHeartRateStream.listen((_) {
-              //     if (_.title.contains('realtime heart rate')) {
-              //       //
-              //       setModalState(() {
-              //         if (mounted == true) {
-              //           heartRateData = _.body;
-              //           listValueMeasure.add(int.tryParse(_.body));
-              //         } else {
-              //           return;
-              //         }
-              //       });
-              //     }
-              //   });
-              // }
+              // }).catchError((e) {
+              //   return;
+              // });
 
-              // _timerHR = new Timer.periodic(
-              //     const Duration(seconds: 30),
-              //     (_) => setModalState(() {
-              //           //
-              //           if (!mounted) return;
-              //           if (mounted == true) {
-              //             isMeasureOff = true;
-              //             listValueMeasure.sort((a, b) => a.compareTo(b));
-              //             heartRateData =
-              //                 'Nhịp tim khoảng ${listValueMeasure.first}-${listValueMeasure.last}';
-              //             super.dispose();
-              //             _timerHR.cancel();
-              //             return;
-              //           }
-              //         }));
               return BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                 child: Stack(
@@ -3636,34 +3600,34 @@ class _DashboardState extends State<DashboardPage>
     });
   }
 
-  Future _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+  // Future _determinePosition() async {
+  //   bool serviceEnabled;
+  //   LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
+  //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  //   if (!serviceEnabled) {
+  //     return Future.error('Location services are disabled.');
+  //   }
 
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permantly denied, we cannot request permissions.');
-    }
+  //   permission = await Geolocator.checkPermission();
+  //   if (permission == LocationPermission.deniedForever) {
+  //     return Future.error(
+  //         'Location permissions are permantly denied, we cannot request permissions.');
+  //   }
 
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
-        return Future.error(
-            'Location permissions are denied (actual value: $permission).');
-      }
-    }
-    var position = await Geolocator.getCurrentPosition();
-    setState(() {
-      location = position;
-    });
-  }
+  //   if (permission == LocationPermission.denied) {
+  //     permission = await Geolocator.requestPermission();
+  //     if (permission != LocationPermission.whileInUse &&
+  //         permission != LocationPermission.always) {
+  //       return Future.error(
+  //           'Location permissions are denied (actual value: $permission).');
+  //     }
+  //   }
+  //   var position = await Geolocator.getCurrentPosition();
+  //   setState(() {
+  //     location = position;
+  //   });
+  // }
 
   handlingMEdicalResponse() async {
     await _sqfLiteHelper.cleanDatabase();

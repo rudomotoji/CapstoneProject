@@ -119,8 +119,8 @@ class _DetailContractView extends State<DetailContractView>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    //  NotificationsSelectBloc.instance.newNotification('');
     super.dispose();
-    NotificationsSelectBloc.instance.newNotification('');
   }
 
   Future _refreshData() async {

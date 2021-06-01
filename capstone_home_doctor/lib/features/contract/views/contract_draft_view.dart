@@ -65,7 +65,7 @@ class _ContractDraftView extends State<ContractDraftView>
 
   @override
   void dispose() {
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

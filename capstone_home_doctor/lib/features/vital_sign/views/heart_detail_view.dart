@@ -524,7 +524,7 @@ class _HeartDetailView extends State<HeartDetailView>
                       height: 400,
                     ),
                     Text(
-                        'Biểu đồ nhịp tim ngày ${_dateValidator.parseToDateView3(_dateView)}'
+                        'Biểu đồ nhịp tim ${_dateValidator.parseToDateView3(_dateView)}'
                             .toUpperCase(),
                         style: TextStyle(
                           fontSize: 16,

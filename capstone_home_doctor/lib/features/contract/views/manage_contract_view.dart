@@ -90,8 +90,7 @@ class _ManageContract extends State<ManageContract>
 
   @override
   void dispose() {
-    NotificationsSelectBloc.instance.newNotification('');
-    if (!mounted) return;
+    //  NotificationsSelectBloc.instance.newNotification('');
     super.dispose();
   }
 
