@@ -22,18 +22,18 @@ request.interceptors.request.use(function (config) {
   if (token != null) {
     config.headers.Authorization = 'Bearer ' + token
   }
-  console.log(`token: ${token}`)
+  // console.log(`token: ${token}`)
   return config
 }, function (error) {
   // Do something with request error
-  console.log('request', error)
+  // console.log('request', error)
   return Promise.reject(error)
 })
 
 request.interceptors.response.use(function (response) {
   // Do something with response data
-  const status = response.status
-  console.log(`status: ${status}`)
+  // const status = response.status
+  // console.log(`status: ${status}`)
   return response
 }, function (error) {
   let { message } = error

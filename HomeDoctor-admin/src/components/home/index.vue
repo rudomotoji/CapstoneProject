@@ -219,6 +219,7 @@ export default {
   },
   mounted () {
     this.login()
+    this.getTimeSystem()
   },
   methods: {
     ...mapActions('doctor', ['getListDoctor', 'login']),

@@ -1,5 +1,5 @@
 import { RepositoryFactory } from '../../repositories/RepositoryFactory'
-import moment from 'moment'
+// import moment from 'moment'
 
 const timeRepository = RepositoryFactory.get('timeRepository')
 const state = () => ({
@@ -11,7 +11,6 @@ const getters = {
 const actions = {
   async getTimeSystem ({ commit }) {
     await timeRepository.getTimeSystem().then(response => {
-      console.log(response)
       commit('setTimeNow', response.data)
     }).catch(err => { console.log(err) })
   },
@@ -29,9 +28,7 @@ const actions = {
 }
 const mutations = {
   setTimeNow (state, time) {
-    var newdatetime = `${moment(time).format('YYYY-MM-DD HH:mm:ss')}`
-    console.log(newdatetime)
-    state.timeSystem = newdatetime
+    state.timeSystem = time
   },
   setDialog (state, flag) {
     state.openDialogTime = flag
