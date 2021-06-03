@@ -62,7 +62,7 @@ dev_dependencies:
   custom_radio_grouped_button: ^1.0.6+1
   jwt_decoder: ^1.0.4
   string_similarity: ^1.1.0
-
+  audioplayers: ^0.12.0
   agora_rtc_engine: ^3.1.6
   permission_handler: ^5.0.1+1
   autocomplete_textfield: ^1.7.3
@@ -216,6 +216,8 @@ flutter:
     - assets/images/ic-edit-hr2.png
     - assets/images/ic-add-img.png
     - assets/images/ic-open-camera.png
+    - assets/images/warning_connect.jpg
+    - assets/audios/warning.mp3
 
 
 

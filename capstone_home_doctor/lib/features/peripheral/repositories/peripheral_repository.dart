@@ -70,7 +70,7 @@ class PeripheralRepository {
       }
       if (e.toString().contains(
           'Unhandled Exception: Exception: Another scan is already in progress')) {
-        stopScanning();
+        await flutterBlue.stopScan();
         device.disconnect();
         await device.connect();
         await _peripheralHelper.updatePeripheralChecking(
@@ -78,7 +78,7 @@ class PeripheralRepository {
         return true;
       }
       if (e.toString().contains('could not find callback wrapper')) {
-        await stopScanning();
+        await flutterBlue.stopScan();
         await device.disconnect();
         await device.connect();
         await _peripheralHelper.updatePeripheralChecking(
@@ -92,7 +92,7 @@ class PeripheralRepository {
   Future<BluetoothDevice> findScanResultById(String peripheralId) async {
     try {
       BluetoothDevice result;
-      await flutterBlue.stopScan();
+      // await flutterBlue.stopScan();
       List<BluetoothDevice> listConnected = await flutterBlue.connectedDevices;
       for (BluetoothDevice deviceCheck in listConnected) {
         if (peripheralId == deviceCheck.id.toString()) {
@@ -102,7 +102,8 @@ class PeripheralRepository {
       }
       return result;
     } catch (e) {
-      await stopScanning();
+      print('ERROR AT FIND SCAN RESULT BY ID: $e');
+      await flutterBlue.stopScan();
       await findScanResultById(peripheralId);
     }
   }
@@ -128,45 +129,38 @@ class PeripheralRepository {
       await flutterBlue.stopScan();
       await FlutterBlue.instance.startScan(timeout: Duration(seconds: 5));
       print('Scanning to connect in background');
-      FlutterBlue.instance.scanResults.listen((results) async {
-        for (ScanResult r in results) {
-          if (check == true) {
-            break;
+      if (check == false) {
+        await FlutterBlue.instance.scanResults.listen((results) async {
+          for (ScanResult r in results) {
+            if (check == true) {
+              break;
+            }
+            if (r.device.id.toString() == peripheralId) {
+              await connectDevice1stTime(r);
+              print('Re-connect peripheral device successful');
+              await _peripheralHelper.updatePeripheralChecking(
+                  true, peripheralId);
+              check = true;
+              return check;
+            } else {
+              await _peripheralHelper.updatePeripheralChecking(
+                  false, peripheralId);
+              check = false;
+            }
           }
-          if (r.device.id.toString() == peripheralId) {
-            await stopScanning();
-            await connectDevice1stTime(r);
-
-            print('Re-connect peripheral device successful');
-            await _peripheralHelper.updatePeripheralChecking(
-                true, peripheralId);
-            check = true;
-            return check;
-          } else {
-            await _peripheralHelper.updatePeripheralChecking(
-                false, peripheralId);
-            check = false;
-            await stopScanning();
-          }
-        }
-      });
-      await stopScanning();
+        });
+        await flutterBlue.stopScan();
+      }
       return check;
     } catch (e) {
       print('error connect background: $e');
       if (e.toString().contains('Another scan is already in progress')) {
-        await stopScanning();
-        Future.delayed(const Duration(seconds: 2), () async {
-          //
-          await connectDeviceInBackground(peripheralId);
-        });
+        await flutterBlue.stopScan();
+        await connectDeviceInBackground(peripheralId);
       }
-      if (e.toString().contains('could not find callback wrapper')) {
-        await stopScanning();
-        Future.delayed(const Duration(seconds: 2), () async {
-          //
-          await connectDeviceInBackground(peripheralId);
-        });
+      if (e.toString().contains('callback wrapper')) {
+        await flutterBlue.stopScan();
+        await connectDeviceInBackground(peripheralId);
       }
     }
   }

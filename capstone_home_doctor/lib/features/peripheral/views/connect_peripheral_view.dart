@@ -222,8 +222,8 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                 //   ),
                 // ),
                 RefreshIndicator(
-              onRefresh: () =>
-                  FlutterBlue.instance.startScan(timeout: Duration(seconds: 4)),
+              onRefresh: () => FlutterBlue.instance
+                  .startScan(timeout: Duration(seconds: 10)),
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
@@ -285,6 +285,7 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
         //     await _scanBluetoothDevice();
         //   },
         // ),
+
         StreamBuilder<bool>(
           stream: FlutterBlue.instance.isScanning,
           initialData: false,
@@ -328,7 +329,7 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                     ),
                   ),
                   onPressed: () => FlutterBlue.instance
-                      .startScan(timeout: Duration(seconds: 4)));
+                      .startScan(timeout: Duration(seconds: 10)));
             }
           },
         ),
@@ -367,40 +368,40 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
           color: DefaultTheme.TRANSPARENT,
           child: Center(
             child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
                 child: Container(
                   padding: EdgeInsets.only(left: 10, top: 10, right: 10),
-                  width: 250,
-                  height: 185,
+                  width: MediaQuery.of(context).size.width - 40,
+                  height: MediaQuery.of(context).size.height * 0.7,
                   decoration: BoxDecoration(
                     color: DefaultTheme.WHITE.withOpacity(0.7),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.only(bottom: 10, top: 10),
+                        padding: EdgeInsets.only(bottom: 10, top: 20, left: 10),
                         child: Text(
                           'Xác nhận kết nối',
                           style: TextStyle(
                             decoration: TextDecoration.none,
                             color: DefaultTheme.BLACK,
                             fontWeight: FontWeight.w600,
-                            fontSize: 18,
+                            fontSize: 25,
                           ),
                         ),
                       ),
-                      //Spacer(),
+
                       Container(
-                        padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+                        padding: EdgeInsets.only(left: 10, right: 20, top: 0),
                         child: Align(
-                          alignment: Alignment.center,
+                          alignment: Alignment.centerLeft,
                           child: Text(
-                            'Hãy đảm bảo rằng thiết bị đã được kết nối với điện thoại bạn trước đó.',
-                            textAlign: TextAlign.center,
+                            'Khi kết nối với thiết bị, hãy đảm bảo những yêu cầu sau để hệ thống Home Doctor lấy được nhịp tim của bạn một cách ổn định.',
+                            textAlign: TextAlign.left,
                             style: TextStyle(
                               decoration: TextDecoration.none,
                               color: DefaultTheme.BLACK,
@@ -410,6 +411,123 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                           ),
                         ),
                       ),
+                      //
+                      Spacer(),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.45,
+                        child: ListView(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.only(top: 3),
+                                    alignment: Alignment.center,
+                                    width: 50,
+                                    child: Text(
+                                      '1',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: DefaultTheme.GREY_TEXT),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width - 110,
+                                    child: Text(
+                                      'Hệ thống chỉ kết nối với 1 thiết bị đeo duy nhất. Sau khi ngắt kết nối, bạn có thể kết nối với thiết bị khác.',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: 10),
+                              child: Divider(
+                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                height: 2,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.only(top: 3),
+                                    alignment: Alignment.center,
+                                    width: 50,
+                                    child: Text(
+                                      '2',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: DefaultTheme.GREY_TEXT),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width - 110,
+                                    child: Text(
+                                      'Hãy chắc rằng thiết bị này đã kết nối với điện thoại của bạn.',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: 10),
+                              child: Divider(
+                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                height: 2,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.only(top: 3),
+                                    alignment: Alignment.center,
+                                    width: 50,
+                                    child: Text(
+                                      '3',
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: DefaultTheme.GREY_TEXT),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width - 110,
+                                    child: Text(
+                                      'Đảm bảo rằng bạn đã mở quyền truy cập dữ liệu bên thứ 3 của thiết bị (như hình bên dưới).',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 30),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width - 40,
+                              child: Image.asset(
+                                  'assets/images/warning_connect.jpg'),
+                            )
+                          ],
+                        ),
+                      ),
+                      //
                       Spacer(),
                       Divider(
                         height: 1,
@@ -420,9 +538,12 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                         children: [
                           FlatButton(
                             height: 40,
-                            minWidth: 250 / 2 - 10.5,
+                            minWidth:
+                                (MediaQuery.of(context).size.width - 40) / 2 -
+                                    10.5,
                             child: Text('Huỷ',
                                 style: TextStyle(
+                                    fontSize: 18,
                                     color: DefaultTheme.RED_CALENDAR)),
                             onPressed: () async {
                               Navigator.of(context).pop();
@@ -435,10 +556,13 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                           ),
                           FlatButton(
                             height: 40,
-                            minWidth: 250 / 2 - 10.5,
+                            minWidth:
+                                (MediaQuery.of(context).size.width - 40) / 2 -
+                                    10.5,
                             child: Text('Kết nối',
-                                style:
-                                    TextStyle(color: DefaultTheme.BLUE_TEXT)),
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: DefaultTheme.BLUE_TEXT)),
                             onPressed: () async {
                               print(
                                   'id device when tap: ${scanResult.device.name}');

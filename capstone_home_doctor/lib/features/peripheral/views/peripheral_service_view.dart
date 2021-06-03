@@ -75,10 +75,11 @@ class _PeripheralService extends State<PeripheralService>
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          RoutesHDr.MAIN_HOME,
-          (Route<dynamic> route) => false,
-        );
+        // Navigator.of(context).pushNamedAndRemoveUntil(
+        //   RoutesHDr.MAIN_HOME,
+        //   (Route<dynamic> route) => false,
+        // );
+        Navigator.of(context).popUntil(ModalRoute.withName('/'));
         return new Future(() => false);
       },
       child: StreamBuilder<BluetoothState>(
@@ -662,10 +663,12 @@ class _PeripheralService extends State<PeripheralService>
                               await peripheralHelper.updatePeripheralChecking(
                                   false, '');
 
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                RoutesHDr.MAIN_HOME,
-                                (Route<dynamic> route) => false,
-                              );
+                              Navigator.of(context)
+                                  .popUntil(ModalRoute.withName('/'));
+                              // Navigator.of(context).pushNamedAndRemoveUntil(
+                              //   RoutesHDr.MAIN_HOME,
+                              //   (Route<dynamic> route) => false,
+                              // );
                               //////
                               //////
                             },

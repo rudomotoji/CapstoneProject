@@ -29,21 +29,21 @@ class VitalSignRepository {
   RealTimeHeartRateBloc realtimeBloc = new RealTimeHeartRateBloc();
 
   //discover services
-  Future<List<BluetoothService>> discoverServices(
-      BluetoothDevice device) async {
-    try {
-      List<BluetoothService> services = await device.discoverServices();
-      return services;
-    } catch (e) {
-      if (e.toString().contains('could not find callback wrapper')) {
-        await stopScanning();
-        Future.delayed(const Duration(seconds: 2), () async {
-          //
-          await discoverServices(device);
-        });
-      }
-    }
-  }
+  // Future<List<BluetoothService>> discoverServices(
+  //     BluetoothDevice device) async {
+  //   try {
+  //     List<BluetoothService> services = await device.discoverServices();
+  //     return services;
+  //   } catch (e) {
+  //     if (e.toString().contains('could not find callback wrapper')) {
+  //       await flutterBlue.stopScan();
+  //       Future.delayed(const Duration(seconds: 2), () async {
+  //         //
+  //         await discoverServices(device);
+  //       });
+  //     }
+  //   }
+  // }
 
   //kick Heart Rate Control Point on.
   Future<void> kickHRCOn(String peripheralId) async {
@@ -154,7 +154,7 @@ class VitalSignRepository {
       }
       if (e.toString().contains(
           'Unhandled Exception: Exception: Another scan is already in progress')) {
-        await stopScanning();
+        await flutterBlue.stopScan();
         await flutterBlue.stopScan();
         BluetoothDevice device =
             await peripheralRepository.findScanResultById(peripheralId);
@@ -165,7 +165,7 @@ class VitalSignRepository {
         await kickHRCOn(peripheralId);
       }
       if (e.toString().contains('could not find callback wrapper')) {
-        await stopScanning();
+        await flutterBlue.stopScan();
         Future.delayed(const Duration(seconds: 2), () async {
           //
           await kickHRCOn(peripheralId);
@@ -184,7 +184,7 @@ class VitalSignRepository {
       await device.disconnect();
       await device.connect();
       BluetoothCharacteristic _characteristic;
-      List<BluetoothService> services = await discoverServices(device);
+      List<BluetoothService> services = await device.discoverServices();
       services.forEach((service) {
         /////////////
         if (service.uuid == PeripheralServices.SERVICE_HEART_RATE) {
@@ -221,15 +221,15 @@ class VitalSignRepository {
       });
       return heartRateValue;
     } catch (e) {
-      await vitalSignHelper.updateHeartValue(0);
-      await flutterBlue.stopScan();
+      //  await vitalSignHelper.updateHeartValue(0);
+      //await flutterBlue.stopScan();
       print('error at getHeartRateValueFromDevice ${e}');
       if (e.toString().contains(
           'PlatformException(already_connected, connection with device already exists, null, null)')) {
         await flutterBlue.stopScan();
         BluetoothDevice device =
             await peripheralRepository.findScanResultById(peripheralId);
-        device.disconnect();
+        await device.disconnect();
         await device.connect();
         await _peripheralHelper.updatePeripheralChecking(
             true, device.id.toString());
@@ -248,19 +248,16 @@ class VitalSignRepository {
         await getHeartRateValueFromDevice(peripheralId);
       }
       if (e.toString().contains('could not find callback wrapper')) {
-        await stopScanning();
-        Future.delayed(const Duration(seconds: 2), () async {
-          //
-          await getHeartRateValueFromDevice(peripheralId);
-        });
+        await flutterBlue.stopScan();
+        await getHeartRateValueFromDevice(peripheralId);
       }
     }
   }
 
   //stop scan device
-  Future<void> stopScanning() async {
-    flutterBlue.stopScan();
-  }
+  // Future<void> stopScanning() async {
+  //   flutterBlue.stopScan();
+  // }
 }
 
 class VitalSignServerRepository extends BaseApiClient {

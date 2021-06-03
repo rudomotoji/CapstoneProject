@@ -140,10 +140,11 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
           if (check) {
             ///CODE HERE FOR NAVIGATE
             ///
-            int currentIndex = 2;
-            Navigator.of(context).pushNamedAndRemoveUntil(
-                RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false,
-                arguments: currentIndex);
+            // int currentIndex = 2;
+            // Navigator.of(context).pushNamedAndRemoveUntil(
+            //     RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false,
+            //     arguments: currentIndex);
+            Navigator.of(context).popUntil(ModalRoute.withName('/'));
 
             ///
             await _medicalInstructionHelper.updateCreateHRFromDetail(false);
@@ -274,6 +275,10 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
                                 ),
                               ),
                             ],
+                          ),
+                          Divider(
+                            color: DefaultTheme.GREY_TOP_TAB_BAR,
+                            height: 2,
                           ),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.center,

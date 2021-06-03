@@ -221,11 +221,11 @@ class _ScheduleView extends State<ScheduleView>
     return Container(
       width: MediaQuery.of(context).size.width,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          // Padding(
-          //   padding: EdgeInsets.only(left: 20),
-          // ),
+          Padding(
+            padding: EdgeInsets.only(left: 20),
+          ),
           InkWell(
             onTap: () {
               setState(() {
@@ -233,18 +233,18 @@ class _ScheduleView extends State<ScheduleView>
               });
             },
             child: Container(
-              padding: EdgeInsets.only(left: 0, right: 5, top: 8, bottom: 8),
+              padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
               height: 40,
               decoration: (_listIndex == 0)
                   ? BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                            width: 2.0,
-                            color:
-                                DefaultTheme.BLUE_REFERENCE.withOpacity(0.8)),
-                      ),
-                      // color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
-                      // borderRadius: BorderRadius.circular(30),
+                      // border: Border(
+                      //   bottom: BorderSide(
+                      //       width: 2.0,
+                      //       color:
+                      //           DefaultTheme.BLUE_REFERENCE.withOpacity(0.8)),
+                      // ),
+                      color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(30),
                     )
                   : BoxDecoration(),
               child: Center(
@@ -282,15 +282,19 @@ class _ScheduleView extends State<ScheduleView>
               });
             },
             child: Container(
-              padding: EdgeInsets.only(left: 0, right: 5, top: 8, bottom: 8),
+              padding: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
               height: 40,
               decoration: (_listIndex == 1)
                   ? BoxDecoration(
-                      border: Border(
-                      bottom: BorderSide(
-                          width: 2.0,
-                          color: DefaultTheme.BLUE_REFERENCE.withOpacity(0.8)),
-                    ))
+                      // border: Border(
+                      //   bottom: BorderSide(
+                      //       width: 2.0,
+                      //       color:
+                      //           DefaultTheme.BLUE_REFERENCE.withOpacity(0.8)),
+                      // ),
+                      color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(30),
+                    )
                   : BoxDecoration(),
               child: Center(
                 child: Row(
@@ -838,7 +842,7 @@ class _ScheduleView extends State<ScheduleView>
                                                   children: [
                                                     //
                                                     Container(
-                                                      width: 120,
+                                                      width: 70,
                                                       alignment:
                                                           Alignment.centerLeft,
                                                       height: 40,
@@ -851,7 +855,8 @@ class _ScheduleView extends State<ScheduleView>
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width -
-                                                              160,
+                                                              110,
+                                                      // color: Colors.red,
                                                       alignment:
                                                           Alignment.centerLeft,
                                                       height: 40,
@@ -910,6 +915,10 @@ class _ScheduleView extends State<ScheduleView>
                                                                               20,
                                                                           child:
                                                                               Image.asset('assets/images/ic-medicine.png'),
+                                                                        ),
+                                                                        Padding(
+                                                                          padding:
+                                                                              EdgeInsets.only(left: 5),
                                                                         ),
                                                                         Text(
                                                                             '${state.dto.medicalInstructions[index].medicalInstructionType}'),

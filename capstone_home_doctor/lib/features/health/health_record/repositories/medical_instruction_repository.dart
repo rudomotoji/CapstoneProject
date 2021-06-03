@@ -7,6 +7,7 @@ import 'package:capstone_home_doctor/models/med_ins_by_disease_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_dto.dart';
 import 'package:capstone_home_doctor/models/medical_instruction_type_dto.dart';
 import 'package:capstone_home_doctor/models/medical_type_required_dto.dart';
+import 'package:capstone_home_doctor/services/token_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:string_similarity/string_similarity.dart';
@@ -14,6 +15,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:sentry/sentry.dart';
 // import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+
+final TokenHelper _tokenHelper = TokenHelper();
 
 class MedicalInstructionRepository extends BaseApiClient {
   final http.Client httpClient;
@@ -151,17 +154,22 @@ class MedicalInstructionRepository extends BaseApiClient {
 
   //create medical instruction by multiple part
   Future<bool> createMedicalInstruction(MedicalInstructionDTO dto) async {
+    String _tokenLogin = '';
     try {
+      await _tokenHelper.getToken().then((value) {
+        _tokenLogin = "Bearer ${value.split(':"')[1].split('"')[0]}";
+      });
       var uri = Uri.parse(
           'http://45.76.186.233:8000/api/v1/MedicalInstructions/InsertMedicalInstructionOld?fromBy=PATIENT');
       var request = http.MultipartRequest('POST', uri);
+      request.headers['authorization'] = _tokenLogin;
       request.fields['MedicalInstructionTypeId'] =
           '${dto.medicalInstructionTypeId}';
       request.fields['HealthRecordId'] = '${dto.healthRecordId}';
       request.fields['PatientId'] = '${dto.patientId}';
       request.fields['Description'] = '${dto.description}';
       request.fields['Conclusion'] = '${dto.diagnose}';
-      request.fields['dateTreatment'] = '${dto.dateTreatment}';
+      request.fields['DateTreatment'] = '${dto.dateTreatment}';
 
       if (dto.diseaseIds == null) {
         print('null');

@@ -110,12 +110,14 @@ class _ManageContract extends State<ManageContract>
     return WillPopScope(
       onWillPop: () {
         NotificationsSelectBloc.instance.newNotification('');
-        Navigator.of(context).pushNamedAndRemoveUntil(
-            RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+        // Navigator.of(context).pushNamedAndRemoveUntil(
+        //     RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
         // Navigator.of(context).pushNamedAndRemoveUntil(
         //   RoutesHDr.MAIN_HOME,
         //   (Route<dynamic> route) => false,
         // );
+
+        Navigator.of(context).popUntil(ModalRoute.withName('/'));
         return new Future(() => false);
       },
       child: Scaffold(

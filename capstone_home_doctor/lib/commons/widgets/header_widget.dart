@@ -154,15 +154,17 @@ class _HeaderWidget extends State<HeaderWidget> {
                 onTap: () async {
                   Future.delayed(const Duration(milliseconds: 100), () async {
                     if (_title == '') {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        RoutesHDr.MAIN_HOME,
-                        (Route<dynamic> route) => false,
-                      );
+                      // Navigator.of(context).pushNamedAndRemoveUntil(
+                      //   RoutesHDr.MAIN_HOME,
+                      //   (Route<dynamic> route) => false,
+                      // );
+                      Navigator.of(context).popUntil(ModalRoute.withName('/'));
                     } else if (_title.contains('Hợp đồng'.trim())) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        RoutesHDr.MAIN_HOME,
-                        (Route<dynamic> route) => false,
-                      );
+                      // Navigator.of(context).pushNamedAndRemoveUntil(
+                      //   RoutesHDr.MAIN_HOME,
+                      //   (Route<dynamic> route) => false,
+                      // );
+                      Navigator.of(context).popUntil(ModalRoute.withName('/'));
                     } else if (_title.contains('Tạo hồ sơ sức khỏe'.trim())) {
                       await _medicalInstructionHelper
                           .getCreateHRFromDetail()
@@ -179,6 +181,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                               RoutesHDr.MAIN_HOME,
                               (Route<dynamic> route) => false,
                               arguments: currentIndex);
+                          // Navigator.of(context)
+                          //     .popUntil(ModalRoute.withName('/'));
                         } else {
                           Navigator.of(context).pop();
                         }
@@ -196,6 +200,8 @@ class _HeaderWidget extends State<HeaderWidget> {
                               RoutesHDr.MAIN_HOME,
                               (Route<dynamic> route) => false,
                               arguments: currentIndex);
+                          // Navigator.of(context).popUntil(ModalRoute.withName('/'));
+
                           await _medicalInstructionHelper
                               .updateCreateHRFromDetail(false);
 
@@ -532,13 +538,13 @@ class _HeaderWidget extends State<HeaderWidget> {
     );
   }
 
-  _kickHRCOn() async {
-    await _peripheralHelper.getPeripheralId().then((id) async {
-      if (id != '') {
-        await _vitalSignRepository.kickHRCOn(id);
-      }
-    });
-  }
+  // _kickHRCOn() async {
+  //   await _peripheralHelper.getPeripheralId().then((id) async {
+  //     if (id != '') {
+  //       await _vitalSignRepository.kickHRCOn(id);
+  //     }
+  //   });
+  // }
 
   _getPatientId() async {
     await _authenticateHelper.getPatientId().then((value) {
@@ -759,8 +765,9 @@ class _HeaderWidget extends State<HeaderWidget> {
     // NotificationsSelectBloc.instance.newNotification('');
     await _medicalInstructionHelper.updateCheckToCreateOrList(false);
     await _medicalInstructionHelper.updateCreateHRFromDetail(false);
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+    // Navigator.of(context).pushNamedAndRemoveUntil(
+    //     RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+    Navigator.of(context).popUntil(ModalRoute.withName('/'));
   }
 
   _onMeasuring() async {
@@ -816,7 +823,7 @@ class _HeaderWidget extends State<HeaderWidget> {
             ),
           );
         });
-    await _kickHRCOn();
+    // await _kickHRCOn();
     _peripheralHelper.getPeripheralId().then((peripheralId) {
       if (peripheralId == '' || peripheralId == null) {
         Navigator.of(context).pop();
@@ -998,7 +1005,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                                                     realtimeHeartRateBloc
                                                         .realtimeHrSink
                                                         .add(0);
-                                                    await _kickHRCOn();
+                                                    //   await _kickHRCOn();
                                                   },
                                                   child: Row(
                                                     mainAxisAlignment:

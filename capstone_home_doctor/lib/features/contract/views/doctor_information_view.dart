@@ -69,8 +69,9 @@ class _DoctorInformation extends State<DoctorInformation>
   Widget build(BuildContext context) {
     String arguments = ModalRoute.of(context).settings.arguments;
 
-    if (arguments.contains('HDR')) {
-      _idDoctor = int.tryParse(arguments.split('R')[1].toString());
+    if (arguments.contains('HDR') || arguments.contains('hdr')) {
+      _idDoctor =
+          int.tryParse(arguments.toUpperCase().split('R')[1].toString());
     } else {
       _idDoctor = int.tryParse(arguments);
     }
@@ -121,7 +122,7 @@ class _DoctorInformation extends State<DoctorInformation>
                         style: BtnStyle.BUTTON_BLACK,
                         label: 'Yêu cầu hợp đồng',
                         onTap: () {
-                          _checkContractAvailable(arguments);
+                          _checkContractAvailable(_idDoctor.toString());
 
                           ///
                           ///

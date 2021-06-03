@@ -232,7 +232,7 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
               height: 0.1,
             ),
           ),
-         
+
           Row(
             children: [
               Container(
@@ -252,9 +252,9 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
               Container(
                 width: MediaQuery.of(context).size.width - (40 + 120 + 20 + 30),
                 child: Text(
-                  '${_currentPrescription.diseases}',
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 5,
+                  '${_generateDisease(_currentPrescription.diseases)}',
+                  //  overflow: TextOverflow.ellipsis,
+                  // maxLines: 10,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 15,
@@ -267,7 +267,7 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
           Padding(
             padding: EdgeInsets.only(bottom: 5),
           ),
-           Row(
+          Row(
             children: [
               Container(
                 padding: EdgeInsets.only(left: 20),
@@ -648,5 +648,15 @@ class _MedicalHistoryDetailView extends State<MedicalHistoryDetailView>
         ],
       ),
     );
+  }
+
+  _generateDisease(List<String> diseases) {
+    String result = '';
+    for (String x in diseases) {
+      if (x != null && x != '') {
+        result += x + '\n';
+      }
+    }
+    return result;
   }
 }

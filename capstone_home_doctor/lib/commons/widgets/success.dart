@@ -30,10 +30,12 @@ class SuccessNotification extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             onPressed: () {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                RoutesHDr.MAIN_HOME,
-                (Route<dynamic> route) => false,
-              );
+              // Navigator.of(context).pushNamedAndRemoveUntil(
+              //   RoutesHDr.MAIN_HOME,
+              //   (Route<dynamic> route) => false,
+              // );
+
+              Navigator.of(context).popUntil(ModalRoute.withName('/'));
             },
             child: Text(
               'Done',

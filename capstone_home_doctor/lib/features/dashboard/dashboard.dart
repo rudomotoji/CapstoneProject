@@ -8,11 +8,13 @@ import 'package:capstone_home_doctor/features/contract/events/doctor_info_event.
 import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
 import 'package:capstone_home_doctor/features/contract/states/doctor_info_state.dart';
 import 'package:capstone_home_doctor/features/contract/views/doctor_information_view.dart';
+import 'package:capstone_home_doctor/main.dart';
 import 'package:capstone_home_doctor/models/advertisement_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_detail_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_push_dto.dart';
 import 'package:capstone_home_doctor/models/vital_sign_schedule_dto.dart';
 import 'package:capstone_home_doctor/services/health_record_helper.dart';
+import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:capstone_home_doctor/services/time_system_helper.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:capstone_home_doctor/commons/constants/theme.dart';
@@ -77,6 +79,9 @@ import 'package:intl/intl.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
+
 //////////////
 ///
 ///
@@ -87,6 +92,7 @@ import 'package:url_launcher/url_launcher.dart';
 final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
 final MobileDeviceHelper _mobileDeviceHelper = MobileDeviceHelper();
 final HealthRecordHelper _healthRecordHelper = HealthRecordHelper();
+final PeripheralHelper _peripheralHelper = PeripheralHelper();
 final VitalSignHelper vitalSignHelper = VitalSignHelper();
 final ContractHelper contractHelper = ContractHelper();
 final ReminderHelper _reminderHelper = ReminderHelper();
@@ -104,6 +110,7 @@ final VitalSignServerRepository _vitalSignServerRepository =
 final TimeSystemHelper _timeSystemHelper = TimeSystemHelper();
 final AdvertisementRepository _advertisementRepository =
     AdvertisementRepository(httpClient: http.Client());
+
 //
 List<int> listTimeMeasure = [3, 5, 10, 15, 30];
 //
@@ -129,6 +136,12 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardState extends State<DashboardPage>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+// //for audio player
+//   static AudioCache cache = AudioCache();
+//   AudioPlayer player;
+
+////
+
   var _index = 0;
   var location;
   var _idDoctorController = TextEditingController();
@@ -223,7 +236,7 @@ class _DashboardState extends State<DashboardPage>
   double get minHeight => kToolbarHeight + MediaQuery.of(context).padding.top;
 
   _refreshBottomSheet(StateSetter setModalState) {
-    if (!mounted) return;
+    if (!mounted) return Future.value(null);
     setModalState(() {
       timeStartM = timeStartM;
       durationM = durationM;
@@ -260,7 +273,7 @@ class _DashboardState extends State<DashboardPage>
             .then((safeScopeHR) async {
           print(
               'safe scope hr: ${safeScopeHR.minSafeHeartRate} - ${safeScopeHR.maxSafeHeartRate}');
-          if (!mounted) return;
+          if (!mounted) return Future.value(null);
           setState(() {
             minL = safeScopeHR.minSafeHeartRate;
             maxL = safeScopeHR.maxSafeHeartRate;
@@ -272,25 +285,25 @@ class _DashboardState extends State<DashboardPage>
 
   _getMeasureCounting() async {
     await _measureHelper.getTimeStartM().then((tStart) {
-      if (!mounted) return;
+      if (!mounted) return Future.value(null);
       setState(() {
         timeStartM = tStart;
       });
     });
     await _measureHelper.getDurationM().then((dM) {
-      if (!mounted) return;
+      if (!mounted) return Future.value(null);
       setState(() {
         durationM = dM;
       });
     });
     await _measureHelper.getListValueHr().then((listV) {
-      if (!mounted) return;
+      if (!mounted) return Future.value(null);
       setState(() {
         listValueM = listV;
       });
     });
     await _measureHelper.getListTime().then((listT) {
-      if (!mounted) return;
+      if (!mounted) return Future.value(null);
 
       listTimeM.clear();
       setState(() {
@@ -307,7 +320,7 @@ class _DashboardState extends State<DashboardPage>
     });
     await _measureHelper.isMeasureOn().then((value) async {
       //
-      if (!mounted) return;
+      if (!mounted) return Future.value(null);
       setState(() {
         //
         isMeasureOn = value;
@@ -316,19 +329,19 @@ class _DashboardState extends State<DashboardPage>
       if (value) {
         await _measureHelper.getCountingM().then((countM) async {
           //
-          if (!mounted) return;
+          if (!mounted) return Future.value(null);
           setState(() {
             countDurationM = countM;
           });
 
           await _measureHelper.getDurationM().then((durationM) async {
             if (countM < durationM) {
-              if (!mounted) return;
+              if (!mounted) return Future.value(null);
               setState(() {
                 isMeasureDone = false;
               });
             } else {
-              if (!mounted) return;
+              if (!mounted) return Future.value(null);
               setState(() {
                 isMeasureDone = true;
               });
@@ -346,7 +359,7 @@ class _DashboardState extends State<DashboardPage>
     await _systemRepository.getTimeSystem().then((value) async {
       /////
       // await _timeSystemHelper.setTimeSystem(value);
-      if (!mounted) return;
+      if (!mounted) return Future.value(null);
       setState(() {
         curentDateNow = new DateFormat('yyyy-MM-dd').parse(
             DateFormat('yyyy-MM-dd').format(DateTime.parse(
@@ -414,7 +427,7 @@ class _DashboardState extends State<DashboardPage>
 
   _getBluetoothConnection() async {
     await _reminderHelper.isBluetoothConnection().then((value) {
-      if (!mounted) return;
+      if (!mounted) return Future.value(null);
       setState(() {
         if (value) {
           isBluetoothConnection = true;
@@ -426,8 +439,8 @@ class _DashboardState extends State<DashboardPage>
   }
 
   _getPeripheralInfo() async {
-    await peripheralHelper.getPeripheralId().then((peripheralId) async {
-      if (!mounted) return;
+    await _peripheralHelper.getPeripheralId().then((peripheralId) async {
+      if (!mounted) return Future.value(null);
       if (peripheralId != '') {
         setState(() {
           _isConnectedWithPeripheral = true;
@@ -443,7 +456,7 @@ class _DashboardState extends State<DashboardPage>
 
   _getPeopleStatus() async {
     await vitalSignHelper.getPeopleStatus().then((value) async {
-      if (!mounted) return;
+      if (!mounted) return Future.value(null);
       setState(() {
         if (value == 'DANGER') {
           checkPeopleStatusLocal = true;
@@ -458,8 +471,6 @@ class _DashboardState extends State<DashboardPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
-
-    //  _animationController.dispose();
   }
 
   // _getHeartRateValue() {
@@ -473,7 +484,7 @@ class _DashboardState extends State<DashboardPage>
   _updateTokenDevice() async {
     await _mobileDeviceHelper.getTokenDevice().then((value) {
       //
-      if (!mounted) return;
+      if (!mounted) return Future.value(null);
       setState(() {
         _tokenDevice = value;
       });
@@ -573,21 +584,17 @@ class _DashboardState extends State<DashboardPage>
       });
       await contractRepository.getListContract(_patientId).then((value) async {
         //
-        listContract = value;
+        //  listContract = value;
         //listContract=  listContract.where((item) => item.status=='APPROVED');
-        if (!mounted) return;
-        setState(() {
-          _listExecuting =
-              listContract.where((item) => item.status == 'ACTIVE').toList();
-        });
+        // if (!mounted) return;
+        // setState(() {
+        //   _listExecuting =
+        //       listContract.where((item) => item.status == 'ACTIVE').toList();
+        // });
         //
-        for (ContractListDTO contract in listContract) {
+        for (ContractListDTO contract in value) {
           if (contract.status == 'APPROVED') {
-            if (!mounted) return;
-            setState(() {
-              isContractApproved = true;
-            });
-            break;
+            isContractApproved = true;
           } else {
             isContractApproved = false;
           }
@@ -692,6 +699,20 @@ class _DashboardState extends State<DashboardPage>
           _showLastHeartRateMeasure(),
           _showLastBloodPressureMeasure(),
           _buildShorcut(),
+          // InkWell(
+          //   onTap: () async {
+          //     //
+          //     player = await cache.loop('audios/warning.mp3');
+          //   },
+          //   child: Container(
+          //     width: MediaQuery.of(context).size.width,
+          //     height: 50,
+          //     child: Center(
+          //       child: Text('Play'),
+          //     ),
+          //   ),
+          // ),
+
           Padding(
             padding: EdgeInsets.only(bottom: 50),
           ),
@@ -947,7 +968,9 @@ class _DashboardState extends State<DashboardPage>
               ),
               InkWell(
                 onTap: () async {
-                  await peripheralHelper.getPeripheralId().then((peripheralId) {
+                  await _peripheralHelper
+                      .getPeripheralId()
+                      .then((peripheralId) {
                     //
                     Navigator.of(context)
                         .pushNamed(RoutesHDr.INTRO_CONNECT_PERIPHERAL);
@@ -1240,6 +1263,28 @@ class _DashboardState extends State<DashboardPage>
                     ),
                     Padding(
                       padding: EdgeInsets.only(bottom: 10),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        //
+                        player.pause();
+                        cache.clear('audios/warning.mp3');
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Text('Tắt âm thanh',
+                              style: TextStyle(
+                                color: DefaultTheme.BLACK,
+                                fontSize: 16,
+                              )),
+                        ),
+                      ),
                     ),
                     (isWarning)
                         ? Container(
@@ -3071,8 +3116,8 @@ class _DashboardState extends State<DashboardPage>
             ),
           );
         });
-    await _kickHRCOn();
-    peripheralHelper.getPeripheralId().then((peripheralId) {
+    //  await _kickHRCOn();
+    _peripheralHelper.getPeripheralId().then((peripheralId) {
       if (peripheralId == '' || peripheralId == null) {
         Navigator.of(context).pop();
         showDialog(
@@ -3222,7 +3267,7 @@ class _DashboardState extends State<DashboardPage>
                                                     realtimeHeartRateBloc
                                                         .realtimeHrSink
                                                         .add(0);
-                                                    await _kickHRCOn();
+                                                    //  await _kickHRCOn();
                                                   },
                                                   child: Row(
                                                     mainAxisAlignment:
@@ -3664,13 +3709,13 @@ class _DashboardState extends State<DashboardPage>
     // getLocalStorage();
   }
 
-  _kickHRCOn() async {
-    await peripheralHelper.getPeripheralId().then((id) async {
-      if (id != '') {
-        await _vitalSignRepository.kickHRCOn(id);
-      }
-    });
-  }
+  // _kickHRCOn() async {
+  //   await peripheralHelper.getPeripheralId().then((id) async {
+  //     if (id != '') {
+  //       await _vitalSignRepository.kickHRCOn(id);
+  //     }
+  //   });
+  // }
 
   getLocalStorage() async {
     List<PrescriptionDTO> data = await _sqfLiteHelper.getMedicationsRespone();
@@ -4011,11 +4056,11 @@ class _DashboardState extends State<DashboardPage>
 ///////////
                                       //
                                       setState(() {
-                                        if (!mounted) return;
+                                        if (!mounted) return Future.value(null);
                                         isMeasureOn = true;
                                       });
                                       setModalState(() {
-                                        if (!mounted) return;
+                                        if (!mounted) return Future.value(null);
                                         isMeasureOn = true;
                                       });
                                       await _measureHelper
@@ -4244,7 +4289,7 @@ class _DashboardState extends State<DashboardPage>
                           InkWell(
                             onTap: () async {
                               setState(() {
-                                if (!mounted) return;
+                                if (!mounted) return Future.value(null);
                                 isMeasureOn = false;
                               });
 
@@ -4312,7 +4357,7 @@ class _DashboardState extends State<DashboardPage>
                       InkWell(
                         onTap: () async {
                           setState(() {
-                            if (!mounted) return;
+                            if (!mounted) return Future.value(null);
                             isMeasureOn = false;
                           });
 
@@ -4781,7 +4826,7 @@ class _DashboardState extends State<DashboardPage>
                                                                         setState(
                                                                             () {
                                                                           if (!mounted)
-                                                                            return;
+                                                                            return Future.value(null);
                                                                           isMeasureOn =
                                                                               false;
                                                                         });

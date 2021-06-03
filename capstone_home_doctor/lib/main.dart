@@ -134,6 +134,10 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+//audio
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
+
 //
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -411,6 +415,12 @@ DateValidator _dateValidator = DateValidator();
 
 // DateTime today = DateTime.now();
 
+//
+//for audio player
+final AudioCache cache = AudioCache();
+AudioPlayer player;
+
+//
 /////////
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -609,6 +619,10 @@ void main() async {
                                       heartRateSchedule.minuteDangerInterval) {
                                     ////////////////////////
                                     //LOCAL EXECUTE HERE
+
+                                    player =
+                                        await cache.loop('audios/warning.mp3');
+
                                     //
                                     var dangerousNotification = {
                                       "notification": {
@@ -992,12 +1006,13 @@ _saveVitalSignScheduleOffline() async {
 //
 _connectFirstOpenApp() async {
   await _peripheralHelper.getPeripheralId().then((value) async {
-    if (value != '') {
+    if (value != '' && value != null) {
       await _peripheralRepository
           .connectDeviceInBackground(value)
           .catchError((e) {
+        print('error at connectDeviceInBackground in main:$e');
         if (e.toString().contains(
-            'error at getHeartRateValueFromDevice PlatformException(set_notification_error, error when writing the descriptor, null, null)')) {
+            'PlatformException(set_notification_error, error when writing the descriptor, null, null)')) {
           // //
           _peripheralRepository.connectDeviceInBackground(value);
         }
@@ -1020,6 +1035,7 @@ _insertHeartRateIntoDb() async {
       );
 
       await _sqfLiteHelper.insertVitalSign(vitalSignDTO);
+      print('--insert heart rate sucessful');
     }
   });
 }
@@ -1048,7 +1064,7 @@ _connectInBackground(int timeInsert) async {
       int countLastValue = 0;
 
       //function get heart rate from device
-      print('peripheralId-----: ${peripheralId}}');
+      print('peripheralId-----: ${peripheralId}');
       await _vitalSignRepository.getHeartRateValueFromDevice(peripheralId);
       //
       //
@@ -1064,6 +1080,7 @@ _connectInBackground(int timeInsert) async {
             //
             print(
                 'COUNTED: ${timeToInsertLocalDB}.DO INSERT HEART RATE INTO LOCAL DB');
+
             await _insertHeartRateIntoDb();
           }
           if (timeToInsertLocalDB >= timeInsert) {
@@ -1142,7 +1159,9 @@ _connectInBackground(int timeInsert) async {
                         if (countDown == scopeHearRate.dangerousCount) {
                           ////////////////////////
                           //LOCAL EXECUTE HERE
-                          //
+
+                          player = await cache.loop('audios/warning.mp3');
+
                           var dangerousNotification = {
                             "notification": {
                               "title": "Sinh hiệu bất thường",
@@ -1173,6 +1192,30 @@ _connectInBackground(int timeInsert) async {
                           /////////////
                           //KICK VARIABLE CHECK DANGER TO NORMAL
                           await _vitalSignHelper.updateCheckToNormal(true);
+
+                          ///SEND SMS HERE
+                          _vitalSignHelper
+                              .isSendSMSTurnOff()
+                              .then((isSMSOff) async {
+                            //
+                            if (isSMSOff == false) {
+                              //SEND SMS TO RELATIVE AND DOCTOR
+                              await _smsRepository.sendSmsMessage(_accountId,
+                                  _vitalSignScheduleDTO.doctorAccountId);
+                              // //
+                              //UPDATE STATUS SMS IS SENT
+                              _vitalSignHelper
+                                  .updateSendSMSTurnOffStatus(true)
+                                  .then((isUpdated) {
+                                if (isUpdated) {
+                                  print(
+                                      'TURN SMS SENDING OFF----------------------');
+                                }
+                              });
+                            } else {
+                              print('SMS IS SENT FOR THE FIRST TIME');
+                            }
+                          });
                         }
                         // set into 0 when normal
                         if (countDown >= scopeHearRate.dangerousCount) {
@@ -1260,7 +1303,9 @@ _connectInBackground(int timeInsert) async {
                         if (countDown == scopeHearRate.dangerousCount) {
                           ////////////////////////
                           //LOCAL EXECUTE HERE
-                          //
+
+                          player = await cache.loop('audios/warning.mp3');
+
                           var dangerousNotification = {
                             "notification": {
                               "title": "Sinh hiệu bất thường",
@@ -1287,6 +1332,30 @@ _connectInBackground(int timeInsert) async {
                             }
                           });
                         }
+
+                        ///SEND SMS HERE
+                        _vitalSignHelper
+                            .isSendSMSTurnOff()
+                            .then((isSMSOff) async {
+                          //
+                          if (isSMSOff == false) {
+                            //SEND SMS TO RELATIVE AND DOCTOR
+                            await _smsRepository.sendSmsMessage(_accountId,
+                                _vitalSignScheduleDTO.doctorAccountId);
+                            // //
+                            //UPDATE STATUS SMS IS SENT
+                            _vitalSignHelper
+                                .updateSendSMSTurnOffStatus(true)
+                                .then((isUpdated) {
+                              if (isUpdated) {
+                                print(
+                                    'TURN SMS SENDING OFF----------------------');
+                              }
+                            });
+                          } else {
+                            print('SMS IS SENT FOR THE FIRST TIME');
+                          }
+                        });
                         //
                       } else {
                         print(
@@ -1368,7 +1437,9 @@ _connectInBackground(int timeInsert) async {
                       if (countDown == heartRateSchedule.minuteDangerInterval) {
                         ////////////////////////
                         //LOCAL EXECUTE HERE
-                        //
+
+                        player = await cache.loop('audios/warning.mp3');
+
                         var dangerousNotification = {
                           "notification": {
                             "title": "Sinh hiệu bất thường",
@@ -1621,6 +1692,9 @@ _connectInBackground(int timeInsert) async {
                       if (countDown == heartRateSchedule.minuteDangerInterval) {
                         ////////////////////////
                         //LOCAL EXECUTE HERE
+
+                        player = await cache.loop('audios/warning.mp3');
+
                         //
                         var dangerousNotification = {
                           "notification": {

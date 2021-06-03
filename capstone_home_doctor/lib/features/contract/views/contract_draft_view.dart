@@ -1643,62 +1643,62 @@ class _ContractDraftView extends State<ContractDraftView>
                                         color: DefaultTheme.GREY_TOP_TAB_BAR,
                                       ),
                                     ),
-                                    Container(
-                                      padding: EdgeInsets.only(
-                                          left: 20, right: 20, bottom: 10),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          'THÔNG TIN CHI TIẾT',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            decoration: TextDecoration.none,
-                                            color: DefaultTheme.GREY_TEXT,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: EdgeInsets.only(
-                                              left: 20, right: 20),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              'Ngày tạo',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                decoration: TextDecoration.none,
-                                                color: DefaultTheme.GREY_TEXT,
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Spacer(),
-                                        Container(
-                                          padding: EdgeInsets.only(
-                                              left: 20, right: 20),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              '${_dateValidator.parseToDateView(_currentDate)}',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                decoration: TextDecoration.none,
-                                                color: DefaultTheme.GREY_TEXT,
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                    // Container(
+                                    //   padding: EdgeInsets.only(
+                                    //       left: 20, right: 20, bottom: 10),
+                                    //   child: Align(
+                                    //     alignment: Alignment.centerLeft,
+                                    //     child: Text(
+                                    //       'THÔNG TIN CHI TIẾT',
+                                    //       textAlign: TextAlign.center,
+                                    //       style: TextStyle(
+                                    //         decoration: TextDecoration.none,
+                                    //         color: DefaultTheme.GREY_TEXT,
+                                    //         fontWeight: FontWeight.w400,
+                                    //         fontSize: 15,
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    // Row(
+                                    //   children: [
+                                    //     Container(
+                                    //       padding: EdgeInsets.only(
+                                    //           left: 20, right: 20),
+                                    //       child: Align(
+                                    //         alignment: Alignment.centerLeft,
+                                    //         child: Text(
+                                    //           'Ngày tạo',
+                                    //           textAlign: TextAlign.center,
+                                    //           style: TextStyle(
+                                    //             decoration: TextDecoration.none,
+                                    //             color: DefaultTheme.GREY_TEXT,
+                                    //             fontWeight: FontWeight.w400,
+                                    //             fontSize: 13,
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //     Spacer(),
+                                    //     Container(
+                                    //       padding: EdgeInsets.only(
+                                    //           left: 20, right: 20),
+                                    //       child: Align(
+                                    //         alignment: Alignment.centerLeft,
+                                    //         child: Text(
+                                    //           '${_dateValidator.parseToDateView(_currentDate)}',
+                                    //           textAlign: TextAlign.center,
+                                    //           style: TextStyle(
+                                    //             decoration: TextDecoration.none,
+                                    //             color: DefaultTheme.GREY_TEXT,
+                                    //             fontWeight: FontWeight.w400,
+                                    //             fontSize: 13,
+                                    //           ),
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   ],
+                                    // ),
                                     Container(
                                       padding: EdgeInsets.only(
                                           left: 20, right: 20, top: 30),
@@ -1706,7 +1706,7 @@ class _ContractDraftView extends State<ContractDraftView>
                                       child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Text(
-                                          'Yêu cầu của bạn đã được gửi đến bác sĩ, giá trị của hợp đồng sẽ được hệ thống tính toán và đưa ra thông báo đến bạn trong thời gian sớm nhất (chậm nhất là 3 ngày kể từ ngày gửi yêu cầu).',
+                                          'Yêu cầu của bạn đã được gửi đến bác sĩ, giá trị của hợp đồng sẽ được hệ thống tính toán và đưa ra thông báo đến bạn trong thời gian sớm nhất (chậm nhất là 5 ngày kể từ ngày gửi yêu cầu).',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             decoration: TextDecoration.none,

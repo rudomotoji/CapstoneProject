@@ -177,6 +177,9 @@ class ContractRepository extends BaseApiClient {
           _contractHelper.updateContractCheckingStatus(true, 'OK');
         } else if (response == 'CANCELD') {
           _contractHelper.updateContractCheckingStatus(true, 'OK');
+        } else if (response == 'LOCKED') {
+          _contractHelper.updateContractCheckingStatus(false,
+              'Tồn tại hợp đồng đang bị khoá giữa bác sĩ và hợp đồng.Bạn có muốn tiếp tục?');
         } else {
           _contractHelper.updateContractCheckingStatus(false,
               'Thời gian phù hợp để gửi yêu cầu hợp đồng là sau ngày ${_dateValidator.parseToDateView4(response)}.\nBạn có muốn tiếp tục?');

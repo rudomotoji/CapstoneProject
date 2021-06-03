@@ -130,12 +130,12 @@ class _ContractShareView extends State<ContractShareView>
                   onTap: () {
                     //
                     print(
-                        'e images length: ${e.images.length} - e mi id: ${e.medicalInstructionId}');
+                        'e images length: ${e.images.length} - e mi id: ${e.medicalInstructionId} - e type: ${e.medicalInstructionTypeName}');
                     if (e.images == null || e.images.isEmpty) {
                       _showDetailVitalSign(e.medicalInstructionId);
                     } else {
                       showFullDetailComponent(e.images, nameOfList,
-                          e.dateCreate, e.disease, e.conclusion);
+                          e.dateTreatment, e.disease, e.conclusion);
                     }
                   },
                   child: ClipRRect(
@@ -152,8 +152,7 @@ class _ContractShareView extends State<ContractShareView>
                                   child: SizedBox(
                                       width: 25,
                                       height: 25,
-                                      child: Image.asset((e
-                                                  .medicalInstructionTypeName ==
+                                      child: Image.asset((nameOfList ==
                                               'Sinh hiệu')
                                           ? 'assets/images/ic-health-selected.png'
                                           : 'assets/images/ic-medicine.png'))),
@@ -277,11 +276,14 @@ class _ContractShareView extends State<ContractShareView>
                                 padding: EdgeInsets.only(left: 20),
                                 child: Text('$nameOfList'),
                               ),
-                              Container(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text('Ngày tạo: ${e.dateCreate}',
-                                    style: TextStyle(fontSize: 12)),
-                              ),
+                              (e.dateTreatment == null || e.dateTreatment == '')
+                                  ? Container()
+                                  : Container(
+                                      padding: EdgeInsets.only(left: 20),
+                                      child: Text(
+                                          'Ngày khám: ${e.dateTreatment}',
+                                          style: TextStyle(fontSize: 12)),
+                                    ),
                             ],
                           ),
                           Spacer(),
@@ -424,7 +426,7 @@ class _ContractShareView extends State<ContractShareView>
                       showFullDetailComponent(
                           e.images,
                           e.medicalInstructionTypeName,
-                          e.dateCreate,
+                          e.dateTreatment,
                           e.disease,
                           e.conclusion);
                     }
@@ -565,11 +567,14 @@ class _ContractShareView extends State<ContractShareView>
                                 padding: EdgeInsets.only(left: 20),
                                 child: Text('$nameOfList'),
                               ),
-                              Container(
-                                padding: EdgeInsets.only(left: 20),
-                                child: Text('Ngày tạo: ${e.dateCreate}',
-                                    style: TextStyle(fontSize: 12)),
-                              ),
+                              (e.dateTreatment == null || e.dateTreatment == '')
+                                  ? Container()
+                                  : Container(
+                                      padding: EdgeInsets.only(left: 20),
+                                      child: Text(
+                                          'Ngày khám: ${e.dateTreatment}',
+                                          style: TextStyle(fontSize: 12)),
+                                    ),
                             ],
                           ),
                           Spacer(),
@@ -716,7 +721,7 @@ class _ContractShareView extends State<ContractShareView>
                       showFullDetailComponent(
                           e.images,
                           e.medicalInstructionTypeName,
-                          e.dateCreate,
+                          e.dateTreatment,
                           e.disease,
                           e.conclusion);
                     }
@@ -870,11 +875,13 @@ class _ContractShareView extends State<ContractShareView>
                               padding: EdgeInsets.only(left: 20),
                               child: Text('$nameOfList'),
                             ),
-                            Container(
-                              padding: EdgeInsets.only(left: 20),
-                              child: Text('Ngày tạo: ${e.dateCreate}',
-                                  style: TextStyle(fontSize: 12)),
-                            ),
+                            (e.dateTreatment == null || e.dateTreatment == '')
+                                ? Container()
+                                : Container(
+                                    padding: EdgeInsets.only(left: 20),
+                                    child: Text('Ngày khám: ${e.dateTreatment}',
+                                        style: TextStyle(fontSize: 12)),
+                                  ),
                           ],
                         ),
                         Spacer(),
@@ -1488,7 +1495,7 @@ class _ContractShareView extends State<ContractShareView>
                                               medicalInstructions3[index]
                                                   .images,
                                               '${medicalInstructions3[index].medicalInstructionTypeName}',
-                                              '${medicalInstructions3[index].dateCreate}',
+                                              '${medicalInstructions3[index].dateTreatment}',
                                               medicalInstructions3[index]
                                                   .disease,
                                               '${medicalInstructions3[index].conclusion}');
@@ -1579,18 +1586,26 @@ class _ContractShareView extends State<ContractShareView>
                                                                     TextOverflow
                                                                         .ellipsis,
                                                               ),
-                                                              Text(
-                                                                'Ngày tạo: ${medicalInstructions3[index].dateCreate}',
-                                                                style: TextStyle(
-                                                                    color: DefaultTheme
-                                                                        .WHITE,
-                                                                    fontSize:
-                                                                        12),
-                                                                maxLines: 1,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
+                                                              (medicalInstructions3[index]
+                                                                              .dateTreatment ==
+                                                                          null ||
+                                                                      medicalInstructions3[index]
+                                                                              .dateTreatment ==
+                                                                          '')
+                                                                  ? Container()
+                                                                  : Text(
+                                                                      'Ngày khám: ${medicalInstructions3[index].dateTreatment}',
+                                                                      style: TextStyle(
+                                                                          color: DefaultTheme
+                                                                              .WHITE,
+                                                                          fontSize:
+                                                                              12),
+                                                                      maxLines:
+                                                                          1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                    ),
                                                             ],
                                                           ),
                                                         ),
@@ -1669,18 +1684,26 @@ class _ContractShareView extends State<ContractShareView>
                                                                     TextOverflow
                                                                         .ellipsis,
                                                               ),
-                                                              Text(
-                                                                'Ngày tạo: ${medicalInstructions3[index].dateCreate}',
-                                                                style: TextStyle(
-                                                                    color: DefaultTheme
-                                                                        .WHITE,
-                                                                    fontSize:
-                                                                        12),
-                                                                maxLines: 1,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                              ),
+                                                              (medicalInstructions3[index]
+                                                                              .dateTreatment ==
+                                                                          null ||
+                                                                      medicalInstructions3[index]
+                                                                              .dateTreatment ==
+                                                                          '')
+                                                                  ? Container()
+                                                                  : Text(
+                                                                      'Ngày khám: ${medicalInstructions3[index].dateTreatment}',
+                                                                      style: TextStyle(
+                                                                          color: DefaultTheme
+                                                                              .WHITE,
+                                                                          fontSize:
+                                                                              12),
+                                                                      maxLines:
+                                                                          1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                    ),
                                                             ],
                                                           ),
                                                         ),
@@ -2275,7 +2298,7 @@ class _ContractShareView extends State<ContractShareView>
                                                                         showFullDetailComponent(
                                                                             listMi[insideCountNow - 1][index3].images,
                                                                             '${state.list[index].medicalInstructions[index2].medicalInstructionTypeName}',
-                                                                            '${listMi[insideCountNow - 1][index3].dateCreate}',
+                                                                            '${listMi[insideCountNow - 1][index3].dateTreatment}',
                                                                             listMi[insideCountNow - 1][index3].disease,
                                                                             '${listMi[insideCountNow - 1][index3].conclusion}');
                                                                       }
@@ -2328,12 +2351,14 @@ class _ContractShareView extends State<ContractShareView>
                                                                                           maxLines: 1,
                                                                                           overflow: TextOverflow.ellipsis,
                                                                                         ),
-                                                                                        Text(
-                                                                                          'Ngày tạo: ${listMi[insideCountNow - 1][index3].dateCreate}',
-                                                                                          style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
-                                                                                          maxLines: 1,
-                                                                                          overflow: TextOverflow.ellipsis,
-                                                                                        ),
+                                                                                        (listMi[insideCountNow - 1][index3].dateTreatment == null || listMi[insideCountNow - 1][index3].dateTreatment == '')
+                                                                                            ? Container()
+                                                                                            : Text(
+                                                                                                'Ngày khám: ${listMi[insideCountNow - 1][index3].dateTreatment}',
+                                                                                                style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
+                                                                                                maxLines: 1,
+                                                                                                overflow: TextOverflow.ellipsis,
+                                                                                              ),
                                                                                       ],
                                                                                     ),
                                                                                   ),
@@ -2387,12 +2412,14 @@ class _ContractShareView extends State<ContractShareView>
                                                                                           maxLines: 1,
                                                                                           overflow: TextOverflow.ellipsis,
                                                                                         ),
-                                                                                        Text(
-                                                                                          'Ngày tạo: ${listMi[insideCountNow - 1][index3].dateCreate}',
-                                                                                          style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
-                                                                                          maxLines: 1,
-                                                                                          overflow: TextOverflow.ellipsis,
-                                                                                        ),
+                                                                                        (listMi[insideCountNow - 1][index3].dateTreatment == null || listMi[insideCountNow - 1][index3].dateTreatment == '')
+                                                                                            ? Container()
+                                                                                            : Text(
+                                                                                                'Ngày khám: ${listMi[insideCountNow - 1][index3].dateTreatment}',
+                                                                                                style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
+                                                                                                maxLines: 1,
+                                                                                                overflow: TextOverflow.ellipsis,
+                                                                                              ),
                                                                                       ],
                                                                                     ),
                                                                                   ),
@@ -2528,7 +2555,7 @@ class _ContractShareView extends State<ContractShareView>
                                                                       1][index3]
                                                                   .images,
                                                               '${listMiOther[insideCountOtherNow - 1][index3].medicalInstructionTypeName}',
-                                                              '${listMiOther[insideCountOtherNow - 1][index3].dateCreate}',
+                                                              '${listMiOther[insideCountOtherNow - 1][index3].dateTreatment}',
                                                               listMiOther[insideCountOtherNow -
                                                                       1][index3]
                                                                   .disease,
@@ -2608,15 +2635,14 @@ class _ContractShareView extends State<ContractShareView>
                                                                             overflow:
                                                                                 TextOverflow.ellipsis,
                                                                           ),
-                                                                          Text(
-                                                                            'Ngày tạo: ${listMiOther[insideCountOtherNow - 1][index3].dateCreate}',
-                                                                            style:
-                                                                                TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
-                                                                            maxLines:
-                                                                                1,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                          ),
+                                                                          (listMiOther[insideCountOtherNow - 1][index3].dateTreatment == null || listMiOther[insideCountOtherNow - 1][index3].dateTreatment == '')
+                                                                              ? Container()
+                                                                              : Text(
+                                                                                  'Ngày khám: ${listMiOther[insideCountOtherNow - 1][index3].dateTreatment}',
+                                                                                  style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
+                                                                                  maxLines: 1,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                ),
                                                                         ],
                                                                       ),
                                                                     ),
@@ -2689,15 +2715,14 @@ class _ContractShareView extends State<ContractShareView>
                                                                             overflow:
                                                                                 TextOverflow.ellipsis,
                                                                           ),
-                                                                          Text(
-                                                                            'Ngày tạo: ${listMiOther[insideCountOtherNow - 1][index3].dateCreate}',
-                                                                            style:
-                                                                                TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
-                                                                            maxLines:
-                                                                                1,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                          ),
+                                                                          (listMiOther[insideCountOtherNow - 1][index3].dateTreatment == null || listMiOther[insideCountOtherNow - 1][index3].dateTreatment == '')
+                                                                              ? Container()
+                                                                              : Text(
+                                                                                  'Ngày khám: ${listMiOther[insideCountOtherNow - 1][index3].dateTreatment}',
+                                                                                  style: TextStyle(color: DefaultTheme.WHITE, fontSize: 12),
+                                                                                  maxLines: 1,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                ),
                                                                         ],
                                                                       ),
                                                                     ),
@@ -3060,11 +3085,11 @@ class _ContractShareView extends State<ContractShareView>
         });
   }
 
-  showFullDetailComponent(List<String> imgs, String miName, String dateCreate,
-      String diseases, String conclusion) {
+  showFullDetailComponent(List<String> imgs, String miName,
+      String dateTreatment, String diseases, String conclusion) {
     int positionImage = 0;
     bool isTappedOut = false;
-    print('disease list: $diseases');
+    // print('disease list: $diseases');
     return showDialog(
         barrierDismissible: false,
         context: context,
@@ -3073,6 +3098,7 @@ class _ContractShareView extends State<ContractShareView>
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
             return Material(
+              color: DefaultTheme.BLACK,
               child: InkWell(
                 onTap: () {
                   setModalState(() {
@@ -3213,6 +3239,7 @@ class _ContractShareView extends State<ContractShareView>
                                       child: Text(
                                           '${positionImage + 1}/${imgs.length}',
                                           style: TextStyle(
+                                              fontSize: 20,
                                               color: DefaultTheme.WHITE)),
                                     ),
                                   )
@@ -3279,13 +3306,14 @@ class _ContractShareView extends State<ContractShareView>
                                     (diseases == null || diseases == '')
                                         ? Container()
                                         : Text(
-                                            'Chẩn đoán: $diseases',
+                                            'Chẩn đoán:\n${_generateDisease(diseases)}',
                                             style: TextStyle(
                                                 color: DefaultTheme.WHITE,
                                                 fontSize: 15),
                                           ),
+
                                     Text(
-                                      (conclusion == null)
+                                      (conclusion == null || conclusion == '')
                                           ? ''
                                           : 'Kết luận: $conclusion',
                                       style: TextStyle(
@@ -3294,15 +3322,23 @@ class _ContractShareView extends State<ContractShareView>
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 5,
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 10),
-                                    ),
-                                    Text(
-                                      'Ngày tạo: $dateCreate',
-                                      style: TextStyle(
-                                          color: DefaultTheme.WHITE,
-                                          fontSize: 15),
-                                    ),
+                                    (dateTreatment == null ||
+                                            dateTreatment == '')
+                                        ? Container()
+                                        : Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 10),
+                                          ),
+                                    (dateTreatment != null &&
+                                            dateTreatment != '' &&
+                                            dateTreatment != 'null')
+                                        ? Text(
+                                            'Ngày khám: $dateTreatment',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                          )
+                                        : Container(),
 
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 50),
@@ -3319,6 +3355,16 @@ class _ContractShareView extends State<ContractShareView>
             //
           });
         });
+  }
+
+  String _generateDisease(String diseases) {
+    String result = '';
+    for (String x in diseases.split('/')) {
+      if (x != null && x != '') {
+        result += x + '\n';
+      }
+    }
+    return result;
   }
 
   _showMedicalShare(
@@ -3590,7 +3636,7 @@ class _ContractShareView extends State<ContractShareView>
                                                                             .width -
                                                                         132,
                                                                     child: Text(
-                                                                      'Ngày tạo: ${group.dateCreate}',
+                                                                      'Ngày tạo: ${group.dateCreated}',
                                                                       style:
                                                                           TextStyle(
                                                                         fontSize:
@@ -4313,7 +4359,7 @@ class _ContractShareView extends State<ContractShareView>
                                                                         .width -
                                                                     132,
                                                                 child: Text(
-                                                                  'Ngày tạo: ${group.dateCreate}',
+                                                                  'Ngày tạo: ${group.dateCreated}',
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:
@@ -4808,7 +4854,7 @@ class _ContractShareView extends State<ContractShareView>
                                                                         .width -
                                                                     132,
                                                                 child: Text(
-                                                                  'Ngày tạo: ${group.dateCreate}',
+                                                                  'Ngày tạo: ${group.dateCreated}',
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:

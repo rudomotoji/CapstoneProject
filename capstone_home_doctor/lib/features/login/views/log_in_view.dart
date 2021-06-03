@@ -323,6 +323,12 @@ class _Login extends State<Login> with WidgetsBindingObserver {
 
               await Navigator.pushNamedAndRemoveUntil(context,
                   RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
+
+              // Navigator.of(context).popUntil(ModalRoute.withName('/'));
+              // Navigator.pushReplacement(
+              //     context,
+              //     MaterialPageRoute(
+              //         builder: (BuildContext context) => super.widget));
             } else {
               Navigator.of(context).pop();
               return showDialog(

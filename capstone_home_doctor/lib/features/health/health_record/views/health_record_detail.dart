@@ -111,9 +111,10 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
             ///CODE HERE FOR NAVIGATE
             ///
             int currentIndex = 2;
-            Navigator.of(context).pushNamedAndRemoveUntil(
-                RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false,
-                arguments: currentIndex);
+            // Navigator.of(context).pushNamedAndRemoveUntil(
+            //     RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false,
+            //     arguments: currentIndex);
+            Navigator.of(context).popUntil(ModalRoute.withName('/'));
 
             ///
             await _medicalInstructionHelper.updateCheckToCreateOrList(false);
@@ -349,11 +350,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     ),
                     Container(
                         padding: EdgeInsets.only(left: 10),
-                        width: 70,
+                        width: 90,
                         child: Text('Ngày khám')),
                     Container(
                       padding: EdgeInsets.only(left: 10),
-                      width: MediaQuery.of(context).size.width - 145,
+                      width: MediaQuery.of(context).size.width - 165,
                       child: Text(
                         (_healthRecordDTO.dateStarted != null)
                             ? '${_dateValidator.parseToDateView(_healthRecordDTO.dateStarted)}'
@@ -376,11 +377,11 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                     ),
                     Container(
                         padding: EdgeInsets.only(left: 10),
-                        width: 70,
+                        width: 90,
                         child: Text('Ngày kết thúc')),
                     Container(
                       padding: EdgeInsets.only(left: 10),
-                      width: MediaQuery.of(context).size.width - 145,
+                      width: MediaQuery.of(context).size.width - 165,
                       child: Text(
                         (_healthRecordDTO.dateFinished != null)
                             ? '${_dateValidator.parseToDateView(_healthRecordDTO.dateFinished)}'
@@ -850,7 +851,6 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
   }
 
   Widget _itemRow(MedicalInstructionDTO dto) {
-    DateTime dateCreated = DateFormat('yyyy-MM-dd').parse(dto.dateCreate);
     return Container(
       width: MediaQuery.of(context).size.width,
       // padding: EdgeInsets.only(left: 20, right: 20),
@@ -883,10 +883,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                   showFullDetailComponent(
                                       dto.image,
                                       dto.medicalInstructionType,
-                                      _dateValidator.convertDateCreate(
-                                          dto.dateCreate,
-                                          'dd/MM/yyyy',
-                                          'yyyy-MM-ddThh:mm:ss'),
+                                      dto.dateTreatment,
                                       dto.diagnose,
                                       dto.diseases,
                                       dto.description);
@@ -911,7 +908,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                               },
                               child: Container(
                                 width: 70,
-                                height: 70,
+                                height: 100,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
@@ -922,7 +919,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                 child: (dto?.image == null)
                                     ? Container(
                                         width: (70 * 1.5),
-                                        height: (70 * 1.5),
+                                        height: (100 * 1.5),
                                         color: DefaultTheme.GREY_TOP_TAB_BAR,
                                         child: checkImageNull(dto),
                                       )
@@ -930,7 +927,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                         children: [
                                           Container(
                                             width: (70 * 1.5),
-                                            height: (70 * 1.5),
+                                            height: (100 * 1.5),
                                             color:
                                                 DefaultTheme.GREY_TOP_TAB_BAR,
                                             child: checkImageNull(dto),
@@ -939,7 +936,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                             top: 0,
                                             child: Container(
                                                 width: (70 * 1.5),
-                                                height: (70 * 1.5),
+                                                height: (100 * 1.5),
                                                 color: DefaultTheme
                                                     .GREY_TOP_TAB_BAR
                                                     .withOpacity(0.2),
@@ -964,35 +961,35 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  (dto.diseases == null || dto.diseases == [])
+                                      ? Container()
+                                      : Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              160,
+                                          child: Text(
+                                            'Bệnh lý:\n${_generateDisease(dto.diseases)}',
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 5,
+                                            style: TextStyle(
+                                              color: DefaultTheme.BLACK,
+                                              // fontWeight: FontWeight.w500
+                                            ),
+                                          ),
+                                        ),
                                   (dto.diagnose == null || dto.diagnose == '')
                                       ? Container()
-                                      : Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Container(
-                                              width: 80,
-                                              child: Text(
-                                                'Kết luận:',
-                                                style: TextStyle(
-                                                    color:
-                                                        DefaultTheme.GREY_TEXT),
-                                              ),
-                                            ),
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width -
-                                                  250,
-                                              child: Text(
-                                                '${dto.diagnose}',
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                              ),
-                                            ),
-                                          ],
+                                      : Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              160,
+                                          child: Text(
+                                            'Kết luận: ${dto.diagnose}',
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                          ),
                                         ),
                                   (dto.description != null &&
                                           dto.description != '')
@@ -1008,8 +1005,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                               child: Text(
                                                 'Ghi chú:',
                                                 style: TextStyle(
-                                                    color:
-                                                        DefaultTheme.GREY_TEXT),
+                                                    color: DefaultTheme.BLACK),
                                               ),
                                             ),
                                             Container(
@@ -1026,41 +1022,27 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                           ],
                                         )
                                       : Container(),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width - 160,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(dateCreated)}',
-                                          style: TextStyle(
-                                            color: DefaultTheme.BLACK,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  (dto.diseases == null || dto.diseases == [])
+                                  (dto.dateTreatment == null ||
+                                          dto.dateTreatment == '')
                                       ? Container()
                                       : Container(
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width -
                                               160,
-                                          child: Text(
-                                            'Bệnh lý: ${dto.diseases}',
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 5,
-                                            style: TextStyle(
-                                                color: DefaultTheme.BLACK,
-                                                fontWeight: FontWeight.w600),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Ngày khám: ${_dateValidator.parseToDateView2(dto.dateTreatment.toString())}',
+                                                style: TextStyle(
+                                                  color: DefaultTheme.BLACK,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                  Padding(
-                                    padding: EdgeInsets.only(bottom: 5),
-                                  ),
                                   (_healthRecordDTO.contractId == null)
                                       ? Container()
                                       : Row(
@@ -1106,6 +1088,21 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
         ],
       ),
     );
+  }
+
+  String _generateDisease(List<String> diseases) {
+    String result = '';
+    for (String x in diseases) {
+      if (x != null && x != '') {
+        result += x + '\n';
+      }
+    }
+    if (result.characters.last == '\n') {
+      if (result != null && result.length > 0) {
+        result = result.substring(0, result.length - 1);
+      }
+    }
+    return result;
   }
 
   checkButtonMoreFuture(MedicalInstructionDTO dto) {
@@ -1185,7 +1182,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
       } else {
         return Image.network(
           'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto?.image.first}',
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
         );
       }
     }
@@ -1619,11 +1616,19 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
     });
   }
 
-  showFullDetailComponent(List<String> imgs, String miName, String dateCreate,
-      String dianose, List<String> diseases, String note) {
+  // List<String> imgs, String miName, String dateCreate,
+  //     String dianose, List<String> diseases, String note
+
+  showFullDetailComponent(
+      List<String> imgs,
+      String miName,
+      String dateTreatment,
+      String conclusion,
+      List<String> diseases,
+      String note) {
     int positionImage = 0;
     bool isTappedOut = false;
-
+    // print('disease list: $diseases');
     return showDialog(
         barrierDismissible: false,
         context: context,
@@ -1632,6 +1637,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
           return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
             return Material(
+              color: DefaultTheme.BLACK,
               child: InkWell(
                 onTap: () {
                   setModalState(() {
@@ -1726,6 +1732,13 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     child: InkWell(
                                       onTap: () {
                                         setModalState(() {
+                                          // if (positionImage == imgs.length) {
+                                          //   positionImage = 0;
+                                          // } else if (positionImage < imgs.length - 1) {
+                                          //   positionImage--;
+                                          // } else {
+                                          //   positionImage = 0;
+                                          // }
                                           if (positionImage == 0) {
                                             positionImage = imgs.length - 1;
                                           } else {
@@ -1765,6 +1778,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                       child: Text(
                                           '${positionImage + 1}/${imgs.length}',
                                           style: TextStyle(
+                                              fontSize: 20,
                                               color: DefaultTheme.WHITE)),
                                     ),
                                   )
@@ -1828,59 +1842,42 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 10),
                                     ),
-                                    (diseases != null &&
-                                            diseases.isNotEmpty &&
-                                            diseases != [])
+                                    (diseases == null || diseases == '')
+                                        ? Container()
+                                        : Text(
+                                            'Chẩn đoán:\n${_generateDisease(diseases)}',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                          ),
+
+                                    Text(
+                                      (conclusion == null || conclusion == '')
+                                          ? ''
+                                          : 'Kết luận: $conclusion',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 15),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 5,
+                                    ),
+                                    (dateTreatment == null ||
+                                            dateTreatment == '')
+                                        ? Container()
+                                        : Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 10),
+                                          ),
+                                    (dateTreatment != null &&
+                                            dateTreatment != '' &&
+                                            dateTreatment != 'null')
                                         ? Text(
-                                            'Chẩn đoán: $diseases',
+                                            'Ngày khám: ${_dateValidator.parseToDateView2(dateTreatment)}',
                                             style: TextStyle(
                                                 color: DefaultTheme.WHITE,
                                                 fontSize: 15),
                                           )
                                         : Container(),
-                                    (dianose == null)
-                                        ? Text(
-                                            '',
-                                            style: TextStyle(
-                                                color: DefaultTheme.WHITE,
-                                                fontSize: 15),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 5,
-                                          )
-                                        : Text(
-                                            'Kết luận: $dianose',
-                                            style: TextStyle(
-                                                color: DefaultTheme.WHITE,
-                                                fontSize: 15),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 5,
-                                          ),
-                                    (note == null)
-                                        ? Text(
-                                            '',
-                                            style: TextStyle(
-                                                color: DefaultTheme.WHITE,
-                                                fontSize: 15),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 5,
-                                          )
-                                        : Text(
-                                            'Mô tả thêm: $note',
-                                            style: TextStyle(
-                                                color: DefaultTheme.WHITE,
-                                                fontSize: 15),
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 5,
-                                          ),
-                                    Padding(
-                                      padding: EdgeInsets.only(bottom: 10),
-                                    ),
-                                    Text(
-                                      'Ngày tạo: $dateCreate',
-                                      style: TextStyle(
-                                          color: DefaultTheme.WHITE,
-                                          fontSize: 15),
-                                    ),
 
                                     Padding(
                                       padding: EdgeInsets.only(bottom: 50),
@@ -1898,6 +1895,286 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
           });
         });
   }
+
+  // showFullDetailComponent(List<String> imgs, String miName, String dateCreate,
+  //     String dianose, List<String> diseases, String note) {
+  //   int positionImage = 0;
+  //   bool isTappedOut = false;
+
+  //   return showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         //
+  //         return StatefulBuilder(
+  //             builder: (BuildContext context, StateSetter setModalState) {
+  //           return Material(
+  //             child: InkWell(
+  //               onTap: () {
+  //                 setModalState(() {
+  //                   isTappedOut = !isTappedOut;
+  //                 });
+  //               },
+  //               child: (isTappedOut)
+  //                   ? Container(
+  //                       width: MediaQuery.of(context).size.width,
+  //                       height: MediaQuery.of(context).size.height,
+  //                       color: DefaultTheme.BLACK,
+  //                       child: Stack(
+  //                         // mainAxisAlignment: MainAxisAlignment.start,
+  //                         children: <Widget>[
+  //                           //
+  //                           SizedBox(
+  //                             width: MediaQuery.of(context).size.width,
+  //                             height: MediaQuery.of(context).size.height,
+  //                             child: PhotoView(
+  //                               customSize: Size(
+  //                                   MediaQuery.of(context).size.width,
+  //                                   MediaQuery.of(context).size.height),
+  //                               imageProvider: NetworkImage(
+  //                                   'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     )
+  //                   : Container(
+  //                       width: MediaQuery.of(context).size.width,
+  //                       height: MediaQuery.of(context).size.height,
+  //                       color: DefaultTheme.BLACK,
+  //                       child: Stack(
+  //                         // mainAxisAlignment: MainAxisAlignment.start,
+  //                         children: <Widget>[
+  //                           //
+  //                           SizedBox(
+  //                             width: MediaQuery.of(context).size.width,
+  //                             height: MediaQuery.of(context).size.height,
+  //                             child: PhotoView(
+  //                               customSize: Size(
+  //                                   MediaQuery.of(context).size.width,
+  //                                   MediaQuery.of(context).size.height),
+  //                               imageProvider: NetworkImage(
+  //                                   'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+  //                             ),
+  //                           ),
+  //                           (imgs.length > 1)
+  //                               ? Positioned(
+  //                                   right: 0,
+  //                                   child: InkWell(
+  //                                     onTap: () {
+  //                                       setModalState(() {
+  //                                         if (positionImage == imgs.length) {
+  //                                           positionImage = 0;
+  //                                         } else if (positionImage <
+  //                                             imgs.length - 1) {
+  //                                           positionImage++;
+  //                                         } else {
+  //                                           positionImage = 0;
+  //                                         }
+  //                                       });
+  //                                     },
+  //                                     child: Container(
+  //                                       width: 50,
+  //                                       height:
+  //                                           MediaQuery.of(context).size.height,
+  //                                       decoration: BoxDecoration(
+  //                                         gradient: LinearGradient(
+  //                                             begin: Alignment.centerRight,
+  //                                             end: Alignment.centerLeft,
+  //                                             colors: [
+  //                                               DefaultTheme.BLACK
+  //                                                   .withOpacity(0.3),
+  //                                               DefaultTheme.TRANSPARENT,
+  //                                             ]),
+  //                                       ),
+  //                                       child: SizedBox(
+  //                                         width: 25,
+  //                                         height: 25,
+  //                                         child: Image.asset(
+  //                                             'assets/images/ic-next.png'),
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 )
+  //                               : Container(),
+  //                           (imgs.length > 1)
+  //                               ? Positioned(
+  //                                   left: 0,
+  //                                   child: InkWell(
+  //                                     onTap: () {
+  //                                       setModalState(() {
+  //                                         if (positionImage == 0) {
+  //                                           positionImage = imgs.length - 1;
+  //                                         } else {
+  //                                           positionImage--;
+  //                                         }
+  //                                       });
+  //                                     },
+  //                                     child: Container(
+  //                                       width: 50,
+  //                                       height:
+  //                                           MediaQuery.of(context).size.height,
+  //                                       decoration: BoxDecoration(
+  //                                         gradient: LinearGradient(
+  //                                             begin: Alignment.centerLeft,
+  //                                             end: Alignment.centerRight,
+  //                                             colors: [
+  //                                               DefaultTheme.BLACK
+  //                                                   .withOpacity(0.3),
+  //                                               DefaultTheme.TRANSPARENT,
+  //                                             ]),
+  //                                       ),
+  //                                       child: SizedBox(
+  //                                         width: 25,
+  //                                         height: 25,
+  //                                         child: Image.asset(
+  //                                             'assets/images/ic-prev.png'),
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 )
+  //                               : Container(),
+  //                           (imgs != null)
+  //                               ? Positioned(
+  //                                   top: 25,
+  //                                   width: MediaQuery.of(context).size.width,
+  //                                   child: Center(
+  //                                     child: Text(
+  //                                         '${positionImage + 1}/${imgs.length}',
+  //                                         style: TextStyle(
+  //                                             color: DefaultTheme.WHITE)),
+  //                                   ),
+  //                                 )
+  //                               : Container(),
+  //                           Positioned(
+  //                             top: 20,
+  //                             right: 10,
+  //                             child: Container(
+  //                               width: 30,
+  //                               height: 30,
+  //                               child: InkWell(
+  //                                 borderRadius: BorderRadius.circular(20),
+  //                                 child: SizedBox(
+  //                                   width: 30,
+  //                                   height: 30,
+  //                                   child: Image.asset(
+  //                                       'assets/images/ic-close.png'),
+  //                                 ),
+  //                                 onTap: () {
+  //                                   Navigator.of(context).pop();
+  //                                 },
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           Positioned(
+  //                             bottom: 0,
+  //                             child: Container(
+  //                               width: MediaQuery.of(context).size.width,
+  //                               height:
+  //                                   MediaQuery.of(context).size.height * 0.4,
+  //                               padding: EdgeInsets.only(left: 30, right: 30),
+  //                               decoration: BoxDecoration(
+  //                                 gradient: LinearGradient(
+  //                                     begin: Alignment.topCenter,
+  //                                     end: Alignment.bottomCenter,
+  //                                     colors: [
+  //                                       DefaultTheme.TRANSPARENT,
+  //                                       DefaultTheme.BLACK.withOpacity(0.9),
+  //                                     ]),
+  //                               ),
+  //                               child: Column(
+  //                                 mainAxisAlignment: MainAxisAlignment.end,
+  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                                 children: <Widget>[
+  //                                   //
+
+  //                                   Text(
+  //                                     '$miName',
+  //                                     style: TextStyle(
+  //                                         color: DefaultTheme.WHITE,
+  //                                         fontSize: 20,
+  //                                         fontWeight: FontWeight.w500),
+  //                                   ),
+  //                                   Padding(
+  //                                     padding: EdgeInsets.only(bottom: 5),
+  //                                   ),
+  //                                   Divider(
+  //                                     color: DefaultTheme.WHITE,
+  //                                     height: 1,
+  //                                   ),
+  //                                   Padding(
+  //                                     padding: EdgeInsets.only(bottom: 10),
+  //                                   ),
+  //                                   (diseases != null &&
+  //                                           diseases.isNotEmpty &&
+  //                                           diseases != [])
+  //                                       ? Text(
+  //                                           'Chẩn đoán: $diseases',
+  //                                           style: TextStyle(
+  //                                               color: DefaultTheme.WHITE,
+  //                                               fontSize: 15),
+  //                                         )
+  //                                       : Container(),
+  //                                   (dianose == null)
+  //                                       ? Text(
+  //                                           '',
+  //                                           style: TextStyle(
+  //                                               color: DefaultTheme.WHITE,
+  //                                               fontSize: 15),
+  //                                           overflow: TextOverflow.ellipsis,
+  //                                           maxLines: 5,
+  //                                         )
+  //                                       : Text(
+  //                                           'Kết luận: $dianose',
+  //                                           style: TextStyle(
+  //                                               color: DefaultTheme.WHITE,
+  //                                               fontSize: 15),
+  //                                           overflow: TextOverflow.ellipsis,
+  //                                           maxLines: 5,
+  //                                         ),
+  //                                   (note == null)
+  //                                       ? Text(
+  //                                           '',
+  //                                           style: TextStyle(
+  //                                               color: DefaultTheme.WHITE,
+  //                                               fontSize: 15),
+  //                                           overflow: TextOverflow.ellipsis,
+  //                                           maxLines: 5,
+  //                                         )
+  //                                       : Text(
+  //                                           'Mô tả thêm: $note',
+  //                                           style: TextStyle(
+  //                                               color: DefaultTheme.WHITE,
+  //                                               fontSize: 15),
+  //                                           overflow: TextOverflow.ellipsis,
+  //                                           maxLines: 5,
+  //                                         ),
+  //                                   Padding(
+  //                                     padding: EdgeInsets.only(bottom: 10),
+  //                                   ),
+  //                                   Text(
+  //                                     'Ngày tạo: $dateCreate',
+  //                                     style: TextStyle(
+  //                                         color: DefaultTheme.WHITE,
+  //                                         fontSize: 15),
+  //                                   ),
+
+  //                                   Padding(
+  //                                     padding: EdgeInsets.only(bottom: 50),
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //             ),
+  //           );
+  //           //
+  //         });
+  //       });
+  // }
 
   _showMorePopup(int medicalInstructionId, String medicalInstructionTypeName) {
     showModalBottomSheet(
