@@ -8,32 +8,32 @@ const versionAPI = 'v1'
 
 const baseUrl = `${baseDomain}/api/${versionAPI}`
 const requestTimeout = 20000
-const headers = ''
+// const headers = ''
 
 const request = axios.create({
   baseURL: baseUrl,
-  headers: headers,
+  // headers: headers,
   timeout: requestTimeout
 })
 
 request.interceptors.request.use(function (config) {
   // Do something before request is sent
-  const token = getToken('hdr-key')
+  const token = getToken('admin-key')
   if (token != null) {
-    // config.headers.Authorization = 'Bearer' + token
+    config.headers.Authorization = 'Bearer ' + token
   }
-  console.log(`token: ${token}`)
+  // console.log(`token: ${token}`)
   return config
 }, function (error) {
   // Do something with request error
-  console.log('request', error)
+  // console.log('request', error)
   return Promise.reject(error)
 })
 
 request.interceptors.response.use(function (response) {
   // Do something with response data
-  const status = response.status
-  console.log(`status: ${status}`)
+  // const status = response.status
+  // console.log(`status: ${status}`)
   return response
 }, function (error) {
   let { message } = error

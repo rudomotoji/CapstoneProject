@@ -1,4 +1,5 @@
 import { RepositoryFactory } from '../../repositories/RepositoryFactory'
+import { getToken, setToken } from '../../utils/cookie'
 
 const doctorRepository = RepositoryFactory.get('doctorRepository')
 
@@ -26,6 +27,19 @@ const actions = {
         dispatch('getListDoctor')
       }
     })
+  },
+  async login ({ dispatch }) {
+    const data = {
+      username: 'admin',
+      password: 'admin'
+    }
+
+    if (!getToken()) {
+      await doctorRepository.login(data).then(response => {
+        setToken(response.data.token)
+      })
+    }
+    dispatch('getListDoctor')
   }
 }
 
