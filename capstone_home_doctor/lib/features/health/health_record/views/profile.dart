@@ -448,7 +448,9 @@ class _ProfileTabState extends State<ProfileTab> with WidgetsBindingObserver {
       child: InkWell(
         onTap: () async {
           await _healthRecordHelper.setHealthReCordId(dto.healthRecordId);
-          Navigator.of(context).pushNamed(RoutesHDr.HEALTH_RECORD_DETAIL);
+          Future.delayed(const Duration(milliseconds: 100), () async {
+            Navigator.of(context).pushNamed(RoutesHDr.HEALTH_RECORD_DETAIL);
+          });
         },
         child: Column(
           children: [

@@ -31,6 +31,7 @@ import 'package:capstone_home_doctor/services/health_record_helper.dart';
 import 'package:capstone_home_doctor/services/medical_instruction_helper.dart';
 import 'package:capstone_home_doctor/services/notifications_bloc.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
+import 'package:capstone_home_doctor/services/sqflite_helper.dart';
 import 'package:capstone_home_doctor/services/vital_sign_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:capstone_home_doctor/services/noti_helper.dart';
@@ -56,7 +57,7 @@ final VitalSignServerRepository _vitalSignServerRepository =
 final VitalSignHelper _vitalsignHelper = VitalSignHelper();
 final MedicalInstructionHelper _medicalInstructionHelper =
     MedicalInstructionHelper();
-
+SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
 // //
 // final FirebaseMessaging _fcm = FirebaseMessaging();
 //
@@ -186,6 +187,18 @@ class _MainHomeState extends State<MainHome> {
         /////
         _vitalsignHelper.updateWarning(true, notification.body);
       }
+      //
+      if (notification.payload.contains('"notiTypeId":"19"')) {
+        /////
+        _sqfLiteHelper.deleteVitalSignSchedule().then((isDeleted) {
+          if (isDeleted) {
+            print('------DELETE VITALSIGN SCHEDULE SUCCESSFUL AND DO NOT SAVE');
+          } else {
+            print('------??????');
+          }
+        });
+      }
+      //
     });
 
     //check wifi/mobile or offline connection

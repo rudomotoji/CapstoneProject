@@ -114,7 +114,7 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
             // Navigator.of(context).pushNamedAndRemoveUntil(
             //     RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false,
             //     arguments: currentIndex);
-            Navigator.of(context).popUntil(ModalRoute.withName('/'));
+            Navigator.of(context).popUntil((route) => route.isFirst);
 
             ///
             await _medicalInstructionHelper.updateCheckToCreateOrList(false);
@@ -2417,44 +2417,44 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
                 .add(MedicalInstructionListEventGetList(hrId: _hrId));
           }
 
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (BuildContext context) {
-              return Material(
-                  color: DefaultTheme.TRANSPARENT,
-                  child: Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                        child: Container(
-                          width: 200,
-                          height: 150,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: DefaultTheme.WHITE.withOpacity(0.8)),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 150,
-                                //height: 200,
-                                child: Image.asset('assets/images/loading.gif'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ));
-            },
-          );
+          // showDialog(
+          //   barrierDismissible: false,
+          //   context: context,
+          //   builder: (BuildContext context) {
+          //     return Material(
+          //         color: DefaultTheme.TRANSPARENT,
+          //         child: Center(
+          //           child: ClipRRect(
+          //             borderRadius: BorderRadius.all(Radius.circular(12)),
+          //             child: BackdropFilter(
+          //               filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+          //               child: Container(
+          //                 width: 200,
+          //                 height: 150,
+          //                 decoration: BoxDecoration(
+          //                     borderRadius: BorderRadius.circular(12),
+          //                     color: DefaultTheme.WHITE.withOpacity(0.8)),
+          //                 child: Column(
+          //                   mainAxisAlignment: MainAxisAlignment.center,
+          //                   crossAxisAlignment: CrossAxisAlignment.center,
+          //                   children: [
+          //                     SizedBox(
+          //                       width: 150,
+          //                       //height: 200,
+          //                       child: Image.asset('assets/images/loading.gif'),
+          //                     ),
+          //                   ],
+          //                 ),
+          //               ),
+          //             ),
+          //           ),
+          //         ));
+          //   },
+          // );
         });
 
         await healthRecordRepository.getHealthRecordById(value).then((value) {
-          Navigator.pop(context);
+          //Navigator.pop(context);
           setState(() {
             _healthRecordDTO = value;
           });

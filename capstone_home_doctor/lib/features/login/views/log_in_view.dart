@@ -9,6 +9,7 @@ import 'package:capstone_home_doctor/features/login/blocs/account_bloc.dart';
 import 'package:capstone_home_doctor/features/login/events/account_event.dart';
 import 'package:capstone_home_doctor/features/login/repositories/account_repository.dart';
 import 'package:capstone_home_doctor/features/login/states/account_state.dart';
+import 'package:capstone_home_doctor/main.dart';
 import 'package:capstone_home_doctor/models/account_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:flutter/cupertino.dart';
@@ -320,15 +321,11 @@ class _Login extends State<Login> with WidgetsBindingObserver {
             if (value == true) {
               Navigator.of(context).pop();
               //
-
-              await Navigator.pushNamedAndRemoveUntil(context,
-                  RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
-
-              // Navigator.of(context).popUntil(ModalRoute.withName('/'));
-              // Navigator.pushReplacement(
-              //     context,
-              //     MaterialPageRoute(
-              //         builder: (BuildContext context) => super.widget));
+              // Navigator.pushNamedAndRemoveUntil(context, RoutesHDr.MAIN_HOME,
+              //     (Route<dynamic> route) => false);
+              await Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => HomeDoctor()),
+                  (Route<dynamic> route) => false);
             } else {
               Navigator.of(context).pop();
               return showDialog(

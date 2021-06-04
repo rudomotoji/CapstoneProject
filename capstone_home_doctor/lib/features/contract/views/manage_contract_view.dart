@@ -117,7 +117,7 @@ class _ManageContract extends State<ManageContract>
         //   (Route<dynamic> route) => false,
         // );
 
-        Navigator.of(context).popUntil(ModalRoute.withName('/'));
+        Navigator.of(context).popUntil((route) => route.isFirst);
         return new Future(() => false);
       },
       child: Scaffold(

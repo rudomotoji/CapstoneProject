@@ -533,7 +533,7 @@ SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   agora_rtc_engine: c9c05dc6054a793d6dba94a615117d5f1dd41472
   AgoraRtcEngine_iOS: 17e55feec1bde14adc30fd9d743332d1e7821b62
-  audioplayers: 455322b54050b30ea4b1af7cd9e9d105f74efa8c
+  audioplayers: 84f968cea3f2deab00ec4f8ff53358b3c0b3992c
   barcode_scan: 33f586d02270046fc6559135038b34b5754eaa4f
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   cloud_firestore: b8c0e15fa49dfff87c2817d288b577e5dca2df13

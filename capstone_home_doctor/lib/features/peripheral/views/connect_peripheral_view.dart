@@ -10,6 +10,7 @@ import 'package:capstone_home_doctor/features/peripheral/events/peripheral_event
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repo.dart';
 import 'package:capstone_home_doctor/features/peripheral/repositories/peripheral_repository.dart';
 import 'package:capstone_home_doctor/features/peripheral/states/peripheral_state.dart';
+import 'package:capstone_home_doctor/main.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -571,8 +572,7 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                               _peripheralBloc.add(
                                   PeripheralEventConnectFirstTime(
                                       scanResult: scanResult));
-                              Navigator.of(context)
-                                  .pushNamed(RoutesHDr.PERIPHERAL_SERVICE);
+                              //
                               await _authenticateHelper
                                   .getPatientId()
                                   .then((value) async {
@@ -591,6 +591,23 @@ class _ConnectPeripheral extends State<ConnectPeripheral>
                                     }
                                   });
                                 }
+                              });
+
+                              Future.delayed(const Duration(milliseconds: 100),
+                                  () async {
+                                Navigator.of(context)
+                                    .pushNamed(RoutesHDr.PERIPHERAL_SERVICE)
+                                    .then((_) async {
+                                  //
+                                  // await Navigator.of(context)
+                                  //     .popUntil((route) => route.isFirst);
+                                  await Navigator.of(context)
+                                      .pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  HomeDoctor()),
+                                          (Route<dynamic> route) => false);
+                                });
                               });
                             },
                           ),

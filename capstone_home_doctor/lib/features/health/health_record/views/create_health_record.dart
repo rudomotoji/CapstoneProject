@@ -144,7 +144,7 @@ class _CreateHealthRecord extends State<CreateHealthRecord>
             // Navigator.of(context).pushNamedAndRemoveUntil(
             //     RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false,
             //     arguments: currentIndex);
-            Navigator.of(context).popUntil(ModalRoute.withName('/'));
+            Navigator.of(context).popUntil((route) => route.isFirst);
 
             ///
             await _medicalInstructionHelper.updateCreateHRFromDetail(false);

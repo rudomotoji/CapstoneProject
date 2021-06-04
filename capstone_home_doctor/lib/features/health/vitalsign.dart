@@ -123,6 +123,7 @@ class _VitalSignTabState extends State<VitalSignTab> {
             ),
           ),
         ),
+       
         Padding(
           padding: EdgeInsets.only(bottom: 20),
         ),
@@ -180,6 +181,7 @@ class _VitalSignTabState extends State<VitalSignTab> {
                   image: Image.asset('assets/images/ic-spo2.png'),
                   onTap: () {
                     //
+                    Navigator.of(context).pushNamed(RoutesHDr.CHOLESTEROL);
                   },
                 ),
                 // ButtonHDr(
@@ -195,7 +197,7 @@ class _VitalSignTabState extends State<VitalSignTab> {
                   label: 'Nhiệt độ cơ thể',
                   image: Image.asset('assets/images/ic-tempurature.png'),
                   onTap: () {
-                    // startPhoneAuth();
+                    Navigator.of(context).pushNamed(RoutesHDr.TEMPERATURE);
                   },
                 ),
               ],

@@ -5,6 +5,8 @@ import 'dart:async';
 import 'package:capstone_home_doctor/features/schedule/blocs/appnt_detail_bloc.dart';
 import 'package:capstone_home_doctor/features/sms/repositories/sms_repositories.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/blood_bloc.dart';
+import 'package:capstone_home_doctor/features/vital_sign/views/cholesterol_view.dart';
+import 'package:capstone_home_doctor/features/vital_sign/views/temperature_view.dart';
 import 'package:capstone_home_doctor/services/measure_helper.dart';
 import 'package:capstone_home_doctor/services/payment_helper.dart';
 import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
@@ -851,7 +853,7 @@ void main() async {
           }
 
           ///cach cun`
-          // await _saveVitalSignScheduleOffline();
+          //await _saveVitalSignScheduleOffline();
         } else {
           print('user has logged out of system');
         }
@@ -2304,6 +2306,8 @@ class _HomeDoctorState extends State<HomeDoctor> {
                 RoutesHDr.VITAL_SIGN_CHART_DETAIL: (context) =>
                     VitalSignChartDetail(),
                 RoutesHDr.PAYMENT: (context) => VNPayWebView(),
+                RoutesHDr.CHOLESTEROL: (context) => CholView(),
+                RoutesHDr.TEMPERATURE: (context) => Temperature(),
               },
               localizationsDelegates: [
                 // ... app-specific localization delegate[s] here

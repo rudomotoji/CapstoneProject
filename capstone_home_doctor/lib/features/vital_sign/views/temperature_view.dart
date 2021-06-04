@@ -23,8 +23,9 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 final AuthenticateHelper authenHelper = AuthenticateHelper();
 final SQFLiteHelper _sqfLiteHelper = SQFLiteHelper();
@@ -33,23 +34,23 @@ final ArrayValidator _arrayValidator = ArrayValidator();
 final VitalSignServerRepository _vitalSignServerRepository =
     VitalSignServerRepository(httpClient: http.Client());
 
-class CholView extends StatefulWidget {
+class Temperature extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
-    return _CholView();
+    return _Temperature();
   }
 }
 
-class _CholView extends State<CholView> {
+class _Temperature extends State<Temperature> {
   int _patientId = 0;
   var uuid = Uuid();
-  Future<void> _launchURL;
   DateTime dateNow;
   VitalSignBloodBloc _vitalSignBloc;
-  String vital_type = 'CHOL';
+  Future<void> _launchURL;
+  String vital_type = 'TEMP';
   List<VitalSignDTO> listSortedDateTime = [];
-  double _lastValue3VitalSign = 0.0;
+  double _value = 0;
 
   @override
   void initState() {
@@ -96,7 +97,7 @@ class _CholView extends State<CholView> {
           children: <Widget>[
             //
             HeaderWidget(
-                title: 'Cholesterol',
+                title: 'Nhiệt độ cơ thể',
                 isMainView: false,
                 buttonHeaderType: ButtonHeaderType.BACK_HOME),
             Expanded(
@@ -148,7 +149,7 @@ class _CholView extends State<CholView> {
                                     width: 50,
                                     height: 50,
                                     child: Image.asset(
-                                        'assets/images/ic-spo2.png'),
+                                        'assets/images/ic-tempurature.png'),
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 30),
@@ -163,15 +164,11 @@ class _CholView extends State<CholView> {
                           );
                         } else {
                           //
-                          print('length of state list: ${state.list.length}');
-                          print(
-                              'component-0: id:${state.list[0].id} -time:${state.list[0].dateTime} -value1${state.list[0].value1}-value2${state.list[0].value2} -value3${state.list[0].value3} -pID:${state.list[0].patientId}');
                           listSortedDateTime = state.list;
                           if (null != listSortedDateTime) {
                             listSortedDateTime.sort(
-                                (a, b) => a.dateTime.compareTo(b.dateTime));
-                            _lastValue3VitalSign =
-                                listSortedDateTime.last.value3;
+                                (a, b) => b.dateTime.compareTo(a.dateTime));
+                            _value = listSortedDateTime.first.value3;
 
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,123 +192,155 @@ class _CholView extends State<CholView> {
                                         fontWeight: FontWeight.w500,
                                       )),
                                 ),
-                                Center(
-                                  child: Container(
-                                    width: 250,
-                                    height: 250,
-                                    margin:
-                                        EdgeInsets.only(left: 20, right: 20),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(250),
-                                      gradient: LinearGradient(
-                                          begin: Alignment.topRight,
-                                          end: Alignment.bottomLeft,
-                                          colors: [
-                                            DefaultTheme.GRADIENT_1,
-                                            DefaultTheme.GRADIENT_2,
-                                          ]),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 50),
                                     ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(250),
-                                      child: BackdropFilter(
-                                        filter: ImageFilter.blur(
-                                            sigmaX: 5.0, sigmaY: 5.0),
-                                        child: Container(
-                                            margin: EdgeInsets.only(
-                                                left: 1,
-                                                right: 1,
-                                                bottom: 1,
-                                                top: 1),
-                                            padding: EdgeInsets.only(
-                                                left: 10,
-                                                right: 10,
-                                                top: 10,
-                                                bottom: 10),
-                                            width: 249,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(250),
-                                              color: DefaultTheme.WHITE
-                                                  .withOpacity(0.4),
-                                            ),
-                                            // padding: EdgeInsets.only(
-                                            //     left: 10, right: 10, top: 10, bottom: 10),
-                                            height: 249,
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                // Row(
-                                                //   children: [
-                                                //     Column(
-                                                //       crossAxisAlignment:
-                                                //           CrossAxisAlignment
-                                                //               .start,
-                                                //       children: [
-                                                //         Text(
-                                                //           '${_dateValidator.getHourAndMinute(listSortedDateTime.last.dateTime)}',
-                                                //           style: TextStyle(
-                                                //             fontSize: 20,
-                                                //             fontWeight:
-                                                //                 FontWeight.w500,
-                                                //             color: DefaultTheme
-                                                //                 .WHITE,
-                                                //           ),
-                                                //         ),
-                                                //         Text(
-                                                //           '${_dateValidator.parseToDateView3(listSortedDateTime.last.dateTime)}',
-                                                //           style: TextStyle(
-                                                //             color: DefaultTheme
-                                                //                 .WHITE,
-                                                //           ),
-                                                //         ),
-                                                //       ],
-                                                //     ),
-                                                //     Spacer(),
-                                                //     Text('mmHg',
-                                                //         style: TextStyle(
-                                                //           color: DefaultTheme
-                                                //               .WHITE,
-                                                //         )),
-                                                //   ],
-                                                // ),
-
-                                                Text('${_lastValue3VitalSign}',
-                                                    style: TextStyle(
-                                                      color: DefaultTheme
-                                                          .BLUE_DARK,
-                                                      fontFamily: 'NewYork',
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 40,
-                                                    )),
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      bottom: 5),
-                                                ),
-                                                Text('mmol/L',
-                                                    style: TextStyle(
-                                                      color: DefaultTheme
-                                                          .BLUE_DARK,
-                                                      fontSize: 20,
-                                                    )),
-                                              ],
-                                            )),
+                                    RotatedBox(
+                                      quarterTurns: -1,
+                                      child: LinearPercentIndicator(
+                                        width: 300,
+                                        lineHeight: 15.0,
+                                        percent: (_value != null)
+                                            ? _value / 100
+                                            : 0 / 100,
+                                        animationDuration: 500,
+                                        animation: true,
+                                        backgroundColor: DefaultTheme.GREY_TEXT
+                                            .withOpacity(0.5),
+                                        linearGradient: LinearGradient(
+                                            begin: Alignment.topRight,
+                                            end: Alignment.bottomLeft,
+                                            colors: [
+                                              DefaultTheme.ORANGE_TEXT,
+                                              DefaultTheme.BLUE_REFERENCE
+                                            ]),
+                                        // progressColor: DefaultTheme.BLUE_TEXT,
                                       ),
                                     ),
-                                  ),
+                                    Container(
+                                      padding: EdgeInsets.only(
+                                          bottom: 2.5, top: 2.5),
+                                      height: 300,
+                                      width: 40,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                height: 1,
+                                                width: 15,
+                                                color: DefaultTheme.GREY_TEXT,
+                                              ),
+                                              Text('100'),
+                                            ],
+                                          ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                height: 1,
+                                                width: 15,
+                                                color: DefaultTheme.GREY_TEXT,
+                                              ),
+                                              Text('75'),
+                                            ],
+                                          ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                height: 1,
+                                                width: 15,
+                                                color: DefaultTheme.GREY_TEXT,
+                                              ),
+                                              Text('50'),
+                                            ],
+                                          ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                height: 1,
+                                                width: 15,
+                                                color: DefaultTheme.GREY_TEXT,
+                                              ),
+                                              Text(
+                                                '25',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Container(
+                                                height: 1,
+                                                width: 15,
+                                                color: DefaultTheme.GREY_TEXT,
+                                              ),
+                                              Text('0'),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 50),
+                                      child: Column(
+                                        children: [
+                                          //
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                '$_value',
+                                                style: TextStyle(
+                                                  color: DefaultTheme
+                                                      .BLUE_REFERENCE,
+                                                  fontSize: 50,
+                                                ),
+                                              ),
+                                              Container(
+                                                padding:
+                                                    EdgeInsets.only(top: 10),
+                                                child: Text(
+                                                  '\t\u2103',
+                                                  style: TextStyle(
+                                                    color: DefaultTheme
+                                                        .ORANGE_TEXT,
+                                                    fontSize: 30,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
 
                                 Container(
                                   padding: EdgeInsets.only(
                                       top: 30, left: 20, bottom: 10),
-                                  child: Text('Tìm hiểu thêm về Cholesterol',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                      )),
+                                  child:
+                                      Text('Tìm hiểu thêm về nhiệt độ cơ thể',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                          )),
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(left: 20, right: 20),
@@ -329,7 +358,7 @@ class _CholView extends State<CholView> {
                                             padding: EdgeInsets.fromLTRB(
                                                 20, 20, 20, 10),
                                             child: Text(
-                                              Terminology.CHOLESTEROL,
+                                              Terminology.TEMP,
                                               style: TextStyle(
                                                 wordSpacing: 0.2,
                                                 color:
@@ -361,9 +390,10 @@ class _CholView extends State<CholView> {
                                                     ),
                                                   ),
                                                   onTap: () => setState(() {
-                                                    _launchURL = _launchInBrowser(
-                                                        Terminology
-                                                            .CHOLESTEROL_URL);
+                                                    _launchURL =
+                                                        _launchInBrowser(
+                                                            Terminology
+                                                                .TEMP_URL);
                                                   }),
                                                 ),
                                               ),
@@ -381,7 +411,7 @@ class _CholView extends State<CholView> {
                                 Container(
                                   padding: EdgeInsets.only(
                                       top: 30, left: 20, bottom: 10),
-                                  child: Text('Lịch sử đo Cholesterol',
+                                  child: Text('Lịch sử đo nhiệt độ cơ thể',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w500,
@@ -410,15 +440,11 @@ class _CholView extends State<CholView> {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Text(
-                                                  '${listSortedDateTime[index].value3}',
+                                                  '${listSortedDateTime[index].value3}\u2103',
                                                   style: TextStyle(
                                                       fontSize: 20,
                                                       color: DefaultTheme
                                                           .BLUE_DARK)),
-                                              Text('mmol/L',
-                                                  style: TextStyle(
-                                                    fontSize: 13,
-                                                  )),
                                             ],
                                           ),
                                           Spacer(),
@@ -481,7 +507,8 @@ class _CholView extends State<CholView> {
 
   void _onButtonShowModelSheet() {
     _getDateTimeNow();
-    final _mmol = TextEditingController();
+    final _tempController = TextEditingController();
+
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -520,20 +547,20 @@ class _CholView extends State<CholView> {
                                       width: 20,
                                       height: 20,
                                       child: Image.asset(
-                                          'assets/images/ic-spo2.png'),
+                                          'assets/images/ic-tempurature.png'),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(left: 15),
                                     ),
                                     Text(
-                                      'Cholesterol',
+                                      'Nhiệt độ cơ thể',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                     Spacer(),
-                                    Text('(mmol/L)')
+                                    Text('(\u2103)')
                                   ],
                                 )),
                           ),
@@ -548,7 +575,7 @@ class _CholView extends State<CholView> {
                             label: 'Giá trị',
                             placeHolder: '',
                             inputType: TFInputType.TF_TEXT,
-                            controller: _mmol,
+                            controller: _tempController,
                             keyboardAction: TextInputAction.next,
                             onChange: (text) {
                               //
@@ -618,7 +645,7 @@ class _CholView extends State<CholView> {
                               onTap: () async {
                                 //
                                 if (_arrayValidator
-                                    .isNumeric(_mmol.text.trim())) {
+                                    .isNumeric(_tempController.text.trim())) {
                                   //
                                   if (_patientId != 0) {
                                     //
@@ -626,7 +653,8 @@ class _CholView extends State<CholView> {
                                       id: uuid.v1(),
                                       patientId: _patientId,
                                       valueType: vital_type,
-                                      value3: double.tryParse(_mmol.text),
+                                      value3:
+                                          double.tryParse(_tempController.text),
                                       dateTime: dateNow.toString(),
                                     );
                                     await _sqfLiteHelper
@@ -636,8 +664,9 @@ class _CholView extends State<CholView> {
                                     VitalSignPushDTO vitalSignPush =
                                         VitalSignPushDTO(
                                       patientId: _patientId,
-                                      vitalSignTypeId: 3,
-                                      numberValue: '${_mmol.text.trim()}',
+                                      vitalSignTypeId: 4,
+                                      numberValue:
+                                          '${_tempController.text.trim()}',
                                       timeValue:
                                           '${_dateValidator.getHourAndMinute(dateNow.toString())}',
                                     );
@@ -651,10 +680,9 @@ class _CholView extends State<CholView> {
                                         .then((isSuccess) async {
                                       if (isSuccess) {
                                         print(
-                                            'SUCCESSFUL PUSH DATA CHOLESTEROL');
+                                            'SUCCESSFUL PUSH DATA BLOOD PRESSURE');
                                       } else {
-                                        print(
-                                            'FAILED TO PUSH DATA CHOLESTEROL');
+                                        print('FAILED TO PUSH DATA HEART RATE');
                                       }
                                     });
 

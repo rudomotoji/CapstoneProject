@@ -19,8 +19,8 @@ class VitalSignBloodBloc extends Bloc<BloodEvent, BloodState> {
     if (event is BloodPressureEventGet) {
       yield BloodPressureStateLoading();
       try {
-        final List<VitalSignDTO> list = await sqfLiteHelper
-            .getListBloodVitalSign(event.type, event.patientId);
+        final List<VitalSignDTO> list =
+            await sqfLiteHelper.getListVitalSign2(event.type, event.patientId);
         yield BloodPressureStateGetListSuccess(list: list);
       } catch (e) {
         yield BloodPressureStateFailure();

@@ -73,6 +73,20 @@ class DateValidator {
     return result;
   }
 
+  String getDateAndTime(String input) {
+    String result = '';
+    if (input != null && input != '') {
+      String date = input.split(' ')[0];
+      String time = input.split(' ')[1];
+      result = date.split('-')[2] +
+          ' tháng ' +
+          date.split('-')[1] +
+          ', ' +
+          date.split('-')[0];
+    }
+    return result;
+  }
+
   DateTime parseStringToDateApnt(String date) {
     int year = int.tryParse(date.split('/')[2]);
     int month = int.tryParse(date.split('/')[1]);
@@ -245,8 +259,8 @@ class DateValidator {
     String result = '';
     if (timeSystem != null && timeSystem != '') {
       DateFormat _format = DateFormat('yyyy-MM-dd-EEEE');
-      String _formatted = _format
-          .format(DateTime.parse(timeSystem.split('"')[1].split('"')[0].split('T')[0]));
+      String _formatted = _format.format(
+          DateTime.parse(timeSystem.split('"')[1].split('"')[0].split('T')[0]));
       String _dateInWeek = parseDateInWeekToView(_formatted.split('-')[3]);
       String _day = _formatted.split('-')[2];
       String _month = _formatted.split('-')[1];

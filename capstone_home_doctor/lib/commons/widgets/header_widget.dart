@@ -20,6 +20,7 @@ import 'package:capstone_home_doctor/features/schedule/blocs/prescription_list_b
 import 'package:capstone_home_doctor/features/schedule/events/prescription_list_event.dart';
 import 'package:capstone_home_doctor/features/vital_sign/blocs/real_time_vt_bloc.dart';
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
+import 'package:capstone_home_doctor/main.dart';
 import 'package:capstone_home_doctor/models/patient_dto.dart';
 import 'package:capstone_home_doctor/models/token_device_dto.dart';
 import 'package:capstone_home_doctor/services/authen_helper.dart';
@@ -152,74 +153,82 @@ class _HeaderWidget extends State<HeaderWidget> {
                 splashColor: DefaultTheme.TRANSPARENT,
                 highlightColor: DefaultTheme.TRANSPARENT,
                 onTap: () async {
-                  Future.delayed(const Duration(milliseconds: 100), () async {
-                    if (_title == '') {
-                      // Navigator.of(context).pushNamedAndRemoveUntil(
-                      //   RoutesHDr.MAIN_HOME,
-                      //   (Route<dynamic> route) => false,
-                      // );
-                      Navigator.of(context).popUntil(ModalRoute.withName('/'));
-                    } else if (_title.contains('Hợp đồng'.trim())) {
-                      // Navigator.of(context).pushNamedAndRemoveUntil(
-                      //   RoutesHDr.MAIN_HOME,
-                      //   (Route<dynamic> route) => false,
-                      // );
-                      Navigator.of(context).popUntil(ModalRoute.withName('/'));
-                    } else if (_title.contains('Tạo hồ sơ sức khỏe'.trim())) {
-                      await _medicalInstructionHelper
-                          .getCreateHRFromDetail()
-                          .then((check) async {
-                        if (check) {
-                          await _medicalInstructionHelper
-                              .updateCreateHRFromDetail(false);
+                  // Navigator.of(context).popUntil(ModalRoute.withName('/'));
+                  // Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.of(context).maybePop();
+//                   Future.delayed(const Duration(milliseconds: 100), () async {
+//                     if (_title == '') {
+//                       Navigator.of(context).pushNamedAndRemoveUntil(
+//                         RoutesHDr.MAIN_HOME,
+//                         (Route<dynamic> route) => false,
+//                       );
+//                       Navigator.of(context).popUntil(ModalRoute.withName('/'));
+//                       if (_title.contains('Hợp đồng'.trim())) {
+//                         // Navigator.of(context).pushNamedAndRemoveUntil(
+//                         //   RoutesHDr.MAIN_HOME,
+//                         //   (Route<dynamic> route) => false,
+//                         // );
+//                         Navigator.of(context)
+//                             .popUntil(ModalRoute.withName('/'));
+//                       } else if (_title.contains('Tạo hồ sơ sức khỏe'.trim())) {
+//                         await _medicalInstructionHelper
+//                             .getCreateHRFromDetail()
+//                             .then((check) async {
+//                           if (check) {
+//                             await _medicalInstructionHelper
+//                                 .updateCreateHRFromDetail(false);
 
-                          ///
-                          await _medicalInstructionHelper
-                              .updateCheckToCreateOrList(false);
-                          int currentIndex = 2;
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              RoutesHDr.MAIN_HOME,
-                              (Route<dynamic> route) => false,
-                              arguments: currentIndex);
-                          // Navigator.of(context)
-                          //     .popUntil(ModalRoute.withName('/'));
-                        } else {
-                          Navigator.of(context).pop();
-                        }
-                      });
-                    } else if (_title.contains('Chi tiết hồ sơ')) {
-                      _medicalInstructionHelper
-                          .getCheckToCreateOrList()
-                          .then((check) async {
-                        //
-                        if (check) {
-                          ///CODE HERE FOR NAVIGATE
-                          ///
-                          int currentIndex = 2;
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              RoutesHDr.MAIN_HOME,
-                              (Route<dynamic> route) => false,
-                              arguments: currentIndex);
-                          // Navigator.of(context).popUntil(ModalRoute.withName('/'));
+//                             ///
+//                             await _medicalInstructionHelper
+//                                 .updateCheckToCreateOrList(false);
+//                             int currentIndex = 2;
+//                             Navigator.of(context).pushNamedAndRemoveUntil(
+//                                 RoutesHDr.MAIN_HOME,
+//                                 (Route<dynamic> route) => false,
+//                                 arguments: currentIndex);
+//                             // Navigator.of(context)
+//                             //     .popUntil(ModalRoute.withName('/'));
+//                           } else {
+//                             // Navigator.of(context).pop();
+//                             Navigator.of(context)
+//                                 .popUntil(ModalRoute.withName('/'));
+//                           }
+//                         });
+//                       } else if (_title.contains('Chi tiết hồ sơ')) {
+//                         _medicalInstructionHelper
+//                             .getCheckToCreateOrList()
+//                             .then((check) async {
+//                           //
+//                           if (check) {
+//                             ///CODE HERE FOR NAVIGATE
+//                             ///
+//                             int currentIndex = 2;
+//                             Navigator.of(context).pushNamedAndRemoveUntil(
+//                                 RoutesHDr.MAIN_HOME,
+//                                 (Route<dynamic> route) => false,
+//                                 arguments: currentIndex);
+//                             // Navigator.of(context).popUntil(ModalRoute.withName('/'));
 
-                          await _medicalInstructionHelper
-                              .updateCreateHRFromDetail(false);
+//                             await _medicalInstructionHelper
+//                                 .updateCreateHRFromDetail(false);
 
-                          ///
-                          await _medicalInstructionHelper
-                              .updateCheckToCreateOrList(false);
-                        } else {
-                          Navigator.pop(context);
-                          await _medicalInstructionHelper
-                              .updateCheckToCreateOrList(false);
-                          await _medicalInstructionHelper
-                              .updateCreateHRFromDetail(false);
-                        }
-                      });
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  });
+//                             ///
+//                             await _medicalInstructionHelper
+//                                 .updateCheckToCreateOrList(false);
+//                           } else {
+//                             Navigator.pop(context);
+//                             await _medicalInstructionHelper
+//                                 .updateCheckToCreateOrList(false);
+//                             await _medicalInstructionHelper
+//                                 .updateCreateHRFromDetail(false);
+//                           }
+//                         });
+//                       } else {
+
+//                       }
+//                     }
+//                   });
+// //
                 },
                 child: Image.asset(
                   'assets/images/ic-pop.png',
@@ -767,7 +776,7 @@ class _HeaderWidget extends State<HeaderWidget> {
     await _medicalInstructionHelper.updateCreateHRFromDetail(false);
     // Navigator.of(context).pushNamedAndRemoveUntil(
     //     RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
-    Navigator.of(context).popUntil(ModalRoute.withName('/'));
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   _onMeasuring() async {
@@ -1614,7 +1623,7 @@ class _HeaderWidget extends State<HeaderWidget> {
                         imgHeight: 25,
                         onTap: () async {
                           Navigator.of(context).pop();
-                          await peripheralHelper
+                          await _peripheralHelper
                               .getPeripheralId()
                               .then((peripheralId) {
                             //
@@ -2252,7 +2261,7 @@ class _Header extends State<Header> {
                         imgHeight: 25,
                         onTap: () async {
                           Navigator.of(context).pop();
-                          await peripheralHelper
+                          await _peripheralHelper
                               .getPeripheralId()
                               .then((peripheralId) {
                             //

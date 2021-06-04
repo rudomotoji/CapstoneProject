@@ -22,6 +22,7 @@ class SQFLiteHelper {
   //vital sign
   //
   static const String VITAL_SIGN_TABLE = 'VitalSignTbl';
+  static const String VITAL_SIGN_TABLE2 = 'VitalSignTbl2';
   static const String VITAL_SIGN_SCHEDULE = 'VitalSignScheduleTbl';
 
   SQFLiteHelper();
@@ -66,7 +67,9 @@ class SQFLiteHelper {
     await db.execute(
         "CREATE TABLE ${VITAL_SIGN_SCHEDULE} (id PRIMARYKEY TEXT, id_schedule INTEGER,vital_sign_schedule_id INTEGER, vital_sign_type TEXT, number_max INTEGER, number_min INTEGER, minute_danger_interval INTEGER, minute_normal_interval INTEGER, time_start TEXT, minute_again INTEGER)");
     await db.execute(
-        "CREATE TABLE ${VITAL_SIGN_TABLE} (id PRIMARYKEY TEXT, patient_id INTEGER, value_type TEXT, value1 INTEGER, value2 INTEGER, date_time TEXT)");
+        "CREATE TABLE ${VITAL_SIGN_TABLE} (id PRIMARYKEY TEXT, patient_id INTEGER, value_type TEXT, value1 INTEGER, value2 INTEGER, value3 REAL, date_time TEXT)");
+    await db.execute(
+        "CREATE TABLE ${VITAL_SIGN_TABLE2} (id PRIMARYKEY TEXT, patient_id INTEGER, value_type TEXT, value1 INTEGER, value2 INTEGER, value3 REAL, date_time TEXT)");
   }
 
   Future close() async {
@@ -290,29 +293,17 @@ class SQFLiteHelper {
     }
   }
 
-  // //get vital Sign (HEART RATE) that OUT OF SAFE SCOPE
-  // Future<List<VitalSignDTO>> getListDangerousVitalSign(
-  //     int min, int max, int patient_id, String value_type) async {
-  //   //
-  //   var dbClient = await database;
-  //   try {
-  //     //
-  //     var maps = await dbClient.rawQuery(
-  //         'SELECT * FROM $VITAL_SIGN_TABLE WHERE value_type = ? AND patient_id = ? AND value1 < ? AND value1 > ?',
-  //         [value_type, patient_id, min, max]);
-  //     List<VitalSignDTO> listVitalSign = [];
-  //     if (maps.length > 0) {
-  //       for (int i = 0; i < maps.length; i++) {
-  //         listVitalSign.add(VitalSignDTO.fromMapSQL(maps[i]));
-  //       }
-  //       // print(
-  //       //     'GET LIST Vital Sign type ${value_type} successful at ${DateTime.now()}');
-  //       return listVitalSign;
-  //     }
-  //   } catch (e) {
-  //     print('ERROR at getListDangerousVitalSign ${e}');
-  //   }
-  // }
+  Future<void> insertVitalSign2(VitalSignDTO dto) async {
+    var dbClient = await database;
+    try {
+      //
+      await dbClient.insert(VITAL_SIGN_TABLE2, dto.toMapSQL());
+      print(
+          'Insert Vital Sign type ${dto.valueType} successful at ${DateTime.now()}');
+    } catch (e) {
+      print('ERROR at Insert Vital Sign ${e}');
+    }
+  }
 
   Future<List<VitalSignDTO>> getListVitalSign(
       String value_type, int patient_id) async {
@@ -336,13 +327,13 @@ class SQFLiteHelper {
     }
   }
 
-  Future<List<VitalSignDTO>> getListBloodVitalSign(
+  Future<List<VitalSignDTO>> getListVitalSign2(
       String value_type, int patient_id) async {
     var dbClient = await database;
     try {
       //
       var maps = await dbClient.rawQuery(
-          'SELECT * FROM $VITAL_SIGN_TABLE WHERE value_type = ? AND patient_id = ?',
+          'SELECT * FROM $VITAL_SIGN_TABLE2 WHERE value_type = ? AND patient_id = ?',
           [value_type, patient_id]);
       List<VitalSignDTO> listVitalSign = [];
       if (maps.length > 0) {
@@ -358,6 +349,28 @@ class SQFLiteHelper {
     }
   }
 
+  // Future<List<VitalSignDTO>> getListBloodVitalSign(
+  //     String value_type, int patient_id) async {
+  //   var dbClient = await database;
+  //   try {
+  //     //
+  //     var maps = await dbClient.rawQuery(
+  //         'SELECT * FROM $VITAL_SIGN_TABLE WHERE value_type = ? AND patient_id = ?',
+  //         [value_type, patient_id]);
+  //     List<VitalSignDTO> listVitalSign = [];
+  //     if (maps.length > 0) {
+  //       for (int i = 0; i < maps.length; i++) {
+  //         listVitalSign.add(VitalSignDTO.fromMapSQL(maps[i]));
+  //       }
+  //       // print(
+  //       //     'GET LIST Vital Sign type ${value_type} successful at ${DateTime.now()}');
+  //       return listVitalSign;
+  //     }
+  //   } catch (e) {
+  //     print('ERROR at get heart rate list ${e}');
+  //   }
+  // }
+
   Future<bool> deleteRecordsVitalSign(String valueType, int patientId) async {
     var dbClient = await database;
     try {
@@ -370,6 +383,20 @@ class SQFLiteHelper {
       return false;
     }
   }
+
+  Future<bool> deleteRecordsVitalSign2(String valueType, int patientId) async {
+    var dbClient = await database;
+    try {
+      await dbClient.rawQuery(
+          'DELETE FROM $VITAL_SIGN_TABLE2 WHERE value_type = ? AND patient_id = ?',
+          [valueType, patientId]);
+      return true;
+    } catch (e) {
+      print('ERROR at delete heart rate by patientId ${e}');
+      return false;
+    }
+  }
+  /////////////////////
 
   //VITAL SIGN SCHEDULE
   Future<void> insertVitalSignSchedule(VitalSigns dto) async {

@@ -335,13 +335,13 @@ class _OverviewTabState extends State<OverviewTab> {
               Container(
                 child: Text('${dto.vitalSignType} được đo vào lúc'),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width - 130,
-                height: 40,
-                child: _buildTimeSchedule(
-                  _getListTimeToSchedule(dto.timeStart, dto.minuteAgain),
-                ),
-              ),
+              // Container(
+              //   width: MediaQuery.of(context).size.width - 130,
+              //   height: 40,
+              //   child: _buildTimeSchedule(
+              //     _getListTimeToSchedule(dto.timeStart, dto.minuteAgain),
+              //   ),
+              // ),
             ],
           ),
         );
@@ -349,33 +349,33 @@ class _OverviewTabState extends State<OverviewTab> {
     }
   }
 
-  Widget _buildTimeSchedule(List<String> listTime) {
-    print('list time length: ${listTime.length}');
-    if (listTime.isEmpty || listTime == null) {
-      return Container();
-    } else {
-      return ListView.builder(
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: listTime.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Center(
-            child: Container(
-              margin: EdgeInsets.only(right: 10),
-              padding: EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: DefaultTheme.RED_CALENDAR.withOpacity(0.7),
-              ),
-              child: Text('${listTime[index]}',
-                  style: TextStyle(color: DefaultTheme.WHITE)),
-            ),
-          );
-        },
-      );
-    }
-  }
+  // Widget _buildTimeSchedule(List<String> listTime) {
+  //   print('list time length: ${listTime.length}');
+  //   if (listTime.isEmpty || listTime == null) {
+  //     return Container();
+  //   } else {
+  //     return ListView.builder(
+  //       scrollDirection: Axis.horizontal,
+  //       shrinkWrap: true,
+  //       physics: NeverScrollableScrollPhysics(),
+  //       itemCount: listTime.length,
+  //       itemBuilder: (BuildContext context, int index) {
+  //         return Center(
+  //           child: Container(
+  //             margin: EdgeInsets.only(right: 10),
+  //             padding: EdgeInsets.only(top: 5, bottom: 5, left: 5, right: 5),
+  //             decoration: BoxDecoration(
+  //               borderRadius: BorderRadius.circular(30),
+  //               color: DefaultTheme.RED_CALENDAR.withOpacity(0.7),
+  //             ),
+  //             child: Text('${listTime[index]}',
+  //                 style: TextStyle(color: DefaultTheme.WHITE)),
+  //           ),
+  //         );
+  //       },
+  //     );
+  //   }
+  // }
 
   Widget _getIconVitalSign(String vitalType) {
     if (vitalType.trim().toLowerCase().contains('nhịp tim')) {

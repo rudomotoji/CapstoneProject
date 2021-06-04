@@ -13,6 +13,7 @@ import 'package:capstone_home_doctor/features/peripheral/states/peripheral_state
 import 'package:capstone_home_doctor/features/peripheral/views/connect_peripheral_view.dart';
 
 import 'package:capstone_home_doctor/features/vital_sign/repositories/vital_sign_repository.dart';
+import 'package:capstone_home_doctor/main.dart';
 import 'package:capstone_home_doctor/services/peripheral_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -74,12 +75,12 @@ class _PeripheralService extends State<PeripheralService>
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
+      onWillPop: () async {
         // Navigator.of(context).pushNamedAndRemoveUntil(
         //   RoutesHDr.MAIN_HOME,
         //   (Route<dynamic> route) => false,
         // );
-        Navigator.of(context).popUntil(ModalRoute.withName('/'));
+        Navigator.of(context).popUntil((route) => route.isFirst);
         return new Future(() => false);
       },
       child: StreamBuilder<BluetoothState>(
@@ -112,18 +113,20 @@ class _PeripheralService extends State<PeripheralService>
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          HeaderWidget(
-                            title: '',
-                            isMainView: false,
-                            buttonHeaderType: ButtonHeaderType.BACK_HOME,
-                          ),
+                          // HeaderWidget(
+                          //   title: '',
+                          //   isMainView: false,
+                          //   buttonHeaderType: ButtonHeaderType.BACK_HOME,
+                          // ),
                           Expanded(
                             child: RefreshIndicator(
                               onRefresh: _getPeripheralId,
                               child: ListView(
                                 children: [
                                   //
-
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 50),
+                                  ),
                                   BlocBuilder<PeripheralBloc, PeripheralState>(
                                     builder: (context, state) {
                                       if (state is PeripheralStateLoading) {
@@ -447,60 +450,98 @@ class _PeripheralService extends State<PeripheralService>
                                                 padding:
                                                     EdgeInsets.only(bottom: 20),
                                               ),
-                                              InkWell(
-                                                onTap: () {
-                                                  //
-                                                  _showDisconnectDialog();
-                                                },
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width -
-                                                      40,
-                                                  padding: EdgeInsets.only(
-                                                      left: 20, right: 20),
-                                                  height: 60,
-                                                  decoration: BoxDecoration(
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: DefaultTheme
-                                                            .GREY_TEXT
-                                                            .withOpacity(0.5),
-                                                        spreadRadius: 1,
-                                                        blurRadius: 5,
-                                                        offset: Offset(0,
-                                                            1), // changes position of shadow
-                                                      ),
-                                                    ],
-                                                    color:
-                                                        DefaultTheme.DARK_VIEW,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                  ),
-                                                  child: Center(
-                                                    child: Text(
-                                                      'Huỷ kết nối',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          color: DefaultTheme
-                                                              .RED_CALENDAR),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(bottom: 30),
-                                              ),
                                             ],
                                           );
                                         }
                                       }
                                       return Container();
                                     },
+                                  ),
+                                  InkWell(
+                                    onTap: () async {
+                                      //
+
+                                      // await Navigator.of(context)
+                                      //     .pushAndRemoveUntil(
+                                      //         MaterialPageRoute(
+                                      //             builder: (context) =>
+                                      //                 HomeDoctor()),
+                                      //         (Route<dynamic> route) => false);
+                                      Navigator.of(context)
+                                          .popUntil((route) => route.isFirst);
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          40,
+                                      margin:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: DefaultTheme.GREY_TEXT
+                                                .withOpacity(0.5),
+                                            spreadRadius: 1,
+                                            blurRadius: 5,
+                                            offset: Offset(0,
+                                                1), // changes position of shadow
+                                          ),
+                                        ],
+                                        color: DefaultTheme.DARK_VIEW,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Về trang chủ',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: DefaultTheme.BLUE_TEXT),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 20),
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      //
+                                      _showDisconnectDialog();
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          40,
+                                      margin:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: DefaultTheme.GREY_TEXT
+                                                .withOpacity(0.5),
+                                            spreadRadius: 1,
+                                            blurRadius: 5,
+                                            offset: Offset(0,
+                                                1), // changes position of shadow
+                                          ),
+                                        ],
+                                        color: DefaultTheme.DARK_VIEW,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Huỷ kết nối',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: DefaultTheme.RED_CALENDAR),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 30),
                                   ),
                                 ],
                               ),
@@ -660,15 +701,13 @@ class _PeripheralService extends State<PeripheralService>
                                     .disconnectDevice(value);
                               });
 
-                              await peripheralHelper.updatePeripheralChecking(
+                              await _peripheralHelper.updatePeripheralChecking(
                                   false, '');
 
-                              Navigator.of(context)
-                                  .popUntil(ModalRoute.withName('/'));
-                              // Navigator.of(context).pushNamedAndRemoveUntil(
-                              //   RoutesHDr.MAIN_HOME,
-                              //   (Route<dynamic> route) => false,
-                              // );
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                RoutesHDr.MAIN_HOME,
+                                (Route<dynamic> route) => false,
+                              );
                               //////
                               //////
                             },

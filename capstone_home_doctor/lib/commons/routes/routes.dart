@@ -37,4 +37,6 @@ class RoutesHDr {
   static const String ACTIVITY_TIME_VIEW = '/ActivityTimeView';
   static const String VITAL_SIGN_CHART_DETAIL = '/VitalSignChartDetail';
   static const String PAYMENT = '/PaymentView';
+  static const String CHOLESTEROL = '/Cholesterol';
+  static const String TEMPERATURE = '/Temperature';
 }

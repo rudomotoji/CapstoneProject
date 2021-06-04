@@ -35,7 +35,7 @@ class SuccessNotification extends StatelessWidget {
               //   (Route<dynamic> route) => false,
               // );
 
-              Navigator.of(context).popUntil(ModalRoute.withName('/'));
+              Navigator.of(context).popUntil((route) => route.isFirst);
             },
             child: Text(
               'Done',

@@ -4,6 +4,7 @@ class VitalSignDTO {
   String valueType;
   int value1;
   int value2;
+  double value3;
   String dateTime;
 
   VitalSignDTO(
@@ -12,6 +13,7 @@ class VitalSignDTO {
       this.valueType,
       this.value1,
       this.value2,
+      this.value3,
       this.dateTime});
 
   //
@@ -22,6 +24,7 @@ class VitalSignDTO {
       'value_type': valueType,
       'value1': value1,
       'value2': value2,
+      'value3': value3,
       'date_time': dateTime,
     };
     return map;
@@ -34,6 +37,7 @@ class VitalSignDTO {
     valueType = map['value_type'];
     value1 = map['value1'];
     value2 = map['value2'];
+    value3 = map['value3'];
     dateTime = map['date_time'];
   }
 
