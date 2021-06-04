@@ -73,6 +73,19 @@ class DateValidator {
     return result;
   }
 
+  String getHourAndMinute2(String dateString) {
+    String result = '';
+    if (dateString.contains('T')) {
+      String hour, minute;
+      String date = dateString.split('T')[1];
+      String time = date.split('.')[0];
+      hour = time.split(':')[0];
+      minute = time.split(':')[1];
+      result = hour + ':' + minute;
+    }
+    return result;
+  }
+
   String getDateAndTime(String input) {
     String result = '';
     if (input != null && input != '') {

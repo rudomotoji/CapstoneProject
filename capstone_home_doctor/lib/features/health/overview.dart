@@ -154,7 +154,7 @@ class _OverviewTabState extends State<OverviewTab> {
                     child: Container(
                       width: MediaQuery.of(context).size.width - 40,
                       margin: EdgeInsets.only(left: 20),
-                      padding: EdgeInsets.only(left: 20, right: 20),
+                      padding: EdgeInsets.only(left: 10, right: 10),
                       alignment: Alignment.centerLeft,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -180,7 +180,7 @@ class _OverviewTabState extends State<OverviewTab> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(bottom: 20),
+                            padding: EdgeInsets.only(bottom: 10),
                           ),
                           _buildVitalSign(state.dto.vitalSigns),
                         ],
@@ -197,74 +197,74 @@ class _OverviewTabState extends State<OverviewTab> {
     );
   }
 
-  List<String> _getListTimeToSchedule(String timeStart, int minuteAgain) {
-    //list result with format ['6:00','7:00']
-    List<String> listTime = [];
-    //list time double to execute [6.0, 7.5];
-    List<double> listTimeDouble = [];
-    //
+  // List<String> _getListTimeToSchedule(String timeStart, int minuteAgain) {
+  //   //list result with format ['6:00','7:00']
+  //   List<String> listTime = [];
+  //   //list time double to execute [6.0, 7.5];
+  //   List<double> listTimeDouble = [];
+  //   //
 
-    //Cut day format.
-    String timeStartString = timeStart.split('T')[1];
+  //   //Cut day format.
+  //   String timeStartString = timeStart.split('T')[1];
 
-    //from String '-6:--' to 6.0
-    double hourDouble = double.tryParse(timeStartString.split(':')[0]);
-    //from string '--:30' to .5
-    double minuteDouble = double.tryParse(timeStartString.split(':')[1]) / 60;
-    //merge 2 value above. It's from '06:30' to 6.5
-    double timeStartDouble = hourDouble + minuteDouble;
+  //   //from String '-6:--' to 6.0
+  //   double hourDouble = double.tryParse(timeStartString.split(':')[0]);
+  //   //from string '--:30' to .5
+  //   double minuteDouble = double.tryParse(timeStartString.split(':')[1]) / 60;
+  //   //merge 2 value above. It's from '06:30' to 6.5
+  //   double timeStartDouble = hourDouble + minuteDouble;
 
-    //at the first value 6.5
-    listTimeDouble.add(timeStartDouble);
+  //   //at the first value 6.5
+  //   listTimeDouble.add(timeStartDouble);
 
-    // from 360 to 6.0
-    double minuteAgainDouble = minuteAgain / 60;
+  //   // from 360 to 6.0
+  //   double minuteAgainDouble = minuteAgain / 60;
 
-    //execute
-    // while (timeStartDouble + minuteAgainDouble <= 23.5) {
-    //   //
-    //   double value = timeStartDouble + minuteAgainDouble;
-    //   listTimeDouble.add(value);
-    //   timeStartDouble = value;
-    // }
-    //
-    for (int i = 0; i <= 24; i++) {
-      if (timeStartDouble + minuteAgainDouble <= 23.5) {
-        // print('=== timeStart double ${timeStartDouble}');
-        // print('=== minute again double ${minuteAgainDouble}');
-        // print(
-        //     '=== timeStart double operation: ${timeStartDouble + minuteAgainDouble}');
-        timeStartDouble = timeStartDouble + minuteAgainDouble;
-        listTimeDouble.add(timeStartDouble);
-      } else {
-        break;
-      }
-    }
-    // print('--------list time double now: ${listTimeDouble}');
+  //   //execute
+  //   // while (timeStartDouble + minuteAgainDouble <= 23.5) {
+  //   //   //
+  //   //   double value = timeStartDouble + minuteAgainDouble;
+  //   //   listTimeDouble.add(value);
+  //   //   timeStartDouble = value;
+  //   // }
+  //   //
+  //   for (int i = 0; i <= 24; i++) {
+  //     if (timeStartDouble + minuteAgainDouble <= 23.5) {
+  //       // print('=== timeStart double ${timeStartDouble}');
+  //       // print('=== minute again double ${minuteAgainDouble}');
+  //       // print(
+  //       //     '=== timeStart double operation: ${timeStartDouble + minuteAgainDouble}');
+  //       timeStartDouble = timeStartDouble + minuteAgainDouble;
+  //       listTimeDouble.add(timeStartDouble);
+  //     } else {
+  //       break;
+  //     }
+  //   }
+  //   // print('--------list time double now: ${listTimeDouble}');
 
-    //
-    //list TimeDouble becomes [6.5, 9.0, 12.5]...
-    for (double x in listTimeDouble) {
-      double minute = (x % 1) * 6;
-      int minuteToString = minute.floor();
-      if (x.floor().toString().characters.length == 1) {
-        if (minuteToString.toString().characters.length == 1) {
-          listTime.add('0${x.floor()}:${minuteToString}0');
-        } else {
-          listTime.add('0${x.floor()}:${minuteToString}');
-        }
-      } else {
-        if (minuteToString.toString().characters.length == 1) {
-          listTime.add('${x.floor()}:${minuteToString}0');
-        } else {
-          listTime.add('${x.floor()}:${minuteToString}');
-        }
-      }
-    }
-    // print('------------list time now: ${listTime}');
-    //
-    return listTime;
-  }
+  //   //
+  //   //list TimeDouble becomes [6.5, 9.0, 12.5]...
+  //   for (double x in listTimeDouble) {
+  //     double minute = (x % 1) * 6;
+  //     int minuteToString = minute.floor();
+  //     if (x.floor().toString().characters.length == 1) {
+  //       if (minuteToString.toString().characters.length == 1) {
+  //         listTime.add('0${x.floor()}:${minuteToString}0');
+  //       } else {
+  //         listTime.add('0${x.floor()}:${minuteToString}');
+  //       }
+  //     } else {
+  //       if (minuteToString.toString().characters.length == 1) {
+  //         listTime.add('${x.floor()}:${minuteToString}0');
+  //       } else {
+  //         listTime.add('${x.floor()}:${minuteToString}');
+  //       }
+  //     }
+  //   }
+  //   // print('------------list time now: ${listTime}');
+  //   //
+  //   return listTime;
+  // }
 
   _buildVitalSign(List<VitalSigns> list) {
     return ListView.builder(
@@ -282,7 +282,7 @@ class _OverviewTabState extends State<OverviewTab> {
                 padding: EdgeInsets.only(left: 10),
               ),
               Container(
-                width: MediaQuery.of(context).size.width - 130,
+                width: MediaQuery.of(context).size.width - 100,
                 child: _buildVitalSignDescription(list[index]),
               ),
             ],
@@ -295,57 +295,49 @@ class _OverviewTabState extends State<OverviewTab> {
   Widget _buildVitalSignDescription(VitalSigns dto) {
     if (dto.vitalSignType.trim().toLowerCase().contains('nhịp tim')) {
       return Container(
-        width: MediaQuery.of(context).size.width - 130,
-        padding: EdgeInsets.only(top: 10, bottom: 10, left: 20),
-        decoration: BoxDecoration(
-          color: DefaultTheme.WHITE.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(5),
-        ),
+        width: MediaQuery.of(context).size.width,
+        // padding: EdgeInsets.only(top: 10, bottom: 10, left: 20),
+        // decoration: BoxDecoration(
+        // color: DefaultTheme.WHITE.withOpacity(0.9),
+        //   borderRadius: BorderRadius.circular(5),
+        // ),
         child: RichText(
           text: TextSpan(
-              style: TextStyle(color: DefaultTheme.BLACK),
+              style: TextStyle(color: DefaultTheme.WHITE),
               children: <TextSpan>[
                 //
                 TextSpan(text: 'Khoảng nhịp tim an toàn: '),
                 TextSpan(
                     text: '${dto.numberMin} - ${dto.numberMax}',
-                    style: TextStyle(color: DefaultTheme.RED_CALENDAR)),
+                    style: TextStyle(
+                      color: DefaultTheme.ORANGE_TEXT,
+                      fontWeight: FontWeight.w600,
+                    )),
                 TextSpan(text: ' bpm'),
               ]),
         ),
       );
     } else {
-      if (dto.timeStart == null ||
-          dto.timeStart == '' ||
-          dto.minuteAgain == 0 ||
-          dto.minuteAgain == null) {
-        return Container();
-      } else {
-        return Container(
-          width: MediaQuery.of(context).size.width - 130,
-          padding: EdgeInsets.only(top: 5, bottom: 5, left: 20),
-          decoration: BoxDecoration(
-            color: DefaultTheme.WHITE.withOpacity(0.9),
-            borderRadius: BorderRadius.circular(5),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                child: Text('${dto.vitalSignType} được đo vào lúc'),
+      return (dto.timeStart == null || dto.timeStart == '')
+          ? Container()
+          : Container(
+              width: MediaQuery.of(context).size.width,
+              child: RichText(
+                text: TextSpan(
+                    style: TextStyle(color: DefaultTheme.WHITE),
+                    children: <TextSpan>[
+                      //
+                      TextSpan(text: '${dto.vitalSignType} được đo lúc: '),
+                      TextSpan(
+                          text:
+                              '${_dateValidator.getHourAndMinute2(dto.timeStart)}',
+                          style: TextStyle(
+                            color: DefaultTheme.ORANGE_TEXT,
+                            fontWeight: FontWeight.w600,
+                          )),
+                    ]),
               ),
-              // Container(
-              //   width: MediaQuery.of(context).size.width - 130,
-              //   height: 40,
-              //   child: _buildTimeSchedule(
-              //     _getListTimeToSchedule(dto.timeStart, dto.minuteAgain),
-              //   ),
-              // ),
-            ],
-          ),
-        );
-      }
+            );
     }
   }
 
@@ -380,8 +372,8 @@ class _OverviewTabState extends State<OverviewTab> {
   Widget _getIconVitalSign(String vitalType) {
     if (vitalType.trim().toLowerCase().contains('nhịp tim')) {
       return Container(
-        width: 40,
-        height: 40,
+        width: 30,
+        height: 30,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: DefaultTheme.WHITE.withOpacity(0.9),
@@ -393,8 +385,8 @@ class _OverviewTabState extends State<OverviewTab> {
       );
     } else if (vitalType.trim().toLowerCase().contains('huyết áp')) {
       return Container(
-        width: 40,
-        height: 40,
+        width: 30,
+        height: 30,
         decoration: BoxDecoration(
           color: DefaultTheme.WHITE.withOpacity(0.9),
           borderRadius: BorderRadius.circular(30),
@@ -402,6 +394,32 @@ class _OverviewTabState extends State<OverviewTab> {
         padding: EdgeInsets.all(10),
         child: Image.asset(
           'assets/images/ic-blood-pressure.png',
+        ),
+      );
+    } else if (vitalType.trim().toLowerCase().contains('cholesterol')) {
+      return Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: DefaultTheme.WHITE.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        padding: EdgeInsets.all(10),
+        child: Image.asset(
+          'assets/images/ic-spo2.png',
+        ),
+      );
+    } else if (vitalType.trim().toLowerCase().contains('nhiệt độ cơ thể')) {
+      return Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: DefaultTheme.WHITE.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        padding: EdgeInsets.all(10),
+        child: Image.asset(
+          'assets/images/ic-tempurature.png',
         ),
       );
     } else {
