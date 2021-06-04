@@ -84,7 +84,7 @@
                 Chi tiết
               </el-button>
               <el-button
-                v-if="scope.row.status === 'LOCKED' && checkOpenContract(scope.row.dateFinished)"
+                v-if="scope.row.status === 'LOCKED' && checkOpenContract(scope.row.dateFinished) === true"
                 v-on:click="ChangeStatus(scope.row.contractId, 'ACTIVE')"
                 type="text"
                 size="small"
@@ -125,38 +125,36 @@
         :before-close="closeDialog"
       >
         <div>
-          <h3>Hợp đồng: {{ contractDetail.contractCode }}</h3>
-          <div
-            class="row"
-            style="display: flex; justify-content: space-between"
-          >
-            <div class="column">
-              <span>Bác sĩ: {{ contractDetail.fullNameDoctor }}</span>
-              <span>SĐT: {{ contractDetail.phoneNumberDoctor }}</span>
+          <div v-if="contractDetail!=null">
+            <h3>Hợp đồng: {{ contractDetail.contractCode }}</h3>
+            <div class="row" style="display: flex; justify-content: space-between">
+              <div class="column">
+                <span>Bác sĩ: {{ contractDetail.fullNameDoctor }}</span>
+                <span>SĐT: {{ contractDetail.phoneNumberDoctor }}</span>
+              </div>
+              <div class="column">
+                <span>Bệnh nhân: {{ contractDetail.fullNamePatient }}</span>
+                <span>SĐT: {{ contractDetail.phoneNumberPatient }}</span>
+              </div>
             </div>
-            <div class="column">
-              <span>Bệnh nhân: {{ contractDetail.fullNamePatient }}</span>
-              <span>SĐT: {{ contractDetail.phoneNumberPatient }}</span>
+            <div style="display: grid">
+              <span>Trạng thái: {{ contractDetail.status }}</span>
+              <span
+                >Ngày bắt đầu:
+                {{ formatDateTime(contractDetail.dateStarted) }}</span
+              >
+              <span
+                >Ngày kết thúc:
+                {{ formatDateTime(contractDetail.dateFinished) }}</span
+              >
+              <span>Tổng ngày theo dõi: {{ contractDetail.daysOfTracking }}</span>
+              <span
+                >Tổng tiền:
+                {{ contractDetail.priceLicense * contractDetail.daysOfTracking }}
+                ({{ contractDetail.nameLicense }})</span
+              >
+              <el-button @click="closeDialog">Đóng</el-button>
             </div>
-          </div>
-          <div style="display: grid">
-            <span>Trạng thái: {{ contractDetail.status }}</span>
-            <span
-              >Ngày bắt đầu:
-              {{ formatDateTime(contractDetail.dateStarted) }}</span
-            >
-            <span
-              >Ngày kết thúc:
-              {{ formatDateTime(contractDetail.dateFinished) }}</span
-            >
-            <span>Tổng ngày theo dõi: {{ contractDetail.daysOfTracking }}</span>
-            <span
-              >Tổng tiền:
-              {{ contractDetail.priceLicense * contractDetail.daysOfTracking }}
-              ({{ contractDetail.nameLicense }})</span
-            >
-
-            <el-button @click="closeDialog">Đóng</el-button>
           </div>
         </div>
       </el-dialog>
@@ -171,21 +169,15 @@ export default {
   data () {
     return {
       dialogVisible: false,
-      contractDetail: {}
+      contractDetail: null
     }
   },
   computed: {
-    ...mapState('contract', ['listContracts', 'contractDetail']),
-    checkOpenContract (dateFinished) {
-      // var timeNow = Date.now()
-      var timeNow = this.getTimeSystem()
-      if (Date.parse(dateFinished) < timeNow) {
-        return true
-      }
-      return false
-    }
+    ...mapState('contract', ['listContracts']),
+    ...mapState('time', ['timeSystem'])
   },
   mounted () {
+    this.getTimeSystem()
     this.getListContracts()
   },
   methods: {
@@ -224,7 +216,14 @@ export default {
     },
     closeDialog () {
       this.dialogVisible = false
-      this.contractDetail = {}
+      this.contractDetail = null
+    },
+    checkOpenContract (dateFinished) {
+      if (Date.parse(dateFinished) > Date.parse(this.timeSystem)) {
+        return true
+      } else {
+        return false
+      }
     }
   }
 }

@@ -218,10 +218,11 @@ export default {
     ...mapState('time', ['openDialogTime', 'timeSystem'])
   },
   mounted () {
-    this.getListDoctor()
+    this.login()
+    this.getTimeSystem()
   },
   methods: {
-    ...mapActions('doctor', ['getListDoctor']),
+    ...mapActions('doctor', ['getListDoctor', 'login']),
     ...mapActions('time', ['setTimeSystem', 'getTimeSystem']),
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {

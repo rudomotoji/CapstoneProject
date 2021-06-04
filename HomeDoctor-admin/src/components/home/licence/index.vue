@@ -126,9 +126,11 @@ export default {
   },
   mounted () {
     this.getLicences()
+    this.getTimeSystem()
   },
   methods: {
     ...mapActions('licence', ['getLicences', 'createLicense']),
+    ...mapActions('time', ['getTimeSystem']),
     formatDateTime (dateStr) {
       return moment(dateStr).format('DD/MM/YYYY')
     },
