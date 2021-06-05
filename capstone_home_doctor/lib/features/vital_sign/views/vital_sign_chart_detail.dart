@@ -383,17 +383,151 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
 
         List<String> listTimeXAxis = listTime.map((e) => '"${e}"').toList();
 
-        return bloodChart(
-            listTimeXAxis,
-            minVitalSignValue,
-            maxVitalSignValue,
-            listValueMap,
-            _dateValidator.convertDateCreate(
-                vitalSignValue.dateCreated, 'dd/MM/yyyy', 'yyyy-MM-dd'));
+        return _showListBlood(
+            vitalSignValue.timeValue, vitalSignValue.numberValue);
+        // bloodChart(
+        //     listTimeXAxis,
+        //     minVitalSignValue,
+        //     maxVitalSignValue,
+        //     listValueMap,
+        //     _dateValidator.convertDateCreate(
+        //         vitalSignValue.dateCreated, 'dd/MM/yyyy', 'yyyy-MM-dd'));
+      } else if (vitalSignValue.vitalSignTypeId == 3) {
+        return _showListChol(
+            vitalSignValue.timeValue, vitalSignValue.numberValue);
+      } else if (vitalSignValue.vitalSignTypeId == 4) {
+        return _showListTemp(
+            vitalSignValue.timeValue, vitalSignValue.numberValue);
       }
     } else {
       return Container();
     }
+  }
+
+  _showListTemp(String times, String nums) {
+    return (times.split(',').length == nums.split(',').length)
+        ? ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: times.split(',').length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                height: 60,
+                color: DefaultTheme.GREY_VIEW,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 20),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Nhiệt độ cơ thể: ${nums.split(',')[index]}'),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 10),
+                    ),
+                    Text('(\u2103)'),
+                    Spacer(),
+                    Text('${times.split(',')[index]}'),
+                    Padding(
+                      padding: EdgeInsets.only(right: 20),
+                    ),
+                  ],
+                ),
+              );
+            },
+          )
+        : Container();
+  }
+
+  _showListChol(String times, String nums) {
+    return (times.split(',').length == nums.split(',').length)
+        ? ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: times.split(',').length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                height: 60,
+                color: DefaultTheme.GREY_VIEW,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 20),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Cholesterol: ${nums.split(',')[index]}'),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 10),
+                    ),
+                    Text('(mmol/L)'),
+                    Spacer(),
+                    Text('${times.split(',')[index]}'),
+                    Padding(
+                      padding: EdgeInsets.only(right: 20),
+                    ),
+                  ],
+                ),
+              );
+            },
+          )
+        : Container();
+  }
+
+  _showListBlood(String times, String nums) {
+    return (times.split(',').length == nums.split(',').length)
+        ? ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: times.split(',').length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                height: 60,
+                color: DefaultTheme.GREY_VIEW,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 20),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            'Tâm thu: ${nums.split(',')[index].split('-')[0]}'),
+                        Text(
+                            'Tâm trương: ${nums.split(',')[index].split('-')[1]}'),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 10),
+                    ),
+                    Text('(mmHg)'),
+                    Spacer(),
+                    Text('${times.split(',')[index]}'),
+                    Padding(
+                      padding: EdgeInsets.only(right: 20),
+                    ),
+                  ],
+                ),
+              );
+            },
+          )
+        : Container();
   }
 
   _selectContract() {
@@ -612,140 +746,140 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
     );
   }
 
-  bloodChart(
-      List<String> listTimeXAxis,
-      int minVitalSignValue,
-      int maxVitalSignValue,
-      List<List<double>> listValueMap,
-      String dateCreate) {
-    return Column(
-      children: <Widget>[
-        Divider(
-          color: DefaultTheme.GREY_TOP_TAB_BAR,
-          height: 0.5,
-        ),
-        (listTimeXAxis != null)
-            ? Container(
-                width: MediaQuery.of(context).size.width,
-                color: DefaultTheme.WHITE,
-                height: 450,
-                child: Column(
-                  children: [
-                    Container(
-                      child: new Echarts(
-                        option: '''
-   
-option = {
+//   bloodChart(
+//       List<String> listTimeXAxis,
+//       int minVitalSignValue,
+//       int maxVitalSignValue,
+//       List<List<double>> listValueMap,
+//       String dateCreate) {
+//     return Column(
+//       children: <Widget>[
+//         Divider(
+//           color: DefaultTheme.GREY_TOP_TAB_BAR,
+//           height: 0.5,
+//         ),
+//         (listTimeXAxis != null)
+//             ? Container(
+//                 width: MediaQuery.of(context).size.width,
+//                 color: DefaultTheme.WHITE,
+//                 height: 450,
+//                 child: Column(
+//                   children: [
+//                     Container(
+//                       child: new Echarts(
+//                         option: '''
 
-                                      color: '#FF784B',
-                                      tooltip: {
-                                        trigger: "axis",
-                                        axisPointer: {
-                                          type: "shadow"
-                                      },
-                                      formatter: function (params)  {
-   
-            var tar = params[0];
-           
-            return 'Huyết áp lúc ' + (tar.value[0]+1) + 'giờ' + '<br/>' + 'tâm thu ' + tar.value[1] + '<br/>' +'tâm trương' + tar.value[2];
-        }
-                                  },
-    xAxis: {
-        name: 'GIỜ',
-                                      nameTextStyle: {
-                                      verticalAlign: "middle",
-                                      color: "#FF784B"
-                                      },
-          axisTick: {
-                                        show: false
-                                      },
-       data: function () {
-            var list = [];
-            for (var i = 1; i <= 24; i++) {
-                list.push(i + ':00');
-            }
-            return list;
-        }()
-    },
-    yAxis: {
-        max:150,
-        min:0,
-           name: '',
-                                      nameTextStyle: {
-                                      verticalAlign: "middle",
-                                      color: "#FF784B"
-                                      },
-                                      axisTick: {
-                                        show: false
-                                      },
-                                      type: 'value',
-                                      axisLine: {
-                                        lineStyle: {
-                                          color: '#303030',
-                                        },
-                                      },
-                                      axisLabel: {
-                                        color: '#303030',
-                                      }
-                                      
-                               
-    },
-    series: [
+// option = {
 
-        {
-        type: 'k',
-  
-        data: $listValueMap,
-         markLine: {
-                                          silent: true,
-                                          lineStyle: {
-                                              color: '#333'
-                                          },
-                                          data: [{
-                                              yAxis: $minVitalSignValue
-                                          }, {
-                                              yAxis: $maxVitalSignValue
-                                          }]
-                                        }
-    
-    }]
-                        }
-                                  ''',
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      // padding: EdgeInsets.only(right: 20),
-                      height: 400,
-                    ),
-                    Text('Biểu đồ huyết áp'.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: DefaultTheme.ORANGE_TEXT,
-                        )),
-                    Text('Thời gian tạo: ${dateCreate}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: DefaultTheme.GREY_TEXT,
-                        )),
-                  ],
-                ),
-              )
-            : Container(),
-        Divider(
-          color: DefaultTheme.GREY_TOP_TAB_BAR,
-          height: 0.5,
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 30),
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 20),
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 20),
-        ),
-      ],
-    );
-  }
+//                                       color: '#FF784B',
+//                                       tooltip: {
+//                                         trigger: "axis",
+//                                         axisPointer: {
+//                                           type: "shadow"
+//                                       },
+//                                       formatter: function (params)  {
+
+//             var tar = params[0];
+
+//             return 'Huyết áp lúc ' + (tar.value[0]+1) + 'giờ' + '<br/>' + 'tâm thu ' + tar.value[1] + '<br/>' +'tâm trương' + tar.value[2];
+//         }
+//                                   },
+//     xAxis: {
+//         name: 'GIỜ',
+//                                       nameTextStyle: {
+//                                       verticalAlign: "middle",
+//                                       color: "#FF784B"
+//                                       },
+//           axisTick: {
+//                                         show: false
+//                                       },
+//        data: function () {
+//             var list = [];
+//             for (var i = 1; i <= 24; i++) {
+//                 list.push(i + ':00');
+//             }
+//             return list;
+//         }()
+//     },
+//     yAxis: {
+//         max:150,
+//         min:0,
+//            name: '',
+//                                       nameTextStyle: {
+//                                       verticalAlign: "middle",
+//                                       color: "#FF784B"
+//                                       },
+//                                       axisTick: {
+//                                         show: false
+//                                       },
+//                                       type: 'value',
+//                                       axisLine: {
+//                                         lineStyle: {
+//                                           color: '#303030',
+//                                         },
+//                                       },
+//                                       axisLabel: {
+//                                         color: '#303030',
+//                                       }
+
+//     },
+//     series: [
+
+//         {
+//         type: 'k',
+
+//         data: $listValueMap,
+//          markLine: {
+//                                           silent: true,
+//                                           lineStyle: {
+//                                               color: '#333'
+//                                           },
+//                                           data: [{
+//                                               yAxis: $minVitalSignValue
+//                                           }, {
+//                                               yAxis: $maxVitalSignValue
+//                                           }]
+//                                         }
+
+//     }]
+//                         }
+//                                   ''',
+//                       ),
+//                       width: MediaQuery.of(context).size.width,
+//                       // padding: EdgeInsets.only(right: 20),
+//                       height: 400,
+//                     ),
+//                     Text('Biểu đồ huyết áp'.toUpperCase(),
+//                         style: TextStyle(
+//                           fontSize: 16,
+//                           fontWeight: FontWeight.w500,
+//                           color: DefaultTheme.ORANGE_TEXT,
+//                         )),
+//                     Text('Thời gian tạo: ${dateCreate}',
+//                         style: TextStyle(
+//                           fontSize: 14,
+//                           fontWeight: FontWeight.w500,
+//                           color: DefaultTheme.GREY_TEXT,
+//                         )),
+//                   ],
+//                 ),
+//               )
+//             : Container(),
+//         Divider(
+//           color: DefaultTheme.GREY_TOP_TAB_BAR,
+//           height: 0.5,
+//         ),
+//         Padding(
+//           padding: EdgeInsets.only(bottom: 30),
+//         ),
+//         Padding(
+//           padding: EdgeInsets.only(bottom: 20),
+//         ),
+//         Padding(
+//           padding: EdgeInsets.only(bottom: 20),
+//         ),
+//       ],
+//     );
+//   }
+
 }
