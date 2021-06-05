@@ -346,9 +346,9 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
           }
         }
 
-        List<int> listValueMap = listValue.map((data) {
+        List<double> listValueMap = listValue.map((data) {
           if (data != "") {
-            return int.parse(data);
+            return double.parse(data);
           }
         }).toList();
         List<String> listTimeXAxis = listTime.map((e) {
@@ -365,12 +365,13 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
             _dateValidator.convertDateCreate(
                 vitalSignValue.dateCreated, 'dd/MM/yyyy', 'yyyy-MM-dd'));
       } else if (vitalSignValue.vitalSignTypeId == 2) {
-        List<List<int>> listValueMap = listValue.map((data) {
-          List<int> listNum = data.split('-').map((e) => int.parse(e)).toList();
+        List<List<double>> listValueMap = listValue.map((data) {
+          List<double> listNum =
+              data.split('-').map((e) => double.parse(e)).toList();
 
           listNum.sort();
 
-          List<int> dataClone = [
+          List<double> dataClone = [
             listNum.first,
             listNum.last,
             listNum.last,
@@ -480,7 +481,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
   }
 
   heartChart(List<String> listTimeXAxis, int minVitalSignValue,
-      int maxVitalSignValue, List<int> listValueMap, String dateCreate) {
+      int maxVitalSignValue, List<double> listValueMap, String dateCreate) {
     return Column(
       children: <Widget>[
         Divider(
@@ -611,8 +612,12 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
     );
   }
 
-  bloodChart(List<String> listTimeXAxis, int minVitalSignValue,
-      int maxVitalSignValue, List<List<int>> listValueMap, String dateCreate) {
+  bloodChart(
+      List<String> listTimeXAxis,
+      int minVitalSignValue,
+      int maxVitalSignValue,
+      List<List<double>> listValueMap,
+      String dateCreate) {
     return Column(
       children: <Widget>[
         Divider(
