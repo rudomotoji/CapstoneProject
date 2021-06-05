@@ -1255,169 +1255,185 @@ class _HealthRecordDetail extends State<HealthRecordDetail>
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      width: MediaQuery.of(context).size.width - 20,
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      decoration: BoxDecoration(
-                        color: DefaultTheme.WHITE.withOpacity(0.6),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(top: 20),
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(left: 20),
-                              ),
-                              Text(
-                                '${value.medicalInstructionType}',
-                                style: TextStyle(
-                                  fontSize: 30,
-                                  decoration: TextDecoration.none,
-                                  color: DefaultTheme.BLACK,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Divider(
-                                  color: DefaultTheme.GREY_TEXT,
-                                  height: 0.25,
-                                ),
-                                Padding(padding: EdgeInsets.only(top: 5)),
+              return Material(
+                color: DefaultTheme.TRANSPARENT,
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        width: MediaQuery.of(context).size.width - 20,
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE.withOpacity(0.6),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(top: 20),
+                            ),
+                            Row(
+                              children: <Widget>[
+                                // Padding(
+                                //   padding: EdgeInsets.only(left: 20),
+                                // ),
                                 Text(
-                                  'Người đặt: ${value.placeHealthRecord}',
+                                  '${value.medicalInstructionType}',
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 30,
                                     decoration: TextDecoration.none,
-                                    color: DefaultTheme.GREY_TEXT,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                Padding(padding: EdgeInsets.only(top: 10)),
-                                Expanded(
-                                  child: ListView.builder(
-                                    itemCount: value.vitalSignScheduleRespone
-                                        .vitalSigns.length,
-                                    itemBuilder: (context, index) {
-                                      var item = value.vitalSignScheduleRespone
-                                          .vitalSigns[index];
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Divider(
-                                            color: DefaultTheme.GREY_TEXT,
-                                            height: 0.25,
-                                          ),
-                                          Text(
-                                            '${item.vitalSignType}',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              decoration: TextDecoration.none,
-                                              color: DefaultTheme.GREY_TEXT,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                'Chỉ số an toàn:',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  decoration:
-                                                      TextDecoration.none,
-                                                  color: DefaultTheme.GREY_TEXT,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                              Text(
-                                                '${item.numberMin} - ${item.numberMax}',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  decoration:
-                                                      TextDecoration.none,
-                                                  color: DefaultTheme.GREY_TEXT,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          Text(
-                                            'Ngày bắt đầu: ${dateStarted}',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              decoration: TextDecoration.none,
-                                              color: DefaultTheme.GREY_TEXT,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                          Text(
-                                            'Ngày Kết thúc: ${dateFinished}',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              decoration: TextDecoration.none,
-                                              color: DefaultTheme.GREY_TEXT,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                    shrinkWrap: true,
-                                    physics: NeverScrollableScrollPhysics(),
-                                  ),
-                                ),
-                                Center(
-                                  child: ButtonHDr(
-                                    style: BtnStyle.BUTTON_BLACK,
-                                    label: 'Chi tiết',
-                                    onTap: () {
-                                      Map<String, dynamic> arguments = {
-                                        'healthRecordId': _hrId,
-                                        'medicalInstructionId':
-                                            medicalInstructionId,
-                                        "timeStared": value
-                                            .vitalSignScheduleRespone
-                                            .timeStared,
-                                        "timeCanceled": value
-                                            .vitalSignScheduleRespone
-                                            .timeCanceled,
-                                      };
-                                      Navigator.pop(context);
-                                      Navigator.pushNamed(context,
-                                              RoutesHDr.VITAL_SIGN_CHART_DETAIL,
-                                              arguments: arguments)
-                                          .then((value) async {
-                                        // await _pullRefresh();
-                                      });
-                                    },
+                                    color: DefaultTheme.BLACK,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(bottom: 15),
-                          )
-                        ],
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    height: 0.25,
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 10)),
+                                  Text(
+                                    'Người đặt: ${value.placeHealthRecord}',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      decoration: TextDecoration.none,
+                                      color: DefaultTheme.BLACK,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 10)),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Text('Sinh hiệu bao gồm:'),
+                                  ),
+                                  for (VitalSigns x in value
+                                      .vitalSignScheduleRespone.vitalSigns)
+                                    Container(
+                                      child: Text('${x.vitalSignType}'),
+                                    ),
+                                  Spacer(),
+                                  // Expanded(
+                                  //   child: ListView.builder(
+                                  //     itemCount: value.vitalSignScheduleRespone
+                                  //         .vitalSigns.length,
+                                  //     itemBuilder: (context, index) {
+                                  //       var item = value.vitalSignScheduleRespone
+                                  //           .vitalSigns[index];
+                                  //       return Column(
+                                  //         crossAxisAlignment:
+                                  //             CrossAxisAlignment.start,
+                                  //         mainAxisAlignment:
+                                  //             MainAxisAlignment.start,
+                                  //         children: [
+                                  //           Divider(
+                                  //             color: DefaultTheme.GREY_TEXT,
+                                  //             height: 0.25,
+                                  //           ),
+                                  //           Text(
+                                  //             '${item.vitalSignType}',
+                                  //             style: TextStyle(
+                                  //               fontSize: 18,
+                                  //               decoration: TextDecoration.none,
+                                  //               color: DefaultTheme.GREY_TEXT,
+                                  //               fontWeight: FontWeight.w500,
+                                  //             ),
+                                  //           ),
+                                  //           Row(
+                                  //             children: [
+                                  //               Text(
+                                  //                 'Chỉ số an toàn:',
+                                  //                 style: TextStyle(
+                                  //                   fontSize: 16,
+                                  //                   decoration:
+                                  //                       TextDecoration.none,
+                                  //                   color: DefaultTheme.GREY_TEXT,
+                                  //                   fontWeight: FontWeight.w400,
+                                  //                 ),
+                                  //               ),
+                                  //               Text(
+                                  //                 '${item.numberMin} - ${item.numberMax}',
+                                  //                 style: TextStyle(
+                                  //                   fontSize: 16,
+                                  //                   decoration:
+                                  //                       TextDecoration.none,
+                                  //                   color: DefaultTheme.GREY_TEXT,
+                                  //                   fontWeight: FontWeight.w400,
+                                  //                 ),
+                                  //               ),
+                                  //             ],
+                                  //           ),
+                                  //           Text(
+                                  //             'Ngày bắt đầu: ${dateStarted}',
+                                  //             style: TextStyle(
+                                  //               fontSize: 16,
+                                  //               decoration: TextDecoration.none,
+                                  //               color: DefaultTheme.GREY_TEXT,
+                                  //               fontWeight: FontWeight.w400,
+                                  //             ),
+                                  //           ),
+                                  //           Text(
+                                  //             'Ngày Kết thúc: ${dateFinished}',
+                                  //             style: TextStyle(
+                                  //               fontSize: 16,
+                                  //               decoration: TextDecoration.none,
+                                  //               color: DefaultTheme.GREY_TEXT,
+                                  //               fontWeight: FontWeight.w400,
+                                  //             ),
+                                  //           ),
+                                  //         ],
+                                  //       );
+                                  //     },
+                                  //     shrinkWrap: true,
+                                  //     physics: NeverScrollableScrollPhysics(),
+                                  //   ),
+                                  // ),
+
+                                  Center(
+                                    child: ButtonHDr(
+                                      style: BtnStyle.BUTTON_BLACK,
+                                      label: 'Chi tiết',
+                                      onTap: () {
+                                        Map<String, dynamic> arguments = {
+                                          'healthRecordId': _hrId,
+                                          'medicalInstructionId':
+                                              medicalInstructionId,
+                                          "timeStared": value
+                                              .vitalSignScheduleRespone
+                                              .timeStared,
+                                          "timeCanceled": value
+                                              .vitalSignScheduleRespone
+                                              .timeCanceled,
+                                        };
+                                        Navigator.pop(context);
+                                        Navigator.pushNamed(
+                                                context,
+                                                RoutesHDr
+                                                    .VITAL_SIGN_CHART_DETAIL,
+                                                arguments: arguments)
+                                            .then((value) async {
+                                          // await _pullRefresh();
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 15),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),

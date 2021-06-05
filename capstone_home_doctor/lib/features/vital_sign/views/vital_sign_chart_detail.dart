@@ -53,7 +53,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
   String timeCanceled = '';
   String dropdownValue;
   List<String> listDays = [];
-
+  List<String> itemID = [];
   @override
   void initState() {
     // TODO: implement initState
@@ -79,10 +79,9 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
             listDays.clear();
             for (var item in value.vitalSignValues) {
               setState(() {
-                listDays.add(item.dateCreated.toString());
+                listDays.add('${item.dateCreated}');
               });
             }
-
             setState(() {
               dropdownValue = listDays.first;
             });
@@ -132,15 +131,6 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
                       padding: EdgeInsets.all(10),
                       child: Row(
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  'Bắt đầu ngày: ${_dateValidator.convertDateCreate(timeStart, 'dd/MM/yyyy', 'yyyy-MM-dd')}'),
-                              Text(
-                                  'Kết thúc ngày:  ${_dateValidator.convertDateCreate(timeCanceled, 'dd/MM/yyyy', 'yyyy-MM-dd')}'),
-                            ],
-                          ),
                           _selectContract(),
                         ],
                       ),
@@ -336,9 +326,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
       listTime.removeLast();
       listValue.removeLast();
 
-      if (vitalSignValue.vitalSignTypeId == 1 ||
-          vitalSignValue.vitalSignTypeId == 3 ||
-          vitalSignValue.vitalSignTypeId == 4) {
+      if (vitalSignValue.vitalSignTypeId == 1) {
         for (var val in _vitalSignDetailDTO.vitalSigns) {
           if (val.vitalSignTypeId == vitalSignValue.vitalSignTypeId) {
             minVitalSignValue = val.numberMin;
@@ -409,7 +397,10 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
         ? ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: times.split(',').length,
+            itemCount:
+                (times.split(',').last == null || times.split(',').last == '')
+                    ? times.split(',').length - 1
+                    : times.split(',').length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 width: MediaQuery.of(context).size.width,
@@ -450,7 +441,10 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
         ? ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: times.split(',').length,
+            itemCount:
+                (times.split(',').last == null || times.split(',').last == '')
+                    ? times.split(',').length - 1
+                    : times.split(',').length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 width: MediaQuery.of(context).size.width,
@@ -491,7 +485,10 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
         ? ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: times.split(',').length,
+            itemCount:
+                (times.split(',').last == null || times.split(',').last == '')
+                    ? times.split(',').length - 1
+                    : times.split(',').length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 width: MediaQuery.of(context).size.width,
@@ -533,7 +530,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
   _selectContract() {
     if (listDays.isNotEmpty && listDays != null) {
       return Container(
-        width: MediaQuery.of(context).size.width - 200,
+        width: MediaQuery.of(context).size.width - 40,
         child: Container(
           margin: EdgeInsets.only(left: 20, right: 20, top: 10),
           padding: EdgeInsets.only(left: 20),
@@ -546,8 +543,7 @@ class _VitalSignChartDetail extends State<VitalSignChartDetail>
               return new DropdownMenuItem<String>(
                 value: value,
                 child: new Text(
-                  _dateValidator.convertDateCreate(
-                      value, 'dd/MM/yyyy', 'yyyy-MM-dd'),
+                  _dateValidator.parseToDateView2(value),
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               );
