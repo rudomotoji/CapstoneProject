@@ -774,9 +774,9 @@ class _HeaderWidget extends State<HeaderWidget> {
     // NotificationsSelectBloc.instance.newNotification('');
     await _medicalInstructionHelper.updateCheckToCreateOrList(false);
     await _medicalInstructionHelper.updateCreateHRFromDetail(false);
+    Navigator.of(context).popUntil((route) => route.isFirst);
     Navigator.of(context).pushNamedAndRemoveUntil(
         RoutesHDr.MAIN_HOME, (Route<dynamic> route) => false);
-    //  Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   _onMeasuring() async {
