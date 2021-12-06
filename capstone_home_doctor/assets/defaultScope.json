@@ -1,0 +1,7 @@
+{
+    "id":"1",
+    "minSafeHeartRate":40,
+    "maxSafeHeartRate":120,
+    "dangerousCount":1,
+    "normalCount":1
+}

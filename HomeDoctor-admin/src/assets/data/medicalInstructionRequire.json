@@ -1,0 +1,19 @@
+[
+	{
+		"medicalInstructionRequireId": 0,
+		"medicalInstructionTypeId": 0,
+		"medicalInstructionTypeName": "",
+		"suggestionDiseases": [
+			{
+				"suggestionDiseaseId": 0,
+				"diseaseId": "",
+				"diseaseName": ""
+			},
+			{
+				"suggestionDiseaseId": 0,
+				"diseaseId": "",
+				"diseaseName": ""
+			}
+		]
+	}
+]

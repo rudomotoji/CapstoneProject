@@ -1,0 +1,5168 @@
+import 'dart:ui';
+
+import 'package:capstone_home_doctor/commons/constants/theme.dart';
+import 'package:capstone_home_doctor/commons/routes/routes.dart';
+import 'package:capstone_home_doctor/commons/utils/arr_validator.dart';
+import 'package:capstone_home_doctor/commons/utils/date_validator.dart';
+import 'package:capstone_home_doctor/commons/widgets/button_widget.dart';
+import 'package:capstone_home_doctor/commons/widgets/header_widget.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_full_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_id_now_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/contract_update_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/doctor_info_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/blocs/payment_bloc.dart';
+import 'package:capstone_home_doctor/features/contract/events/contract_full_event.dart';
+import 'package:capstone_home_doctor/features/contract/events/contract_update_event.dart';
+import 'package:capstone_home_doctor/features/contract/events/doctor_info_event.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/contract_repository.dart';
+import 'package:capstone_home_doctor/features/contract/repositories/doctor_repository.dart';
+import 'package:capstone_home_doctor/features/contract/states/contract_full_state_dto.dart';
+import 'package:capstone_home_doctor/features/contract/states/doctor_info_state.dart';
+import 'package:capstone_home_doctor/features/contract/views/webview_payment.dart';
+import 'package:capstone_home_doctor/features/health/health_record/repositories/medical_instruction_repository.dart';
+import 'package:capstone_home_doctor/features/information/blocs/patient_bloc.dart';
+import 'package:capstone_home_doctor/features/information/events/patient_event.dart';
+import 'package:capstone_home_doctor/features/information/repositories/patient_repository.dart';
+import 'package:capstone_home_doctor/features/information/states/patient_state.dart';
+import 'package:capstone_home_doctor/features/payment/blocs/payment_bloc.dart';
+import 'package:capstone_home_doctor/features/payment/repositories/payment_repository.dart';
+import 'package:capstone_home_doctor/models/contract_full_dto.dart';
+import 'package:capstone_home_doctor/models/contract_update_dto.dart';
+import 'package:capstone_home_doctor/models/doctor_dto.dart';
+import 'package:capstone_home_doctor/services/authen_helper.dart';
+import 'package:capstone_home_doctor/services/contract_helper.dart';
+import 'package:capstone_home_doctor/services/noti_helper.dart';
+import 'package:capstone_home_doctor/services/notifications_bloc.dart';
+import 'package:capstone_home_doctor/services/payment_helper.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
+import 'package:photo_view/photo_view.dart';
+import 'package:intl/intl.dart';
+
+//
+final AuthenticateHelper _authenticateHelper = AuthenticateHelper();
+final ContractHelper _contractHelper = ContractHelper();
+final DateValidator _dateValidator = DateValidator();
+final ArrayValidator _arrayValidator = ArrayValidator();
+final PaymentHelper _paymentHelper = PaymentHelper();
+
+final Shader _normalHealthColors = LinearGradient(
+  colors: <Color>[
+    DefaultTheme.GRADIENT_1,
+    DefaultTheme.GRADIENT_2,
+  ],
+).createShader(new Rect.fromLTWH(10.0, 1.0, 100.0, 90.0));
+
+class DetailContractView extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _DetailContractView();
+  }
+}
+
+class _DetailContractView extends State<DetailContractView>
+    with WidgetsBindingObserver {
+  bool _isAccept = false;
+  int _patientId = 0;
+  int _doctorId = 0;
+  int _contractId = 0;
+  ContractIdNowBloc _contractIdNowBloc;
+  ContractFullBloc _contractFullBloc;
+  ContractUpdateBloc _contractUpdateBloc;
+  ContractFullDTO _contractFullDTO = ContractFullDTO();
+  String _stateContract = '';
+  String _currentDate = DateTime.now().toString().split(' ')[0];
+  DoctorDTO doctorDTO = DoctorDTO();
+  //
+  DoctorRepository doctorRepository =
+      DoctorRepository(httpClient: http.Client());
+  PatientRepository patientRepository =
+      PatientRepository(httpClient: http.Client());
+  PaymentRepository paymentRepository =
+      PaymentRepository(httpClient: http.Client());
+  //
+
+  Stream<ReceiveNotification> _notificationsStream;
+  MedicalInstructionRepository _medicalInstructionRepository =
+      MedicalInstructionRepository(httpClient: http.Client());
+  ContractRepository contractRepository =
+      ContractRepository(httpClient: http.Client());
+
+  //
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+
+    _getPatientId();
+    _contractIdNowBloc = BlocProvider.of(context);
+    _contractFullBloc = BlocProvider.of(context);
+    _contractUpdateBloc = BlocProvider.of(context);
+    _refreshData();
+
+    _notificationsStream = NotificationsBloc.instance.notificationsStream;
+    _notificationsStream.listen((notification) {
+      _refreshData();
+    });
+  }
+
+  _getPatientId() async {
+    await _authenticateHelper.getPatientId().then((value) {
+      setState(() {
+        _patientId = value;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    //  NotificationsSelectBloc.instance.newNotification('');
+    super.dispose();
+  }
+
+  Future _refreshData() async {
+    await _contractHelper.getContractId().then((value) {
+      print('value now ${value}');
+      _contractId = value;
+      if (_contractId != 0) {
+        _contractFullBloc.add(ContractFullEventSetCId(cId: _contractId));
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // resizeToAvoidBottomPadding: false,
+      backgroundColor: DefaultTheme.GREY_VIEW,
+      body: SafeArea(
+        child: BlocBuilder<ContractFullBloc, ContractFullState>(
+          builder: (context, state) {
+            //
+            if (state is ContractFullStateLoading) {
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Image.asset('assets/images/loading.gif'),
+                ),
+              );
+            }
+            if (state is ContractFullStateFailure) {
+              return Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Center(
+                      child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+            }
+            if (state is ContractFullStateSuccess) {
+              print('state dto: ${state.dto}');
+              if (state.dto == null ||
+                  state.dto.contractCode == null ||
+                  state.dto.status == null) {
+                return Container(
+                    child: Center(child: Text('Không tìm thấy hợp đồng')));
+              } else {
+                _contractFullDTO = state.dto;
+                _stateContract = state.dto.status;
+                _doctorId = state.dto.doctorId;
+                //
+                ///
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    //
+                    HeaderWidget(
+                      title: 'Chi tiết hợp đồng',
+                      isMainView: false,
+                      buttonHeaderType: ButtonHeaderType.BACK_HOME,
+                    ),
+                    Divider(
+                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                      height: 1,
+                    ),
+
+                    (state.dto.status == 'CANCELP' ||
+                            state.dto.status == 'CANCELD')
+                        ? Container(
+                            height: 60,
+                            width: MediaQuery.of(context).size.width,
+                            color: DefaultTheme.RED_CALENDAR,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: 60,
+                                  height: 25,
+                                  child: Image.asset(
+                                      'assets/images/ic-c-cancel.png'),
+                                ),
+                                Text(
+                                  (state.dto.status == 'CANCELP')
+                                      ? 'Hợp đồng ở trạng thái bị huỷ'
+                                      : 'Bác sĩ đã huỷ hợp đồng yêu cầu của bạn',
+                                  style: TextStyle(color: DefaultTheme.WHITE),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Stack(
+                            children: [
+                              Positioned(
+                                  top: 0,
+                                  child: Container(
+                                    color: DefaultTheme.WHITE,
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(bottom: 5),
+                                    height: 60,
+                                    child: Column(
+                                      children: [
+                                        //
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: 21,
+                                        ),
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            margin: EdgeInsets.only(
+                                              left: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.1,
+                                              right: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.1,
+                                            ),
+                                            height: 1,
+                                            color:
+                                                DefaultTheme.GREY_TOP_TAB_BAR)
+                                      ],
+                                    ),
+                                  )),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding: EdgeInsets.only(bottom: 10, top: 5),
+                                height: 60,
+                                child: Row(
+                                  children: <Widget>[
+                                    //
+
+                                    (_stateContract.contains('PENDING'))
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-pending.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Xét duyệt',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-pending-u.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Xét duyệt',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          ),
+
+                                    (_stateContract.contains('APPROVED'))
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-approved.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Chấp thuận',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-approved-u.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Chấp thuận',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          ),
+                                    //
+
+                                    (_stateContract.contains('SIGNED'))
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-signed.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Đã ký',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-signed-u.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Đã ký',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          ),
+                                    (_stateContract.contains('ACTIVE'))
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-active.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Hiện hành',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-active-u.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Hiện hành',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          ),
+                                    (_stateContract.contains('FINISHED'))
+                                        ? Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-finished.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Kết thúc',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            height: 60,
+                                            child: Column(
+                                              children: [
+                                                Spacer(),
+                                                SizedBox(
+                                                  width: 60,
+                                                  height: 25,
+                                                  child: Image.asset(
+                                                      'assets/images/ic-c-finished-u.png'),
+                                                ),
+                                                Spacer(),
+                                                Text('Kết thúc',
+                                                    style: TextStyle(
+                                                        fontSize: 11)),
+                                              ],
+                                            ),
+                                          ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                    Divider(
+                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                      height: 1,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.only(top: 5, bottom: 5),
+                      color: DefaultTheme.WHITE,
+                      child: Text(
+                        'Trạng thái hợp đồng mã ${state.dto.contractCode}',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 13, color: DefaultTheme.BLACK_BUTTON),
+                      ),
+                    ),
+
+                    Divider(
+                      color: DefaultTheme.GREY_TOP_TAB_BAR,
+                      height: 1,
+                    ),
+                    (_stateContract.contains('APPROVED'))
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              //
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: 30,
+                                padding: EdgeInsets.only(top: 5, bottom: 5),
+                                color: DefaultTheme.SUCCESS_STATUS
+                                    .withOpacity(0.3),
+                                child: InkWell(
+                                  onTap: () {
+                                    if (_patientId != 0 &&
+                                        _contractId != 0 &&
+                                        _doctorId != 0) {
+                                      ContractUpdateDTO contractUpdateDTO =
+                                          ContractUpdateDTO(
+                                        contractId: _contractId,
+                                        doctorId: _doctorId,
+                                        patientId: _patientId,
+                                        status: 'SIGNED',
+                                      );
+                                      return showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Material(
+                                              color: DefaultTheme.TRANSPARENT,
+                                              child: Center(
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(15)),
+                                                  child: BackdropFilter(
+                                                    filter: ImageFilter.blur(
+                                                        sigmaX: 25, sigmaY: 25),
+                                                    child: Container(
+                                                      padding: EdgeInsets.only(
+                                                          left: 10,
+                                                          top: 10,
+                                                          right: 10),
+                                                      width: 250,
+                                                      height: 210,
+                                                      decoration: BoxDecoration(
+                                                        color: DefaultTheme
+                                                            .WHITE
+                                                            .withOpacity(0.7),
+                                                      ),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: <Widget>[
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    bottom: 5,
+                                                                    top: 10),
+                                                            child: Text(
+                                                              'Lưu ý',
+                                                              style: TextStyle(
+                                                                decoration:
+                                                                    TextDecoration
+                                                                        .none,
+                                                                color:
+                                                                    DefaultTheme
+                                                                        .BLACK,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 18,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Spacer(),
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20,
+                                                                    right: 20),
+                                                            child: Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              child: Text(
+                                                                'Bạn vui lòng đọc kĩ nội dung hợp đồng tiếp theo bởi vì hợp đồng sẽ có hiệu lực kể từ khi bạn xác nhận và mọi thông tin trong hợp đồng sẽ thực hiện đúng qui định của pháp luật.',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    TextStyle(
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .none,
+                                                                  color: DefaultTheme
+                                                                      .GREY_TEXT,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontSize: 13,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Spacer(),
+                                                          Divider(
+                                                            height: 1,
+                                                            color: DefaultTheme
+                                                                .GREY_TOP_TAB_BAR,
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              FlatButton(
+                                                                height: 40,
+                                                                minWidth:
+                                                                    250 / 2 -
+                                                                        10.5,
+                                                                child: Text(
+                                                                    'Đóng',
+                                                                    style: TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLUE_TEXT)),
+                                                                onPressed: () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                              ),
+                                                              Container(
+                                                                height: 40,
+                                                                width: 0.5,
+                                                                color: DefaultTheme
+                                                                    .GREY_TOP_TAB_BAR,
+                                                              ),
+                                                              FlatButton(
+                                                                height: 40,
+                                                                minWidth:
+                                                                    250 / 2 -
+                                                                        10.5,
+                                                                child: Text(
+                                                                    'Tiếp tục',
+                                                                    style: TextStyle(
+                                                                        color: DefaultTheme
+                                                                            .BLUE_TEXT)),
+                                                                onPressed: () {
+                                                                  //
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                  _showContractDocument(
+                                                                      contractUpdateDTO,
+                                                                      true);
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          });
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 30,
+                                        height: 30,
+                                        child: Image.asset(
+                                            'assets/images/ic-checked.png'),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                      ),
+                                      Text(
+                                        'XÁC NHẬN HỢP ĐỒNG',
+                                        style: TextStyle(
+                                            color: DefaultTheme.BLUE_DARK,
+                                            fontWeight: FontWeight.w600),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Divider(
+                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                height: 1,
+                              ),
+                            ],
+                          )
+                        : Container(),
+
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: _refreshData,
+                        child: ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: <Widget>[
+                            //
+
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: EdgeInsets.only(
+                                  top: 30, left: 20, bottom: 10),
+                              child: Text(
+                                'Hợp đồng theo dõi',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: DefaultTheme.BLACK_BUTTON),
+                              ),
+                            ),
+                            //
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: DefaultTheme.WHITE,
+                              child: Column(
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10, bottom: 10, left: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Image.asset(
+                                              'assets/images/ic-add-disease.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Text(
+                                          'Bệnh lý',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: DefaultTheme.BLACK_BUTTON),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  for (String i in state.dto.diseaseContracts)
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      padding: EdgeInsets.only(
+                                          top: 10,
+                                          bottom: 10,
+                                          left: 30,
+                                          right: 20),
+                                      color: DefaultTheme.WHITE,
+                                      child: Text('${i}',
+                                          style: TextStyle(
+                                              color: DefaultTheme.BLUE_DARK)),
+                                    ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+//
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: EdgeInsets.only(
+                                  top: 30, left: 20, bottom: 10),
+                              child: Text(
+                                'Thông tin hai bên',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: DefaultTheme.BLACK_BUTTON),
+                              ),
+                            ),
+//
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: DefaultTheme.WHITE,
+                              child: Column(
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10, bottom: 10, left: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Image.asset(
+                                              'assets/images/ic-people.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Text(
+                                          'Bác sĩ',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: DefaultTheme.BLACK_BUTTON),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  //
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Họ và tên:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.fullNameDoctor}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Nơi làm việc:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.workLocationDoctor}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Điện thoại:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_arrayValidator.parsePhoneToView(_contractFullDTO.phoneNumberDoctor)}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Chuyên khoa:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.specialization}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Kinh nghiệm:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.experience} năm',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  //
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+//
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: DefaultTheme.WHITE,
+                              child: Column(
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10, bottom: 10, left: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Image.asset(
+                                              'assets/images/ic-people.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Text(
+                                          'Bệnh nhân',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: DefaultTheme.BLACK_BUTTON),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  //
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 10),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Họ và tên:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.fullNamePatient}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Địa chỉ:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_contractFullDTO.addressPatient}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Điện thoại:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_arrayValidator.parsePhoneToView(_contractFullDTO.phoneNumberPatient)}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Ngày sinh:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_dateValidator.parseToDateView2(_contractFullDTO.dobPatient)}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                        Row(
+                                          children: [
+                                            //
+
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                'Giới tính:',
+                                              ),
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  100 -
+                                                  40,
+                                              child: Text(
+                                                '${_getGender(_contractFullDTO.genderPatient)}',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 7),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  //
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+//
+//
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              padding: EdgeInsets.only(
+                                  top: 30, left: 20, bottom: 10),
+                              child: Text(
+                                'Thông tin về hợp đồng',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: DefaultTheme.BLACK_BUTTON),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: DefaultTheme.WHITE,
+                              child: Column(
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10, bottom: 10, left: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Image.asset(
+                                              'assets/images/ic-calendar.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Text(
+                                          'Thời gian',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: DefaultTheme.BLACK_BUTTON),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  //
+                                  Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      padding:
+                                          EdgeInsets.only(left: 20, right: 20),
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 10),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 100,
+                                                child: Text(
+                                                  'Ngày bắt đầu:',
+                                                ),
+                                              ),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    100 -
+                                                    40,
+                                                child: Text(
+                                                  '${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)}',
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 7),
+                                          ),
+                                          (_contractFullDTO.dateFinished ==
+                                                      null ||
+                                                  _contractFullDTO
+                                                          .dateFinished ==
+                                                      '0001-01-01T00:00:00')
+                                              ? Row(
+                                                  children: [
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width -
+                                                              40,
+                                                      child: Text(
+                                                        'Ngày kết thúc sẽ được cập nhật sau khi bác sĩ xét duyệt.',
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              : Row(
+                                                  children: [
+                                                    //
+
+                                                    Container(
+                                                      width: 100,
+                                                      child: Text(
+                                                        'Ngày kết thúc:',
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width -
+                                                              100 -
+                                                              40,
+                                                      child: Text(
+                                                        '${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}',
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 7),
+                                          ),
+                                        ],
+                                      )),
+                                  //
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+//
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              color: DefaultTheme.WHITE,
+                              child: Column(
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        top: 10, bottom: 10, left: 20),
+                                    color: DefaultTheme.WHITE,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: Image.asset(
+                                              'assets/images/ic-money.png'),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 10),
+                                        ),
+                                        Text(
+                                          'Giá tiền',
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              color: DefaultTheme.BLACK_BUTTON),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                  //
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding:
+                                        EdgeInsets.only(left: 20, right: 20),
+                                    child: (state.dto.priceLicense != 0 &&
+                                            state.dto.daysOfTracking != 0)
+                                        ? Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 10),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: 100,
+                                                    child: Text(
+                                                      'Số ngày:',
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                            100 -
+                                                            40,
+                                                    child: Text(
+                                                      '${_contractFullDTO.daysOfTracking} ngày',
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 7),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  //
+
+                                                  Container(
+                                                    width: 100,
+                                                    child: Text(
+                                                      'Thành tiền:',
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                            100 -
+                                                            40,
+                                                    child: Text(
+                                                      '${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)}',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: DefaultTheme
+                                                              .SUCCESS_STATUS,
+                                                          wordSpacing: 1,
+                                                          letterSpacing: 0.4),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 7),
+                                              ),
+                                            ],
+                                          )
+                                        : Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: 50,
+                                            child: Center(
+                                                child: Text(
+                                                    'Giá tiền sẽ được cập nhật sau khi bác sĩ xét duyệt')),
+                                          ),
+                                  ),
+                                  //
+                                  Divider(
+                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                    height: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+//
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            (state.dto.medicalInstructionDiseases != null &&
+                                    state.dto.medicalInstructionDiseases
+                                        .isNotEmpty)
+                                ? Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    color: DefaultTheme.WHITE,
+                                    child: Column(
+                                      children: [
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: EdgeInsets.only(
+                                              top: 10, bottom: 10, left: 20),
+                                          color: DefaultTheme.WHITE,
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child: Image.asset(
+                                                    'assets/images/ic-medical-instruction.png'),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                              ),
+                                              Text(
+                                                'Phiếu y lệnh tương ứng với bệnh đã chọn',
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: DefaultTheme
+                                                        .BLACK_BUTTON),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        (state.dto.medicalInstructionDiseases !=
+                                                    null &&
+                                                state
+                                                    .dto
+                                                    .medicalInstructionDiseases
+                                                    .isNotEmpty)
+                                            ? Column(
+                                                children: [
+                                                  for (MedicalInstructionDiseases medDisease
+                                                      in state.dto
+                                                          .medicalInstructionDiseases)
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      height: 250,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 20,
+                                                                    top: 10),
+                                                            child: Text(
+                                                                '${medDisease.diseaseId}-${medDisease.nameDisease}'),
+                                                          ),
+                                                          Container(
+                                                            height: 200,
+                                                            width:
+                                                                MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                            child: ListView
+                                                                .builder(
+                                                              scrollDirection:
+                                                                  Axis.horizontal,
+                                                              itemCount: medDisease
+                                                                  .medicalInstructions
+                                                                  .length,
+                                                              itemBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      int index) {
+                                                                return Container(
+                                                                  height: 200,
+                                                                  width: 150,
+                                                                  margin: EdgeInsets
+                                                                      .only(
+                                                                          left:
+                                                                              10),
+                                                                  child:
+                                                                      InkWell(
+                                                                    onTap: () {
+                                                                      if (medDisease.medicalInstructions[index].images ==
+                                                                              null ||
+                                                                          medDisease
+                                                                              .medicalInstructions[index]
+                                                                              .images
+                                                                              .isEmpty) {
+                                                                        if (medDisease
+                                                                            .medicalInstructions
+                                                                            .contains('Đơn thuốc')) {
+                                                                          _showDetailVitalSign(medDisease
+                                                                              .medicalInstructions[index]
+                                                                              .medicalInstructionId);
+                                                                        } else {
+                                                                          print(
+                                                                              'THIS IS MEDICAL INSTRUCTION ID: ${medDisease.medicalInstructions[index].medicalInstructionId}');
+                                                                          _showDetailVitalSign(medDisease
+                                                                              .medicalInstructions[index]
+                                                                              .medicalInstructionId);
+                                                                        }
+                                                                      } else {
+                                                                        showFullDetailComponent(
+                                                                            medDisease.medicalInstructions[index].images,
+                                                                            medDisease.medicalInstructions[index].medicalInstructionTypeName,
+                                                                            medDisease.medicalInstructions[index].dateCreated,
+                                                                            medDisease.medicalInstructions[index].conclusion,
+                                                                            medDisease.medicalInstructions[index].diseases);
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                        Stack(
+                                                                      children: [
+                                                                        //
+                                                                        // SizedBox(
+                                                                        //   width: 150,
+                                                                        //   height: 200,
+                                                                        //   child: Image
+                                                                        //       .network(
+                                                                        //           'http://45.76.186.233:8000/api/v1/Images?pathImage=${medDisease.medicalInstructions[index].images.first}'),
+                                                                        // ),
+                                                                        checkTypeMedIns(
+                                                                            medDisease.medicalInstructions[index],
+                                                                            medDisease.medicalInstructions[index].medicalInstructionTypeName),
+                                                                        Positioned(
+                                                                          bottom:
+                                                                              0,
+                                                                          child:
+                                                                              Container(
+                                                                            width:
+                                                                                150,
+                                                                            height:
+                                                                                100,
+                                                                            padding:
+                                                                                EdgeInsets.only(bottom: 10),
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+                                                                                DefaultTheme.TRANSPARENT,
+                                                                                DefaultTheme.BLACK.withOpacity(0.9),
+                                                                              ]),
+                                                                            ),
+                                                                            child:
+                                                                                Align(
+                                                                              alignment: Alignment.bottomCenter,
+                                                                              child: Text(
+                                                                                '${medDisease.medicalInstructions[index].medicalInstructionTypeName}',
+                                                                                style: TextStyle(color: DefaultTheme.WHITE, fontWeight: FontWeight.w500),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                          Divider(
+                                                            color: DefaultTheme
+                                                                .GREY_TOP_TAB_BAR,
+                                                            height: 2,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                ],
+                                              )
+                                            : Container(),
+                                        //
+                                        // Container(
+                                        //   width: MediaQuery.of(context).size.width,
+                                        //   height: 200,
+                                        //   child: ListView(
+                                        //     scrollDirection: Axis.horizontal,
+                                        //     children: [
+                                        //       for (MedicalInstructionTypes x
+                                        //           in state.dto.medicalInstructionChoosed)
+                                        //         Container(
+                                        //           height: 200,
+                                        //           child: ListView.builder(
+                                        //             scrollDirection: Axis.horizontal,
+                                        //             shrinkWrap: true,
+                                        //             physics:
+                                        //                 NeverScrollableScrollPhysics(),
+                                        //             itemCount:
+                                        //                 x.medicalInstructions.length,
+                                        //             itemBuilder: (BuildContext context,
+                                        //                 int index) {
+                                        //               return Container(
+                                        //                 height: 200,
+                                        //                 width: 150,
+                                        //                 margin:
+                                        //                     EdgeInsets.only(left: 10),
+                                        //                 child:
+                                        // InkWell(
+                                        //                   onTap: () {
+                                        //                     if (x
+                                        //                                 .medicalInstructions[
+                                        //                                     index]
+                                        //                                 .images ==
+                                        //                             null ||
+                                        //                         x
+                                        //                             .medicalInstructions[
+                                        //                                 index]
+                                        //                             .images
+                                        //                             .isEmpty) {
+                                        //                       if (x
+                                        //                           .medicalInstructionTypeName
+                                        //                           .contains(
+                                        //                               'Đơn thuốc')) {
+                                        //                         _showDetailVitalSign(x
+                                        //                             .medicalInstructions[
+                                        //                                 index]
+                                        //                             .medicalInstructionId);
+                                        //                       } else {
+                                        //                         print(
+                                        //                             'THIS IS MEDICAL INSTRUCTION ID: ${x.medicalInstructions[index].medicalInstructionId}');
+                                        //                         _showDetailVitalSign(x
+                                        //                             .medicalInstructions[
+                                        //                                 index]
+                                        //                             .medicalInstructionId);
+                                        //                       }
+                                        //                     } else {
+                                        //                       showFullDetailComponent(
+                                        //                           x
+                                        //                               .medicalInstructions[
+                                        //                                   index]
+                                        //                               .images,
+                                        //                           x
+                                        //                               .medicalInstructionTypeName,
+                                        //                           '',
+                                        //                           x
+                                        //                               .medicalInstructions[
+                                        //                                   index]
+                                        //                               .diagnose);
+                                        //                       // _showFullImageDescription(
+                                        //                       //     x.medicalInstructions[
+                                        //                       //         index],
+                                        //                       //     x.medicalInstructionTypeName);
+                                        //                     }
+                                        //                   },
+                                        //                   child:
+                                        // Stack(
+                                        //                     children: [
+                                        //                       //
+                                        //                       // SizedBox(
+                                        //                       //   width: 150,
+                                        //                       //   height: 200,
+                                        //                       //   child: Image.network(
+                                        //                       //       'http://45.76.186.233:8000/api/v1/Images?pathImage=${x.medicalInstructions[index].image}'),
+                                        //                       // ),
+                                        //                       checkTypeMedIns(
+                                        //                           x.medicalInstructions[
+                                        //                               index],
+                                        //                           x.medicalInstructionTypeName),
+                                        //                       Positioned(
+                                        //                         bottom: 0,
+                                        //                         child: Container(
+                                        //                           width: 150,
+                                        //                           height: 100,
+                                        //                           padding:
+                                        //                               EdgeInsets.only(
+                                        //                                   bottom: 10),
+                                        //                           decoration:
+                                        //                               BoxDecoration(
+                                        //                             gradient: LinearGradient(
+                                        //                                 begin: Alignment
+                                        //                                     .topCenter,
+                                        //                                 end: Alignment
+                                        //                                     .bottomCenter,
+                                        //                                 colors: [
+                                        //                                   DefaultTheme
+                                        //                                       .TRANSPARENT,
+                                        //                                   DefaultTheme
+                                        //                                       .BLACK
+                                        //                                       .withOpacity(
+                                        //                                           0.9),
+                                        //                                 ]),
+                                        //                           ),
+                                        //                           child: Align(
+                                        //                             alignment: Alignment
+                                        //                                 .bottomCenter,
+                                        //                             child: Text(
+                                        //                               '${x.medicalInstructionTypeName}',
+                                        //                               style: TextStyle(
+                                        //                                   color:
+                                        //                                       DefaultTheme
+                                        //                                           .WHITE,
+                                        //                                   fontWeight:
+                                        //                                       FontWeight
+                                        //                                           .w500),
+                                        //                             ),
+                                        //                           ),
+                                        //                         ),
+                                        //                       ),
+                                        //                     ],
+                                        //                   ),
+                                        //                 ),
+                                        //               );
+                                        //             },
+                                        //           ),
+                                        //         )
+                                        //     ],
+                                        //   ),
+                                        // ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+                            Divider(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                              height: 1,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 30),
+                            ),
+                            ///////
+                            ///
+                            ///
+                            ///
+                            (state.dto.medicalInstructionOthers != null &&
+                                    state.dto.medicalInstructionOthers
+                                        .isNotEmpty)
+                                ? Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    color: DefaultTheme.WHITE,
+                                    child: Column(
+                                      children: [
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: EdgeInsets.only(
+                                              top: 10, bottom: 10, left: 20),
+                                          color: DefaultTheme.WHITE,
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child: Image.asset(
+                                                    'assets/images/ic-medical-instruction.png'),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                              ),
+                                              Text(
+                                                'Phiếu y lệnh đã chọn khác',
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: DefaultTheme
+                                                        .BLACK_BUTTON),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          height: 200,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: state
+                                                .dto
+                                                .medicalInstructionOthers
+                                                .length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Container(
+                                                height: 200,
+                                                width: 150,
+                                                margin:
+                                                    EdgeInsets.only(left: 10),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    if (state
+                                                                .dto
+                                                                .medicalInstructionOthers[
+                                                                    index]
+                                                                .images ==
+                                                            null ||
+                                                        state
+                                                            .dto
+                                                            .medicalInstructionOthers[
+                                                                index]
+                                                            .images
+                                                            .isEmpty) {
+                                                      if (state.dto
+                                                          .medicalInstructionOthers
+                                                          .contains(
+                                                              'Đơn thuốc')) {
+                                                        _showDetailVitalSign(state
+                                                            .dto
+                                                            .medicalInstructionOthers[
+                                                                index]
+                                                            .medicalInstructionId);
+                                                      } else {
+                                                        print(
+                                                            'THIS IS MEDICAL INSTRUCTION ID: ${state.dto.medicalInstructionOthers[index].medicalInstructionId}');
+                                                        _showDetailVitalSign(state
+                                                            .dto
+                                                            .medicalInstructionOthers[
+                                                                index]
+                                                            .medicalInstructionId);
+                                                      }
+                                                    } else {
+                                                      showFullDetailComponent(
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .images,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .medicalInstructionTypeName,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .dateCreated,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .conclusion,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .diseases);
+                                                    }
+                                                  },
+                                                  child: Stack(
+                                                    children: [
+                                                      checkTypeMedIns2(
+                                                          state.dto
+                                                                  .medicalInstructionOthers[
+                                                              index],
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionOthers[
+                                                                  index]
+                                                              .medicalInstructionTypeName),
+                                                      Positioned(
+                                                        bottom: 0,
+                                                        child: Container(
+                                                          width: 150,
+                                                          height: 100,
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 10),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            gradient: LinearGradient(
+                                                                begin: Alignment
+                                                                    .topCenter,
+                                                                end: Alignment
+                                                                    .bottomCenter,
+                                                                colors: [
+                                                                  DefaultTheme
+                                                                      .TRANSPARENT,
+                                                                  DefaultTheme
+                                                                      .BLACK
+                                                                      .withOpacity(
+                                                                          0.9),
+                                                                ]),
+                                                          ),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .bottomCenter,
+                                                            child: Text(
+                                                              '${state.dto.medicalInstructionOthers[index].medicalInstructionTypeName}',
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .WHITE,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 2,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+
+                            ///////
+                            ///
+                            ///
+                            ///
+
+                            (state.dto.medicalInstructionChoosed != null &&
+                                    state.dto.medicalInstructionChoosed
+                                        .isNotEmpty)
+                                ? Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    color: DefaultTheme.WHITE,
+                                    child: Column(
+                                      children: [
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: EdgeInsets.only(
+                                              top: 10, bottom: 10, left: 20),
+                                          color: DefaultTheme.WHITE,
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child: Image.asset(
+                                                    'assets/images/ic-medical-instruction.png'),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                              ),
+                                              Text(
+                                                'Phiếu y lệnh mà bác sĩ đã chọn',
+                                                textAlign: TextAlign.left,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: DefaultTheme
+                                                        .BLACK_BUTTON),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 1,
+                                        ),
+                                        Container(
+                                          height: 200,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: state
+                                                .dto
+                                                .medicalInstructionChoosed
+                                                .length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Container(
+                                                height: 200,
+                                                width: 150,
+                                                margin:
+                                                    EdgeInsets.only(left: 10),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    if (state
+                                                                .dto
+                                                                .medicalInstructionChoosed[
+                                                                    index]
+                                                                .images ==
+                                                            null ||
+                                                        state
+                                                            .dto
+                                                            .medicalInstructionChoosed[
+                                                                index]
+                                                            .images
+                                                            .isEmpty) {
+                                                      if (state.dto
+                                                          .medicalInstructionChoosed
+                                                          .contains(
+                                                              'Đơn thuốc')) {
+                                                        _showDetailVitalSign(state
+                                                            .dto
+                                                            .medicalInstructionChoosed[
+                                                                index]
+                                                            .medicalInstructionId);
+                                                      } else {
+                                                        print(
+                                                            'THIS IS MEDICAL INSTRUCTION ID: ${state.dto.medicalInstructionChoosed[index].medicalInstructionId}');
+                                                        _showDetailVitalSign(state
+                                                            .dto
+                                                            .medicalInstructionChoosed[
+                                                                index]
+                                                            .medicalInstructionId);
+                                                      }
+                                                    } else {
+                                                      showFullDetailComponent(
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .images,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .medicalInstructionTypeName,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .dateCreated,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .conclusion,
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .diseases);
+                                                    }
+                                                  },
+                                                  child: Stack(
+                                                    children: [
+                                                      checkTypeMedIns3(
+                                                          state.dto
+                                                                  .medicalInstructionChoosed[
+                                                              index],
+                                                          state
+                                                              .dto
+                                                              .medicalInstructionChoosed[
+                                                                  index]
+                                                              .medicalInstructionTypeName),
+                                                      Positioned(
+                                                        bottom: 0,
+                                                        child: Container(
+                                                          width: 150,
+                                                          height: 100,
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 10),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            gradient: LinearGradient(
+                                                                begin: Alignment
+                                                                    .topCenter,
+                                                                end: Alignment
+                                                                    .bottomCenter,
+                                                                colors: [
+                                                                  DefaultTheme
+                                                                      .TRANSPARENT,
+                                                                  DefaultTheme
+                                                                      .BLACK
+                                                                      .withOpacity(
+                                                                          0.9),
+                                                                ]),
+                                                          ),
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .bottomCenter,
+                                                            child: Text(
+                                                              '${state.dto.medicalInstructionChoosed[index].medicalInstructionTypeName}',
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .WHITE,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        Divider(
+                                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                          height: 2,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Container(),
+
+                            ///
+                            ///
+                            ///
+
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 20),
+                            ),
+
+                            //
+                            Divider(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                              height: 1,
+                            ),
+                            //
+                            (_stateContract == 'APPROVED')
+                                ? Container()
+                                : Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: EdgeInsets.only(
+                                        left: 20,
+                                        right: 20,
+                                        top: 10,
+                                        bottom: 10),
+                                    color: DefaultTheme.YELLOW.withOpacity(0.2),
+                                    child: InkWell(
+                                      onTap: () {
+                                        print('contractId ${_contractId}');
+                                        print('patientId ${_patientId}');
+                                        print('doctorId ${_doctorId}');
+
+                                        if (_contractId != 0 &&
+                                            _patientId != 0 &&
+                                            _doctorId != 0) {
+                                          ContractUpdateDTO contractUpdateDTO =
+                                              ContractUpdateDTO(
+                                            contractId: _contractId,
+                                            doctorId: _doctorId,
+                                            patientId: _patientId,
+                                            status: 'SIGNED',
+                                          );
+
+                                          _showContractDocument(
+                                              contractUpdateDTO, false);
+                                        }
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          //
+                                          SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: Image.asset(
+                                                'assets/images/ic-contract.png'),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 20),
+                                          ),
+                                          Text(
+                                            'Xem bản hợp đồng',
+                                            style: TextStyle(
+                                                color:
+                                                    DefaultTheme.ORANGE_TEXT),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                            Divider(
+                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                              height: 1,
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 10),
+                            ),
+                            (_stateContract.contains('PENDING'))
+                                ? Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 40,
+                                    child: InkWell(
+                                      onTap: () {
+                                        //
+                                        if (_patientId != 0 &&
+                                            _contractId != 0 &&
+                                            _doctorId != 0) {
+                                          ContractUpdateDTO contractCancelDTO =
+                                              ContractUpdateDTO(
+                                            contractId: _contractId,
+                                            doctorId: _doctorId,
+                                            patientId: _patientId,
+                                            status: 'CANCELP',
+                                          );
+                                          //
+                                          return showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return Material(
+                                                color: DefaultTheme.TRANSPARENT,
+                                                child: Center(
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                15)),
+                                                    child: BackdropFilter(
+                                                      filter: ImageFilter.blur(
+                                                          sigmaX: 25,
+                                                          sigmaY: 25),
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 10,
+                                                                top: 10,
+                                                                right: 10),
+                                                        width: 250,
+                                                        height: 185,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: DefaultTheme
+                                                              .WHITE
+                                                              .withOpacity(0.7),
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: <Widget>[
+                                                            Spacer(),
+                                                            Container(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      bottom:
+                                                                          10,
+                                                                      top: 0),
+                                                              child: Text(
+                                                                'Lưu ý',
+                                                                style:
+                                                                    TextStyle(
+                                                                  decoration:
+                                                                      TextDecoration
+                                                                          .none,
+                                                                  color:
+                                                                      DefaultTheme
+                                                                          .BLACK,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize: 18,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 20,
+                                                                      right:
+                                                                          20),
+                                                              child: Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                child: Text(
+                                                                  'Huỷ yêu cầu đồng nghĩa bác sĩ sẽ không xem xét được tình trạng bệnh lý và yêu cầu chăm khám. Bạn có muốn huỷ?',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    decoration:
+                                                                        TextDecoration
+                                                                            .none,
+                                                                    color: DefaultTheme
+                                                                        .GREY_TEXT,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                    fontSize:
+                                                                        13,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Spacer(),
+                                                            Divider(
+                                                              height: 1,
+                                                              color: DefaultTheme
+                                                                  .GREY_TOP_TAB_BAR,
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                FlatButton(
+                                                                  height: 40,
+                                                                  minWidth:
+                                                                      250 / 2 -
+                                                                          10.5,
+                                                                  child: Text(
+                                                                      'ĐÓNG',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              DefaultTheme.BLUE_TEXT)),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  },
+                                                                ),
+                                                                Container(
+                                                                  height: 40,
+                                                                  width: 1,
+                                                                  color: DefaultTheme
+                                                                      .GREY_TOP_TAB_BAR,
+                                                                ),
+                                                                FlatButton(
+                                                                  height: 40,
+                                                                  minWidth:
+                                                                      250 / 2 -
+                                                                          10.5,
+                                                                  child: Text(
+                                                                      'XÁC NHẬN',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              DefaultTheme.RED_TEXT)),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    //
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                    //
+                                                                    print(
+                                                                        'CONTRACT CANCEL DTO:\n contractId:${contractCancelDTO.contractId} -dateStart: ${contractCancelDTO.dateStart} -daysOfTracking: ${contractCancelDTO.daysOfTracking} - status:${contractCancelDTO.status} -patientId: ${contractCancelDTO.patientId} - doctorId: ${contractCancelDTO.doctorId} ');
+                                                                    await _contractUpdateBloc.add(
+                                                                        ContractUpdateEventUpdate(
+                                                                            dto:
+                                                                                contractCancelDTO));
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .popUntil(
+                                                                            ModalRoute.withName('/'));
+                                                                    // Navigator.of(context).pushNamedAndRemoveUntil(
+                                                                    //     RoutesHDr
+                                                                    //         .MAIN_HOME,
+                                                                    //     (Route<dynamic>
+                                                                    //             route) =>
+                                                                    //         false);
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        }
+                                      },
+                                      child: Center(
+                                        child: Text(
+                                          'Huỷ yêu cầu hợp đồng',
+                                          style: TextStyle(
+                                              color: DefaultTheme.RED_CALENDAR,
+                                              decoration:
+                                                  TextDecoration.underline),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 30),
+                            ),
+                            //
+                            ///
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              }
+            }
+            return Container(
+                width: MediaQuery.of(context).size.width,
+                child: Center(
+                    child: Text('Kiểm tra lại đường truyền kết nối mạng')));
+          },
+        ),
+      ),
+    );
+  }
+
+//hiển thị y lệnh
+  checkTypeMedIns(MedicalInstructions medicalInstructions,
+      String medicalInstructionTypeName) {
+    if (medicalInstructions.images != null &&
+        medicalInstructions.images.isNotEmpty) {
+      return SizedBox(
+        width: 150,
+        height: 200,
+        child: Image.network(
+            'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions.images.first}'),
+      );
+    } else {
+      if (medicalInstructionTypeName.contains('Đơn thuốc')) {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset('assets/images/ic-medicine.png'),
+              ),
+            ],
+          ),
+        );
+      } else if (medicalInstructionTypeName.contains('Sinh hiệu')) {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset('assets/images/ic-health-selected.png'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              //
+              Container(
+                width: 40,
+                height: 40,
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
+  checkTypeMedIns2(MedicalInstructionOthers medicalInstructions,
+      String medicalInstructionTypeName) {
+    if (medicalInstructions.images != null &&
+        medicalInstructions.images.isNotEmpty) {
+      return SizedBox(
+        width: 150,
+        height: 200,
+        child: Image.network(
+            'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions.images.first}'),
+      );
+    } else {
+      if (medicalInstructionTypeName.contains('Đơn thuốc')) {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset('assets/images/ic-medicine.png'),
+              ),
+            ],
+          ),
+        );
+      } else if (medicalInstructionTypeName.contains('Sinh hiệu')) {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset('assets/images/ic-health-selected.png'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              //
+              Container(
+                width: 40,
+                height: 40,
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
+  checkTypeMedIns3(MedicalInstructionChoosed medicalInstructions,
+      String medicalInstructionTypeName) {
+    if (medicalInstructions.images != null &&
+        medicalInstructions.images.isNotEmpty) {
+      return SizedBox(
+        width: 150,
+        height: 200,
+        child: Image.network(
+            'http://45.76.186.233:8000/api/v1/Images?pathImage=${medicalInstructions.images.first}'),
+      );
+    } else {
+      if (medicalInstructionTypeName.contains('Đơn thuốc')) {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset('assets/images/ic-medicine.png'),
+              ),
+            ],
+          ),
+        );
+      } else if (medicalInstructionTypeName.contains('Sinh hiệu')) {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset('assets/images/ic-health-selected.png'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        return Container(
+          width: 150,
+          height: 200,
+          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              //
+              Container(
+                width: 40,
+                height: 40,
+              ),
+            ],
+          ),
+        );
+      }
+    }
+  }
+
+  void _showDetailVitalSign(int medicalInstructionId) {
+    print('THIS IS MEDICAL INSTRUCTION ID: $medicalInstructionId');
+    setState(() {
+      showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (BuildContext context) {
+            return Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                  child: Container(
+                    padding: EdgeInsets.all(10),
+                    width: 250,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: DefaultTheme.WHITE.withOpacity(0.7),
+                    ),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 130,
+                          // height: 100,
+                          child: Image.asset('assets/images/loading.gif'),
+                        ),
+                        // Spacer(),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            'Đang tải',
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              color: DefaultTheme.GREY_TEXT,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          });
+    });
+
+    _medicalInstructionRepository
+        .getMedicalInstructionById(medicalInstructionId)
+        .then((value) {
+      Navigator.pop(context);
+      if (value != null) {
+        if (value.medicationsRespone != null) {
+          Navigator.pushNamed(context, RoutesHDr.MEDICAL_HISTORY_DETAIL,
+              arguments: value.medicalInstructionId);
+        } else {
+          var dateStarted = _dateValidator.convertDateCreate(
+              value.vitalSignScheduleRespone.timeStared,
+              'dd/MM/yyyy',
+              "yyyy-MM-dd");
+          var dateFinished = _dateValidator.convertDateCreate(
+              value.vitalSignScheduleRespone.timeCanceled,
+              'dd/MM/yyyy',
+              "yyyy-MM-dd");
+
+          setState(() {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        width: MediaQuery.of(context).size.width - 20,
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        decoration: BoxDecoration(
+                          color: DefaultTheme.WHITE.withOpacity(0.6),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(top: 20),
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(left: 20),
+                                ),
+                                Text(
+                                  '${value.medicalInstructionType}',
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    decoration: TextDecoration.none,
+                                    color: DefaultTheme.BLACK,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Divider(
+                                    color: DefaultTheme.GREY_TEXT,
+                                    height: 0.25,
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 5)),
+                                  Text(
+                                    'Người đặt: ${value.placeHealthRecord}',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      decoration: TextDecoration.none,
+                                      color: DefaultTheme.GREY_TEXT,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 10)),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: value.vitalSignScheduleRespone
+                                          .vitalSigns.length,
+                                      itemBuilder: (context, index) {
+                                        var item = value
+                                            .vitalSignScheduleRespone
+                                            .vitalSigns[index];
+                                        return Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Divider(
+                                              color: DefaultTheme.GREY_TEXT,
+                                              height: 0.25,
+                                            ),
+                                            Text(
+                                              '${value.vitalSignScheduleRespone.vitalSigns[0].vitalSignType}',
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Chỉ số an toàn:',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    decoration:
+                                                        TextDecoration.none,
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${value.vitalSignScheduleRespone.vitalSigns[0].numberMin} - ${value.vitalSignScheduleRespone.vitalSigns[0].numberMax}',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    decoration:
+                                                        TextDecoration.none,
+                                                    color:
+                                                        DefaultTheme.GREY_TEXT,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Text(
+                                              'Ngày bắt đầu: ${dateStarted}',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                            Text(
+                                              'Ngày Kết thúc: ${dateFinished}',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                decoration: TextDecoration.none,
+                                                color: DefaultTheme.GREY_TEXT,
+                                                fontWeight: FontWeight.w400,
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                    ),
+                                  ),
+                                  ButtonHDr(
+                                    style: BtnStyle.BUTTON_BLACK,
+                                    label: 'Chi tiết',
+                                    onTap: () {
+                                      Map<String, dynamic> arguments = {
+                                        'healthRecordId': 0,
+                                        'medicalInstructionId':
+                                            medicalInstructionId,
+                                        "timeStared": value
+                                            .vitalSignScheduleRespone
+                                            .timeStared,
+                                        "timeCanceled": value
+                                            .vitalSignScheduleRespone
+                                            .timeCanceled,
+                                      };
+                                      Navigator.pushNamed(context,
+                                          RoutesHDr.VITAL_SIGN_CHART_DETAIL,
+                                          arguments: arguments);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 15),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          });
+        }
+      }
+    });
+  }
+
+  _showContractDocument(ContractUpdateDTO dto, bool isSigned) {
+    //
+    _isAccept = false;
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        backgroundColor: DefaultTheme.TRANSPARENT,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+            _updateAcceptState() {
+              setModalState(() {
+                _isAccept = !_isAccept;
+              });
+            }
+
+            return BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: Stack(
+                  //
+                  children: <Widget>[
+                    //
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.96,
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.05),
+                      color: DefaultTheme.TRANSPARENT,
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.96,
+                        padding: EdgeInsets.only(top: 1),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(10)),
+                          color: DefaultTheme.GREY_VIEW,
+                        ),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              //
+                              Expanded(
+                                child: ListView(children: <Widget>[
+                                  //
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: DefaultTheme.GREY_VIEW),
+                                    margin: EdgeInsets.only(
+                                        left: 10,
+                                        right: 10,
+                                        top: 20,
+                                        bottom: 20),
+                                    padding:
+                                        EdgeInsets.only(top: 30, bottom: 30),
+                                    width:
+                                        MediaQuery.of(context).size.width - 20,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 0, right: 0),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'CỘNG HOÀ XÃ HỘI CHỦ NGHĨA VIỆT NAM',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 10, right: 10, bottom: 30),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'Độc lập - Tự do - Hạnh phúc',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                decoration:
+                                                    TextDecoration.underline,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 10, right: 10),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'HỢP ĐỒNG KHÁM CHỮA BỆNH',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 20,
+                                                  fontFamily: 'NewYork'),
+                                            ),
+                                          ),
+                                        ),
+
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 20, left: 20, right: 20),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              //
+                                              Text(
+                                                '- Căn cứ Bộ luật Dân sự ngày 14 tháng 6 năm 2005;',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: DefaultTheme.BLACK,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 5),
+                                              ),
+                                              Text(
+                                                '- Căn cứ Luật khám bệnh, chữa bệnh ngày 23 tháng 11 năm 2009;',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: DefaultTheme.BLACK,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 5),
+                                              ),
+                                              Text(
+                                                '- Căn cứ Nghị định số 87/2011/NĐ-CP ngày 27 tháng 9 năm 2011 của Chính phủ quy định chi tiết và hướng dẫn thi hành một số điều của Luật khám bệnh, chữa bệnh;',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: DefaultTheme.BLACK,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(bottom: 20),
+                                              ),
+                                              Text(
+                                                'Hôm nay ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateStarted)}.\nChúng tôi gồm có:',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: DefaultTheme.BLACK,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        _getPatientInfo(dto.patientId),
+
+                                        ///
+                                        ///
+                                        BlocProvider(
+                                          create: (context) => DoctorInfoBloc(
+                                              doctorAPI: doctorRepository)
+                                            ..add(DoctorInfoEventSetId(
+                                                id: dto.doctorId)),
+                                          child: _getDoctorInfo(),
+                                        ),
+
+                                        ///
+
+                                        ///
+                                        ///
+                                        ///
+                                        ///
+                                        ///
+                                        ///
+                                        ///
+
+                                        //
+                                        //
+
+                                        //
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 30, left: 20, right: 20),
+                                          child: Text(
+                                              'Sau khi thỏa thuận, Hai bên thống nhất ký kết hợp đồng khám, chữa bệnh theo các điều khoản cụ thể như sau:',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 15,
+                                                  fontStyle: FontStyle.italic,
+                                                  fontFamily: 'NewYork')),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              bottom: 10,
+                                              top: 20),
+                                          child: Text(
+                                            'Điều 1: Thời hạn và nhiệm vụ hợp đồng',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 20),
+                                          child: Text(
+                                            (_contractFullDTO.dateFinished ==
+                                                        null ||
+                                                    _contractFullDTO
+                                                            .dateFinished ==
+                                                        '0001-01-01T00:00:00')
+                                                ? 'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateStarted)}. \n Ngày kết thúc sẽ được cập nhật sau khi bác sĩ xét duyệt.'
+                                                : 'Thời hạn hợp đồng kể từ ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateStarted)} đến ngày ${_dateValidator.parseToDateView2(_contractFullDTO.dateFinished)}.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              bottom: 10,
+                                              top: 30),
+                                          child: Text(
+                                            'Điều 2: Chế độ thăm khám và theo dõi',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 20),
+                                          child: Text(
+                                            'Bên B sẽ sử dụng HDr system để hỗ trợ khám và tư vấn cho bên A.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              bottom: 20,
+                                              top: 30),
+                                          child: Text(
+                                            'Điều 3: Nghĩa vụ và quyền lợi của bên A',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 20),
+                                          child: Text(
+                                            '1. Quyền lợi của bên A:',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'a) Được khám, chữa bệnh và chăm sóc dưới sự giám sát của bên B.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'b) Đề xuất, khiếu nại hoặc đề nghị thay đổi hoặc chấm dứt hợp đồng.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'c) Bên A có thể chấm dứt hợp đồng bất cứ khi nào.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              bottom: 20,
+                                              top: 20),
+                                          child: Text(
+                                            '2. Nghĩa vụ:',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'a) Cung cấp những thông tin cần thiết cho bên B để có thể theo dõi và khám chữa bệnh.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'b) Hoàn thành những nghĩa vụ đã cam kết trong hợp đồng giữa hai bên theo các điều mục 5,6 bên dưới.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'c) Phối hợp theo đúng chỉ định của bên B về việc khám và chữa bệnh.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'd) Chấp hành nội quy, quy chế theo quy định của bộ y tế về việc tổ chức khám chữa bệnh.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              bottom: 20,
+                                              top: 30),
+                                          child: Text(
+                                            'Điều 4. Nghĩa vụ và quyền lợi của bên B',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 20),
+                                          child: Text(
+                                            '1. Quyền lợi của bên B:',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'a) Yêu cầu bên A cung cấp và chia sẻ các thông tin cần thiết.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'b) Bên B có thể đơn phương chấm dứt hợp đồng khi có bằng chứng việc bên A có những sai phạm trong các điều khoản 5 và 6 cũng như các nghĩa vụ mà bên A phải thực hiện hoặc sai phạm luật của bộ y tế theo nghị định số 87/2011/NĐ-CP ngày 27 tháng 9 năm 2011 cũng như không tuân thủ các quy định được đưa ra trong ứng dụng HDr, gây ảnh hưởng tới việc không thể theo dõi và chăm sóc bệnh nhân.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              bottom: 20,
+                                              top: 20),
+                                          child: Text(
+                                            '2. Nghĩa vụ của bên B:',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'a) Xác nhận quá trình theo quy định của Luật khám bệnh, chữa bệnh ngày 23 tháng 11 năm 2009; Nghị định số 87/2011/NĐ-CP ngày 27 tháng 9 năm 2011 của Chính phủ quy định chi tiết và hướng dẫn thi hành một số điều của Luật khám bệnh, chữa bệnh và Thông tư số 41/2011/TT-BYT ngày 14 tháng 11 năm 2011 của Bộ trưởng Bộ Y tế Hướng dẫn cấp chứng chỉ hành nghề đối với người hành nghề và cấp giấy phép hoạt động đối với cơ sở khám bệnh, chữa bệnh.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'b) Đảm bảo thực hiện đầy đủ những điều đã cam kết trong hợp đồng làm việc.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'c) Không được chấm dứt hợp đồng nếu bên A không sai phạm các điều luật đã quy định trong hợp đồng.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            'd) Khi bên B tự động chấm dứt hợp đồng trước thời hạn, phải bồi thường cho bên A theo quy định của pháp luật.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              bottom: 20,
+                                              top: 30),
+                                          child: Text(
+                                            'Điều 5. Nghĩa vụ và quyền lợi của bên B',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            '1. Khi có tranh chấp, hai bên thống nhất giải quyết trên nguyên tắc bình đẳng, hợp tác, hòa giải. Trong thời gian tranh chấp, hai Bên vẫn phải bảo đảm điều kiện để khám bệnh, chữa bệnh đầy đủ.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            '2. Trường hợp hai Bên không hòa giải được sẽ báo cáo cơ quan có thẩm quyền giải quyết.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              bottom: 20,
+                                              top: 30),
+                                          child: Text(
+                                            'Điều 6. Tiền dịch vụ và phương thức thanh toán',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        (_contractFullDTO.priceLicense ==
+                                                    null ||
+                                                _contractFullDTO.priceLicense ==
+                                                    0 ||
+                                                _contractFullDTO
+                                                        .daysOfTracking ==
+                                                    0)
+                                            ? Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                    bottom: 10),
+                                                child: Text(
+                                                  '- Phí tiền dịch vụ: Được cập nhật sau khi bác sĩ phê duyệt',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 16,
+                                                      fontFamily: 'NewYork'),
+                                                ),
+                                              )
+                                            : Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                    bottom: 10),
+                                                child: Text(
+                                                  '- Phí tiền dịch vụ: ${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)} từ ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)} đến ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}.',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 16,
+                                                      fontFamily: 'NewYork'),
+                                                ),
+                                              ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            '- Phương thức thanh toán: Thanh toán trực tiếp vào tài khoản của Home Doctor thông qua VNPAY.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20,
+                                              right: 20,
+                                              bottom: 20,
+                                              top: 30),
+                                          child: Text(
+                                            'Điều 7. Cam kết chung',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            (_contractFullDTO.dateFinished ==
+                                                        null ||
+                                                    _contractFullDTO
+                                                            .dateFinished ==
+                                                        '0001-01-01T00:00:00')
+                                                ? '1. Hai bên cam kết thực hiện đúng những điều khoản trong hợp đồng từ ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)}. Ngày kết thúc hợp đồng sẽ được bác sĩ phê duyệt.'
+                                                : '1. Hai bên cam kết thực hiện đúng những điều khoản trong hợp đồng từ ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)} đến ngày ${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 10),
+                                          child: Text(
+                                            '2. Những vấn đề phát sinh khác ngoài hợp đồng, kể cả việc kéo dài hoặc chấm dứt hợp đồng trước thời hạn sẽ được hai bên cùng thảo luận giải quyết, thể hiện bằng việc ký kết một hợp mới, hợp đồng hiện hành sẽ hết hạn kể từ khi hợp đồng mới được ký.',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                                fontFamily: 'NewYork'),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  (isSigned)
+                                      ? Container(
+                                          padding: EdgeInsets.only(
+                                              left: 20, right: 20, bottom: 20),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              InkWell(
+                                                onTap: () =>
+                                                    _updateAcceptState(),
+                                                borderRadius:
+                                                    BorderRadius.circular(40),
+                                                child: _isAccept
+                                                    ? SizedBox(
+                                                        width: 20,
+                                                        height: 20,
+                                                        child: Image.asset(
+                                                            'assets/images/ic-dot.png'),
+                                                      )
+                                                    : SizedBox(
+                                                        width: 20,
+                                                        height: 20,
+                                                        child: Image.asset(
+                                                            'assets/images/ic-dot-unselect.png'),
+                                                      ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                              ),
+                                              Text(
+                                                'Tôi đồng ý với tất cả các điều khoản.',
+                                                style: TextStyle(
+                                                  color: DefaultTheme.GREY_TEXT,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 15,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : Container(),
+                                  (isSigned && _isAccept)
+                                      ? Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: 50,
+                                          margin: EdgeInsets.only(
+                                              bottom: 30, left: 20, right: 20),
+                                          child: ButtonHDr(
+                                            style: BtnStyle.BUTTON_BLACK,
+                                            label: 'Xác nhận hợp đồng',
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                              return showDialog(
+                                                  barrierDismissible: false,
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return Material(
+                                                      color: DefaultTheme
+                                                          .TRANSPARENT,
+                                                      child: Center(
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          15)),
+                                                          child: BackdropFilter(
+                                                            filter: ImageFilter
+                                                                .blur(
+                                                                    sigmaX: 25,
+                                                                    sigmaY: 25),
+                                                            child: Container(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 10,
+                                                                      top: 10,
+                                                                      right:
+                                                                          10),
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width -
+                                                                  40,
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  0.35,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                color: DefaultTheme
+                                                                    .WHITE
+                                                                    .withOpacity(
+                                                                        0.7),
+                                                              ),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: <
+                                                                    Widget>[
+                                                                  Container(
+                                                                      padding: EdgeInsets.only(
+                                                                          bottom:
+                                                                              5,
+                                                                          top:
+                                                                              20),
+                                                                      child:
+                                                                          Row(
+                                                                        children: [
+                                                                          Padding(
+                                                                            padding:
+                                                                                EdgeInsets.only(left: 20),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                30,
+                                                                            height:
+                                                                                30,
+                                                                            child:
+                                                                                Image.asset('assets/images/ic-money.png'),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding:
+                                                                                EdgeInsets.only(left: 20),
+                                                                          ),
+                                                                          Text(
+                                                                            'Xác nhận thanh toán',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              decoration: TextDecoration.none,
+                                                                              color: DefaultTheme.BLACK,
+                                                                              fontWeight: FontWeight.w600,
+                                                                              fontSize: 22,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      )),
+                                                                  Padding(
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .only(
+                                                                      bottom:
+                                                                          10,
+                                                                      top: 10,
+                                                                    ),
+                                                                    child: Divider(
+                                                                        color: DefaultTheme
+                                                                            .GREY_TOP_TAB_BAR,
+                                                                        height:
+                                                                            1),
+                                                                  ),
+                                                                  Container(
+                                                                    padding: EdgeInsets.only(
+                                                                        left:
+                                                                            20,
+                                                                        right:
+                                                                            20),
+                                                                    child: Align(
+                                                                        alignment: Alignment.center,
+                                                                        child: RichText(
+                                                                          text:
+                                                                              TextSpan(
+                                                                            style:
+                                                                                TextStyle(color: DefaultTheme.BLACK, fontSize: 16),
+                                                                            children: <TextSpan>[
+                                                                              TextSpan(text: 'Khi ký hợp đồng này, đồng nghĩa với việc bạn phải trả '),
+                                                                              TextSpan(text: '${NumberFormat.currency(locale: 'vi').format(_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense)}', style: TextStyle(color: DefaultTheme.SUCCESS_STATUS, fontWeight: FontWeight.w600)),
+                                                                              TextSpan(text: '.\nSố tiền này sẽ không được hoàn trả.'),
+                                                                              TextSpan(text: '\nHợp đồng có hiệu lực:'),
+                                                                              TextSpan(text: '\nTừ ngày: '),
+                                                                              TextSpan(text: '${_dateValidator.parseToDateView(_contractFullDTO.dateStarted)}', style: TextStyle(color: DefaultTheme.BLUE_TEXT)),
+                                                                              TextSpan(text: '\nĐến ngày: '),
+                                                                              TextSpan(text: '${_dateValidator.parseToDateView(_contractFullDTO.dateFinished)}', style: TextStyle(color: DefaultTheme.BLUE_TEXT)),
+                                                                              TextSpan(text: '.'),
+                                                                            ],
+                                                                          ),
+                                                                        )),
+                                                                  ),
+                                                                  Spacer(),
+                                                                  Divider(
+                                                                    height: 1,
+                                                                    color: DefaultTheme
+                                                                        .GREY_TOP_TAB_BAR,
+                                                                  ),
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      FlatButton(
+                                                                        height:
+                                                                            40,
+                                                                        minWidth:
+                                                                            (MediaQuery.of(context).size.width - 60.5) /
+                                                                                2,
+                                                                        child: Text(
+                                                                            'Đóng',
+                                                                            style:
+                                                                                TextStyle(color: DefaultTheme.RED_CALENDAR)),
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            _isAccept =
+                                                                                false;
+                                                                          });
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        },
+                                                                      ),
+                                                                      Container(
+                                                                        height:
+                                                                            40,
+                                                                        width:
+                                                                            0.5,
+                                                                        color: DefaultTheme
+                                                                            .GREY_TOP_TAB_BAR,
+                                                                      ),
+                                                                      FlatButton(
+                                                                        height:
+                                                                            40,
+                                                                        minWidth:
+                                                                            (MediaQuery.of(context).size.width - 60.5) /
+                                                                                2,
+                                                                        child: Text(
+                                                                            'Thanh toán',
+                                                                            style:
+                                                                                TextStyle(color: DefaultTheme.BLUE_TEXT)),
+                                                                        onPressed:
+                                                                            () async {
+                                                                          double
+                                                                              money =
+                                                                              _contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense;
+                                                                          print(
+                                                                              'TIEN: ${_contractFullDTO.daysOfTracking * _contractFullDTO.priceLicense} ');
+                                                                          // Navigator.of(context, rootNavigator: true)
+                                                                          //     .pop();
+
+//                                                                           showDialog(
+//                                                                               barrierDismissible: false,
+//                                                                               context: context,
+//                                                                               builder: (BuildContext context) {
+//                                                                                 return Material(
+//                                                                                   color: DefaultTheme.TRANSPARENT,
+//                                                                                   child: Center(
+//                                                                                     child: ClipRRect(
+//                                                                                       borderRadius: BorderRadius.all(Radius.circular(15)),
+//                                                                                       child: BackdropFilter(
+//                                                                                         filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+//                                                                                         child: Container(
+//                                                                                           padding: EdgeInsets.all(10),
+//                                                                                           width: 250,
+//                                                                                           height: 160,
+//                                                                                           decoration: BoxDecoration(
+//                                                                                             color: DefaultTheme.WHITE.withOpacity(0.7),
+//                                                                                           ),
+//                                                                                           child: Column(
+//                                                                                             children: <Widget>[
+//                                                                                               SizedBox(
+//                                                                                                 width: 130,
+//                                                                                                 // height: 100,
+//                                                                                                 child: Image.asset('assets/images/loading.gif'),
+//                                                                                               ),
+//                                                                                               // Spacer(),
+//                                                                                               Container(
+//                                                                                                 padding: EdgeInsets.only(bottom: 10),
+//                                                                                                 child: Text(
+//                                                                                                   'Đang tải',
+//                                                                                                   style: TextStyle(
+//                                                                                                     decoration: TextDecoration.none,
+//                                                                                                     color: DefaultTheme.GREY_TEXT,
+//                                                                                                     fontWeight: FontWeight.w400,
+//                                                                                                     fontSize: 15,
+//                                                                                                   ),
+//                                                                                                 ),
+//                                                                                               ),
+//                                                                                             ],
+//                                                                                           ),
+//                                                                                         ),
+//                                                                                       ),
+//                                                                                     ),
+//                                                                                   ),
+//                                                                                 );
+//                                                                               });
+// /////////////
+
+                                                                          /////// process here
+                                                                          await paymentRepository
+                                                                              .vnpay(money, 'Thanh toán hợp đồng')
+                                                                              .then(
+                                                                            (value) async {
+                                                                              Navigator.of(context).pop();
+                                                                              Navigator.push(
+                                                                                context,
+                                                                                MaterialPageRoute(
+                                                                                  builder: (context) => VNPayWebView(
+                                                                                    url: value.body,
+                                                                                  ),
+                                                                                ),
+                                                                              ).then((value) {
+                                                                                print('----------VALUE VNPAY:$value');
+                                                                                _paymentHelper.isPaymentCheck().then((isChecked) {
+                                                                                  if (isChecked) {
+                                                                                    _contractUpdateBloc.add(ContractUpdateEventUpdate(urlRespone: value, contractId: dto.contractId));
+                                                                                    Future.delayed(const Duration(seconds: 2), () {
+                                                                                      _refreshData();
+                                                                                    });
+                                                                                    _paymentHelper.updatePaymentCheck(false);
+                                                                                  }
+                                                                                });
+                                                                              });
+                                                                            },
+                                                                          ).catchError((e) {
+                                                                            print('getPaymentUrl error');
+                                                                            Navigator.of(context).pop();
+                                                                            showDialog(
+                                                                              barrierDismissible: false,
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return Material(
+                                                                                  color: DefaultTheme.TRANSPARENT,
+                                                                                  child: Center(
+                                                                                    child: ClipRRect(
+                                                                                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                                                                                      child: BackdropFilter(
+                                                                                        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                                                                                        child: Container(
+                                                                                          padding: EdgeInsets.only(left: 10, top: 10, right: 10),
+                                                                                          width: 250,
+                                                                                          height: 150,
+                                                                                          decoration: BoxDecoration(
+                                                                                            color: DefaultTheme.WHITE.withOpacity(0.7),
+                                                                                          ),
+                                                                                          child: Column(
+                                                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                            children: <Widget>[
+                                                                                              Container(
+                                                                                                padding: EdgeInsets.only(bottom: 10, top: 10),
+                                                                                                child: Text(
+                                                                                                  'Không thể thanh toán',
+                                                                                                  style: TextStyle(
+                                                                                                    decoration: TextDecoration.none,
+                                                                                                    color: DefaultTheme.BLACK,
+                                                                                                    fontWeight: FontWeight.w600,
+                                                                                                    fontSize: 18,
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                              Container(
+                                                                                                padding: EdgeInsets.only(left: 10, right: 10),
+                                                                                                child: Align(
+                                                                                                  alignment: Alignment.center,
+                                                                                                  child: Text(
+                                                                                                    'Vui lòng thanh toán lại. Kiểm tra đường truyền kết nối.',
+                                                                                                    textAlign: TextAlign.center,
+                                                                                                    style: TextStyle(
+                                                                                                      decoration: TextDecoration.none,
+                                                                                                      color: DefaultTheme.BLACK,
+                                                                                                      fontWeight: FontWeight.w400,
+                                                                                                      fontSize: 13,
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                              Spacer(),
+                                                                                              Divider(
+                                                                                                height: 1,
+                                                                                                color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                                                                              ),
+                                                                                              ButtonHDr(
+                                                                                                height: 40,
+                                                                                                style: BtnStyle.BUTTON_TRANSPARENT,
+                                                                                                label: 'OK',
+                                                                                                labelColor: DefaultTheme.BLUE_TEXT,
+                                                                                                onTap: () {
+                                                                                                  Navigator.of(context).pop();
+                                                                                                },
+                                                                                              ),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                            );
+                                                                          });
+                                                                        },
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  });
+                                            },
+                                          ),
+                                        )
+                                      : (isSigned && _isAccept == false)
+                                          ? Container(
+                                              margin: EdgeInsets.only(
+                                                  bottom: 30,
+                                                  left: 20,
+                                                  right: 20),
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                  color: DefaultTheme
+                                                      .GREY_TOP_TAB_BAR,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: Align(
+                                                alignment: Alignment.center,
+                                                heightFactor: 50,
+                                                child: Text('Xác nhận hợp đồng',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 16)),
+                                              ),
+                                            )
+                                          : Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: 50,
+                                              margin: EdgeInsets.only(
+                                                  bottom: 30,
+                                                  left: 20,
+                                                  right: 20),
+                                              child: ButtonHDr(
+                                                style: BtnStyle.BUTTON_BLACK,
+                                                label: 'Đóng',
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ),
+                                ]),
+                              ),
+                            ]),
+                      ),
+                    ),
+                    Positioned(
+                      top: 23,
+                      left: MediaQuery.of(context).size.width * 0.3,
+                      height: 5,
+                      child: Container(
+                        padding: EdgeInsets.only(
+                            left: MediaQuery.of(context).size.width * 0.3),
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: 15,
+                        decoration: BoxDecoration(
+                            color: DefaultTheme.WHITE.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(50)),
+                      ),
+                    ),
+                  ],
+                ));
+          });
+        });
+  }
+
+  //
+  _getPatientInfo(int _patientId) {
+    return BlocProvider(
+      create: (context4) => PatientBloc(patientRepository: patientRepository)
+        ..add(PatientEventSetId(id: _patientId)),
+      child: BlocBuilder<PatientBloc, PatientState>(
+        builder: (context4, state4) {
+          if (state4 is PatientStateLoading) {
+            return Container(
+              margin: EdgeInsets.only(left: 20, right: 20),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: DefaultTheme.GREY_BUTTON),
+              child: Center(
+                child: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: Image.asset('assets/images/loading.gif'),
+                ),
+              ),
+            );
+          }
+          if (state4 is PatientStateFailure) {
+            return Container(
+              margin: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: DefaultTheme.GREY_BUTTON),
+              child: Padding(
+                padding:
+                    EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+                child: Text('Không thể tải thông tin cá nhân',
+                    style: TextStyle(
+                      color: DefaultTheme.GREY_TEXT,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    )),
+              ),
+            );
+          }
+          if (state4 is PatientStateSuccess) {
+            if (state4.dto == null) {
+              return Container(
+                margin:
+                    EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: DefaultTheme.GREY_BUTTON),
+                child: Padding(
+                  padding:
+                      EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+                  child: Text('Không thể tải thông tin cá nhân',
+                      style: TextStyle(
+                        color: DefaultTheme.GREY_TEXT,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      )),
+                ),
+              );
+            }
+            return Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  //
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 20, right: 20, bottom: 20, top: 30),
+                    child: Text(
+                      'Bên A: ${state4.dto.fullName} (Bệnh nhân)',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          fontFamily: 'NewYork'),
+                    ),
+                  ),
+
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 20),
+                        width: 130,
+                        child: Text(
+                          'ĐC thường trú:',
+                          style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 15,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                      ),
+                      Container(
+                        width:
+                            MediaQuery.of(context).size.width - (40 + 120 + 20),
+                        child: Text(
+                          '${state4.dto.address}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 20),
+                        width: 130,
+                        child: Text(
+                          'Điện thoại:',
+                          style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 15,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                      ),
+                      Container(
+                        width:
+                            MediaQuery.of(context).size.width - (40 + 120 + 20),
+                        child: Text(
+                          '${state4.dto.phoneNumber}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 20),
+                        width: 130,
+                        child: Text(
+                          'Ngày sinh:',
+                          style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 15,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                      ),
+                      Container(
+                        width:
+                            MediaQuery.of(context).size.width - (40 + 120 + 20),
+                        child: Text(
+                          '${_dateValidator.parseToDateView(state4.dto.dateOfBirth)}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 20),
+                        width: 130,
+                        child: Text(
+                          'Giới tính:',
+                          style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 15,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                      ),
+                      Container(
+                        width:
+                            MediaQuery.of(context).size.width - (40 + 120 + 20),
+                        child: Text(
+                          '${_getGender(state4.dto.gender)}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 5),
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(left: 20),
+                        width: 130,
+                        child: Text(
+                          'Nghề nghiệp:',
+                          style: TextStyle(
+                              color: DefaultTheme.GREY_TEXT,
+                              fontSize: 15,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                      ),
+                      Container(
+                        width:
+                            MediaQuery.of(context).size.width - (40 + 120 + 20),
+                        child: Text(
+                          '${state4.dto.career}',
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontFamily: 'NewYork'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return Container(
+            margin: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: DefaultTheme.GREY_BUTTON),
+            child: Padding(
+              padding:
+                  EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+              child: Text('Không thể tải thông tin cá nhân',
+                  style: TextStyle(
+                    color: DefaultTheme.GREY_TEXT,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  )),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  //
+  // _showFullImageDescription(MedicalInstructions dto, String nameMedIns) {
+  //   showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         //
+  //         return Material(
+  //           child: Container(
+  //             width: MediaQuery.of(context).size.width,
+  //             height: MediaQuery.of(context).size.height,
+  //             color: DefaultTheme.BLACK,
+  //             child: Stack(
+  //               // mainAxisAlignment: MainAxisAlignment.start,
+  //               children: <Widget>[
+  //                 //
+  //                 SizedBox(
+  //                   width: MediaQuery.of(context).size.width,
+  //                   height: MediaQuery.of(context).size.height,
+  //                   child: PhotoView(
+  //                     customSize: Size(MediaQuery.of(context).size.width,
+  //                         MediaQuery.of(context).size.height),
+  //                     imageProvider: NetworkImage(
+  //                         'http://45.76.186.233:8000/api/v1/Images?pathImage=${dto.images.first}'),
+  //                   ),
+  //                 ),
+  //                 Positioned(
+  //                   top: 20,
+  //                   right: 10,
+  //                   child: Container(
+  //                     width: 30,
+  //                     height: 30,
+  //                     child: InkWell(
+  //                       borderRadius: BorderRadius.circular(20),
+  //                       child: SizedBox(
+  //                         width: 30,
+  //                         height: 30,
+  //                         child: Image.asset('assets/images/ic-close.png'),
+  //                       ),
+  //                       onTap: () {
+  //                         Navigator.of(context).pop();
+  //                       },
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 Positioned(
+  //                   bottom: 0,
+  //                   child: Container(
+  //                     width: MediaQuery.of(context).size.width,
+  //                     height: MediaQuery.of(context).size.height * 0.4,
+  //                     padding: EdgeInsets.only(left: 30, right: 30),
+  //                     decoration: BoxDecoration(
+  //                       gradient: LinearGradient(
+  //                           begin: Alignment.topCenter,
+  //                           end: Alignment.bottomCenter,
+  //                           colors: [
+  //                             DefaultTheme.TRANSPARENT,
+  //                             DefaultTheme.BLACK.withOpacity(0.9),
+  //                           ]),
+  //                     ),
+  //                     child: Column(
+  //                       mainAxisAlignment: MainAxisAlignment.end,
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: <Widget>[
+  //                         //
+  //                         // Divider(
+  //                         //   color: DefaultTheme.WHITE,
+  //                         //   height: 1,
+  //                         // ),
+  //                         // Padding(
+  //                         //   padding: EdgeInsets.only(bottom: 10),
+  //                         // ),
+  //                         Text(
+  //                           '$nameMedIns',
+  //                           style: TextStyle(
+  //                               color: DefaultTheme.WHITE,
+  //                               fontSize: 20,
+  //                               fontWeight: FontWeight.w500),
+  //                         ),
+  //                         Padding(
+  //                           padding: EdgeInsets.only(bottom: 5),
+  //                         ),
+  //                         Divider(
+  //                           color: DefaultTheme.WHITE,
+  //                           height: 1,
+  //                         ),
+  //                         Padding(
+  //                           padding: EdgeInsets.only(bottom: 10),
+  //                         ),
+  //                         (dto.diagnose != null)
+  //                             ? Text(
+  //                                 'Chẩn đoán: ${dto.diagnose}',
+  //                                 style: TextStyle(
+  //                                     color: DefaultTheme.WHITE, fontSize: 14),
+  //                               )
+  //                             : Container(),
+  //                         (dto.description != null)
+  //                             ? Text(
+  //                                 'Chi tiết: ${dto.description}',
+  //                                 style: TextStyle(
+  //                                     color: DefaultTheme.WHITE, fontSize: 14),
+  //                               )
+  //                             : Container(),
+
+  //                         Padding(
+  //                           padding: EdgeInsets.only(bottom: 50),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //         //
+  //       });
+  // }
+
+  _getDoctorInfo() {
+    return BlocBuilder<DoctorInfoBloc, DoctorInfoState>(
+        builder: (context, state) {
+      if (state is DoctorInfoStateLoading) {
+        return Container(
+          margin: EdgeInsets.only(left: 20, right: 20),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              color: DefaultTheme.GREY_BUTTON),
+          child: Center(
+            child: SizedBox(
+              width: 30,
+              height: 30,
+              child: Image.asset('assets/images/loading.gif'),
+            ),
+          ),
+        );
+      }
+      if (state is DoctorInfoStateFailure) {
+        return Container(
+          margin: EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: DefaultTheme.GREY_BUTTON),
+          child: Padding(
+            padding: EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
+            child: Text('Không tìm thấy bác sĩ',
+                style: TextStyle(
+                  color: DefaultTheme.GREY_TEXT,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                )),
+          ),
+        );
+      }
+      if (state is DoctorInfoStateSuccess) {
+        doctorDTO = state.dto;
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            //
+            Padding(
+              padding:
+                  EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 30),
+              child: Text(
+                'Bên B: ${state.dto.fullName} (Bác sĩ)',
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 18,
+                    fontFamily: 'NewYork'),
+              ),
+            ),
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 20),
+                  width: 130,
+                  child: Text(
+                    'Công tác tại:',
+                    style: TextStyle(
+                        color: DefaultTheme.GREY_TEXT,
+                        fontSize: 15,
+                        fontFamily: 'NewYork'),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width - (40 + 120 + 20),
+                  child: Text(
+                    '${doctorDTO.workLocation}',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontFamily: 'NewYork'),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 5),
+            ),
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 20),
+                  width: 130,
+                  child: Text(
+                    'Chuyên khoa:',
+                    style: TextStyle(
+                        color: DefaultTheme.GREY_TEXT,
+                        fontSize: 15,
+                        fontFamily: 'NewYork'),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width - (40 + 120 + 20),
+                  child: Text(
+                    '${state.dto.specialization}',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontFamily: 'NewYork'),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 5),
+            ),
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 20),
+                  width: 130,
+                  child: Text(
+                    'Điện thoại:',
+                    style: TextStyle(
+                        color: DefaultTheme.GREY_TEXT,
+                        fontSize: 15,
+                        fontFamily: 'NewYork'),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width - (40 + 120 + 20),
+                  child: Text(
+                    '${state.dto.phone}',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontFamily: 'NewYork'),
+                  ),
+                ),
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(bottom: 5),
+            ),
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 20),
+                  width: 130,
+                  child: Text(
+                    'Ngày sinh:',
+                    style: TextStyle(
+                        color: DefaultTheme.GREY_TEXT,
+                        fontSize: 15,
+                        fontFamily: 'NewYork'),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width - (40 + 120 + 20),
+                  child: Text(
+                    '${_dateValidator.parseToDateView(state.dto.dateOfBirth)}',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 15,
+                        fontFamily: 'NewYork'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      }
+      return Container();
+    });
+  }
+
+  showFullDetailComponent(List<String> imgs, String miName,
+      String dateTreatment, String conclusion, List<String> diseases) {
+    int positionImage = 0;
+    bool isTappedOut = false;
+    // print('disease list: $diseases');
+    return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          //
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setModalState) {
+            return Material(
+              color: DefaultTheme.BLACK,
+              child: InkWell(
+                onTap: () {
+                  setModalState(() {
+                    isTappedOut = !isTappedOut;
+                  });
+                },
+                child: (isTappedOut)
+                    ? Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        color: DefaultTheme.BLACK,
+                        child: Stack(
+                          // mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            //
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              child: PhotoView(
+                                customSize: Size(
+                                    MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height),
+                                imageProvider: NetworkImage(
+                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        color: DefaultTheme.BLACK,
+                        child: Stack(
+                          // mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            //
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                              child: PhotoView(
+                                customSize: Size(
+                                    MediaQuery.of(context).size.width,
+                                    MediaQuery.of(context).size.height),
+                                imageProvider: NetworkImage(
+                                    'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+                              ),
+                            ),
+                            (imgs.length > 1)
+                                ? Positioned(
+                                    right: 0,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setModalState(() {
+                                          if (positionImage == imgs.length) {
+                                            positionImage = 0;
+                                          } else if (positionImage <
+                                              imgs.length - 1) {
+                                            positionImage++;
+                                          } else {
+                                            positionImage = 0;
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment.centerRight,
+                                              end: Alignment.centerLeft,
+                                              colors: [
+                                                DefaultTheme.BLACK
+                                                    .withOpacity(0.3),
+                                                DefaultTheme.TRANSPARENT,
+                                              ]),
+                                        ),
+                                        child: SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-next.png'),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            (imgs.length > 1)
+                                ? Positioned(
+                                    left: 0,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setModalState(() {
+                                          // if (positionImage == imgs.length) {
+                                          //   positionImage = 0;
+                                          // } else if (positionImage < imgs.length - 1) {
+                                          //   positionImage--;
+                                          // } else {
+                                          //   positionImage = 0;
+                                          // }
+                                          if (positionImage == 0) {
+                                            positionImage = imgs.length - 1;
+                                          } else {
+                                            positionImage--;
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              begin: Alignment.centerLeft,
+                                              end: Alignment.centerRight,
+                                              colors: [
+                                                DefaultTheme.BLACK
+                                                    .withOpacity(0.3),
+                                                DefaultTheme.TRANSPARENT,
+                                              ]),
+                                        ),
+                                        child: SizedBox(
+                                          width: 25,
+                                          height: 25,
+                                          child: Image.asset(
+                                              'assets/images/ic-prev.png'),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                            (imgs != null)
+                                ? Positioned(
+                                    top: 25,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Center(
+                                      child: Text(
+                                          '${positionImage + 1}/${imgs.length}',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: DefaultTheme.WHITE)),
+                                    ),
+                                  )
+                                : Container(),
+                            Positioned(
+                              top: 20,
+                              right: 10,
+                              child: Container(
+                                width: 30,
+                                height: 30,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: Image.asset(
+                                        'assets/images/ic-close.png'),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.4,
+                                padding: EdgeInsets.only(left: 30, right: 30),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        DefaultTheme.TRANSPARENT,
+                                        DefaultTheme.BLACK.withOpacity(0.9),
+                                      ]),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    //
+
+                                    Text(
+                                      '$miName',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5),
+                                    ),
+                                    Divider(
+                                      color: DefaultTheme.WHITE,
+                                      height: 1,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 10),
+                                    ),
+                                    (diseases == null || diseases.isEmpty)
+                                        ? Container()
+                                        : Text(
+                                            'Chẩn đoán:\n${_generateDisease(diseases)}',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                          ),
+
+                                    Text(
+                                      (conclusion == null || conclusion == '')
+                                          ? ''
+                                          : 'Kết luận: $conclusion',
+                                      style: TextStyle(
+                                          color: DefaultTheme.WHITE,
+                                          fontSize: 15),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 5,
+                                    ),
+                                    (dateTreatment == null ||
+                                            dateTreatment == '')
+                                        ? Container()
+                                        : Padding(
+                                            padding: EdgeInsets.only(bottom: 5),
+                                          ),
+                                    (dateTreatment != null &&
+                                            dateTreatment != '' &&
+                                            dateTreatment != 'null')
+                                        ? Text(
+                                            'Ngày khám: ${_dateValidator.parseToDateView2(dateTreatment)}',
+                                            style: TextStyle(
+                                                color: DefaultTheme.WHITE,
+                                                fontSize: 15),
+                                          )
+                                        : Container(),
+
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 50),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+            );
+            //
+          });
+        });
+  }
+
+  String _generateDisease(List<String> diseases) {
+    String result = '';
+    for (String x in diseases) {
+      if (x != '' && x != null) {
+        result += x + '\n';
+      }
+    }
+    return result;
+  }
+
+  // showFullDetailComponent(List<String> imgs, String miName, String dateCreate,
+  //     String conclusion, List<String> diseases) {
+  //   int positionImage = 0;
+  //   bool isTappedOut = false;
+
+  //   return showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         //
+  //         return StatefulBuilder(
+  //             builder: (BuildContext context, StateSetter setModalState) {
+  //           return Material(
+  //             child: InkWell(
+  //               onTap: () {
+  //                 setModalState(() {
+  //                   isTappedOut = !isTappedOut;
+  //                 });
+  //               },
+  //               child: (isTappedOut)
+  //                   ? Container(
+  //                       width: MediaQuery.of(context).size.width,
+  //                       height: MediaQuery.of(context).size.height,
+  //                       color: DefaultTheme.BLACK,
+  //                       child: Stack(
+  //                         // mainAxisAlignment: MainAxisAlignment.start,
+  //                         children: <Widget>[
+  //                           //
+  //                           SizedBox(
+  //                             width: MediaQuery.of(context).size.width,
+  //                             height: MediaQuery.of(context).size.height,
+  //                             child: PhotoView(
+  //                               customSize: Size(
+  //                                   MediaQuery.of(context).size.width,
+  //                                   MediaQuery.of(context).size.height),
+  //                               imageProvider: NetworkImage(
+  //                                   'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     )
+  //                   : Container(
+  //                       width: MediaQuery.of(context).size.width,
+  //                       height: MediaQuery.of(context).size.height,
+  //                       color: DefaultTheme.BLACK,
+  //                       child: Stack(
+  //                         // mainAxisAlignment: MainAxisAlignment.start,
+  //                         children: <Widget>[
+  //                           //
+  //                           SizedBox(
+  //                             width: MediaQuery.of(context).size.width,
+  //                             height: MediaQuery.of(context).size.height,
+  //                             child: PhotoView(
+  //                               customSize: Size(
+  //                                   MediaQuery.of(context).size.width,
+  //                                   MediaQuery.of(context).size.height),
+  //                               imageProvider: NetworkImage(
+  //                                   'http://45.76.186.233:8000/api/v1/Images?pathImage=${imgs[positionImage]}'),
+  //                             ),
+  //                           ),
+  //                           (imgs.length > 1)
+  //                               ? Positioned(
+  //                                   right: 0,
+  //                                   child: InkWell(
+  //                                     onTap: () {
+  //                                       setModalState(() {
+  //                                         if (positionImage == imgs.length) {
+  //                                           positionImage = 0;
+  //                                         } else if (positionImage <
+  //                                             imgs.length - 1) {
+  //                                           positionImage++;
+  //                                         } else {
+  //                                           positionImage = 0;
+  //                                         }
+  //                                       });
+  //                                     },
+  //                                     child: Container(
+  //                                       width: 50,
+  //                                       height:
+  //                                           MediaQuery.of(context).size.height,
+  //                                       decoration: BoxDecoration(
+  //                                         gradient: LinearGradient(
+  //                                             begin: Alignment.centerRight,
+  //                                             end: Alignment.centerLeft,
+  //                                             colors: [
+  //                                               DefaultTheme.BLACK
+  //                                                   .withOpacity(0.3),
+  //                                               DefaultTheme.TRANSPARENT,
+  //                                             ]),
+  //                                       ),
+  //                                       child: SizedBox(
+  //                                         width: 25,
+  //                                         height: 25,
+  //                                         child: Image.asset(
+  //                                             'assets/images/ic-next.png'),
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 )
+  //                               : Container(),
+  //                           (imgs.length > 1)
+  //                               ? Positioned(
+  //                                   left: 0,
+  //                                   child: InkWell(
+  //                                     onTap: () {
+  //                                       setModalState(() {
+  //                                         // if (positionImage == imgs.length) {
+  //                                         //   positionImage = 0;
+  //                                         // } else if (positionImage < imgs.length - 1) {
+  //                                         //   positionImage--;
+  //                                         // } else {
+  //                                         //   positionImage = 0;
+  //                                         // }
+  //                                         if (positionImage == 0) {
+  //                                           positionImage = imgs.length - 1;
+  //                                         } else {
+  //                                           positionImage--;
+  //                                         }
+  //                                       });
+  //                                     },
+  //                                     child: Container(
+  //                                       width: 50,
+  //                                       height:
+  //                                           MediaQuery.of(context).size.height,
+  //                                       decoration: BoxDecoration(
+  //                                         gradient: LinearGradient(
+  //                                             begin: Alignment.centerLeft,
+  //                                             end: Alignment.centerRight,
+  //                                             colors: [
+  //                                               DefaultTheme.BLACK
+  //                                                   .withOpacity(0.3),
+  //                                               DefaultTheme.TRANSPARENT,
+  //                                             ]),
+  //                                       ),
+  //                                       child: SizedBox(
+  //                                         width: 25,
+  //                                         height: 25,
+  //                                         child: Image.asset(
+  //                                             'assets/images/ic-prev.png'),
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 )
+  //                               : Container(),
+  //                           (imgs != null)
+  //                               ? Positioned(
+  //                                   top: 25,
+  //                                   width: MediaQuery.of(context).size.width,
+  //                                   child: Center(
+  //                                     child: Text(
+  //                                         '${positionImage + 1}/${imgs.length}',
+  //                                         style: TextStyle(
+  //                                             color: DefaultTheme.WHITE)),
+  //                                   ),
+  //                                 )
+  //                               : Container(),
+  //                           Positioned(
+  //                             top: 20,
+  //                             right: 10,
+  //                             child: Container(
+  //                               width: 30,
+  //                               height: 30,
+  //                               child: InkWell(
+  //                                 borderRadius: BorderRadius.circular(20),
+  //                                 child: SizedBox(
+  //                                   width: 30,
+  //                                   height: 30,
+  //                                   child: Image.asset(
+  //                                       'assets/images/ic-close.png'),
+  //                                 ),
+  //                                 onTap: () {
+  //                                   Navigator.of(context).pop();
+  //                                 },
+  //                               ),
+  //                             ),
+  //                           ),
+  //                           Positioned(
+  //                             bottom: 0,
+  //                             child: Container(
+  //                               width: MediaQuery.of(context).size.width,
+  //                               height:
+  //                                   MediaQuery.of(context).size.height * 0.4,
+  //                               padding: EdgeInsets.only(left: 30, right: 30),
+  //                               decoration: BoxDecoration(
+  //                                 gradient: LinearGradient(
+  //                                     begin: Alignment.topCenter,
+  //                                     end: Alignment.bottomCenter,
+  //                                     colors: [
+  //                                       DefaultTheme.TRANSPARENT,
+  //                                       DefaultTheme.BLACK.withOpacity(0.9),
+  //                                     ]),
+  //                               ),
+  //                               child: Column(
+  //                                 mainAxisAlignment: MainAxisAlignment.end,
+  //                                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                                 children: <Widget>[
+  //                                   //
+
+  //                                   Text(
+  //                                     '$miName',
+  //                                     style: TextStyle(
+  //                                         color: DefaultTheme.WHITE,
+  //                                         fontSize: 20,
+  //                                         fontWeight: FontWeight.w500),
+  //                                   ),
+  //                                   Padding(
+  //                                     padding: EdgeInsets.only(bottom: 5),
+  //                                   ),
+  //                                   Divider(
+  //                                     color: DefaultTheme.WHITE,
+  //                                     height: 1,
+  //                                   ),
+  //                                   Padding(
+  //                                     padding: EdgeInsets.only(bottom: 10),
+  //                                   ),
+  //                                   (diseases == null || diseases == [])
+  //                                       ? Container()
+  //                                       : Text(
+  //                                           'Chuẩn đoán $diseases',
+  //                                           style: TextStyle(
+  //                                               color: DefaultTheme.WHITE,
+  //                                               fontSize: 15),
+  //                                           overflow: TextOverflow.ellipsis,
+  //                                           maxLines: 5,
+  //                                         ),
+  //                                   Padding(
+  //                                     padding: EdgeInsets.only(bottom: 10),
+  //                                   ),
+  //                                   (conclusion == null || conclusion == '')
+  //                                       ? Container()
+  //                                       : Text(
+  //                                           'Kết luận: $conclusion',
+  //                                           style: TextStyle(
+  //                                               color: DefaultTheme.WHITE,
+  //                                               fontSize: 15),
+  //                                           overflow: TextOverflow.ellipsis,
+  //                                           maxLines: 5,
+  //                                         ),
+  //                                   Padding(
+  //                                     padding: EdgeInsets.only(bottom: 10),
+  //                                   ),
+  //                                   Text(
+  //                                     'Ngày tạo $dateCreate',
+  //                                     style: TextStyle(
+  //                                         color: DefaultTheme.WHITE,
+  //                                         fontSize: 15),
+  //                                   ),
+
+  //                                   Padding(
+  //                                     padding: EdgeInsets.only(bottom: 50),
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //             ),
+  //           );
+  //           //
+  //         });
+  //       });
+  // }
+
+  String _getGender(String gender) {
+    String result = '';
+    if (gender.trim().toLowerCase() == 'male') {
+      result = 'Nam';
+    } else if (gender.trim().toLowerCase() == 'female') {
+      result = 'Nữ';
+    } else {
+      result = gender;
+    }
+    return result;
+  }
+}

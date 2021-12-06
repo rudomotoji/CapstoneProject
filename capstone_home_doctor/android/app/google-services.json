@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "974778918990",
+    "project_id": "home-doctor-de846",
+    "storage_bucket": "home-doctor-de846.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:974778918990:android:a68f37dfd5005003b1bb1f",
+        "android_client_info": {
+          "package_name": "hdr.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "974778918990-l43qgtmrv7pti4kjmqlvls9ubcf4di79.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNhumFBA9o0zs-2yJSFZBHUv2d9HpiUjc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "974778918990-l43qgtmrv7pti4kjmqlvls9ubcf4di79.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "974778918990-63412ghdvmrse386plck5co0m4osoh60.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "hdr.mobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
